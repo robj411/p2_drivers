@@ -1,11 +1,11 @@
-function sec = p2Sim(inp1,inp2,inp3,inp4,inp5,inp6)
+function sec = p2Sim(inp1,inp2,inp3)
     
     load(strcat(inp1,'.mat'),'data');
-    lx        = length(data.obj);
+    lx        = length(data.B);
     data.tvec = [-75 365*3+1];
     
-    [data,~,~]    = p2Params(data,'Covid Wildtype',inp4,1,1);
-    [data,dis,p2] = p2Params(data,inp2,inp4,inp5,inp6);
+    [data,~,~]    = p2Params(data,'Covid Wildtype');%to define wnorm and Td_CWT
+    [data,dis,p2] = p2Params(data,inp2);
     
     int = 5;
     if strcmp(inp3,'Elimination');
@@ -32,13 +32,13 @@ function sec = p2Sim(inp1,inp2,inp3,inp4,inp5,inp6)
         error('Unknown Mitigation Strategy!');
     end
     
-    [data,f,g]     = p2Run(data,dis,inp3,int,xoptim,p2);
-    [cost,ccost_t] = p2Cost(data,dis,p2,g);
-    sec(1)         = sum(cost([3,6,7:10],:),'all');
-    sec(2)         = sum(cost([3],:),'all');
-    sec(3)         = sum(cost([6],:),'all');
-    sec(4)         = sum(cost([7:10],:),'all');
+    [data,f,g] = p2Run(data,dis,inp3,int,xoptim,p2);
+    [cost,~]   = p2Cost(data,dis,p2,g);
+    sec(1)     = sum(cost([3,6,7:10],:),'all');
+    sec(2)     = sum(cost([3],:),'all');
+    sec(3)     = sum(cost([6],:),'all');
+    sec(4)     = sum(cost([7:10],:),'all');
 
-    plots = p2Plot(data,f,p2,g,cost,ccost_t,sec(1),inp1,inp2,inp3);
+    p2Plot(data,f,p2,g,cost,NaN,sec(1),inp1,inp2,inp3);
     
 end

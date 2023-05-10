@@ -28,7 +28,7 @@ j = 1;
 
 %%
 
-for i = 1:length(countries)%[115,124,120,116,119]
+for i = 1:length(countries);
     
 country = countries{i};
 
@@ -243,7 +243,7 @@ if ~isempty(kr);
     
     dgva = T(kr,:).x2019/T(kr,:).x2018;
     if (dgva>0 && dgva<Inf);
-        obj = dgva*obj;
+        obj(obj>=0) = dgva*obj(obj>=0);
     end
 else
     continue;
@@ -350,7 +350,6 @@ else
     source             = 'Estimated, 0';
 end
 
-data.wpc = w;
 data.wfh = wfh;
 
 %disp(['The share of home-working is ',num2str(w),' (',source,')']);
@@ -699,9 +698,9 @@ data.la  = la;
 %     vsy    = 0;
 %     source = 'Estimated, 0';
 % end
-
+ 
 gdp = 365*sum(obj);
-vsy = 0.5454*gdp/sum(Npop(2:4));;%2.02*gdp/sum(Npop(2:4));
+vsy = 0.5454*gdp/sum(Npop(2:4));%2.02*gdp/sum(Npop(2:4));
 
 if vsy~=0;
     source = 'OECD, 2018';
@@ -710,8 +709,8 @@ else
 end
 
 data.vsy = vsy;
-
-%disp(['The value of a school year is $',num2str(vsy),' million (',source,')']);
+ 
+% %disp(['The value of a school year is $',num2str(vsy),' million (',source,')']);
 
 %% costing - gdpl
 

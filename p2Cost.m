@@ -9,26 +9,14 @@ ln = lx+4;
 deaths    = g(end,1+2*lx+4*ln+1:1+2*lx+5*ln);
 cost(1,:) = deaths;
 
-na         = [data.Npop(1:16)',sum(data.Npop(17:end))];%length is 17 to match ifr
-la         = [data.la(1:16),...
-              dot(data.la(17:end),[data.Npop(17),sum(data.Npop(18:end))])/sum(data.Npop(17:end))];
-napd       = na.*dis.ifr;
-lg         = [dot(la(1),napd(1))/sum(napd(1)),...
-              dot(la(2:4),napd(2:4))/sum(napd(2:4)),...
-              dot(la(5:13),napd(5:13))/sum(napd(5:13)),...
-              dot(la(14:end),napd(14:end))/sum(napd(14:end))];
-for k = 1:length(lg); 
-    lgh(k) = sum(1./((1+0.03).^[1:lg(k)]));
-end  
-lgh        = [repmat(lgh(3),1,45),lgh];
-lyl        = deaths.*lgh;
-cost(2,:)  = lyl;
+lyl       = deaths.*data.lgh;
+cost(2,:) = lyl;
 
 vlyl      = lyl*data.vly;
 cost(3,:) = vlyl;
 
 deaths          = g(:,1+2*lx+4*ln+1:1+2*lx+5*ln);
-ccost_t(:,1:ln) = deaths.*lgh.*data.vly;
+ccost_t(:,1:ln) = deaths.*data.lgh.*data.vly;
 
 %% VSYL
 
