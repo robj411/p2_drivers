@@ -4,8 +4,11 @@ function sec = p2Sim(inp1,inp2,inp3)
     lx        = length(data.B);
     data.tvec = [-75 365*3+1];
     
-    [data,~,~]    = p2Params(data,'Covid Wildtype');%to define wnorm and Td_CWT
-    [data,dis,p2] = p2Params(data,inp2);
+    
+    dis = get_dis_params(inp2);    
+    
+    [data,~,~]    = p2Params(data,'Covid Wildtype',dis);%to define wnorm and Td_CWT
+    [data,dis,p2] = p2Params(data,inp2,dis);
     
     int = 5;
     if strcmp(inp3,'Elimination');

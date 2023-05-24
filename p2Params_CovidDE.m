@@ -29,4 +29,9 @@ dis.Ti    = 365;
 dis.red = 0.58;
 dis.R0  = 5.0800;
 
+
+load(sprintf('%sR0.mat','Covid Delta'));
+dis.R0values = R0;
+dis.R0quantiles = qR0;
+
 end

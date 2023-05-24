@@ -32,4 +32,9 @@ dis.Ti    = 365;
 dis.red = 0.58;
 dis.R0  = 1.7500;%3.0000;
 
+
+load(sprintf('%sR0.mat','SARS'));
+dis.R0values = R0;
+dis.R0quantiles = qR0;
+
 end

@@ -32,4 +32,8 @@ dis.Ti    = 365;
 dis.red = 0.58;
 dis.R0  = 2.5000;
 
+load(sprintf('%sR0.mat','Influenza 1918'));
+dis.R0values = R0;
+dis.R0quantiles = qR0;
+
 end
