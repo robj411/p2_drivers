@@ -75,10 +75,10 @@ while Tout(end)<tend;
     NNnext([1:lx,lx+3]) = NNnext([1:lx,lx+3])/sumWorkingAge;
     NNnext(end)         = 1;
     
-    p2.ratep1 = NNnext.*[repmat(p2.aratep1(3),lx,1);p2.aratep1];    
-    p2.ratep2 = NNnext.*[repmat(p2.aratep2(3),lx,1);p2.aratep2];
-    p2.ratep3 = NNnext.*[repmat(p2.aratep3(3),lx,1);p2.aratep3];
-    p2.ratep4 = NNnext.*[repmat(p2.aratep4(3),lx,1);p2.aratep4];
+%     p2.ratep1 = NNnext.*[repmat(p2.aratep1(3),lx,1);p2.aratep1];    
+%     p2.ratep2 = NNnext.*[repmat(p2.aratep2(3),lx,1);p2.aratep2];
+%     p2.ratep3 = NNnext.*[repmat(p2.aratep3(3),lx,1);p2.aratep3];
+%     p2.ratep4 = NNnext.*[repmat(p2.aratep4(3),lx,1);p2.aratep4];
 
     [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,Vclass,y0,inext]=...
      integr8(data,NNfeed,D,i,t0,tend,dis,y0,inp3,p2);
@@ -244,22 +244,22 @@ ph    = amp.*dis.ph';
 Ts    = ((1-ph).*dis.Tsr) + (ph.*dis.Tsh);
 g3    = (1-pd)./Th;
 h     = ph./Ts;
-h_v1  = dis.h_v1;
+% h_v1  = dis.h_v1;
 dur   = p2.dur;
 qh    = ph./(Ts-dur);
-qh_v1 = p2.qh_v1;
+% qh_v1 = p2.qh_v1;
 
 Hdot   = h.*Ins      +qh.*Iss        -(g3+mu).*H;
-Hv1dot = h_v1'.*Insv1 +qh_v1'.*Issv1   -(g3+mu).*Hv1;
-occdot = sum(Hdot+Hv1dot,2);
+% Hv1dot = h_v1'.*Insv1 +qh_v1'.*Issv1   -(g3+mu).*Hv1;
+occdot = sum(Hdot,2);%+Hv1dot
 r      = occdot./occ;
 
 Ina   = yout(:,2*ntot+1:3*ntot);
 Isa   = yout(:,3*ntot+1:4*ntot);
-Inav1 = yout(:,11*ntot+1:12*ntot);
-Isav1 = yout(:,12*ntot+1:13*ntot);
+% Inav1 = yout(:,11*ntot+1:12*ntot);
+% Isav1 = yout(:,12*ntot+1:13*ntot);
 
-Ip    = 10^5*sum(Ina+Ins+Isa+Iss+Inav1+Insv1+Isav1+Issv1,2)/sum(NN0);
+Ip    = 10^5*sum(Ina+Ins+Isa+Iss,2)/sum(NN0);%+Inav1+Insv1+Isav1+Issv1
 trate = p2.trate;
 b0    = 2.197;
 b1    = 0.1838;
@@ -292,23 +292,23 @@ Iss=    y(5*ntot+1:6*ntot);
 H=      y(6*ntot+1:7*ntot);
 R=      y(7*ntot+1:8*ntot);
 
-Shv1=   y(8*ntot+1:9*ntot);
-Sv1=    y(9*ntot+1:10*ntot);
-Ev1=    y(10*ntot+1:11*ntot);
-Inav1=  y(11*ntot+1:12*ntot);
-Isav1=  y(12*ntot+1:13*ntot);
-Insv1=  y(13*ntot+1:14*ntot);
-Issv1=  y(14*ntot+1:15*ntot);
-Hv1=    y(15*ntot+1:16*ntot);
-Rv1=    y(16*ntot+1:17*ntot);
+% Shv1=   y(8*ntot+1:9*ntot);
+% Sv1=    y(9*ntot+1:10*ntot);
+% Ev1=    y(10*ntot+1:11*ntot);
+% Inav1=  y(11*ntot+1:12*ntot);
+% Isav1=  y(12*ntot+1:13*ntot);
+% Insv1=  y(13*ntot+1:14*ntot);
+% Issv1=  y(14*ntot+1:15*ntot);
+% Hv1=    y(15*ntot+1:16*ntot);
+% Rv1=    y(16*ntot+1:17*ntot);
 
-DE=     y(17*ntot+1:18*ntot);
-V=      y(18*ntot+1:19*ntot);
+% DE=     y(17*ntot+1:18*ntot);
+% V=      y(18*ntot+1:19*ntot);
 Sn=     y(19*ntot+1:20*ntot);
 
 %% HOSPITAL OCCUPANCY:
 
-occ   = max(1,sum(H+Hv1));
+occ   = max(1,sum(H)); %+Hv1
 Hmax  = p2.Hmax;
 SHmax = p2.SHmax;
 
@@ -340,12 +340,12 @@ red  = dis.red;
 beta = dis.beta;
 
 %Vaccination
-hrv1  = dis.hrv1;    
-scv1  = dis.scv1;  
-g2_v1 = dis.g2_v1;
-h_v1  = dis.h_v1;
-trv1  = dis.trv1;
-nuv1  = dis.nuv1;
+% hrv1  = dis.hrv1;    
+% scv1  = dis.scv1;  
+% g2_v1 = dis.g2_v1;
+% h_v1  = dis.h_v1;
+% trv1  = dis.trv1;
+% nuv1  = dis.nuv1;
 
 %Preparedness
 %Tm      = p2.Tm;
@@ -354,31 +354,31 @@ nuv1  = dis.nuv1;
 dur    = p2.dur;
 qg1    = p2.qg1;
 qg2    = (1-ph)./(Ts-dur);
-qg2_v1 = p2.qg2_v1;
+% qg2_v1 = p2.qg2_v1;
 qh     = ph./(Ts-dur);
-qh_v1  = p2.qh_v1;
+% qh_v1  = p2.qh_v1;
 %betamod = p2.betamod;
 %Hmax    = p2.Hmax;
 %FHmax   = p2.FHmax;
 %g3_oc   = p2.g3_oc;
 %mu_oc   = p2.mu_oc;
 
-startp1 = p2.startp1;
-startp2 = p2.startp2;
-startp3 = p2.startp3;
-startp4 = p2.startp4;
-pend    = p2.end;
-
-ratep1 = p2.ratep1;
-ratep2 = p2.ratep2;
-ratep3 = p2.ratep3;
-ratep4 = p2.ratep4;
+% startp1 = p2.startp1;
+% startp2 = p2.startp2;
+% startp3 = p2.startp3;
+% startp4 = p2.startp4;
+% pend    = p2.end;
+% 
+% ratep1 = p2.ratep1;
+% ratep2 = p2.ratep2;
+% ratep3 = p2.ratep3;
+% ratep4 = p2.ratep4;
 
 %% FOI:
 
 phi = 1;%+data.amp*cos((t-32-data.phi)/(365/2*pi));
 
-ddk    = 10^5*sum(mu.*(H+Hv1))/sum(NN0);
+ddk    = 10^5*sum(mu.*(H))/sum(NN0);%+Hv1
 sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
 
 if i==1;
@@ -389,7 +389,7 @@ else
     betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
 end
 
-I       = (red*Ina+Ins)+(1-trv1)*(red*Inav1+Insv1);%Only non-self-isolating compartments
+I       = (red*Ina+Ins); %+(1-trv1)*(red*Inav1+Insv1);%Only non-self-isolating compartments
 foi     = phi*beta*betamod*(D*(I./NN0));
 
 seedvec = 10^-15*sum(data.Npop)*ones(ntot,1);
@@ -410,7 +410,7 @@ elseif t<p2.end && i~=5;
 %     p3    = (x2<log10(trate)).*(1-(1./(1+10.^(-sl*(x2-mp)))))/dur + ...
 %             (x2>=log10(trate)).*min(trate/10^5,1-(1./(1+10.^(-sl*(x2-mp)))))/dur;
 %     p4    = p3;
-    Ip    = 10^5*sum(Ina+Ins+Isa+Iss+Inav1+Insv1+Isav1+Issv1)/sum(NN0);
+    Ip    = 10^5*sum(Ina+Ins+Isa+Iss)/sum(NN0);%+Inav1+Insv1+Isav1+Issv1
     trate = p2.trate;
 %     b0    = 2;
 %     b1    = 0.03132;
@@ -438,80 +438,82 @@ end
 % uptake(uptake>0)=1;
 % uptake=[repmat(uptake(3),numSectors,1);uptake];
 
-nonVax=NN0-V;
+% nonVax=NN0-V;
 %S (and R) ./nonVax accounts for the (inefficient) administration of vaccines to exposed, infectious and hospitalised people
 %nonVax approximates S+E+I+H+R (unvaccinated) and D (partially)
 %S (or R) ./nonVax is approximately 1 (or 0) when prevalence is low but is closer to 0 (or 1) when prevalence is high
 %nonVax is non-zero as long as uptake is less than 100%
 
-if t>=pend
-    v1rates=zeros(ntot,1);
-    v1rater=zeros(ntot,1);
-    Vdot=   zeros(ntot,1);
-    
+% if t>=pend
+%     v1rates=zeros(ntot,1);
+%     v1rater=zeros(ntot,1);
+%     Vdot=   zeros(ntot,1);  
 % elseif t>=p2.startp5
 %     v1rates=p2.ratep5.*S./nonVax;
 %     v1rater=p2.ratep5.*R./nonVax;
 %     Vdot=   p2.ratep5;
       
-elseif t>=startp4
-    v1rates=ratep4.*S./nonVax;
-    v1rater=ratep4.*R./nonVax;
-    Vdot=   ratep4;
-    
-elseif t>=startp3
-    v1rates=ratep3.*S./nonVax;
-    v1rater=ratep3.*R./nonVax;
-    Vdot=   ratep3;
-    
-elseif t>=startp2
-    v1rates=ratep2.*S./nonVax;
-    v1rater=ratep2.*R./nonVax;
-    Vdot=   ratep2;
-    
-elseif t>=startp1
-    v1rates=ratep1.*S./nonVax;
-    v1rater=ratep1.*R./nonVax;
-    Vdot=   ratep1;
-    
-else
-    v1rates=zeros(ntot,1);
-    v1rater=zeros(ntot,1);
-    Vdot=   zeros(ntot,1);
-    
-end
+% elseif t>=startp4
+%     v1rates=ratep4.*S./nonVax;
+%     v1rater=ratep4.*R./nonVax;
+%     Vdot=   ratep4;
+% elseif t>=startp3
+%     v1rates=ratep3.*S./nonVax;
+%     v1rater=ratep3.*R./nonVax;
+%     Vdot=   ratep3;
+% elseif t>=startp2
+%     v1rates=ratep2.*S./nonVax;
+%     v1rater=ratep2.*R./nonVax;
+%     Vdot=   ratep2;
+% elseif t>=startp1
+%     v1rates=ratep1.*S./nonVax;
+%     v1rater=ratep1.*R./nonVax;
+%     Vdot=   ratep1;
+% else
+%     v1rates=zeros(ntot,1);
+%     v1rater=zeros(ntot,1);
+%     Vdot=   zeros(ntot,1);
+% end
 
-%v1rate=0.2*p2.ratep3.*S./nonVax;
-%v2rate=0.8*p2.ratep3.*S./nonVax;
-
-Sndot=      -Sn.*(foi+seed)          -v1rates.*Sn./S;
+Sndot=      -Sn.*(foi+seed) ; %         -v1rates.*Sn./S;
 
 %% EQUATIONS:
 
-Sdot=       -S.*(foi+seed)  +nu.*R   -v1rates                +nuv1.*Sv1;
-Shv1dot=    v1rates     -hrv1*Shv1   -Shv1.*foi;
-Sv1dot=                  hrv1*Shv1   -Sv1.*(1-scv1).*foi  -nuv1.*Sv1;  %+nu.*Rv1; 
+Sdot=       -S.*(foi+seed)  +nu.*R ; %  -v1rates                +nuv1.*Sv1;
+% Shv1dot=    v1rates     -hrv1*Shv1   -Shv1.*foi;
+% Sv1dot=                  hrv1*Shv1   -Sv1.*(1-scv1).*foi  -nuv1.*Sv1;  %+nu.*Rv1; 
 
-Edot=        S.*(foi+seed)  +Shv1.*foi  -(sig1+sig2).*E;
-Ev1dot=                                  Sv1.*(1-scv1).*foi  -(sig1+sig2).*Ev1;
+Edot=        S.*(foi+seed)   -(sig1+sig2).*E;% +Shv1.*foi
+% Ev1dot=                                  Sv1.*(1-scv1).*foi  -(sig1+sig2).*Ev1;
 
 Inadot=     sig1.*E     -g1.*Ina                -p3*Ina;
 Insdot=     sig2.*E     -(g2+h).*Ins            -p4*Ins;
-Inav1dot=   sig1.*Ev1   -g1.*Inav1              -p3*Inav1;
-Insv1dot=   sig2.*Ev1   -(g2_v1+h_v1).*Insv1    -p4*Insv1;
+% Inav1dot=   sig1.*Ev1   -g1.*Inav1              -p3*Inav1;
+% Insv1dot=   sig2.*Ev1   -(g2_v1+h_v1).*Insv1    -p4*Insv1;
 
 Isadot=     p3*Ina      -qg1.*Isa;
 Issdot=     p4*Ins      -(qg2+qh).*Iss;
-Isav1dot=   p3*Inav1    -qg1.*Isav1;
-Issv1dot=   p4*Insv1    -(qg2_v1+qh_v1).*Issv1;
+% Isav1dot=   p3*Inav1    -qg1.*Isav1;
+% Issv1dot=   p4*Insv1    -(qg2_v1+qh_v1).*Issv1;
 
 Hdot=       h.*Ins      +qh.*Iss        -(g3+mu).*H;
-Hv1dot=     h_v1.*Insv1 +qh_v1.*Issv1   -(g3+mu).*Hv1;
+% Hv1dot=     h_v1.*Insv1 +qh_v1.*Issv1   -(g3+mu).*Hv1;
 
-Rdot=       g1.*Ina     +qg1.*Isa   +g2.*Ins        +qg2.*Iss       +g3.*H      -nu.*R      -v1rater;
-Rv1dot=     g1.*Inav1   +qg1*Isav1  +g2_v1.*Insv1   +qg2_v1.*Issv1  +g3.*Hv1    +v1rater;   %-nu.*Rv1;
+Rdot=       g1.*Ina     +qg1.*Isa   +g2.*Ins        +qg2.*Iss       +g3.*H      -nu.*R  ;%    -v1rater;
+% Rv1dot=     g1.*Inav1   +qg1*Isav1  +g2_v1.*Insv1   +qg2_v1.*Issv1  +g3.*Hv1    +v1rater;   %-nu.*Rv1;
 
-DEdot=      mu.*H               +mu.*Hv1;     
+DEdot=      mu.*H    ; %           +mu.*Hv1;     
+
+Shv1dot = zeros(size(Rdot));
+Sv1dot = zeros(ntot,1);
+Ev1dot = zeros(ntot,1);
+Inav1dot = zeros(ntot,1);
+Insv1dot = zeros(ntot,1);
+Isav1dot = zeros(ntot,1);
+Issv1dot = zeros(ntot,1);
+Hv1dot = zeros(ntot,1);
+Rv1dot = zeros(ntot,1);
+Vdot = zeros(ntot,1);
 
 % Hdot=       h.*(Ins+Iss)    -(g3+mu).*(min(occ,SHmax)/occ).*H   -(g3_oc+mu_oc).*(max(0,occ-SHmax)/occ).*H;
 % Hv1dot=     h_v1.*(Insv1+Issv1)  -(g3+mu).*(min(occ,SHmax)/occ).*Hv1   -(g3_oc+mu_oc).*(max(0,occ-SHmax)/occ).*Hv1;
@@ -538,7 +540,7 @@ f= [Sdot;Edot;...
 %     Hdot;DEdot;Rdot];
 f(y<eps) = max(0,f(y<eps)); 
 
-g=h.*(Ins+Iss)+h_v1.*(Insv1+Issv1);%Hin
+g=h.*(Ins+Iss); %+h_v1.*(Insv1+Issv1);%Hin
 
 end
 
@@ -683,10 +685,10 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,
     g3    = (1-pd)./Th;
     h     = ph./Ts;
     mu    = pd./Th;
-    h_v1  = dis.h_v1;
+%     h_v1  = dis.h_v1;
     dur   = p2.dur;
     qh    = ph./(Ts-dur);
-    qh_v1 = p2.qh_v1;
+%     qh_v1 = p2.qh_v1;
   
 %     if t<p2.t_tit;   
 %         p3=0;
@@ -714,8 +716,8 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,
 %     end
 
     Hdot   = h.*Ins      +qh.*Iss        -(g3+mu).*H;
-    Hv1dot = h_v1.*Insv1 +qh_v1.*Issv1   -(g3+mu).*Hv1;
-    occdot = sum(Hdot+Hv1dot);
+%     Hv1dot = h_v1.*Insv1 +qh_v1.*Issv1   -(g3+mu).*Hv1;
+    occdot = sum(Hdot);%+Hv1dot
     r      = occdot/occ;%disp(num2str([t,r]));%H(t)=occ*exp(r*t)
     Tcap   = t + log(p2.Hmax/occ)/r;
     Tcap   = Tcap-4;
@@ -801,20 +803,21 @@ end
 function Rt = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,N,D,betamod,p3,p4)
         
     FOIu = repmat(S+Shv1,1,ntot).*dis.beta.*betamod.*D./repmat(N',ntot,1);
-    FOIv = repmat(Sv1,   1,ntot).*dis.beta.*betamod.*D./repmat(N',ntot,1).*(1-dis.scv1);
+%     FOIv = repmat(Sv1,   1,ntot).*dis.beta.*betamod.*D./repmat(N',ntot,1).*(1-dis.scv1);
     
-    F                                = zeros(6*ntot,6*ntot);
-    F(1:ntot,       2*ntot+1:6*ntot) = [dis.red*FOIu,  FOIu,  dis.red*(1-dis.trv1)*FOIu,  (1-dis.trv1)*FOIu];
-    F(ntot+1:2*ntot,2*ntot+1:6*ntot) = [dis.red*FOIv,  FOIv,  dis.red*(1-dis.trv1)*FOIv,  (1-dis.trv1)*FOIv];
+    F                                = zeros(4*ntot,4*ntot);
+    F(1:ntot,       2*ntot+1:4*ntot) = [dis.red*FOIu,  FOIu]; %,  dis.red*(1-dis.trv1)*FOIu,  (1-dis.trv1)*FOIu
+%     F(ntot+1:2*ntot,2*ntot+1:6*ntot) = [dis.red*FOIv,  FOIv,  dis.red*(1-dis.trv1)*FOIv,  (1-dis.trv1)*FOIv];
     
     onesn                            = ones(ntot,1);
+    zerosn                            = zeros(ntot,1);
     vvec                             = [(dis.sig1+dis.sig2).*onesn;  (dis.sig1+dis.sig2).*onesn;  (dis.g1+p3).*onesn;...
-                                        (g2+h+p4).*onesn;            (dis.g1+p3).*onesn;          (dis.g2_v1+dis.h_v1+p4).*onesn];
+                                        (g2+h+p4).*onesn;  ];          (dis.g1+p3).*onesn;     %     (dis.g2_v1+dis.h_v1+p4).*onesn
     V                                = diag(vvec);
     V(2*ntot+1:3*ntot,1:ntot)        = diag(-dis.sig1.*onesn);
     V(3*ntot+1:4*ntot,1:ntot)        = diag(-dis.sig2.*onesn);
-    V(4*ntot+1:5*ntot,ntot+1:2*ntot) = diag(-dis.sig1.*onesn);
-    V(5*ntot+1:6*ntot,ntot+1:2*ntot) = diag(-dis.sig2.*onesn);
+%     V(4*ntot+1:5*ntot,ntot+1:2*ntot) = diag(-dis.sig1.*onesn);
+%     V(5*ntot+1:6*ntot,ntot+1:2*ntot) = diag(-dis.sig2.*onesn);
     
     NGM = F/V;
     Rt  = eigs(NGM,1);
