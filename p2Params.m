@@ -1,4 +1,4 @@
-function [data,dis,p2] = p2Params(data,inp2)
+function [data,dis,p2] = p2Params(data,inp2,dis)
 
 %% COUNTRY PARAMETERS:
 
@@ -24,24 +24,6 @@ data.alp = 1;
 
 %% INITIAL DISEASE PARAMETERS:
     
-if strcmp(inp2,'Influenza 2009');
-    dis = p2Params_Flu2009;
-elseif strcmp(inp2,'Influenza 1957');
-    dis = p2Params_Flu1957;
-elseif strcmp(inp2,'Influenza 1918');
-    dis = p2Params_Flu1918;
-elseif strcmp(inp2,'Covid Wildtype');
-    dis = p2Params_CovidWT;    
-elseif strcmp(inp2,'Covid Omicron');
-    dis = p2Params_CovidOM;    
-elseif strcmp(inp2,'Covid Delta');
-    dis = p2Params_CovidDE;    
-elseif strcmp(inp2,'SARS');
-    dis = p2Params_SARS;
-else
-    error('Unknown Disease!');
-end   
-
 % dis.R0  = inp5*dis.R0;
 % dis.ps  = min(inp6*dis.ps ,1);
 % dis.ihr = min(inp6*dis.ihr,dis.ps);
@@ -87,19 +69,30 @@ V(2*ntot+1:3*ntot,1:ntot) = diag(-dis.sig2.*onesn);
 GD=F/V;
 d=eigs(GD,1);%largest in magnitude (+/-) 
 R0a=max(d); 
-dis.beta=dis.R0/R0a;%beta scales actual R0 to fitted R0
+
+% get R0a as quantile from raw null distribution: quantiles qR0, values R0
+if R0a > max(dis.R0values)
+    R0quantile = max(dis.R0quantiles(dis.R0quantiles<1));
+    disp('Too many candidate infectees');
+else
+    R0quantile = interp1(dis.R0values,dis.R0quantiles,R0a);
+end
+
+dis.R0sample = norminv(R0quantile,dis.R0,.1*dis.R0);
+
+dis.beta = dis.R0sample/R0a;%beta scales actual R0 to fitted R0
 
 %Vaccination
-dis.hrv1 = 1/28;                       %time to develop v-acquired immunity
-dis.scv1 = 0.60;                       %infection-blocking efficacy
+% dis.hrv1 = 1/28;                       %time to develop v-acquired immunity
+% dis.scv1 = 0.60;                       %infection-blocking efficacy
 dis.heff = 0.87;                       %severe-disease-blocking efficacy
-dis.hv1  = 1-((1-dis.heff)/(1-dis.scv1)); 
-dis.trv1 = 0.52;                       %transmission-blocking efficacy
-dis.nuv1 = 1/365;                      %duration of v-acquired immunity
-
-dis.Ts_v1 = ((1-(1-dis.hv1)*dis.ph).*dis.Tsr)  +((1-dis.hv1)*dis.ph.*dis.Tsh);
-dis.g2_v1 = (1-(1-dis.hv1)*dis.ph)./dis.Ts_v1;
-dis.h_v1  = (1-dis.hv1)*dis.ph./dis.Ts_v1;
+% dis.hv1  = 1-((1-dis.heff)/(1-dis.scv1)); 
+% dis.trv1 = 0.52;                       %transmission-blocking efficacy
+% dis.nuv1 = 1/365;                      %duration of v-acquired immunity
+% 
+% dis.Ts_v1 = ((1-(1-dis.hv1)*dis.ph).*dis.Tsr)  +((1-dis.hv1)*dis.ph.*dis.Tsh);
+% dis.g2_v1 = (1-(1-dis.hv1)*dis.ph)./dis.Ts_v1;
+% dis.h_v1  = (1-dis.hv1)*dis.ph./dis.Ts_v1;
 
 %% PREPAREDNESS PARAMETERS:
 
@@ -111,9 +104,9 @@ p2.trate = data.trate;                      %Test-Isolate-Trace Rate
 p2.sdl   = data.sdl;                        %Social Distancing Asymptote
 p2.sdb   = data.sdb;                        %Social Distancing Steepness
 p2.Hmax  = data.Hmax*sum(data.Npop)/10^5;   %Hospital Capacity
-t_vax    = data.t_vax;                      %Vaccine Administration Time
-arate    = data.arate*sum(data.Npop/10^5);  %Vaccine Administration Rate
-puptake  = data.puptake;                    %Vaccine Uptake
+% t_vax    = data.t_vax;                      %Vaccine Administration Time
+% arate    = data.arate*sum(data.Npop/10^5);  %Vaccine Administration Rate
+% puptake  = data.puptake;                    %Vaccine Uptake
 
 %Response Time
 J                                  = zeros(7*ntot,7*ntot);
@@ -147,9 +140,9 @@ p2.t_tit  = data.tvec(1) + (-data.tvec(1) + p2.t_tit)*Td/data.Td_CWT;
 p2.dur    = 1;
 p2.qg1    = 1/(dis.Tay-p2.dur);
 p2.qg2    = (1-dis.ph)./(dis.Ts-p2.dur);
-p2.qg2_v1 = (1-(1-dis.hv1)*dis.ph)./(dis.Ts_v1-p2.dur);
+% p2.qg2_v1 = (1-(1-dis.hv1)*dis.ph)./(dis.Ts_v1-p2.dur);
 p2.qh     = dis.ph./(dis.Ts-p2.dur);
-p2.qh_v1  = (1-dis.hv1)*dis.ph./(dis.Ts_v1-p2.dur);
+% p2.qh_v1  = (1-dis.hv1)*dis.ph./(dis.Ts_v1-p2.dur);
 
 %Hospital Capacity
 p2.thl   = max(1,0.25*p2.Hmax);%lower threshold can't be less than 1 occupant
@@ -159,49 +152,49 @@ p2.SHmax = 2*p2.Hmax;
 %Vaccine Uptake
 Npop    = data.Npop;
 NNage   = [Npop(1),sum(Npop(2:4)),sum(Npop(5:13)),sum(Npop(14:end))];
-puptake = min(0.99*(1-NNage(1)/sum(NNage)),puptake);%population uptake cannot be greater than full coverage in non-pre-school age groups
-up3fun  = @(u3) puptake*sum(NNage) - u3*(NNage(2)/2 + NNage(3)) - min(1.5*u3,1)*NNage(4);
-if up3fun(0)*up3fun(1)<=0;
-    u3  = fzero(up3fun,[0 1]);
-else
-    u3  = fminbnd(up3fun,0,1);
-end
-u4      = min(1.5*u3,1);
-u1      = 0;
-up2fun  = @(u2) u2*NNage(2) + u3*NNage(3) + u4*NNage(4) - puptake*sum(NNage);
-u2      = fzero(up2fun,[0 1]);
-uptake  = [u1,u2,u3,u4];
+% puptake = min(0.99*(1-NNage(1)/sum(NNage)),puptake);%population uptake cannot be greater than full coverage in non-pre-school age groups
+% up3fun  = @(u3) puptake*sum(NNage) - u3*(NNage(2)/2 + NNage(3)) - min(1.5*u3,1)*NNage(4);
+% if up3fun(0)*up3fun(1)<=0;
+%     u3  = fzero(up3fun,[0 1]);
+% else
+%     u3  = fminbnd(up3fun,0,1);
+% end
+% u4      = min(1.5*u3,1);
+% u1      = 0;
+% up2fun  = @(u2) u2*NNage(2) + u3*NNage(3) + u4*NNage(4) - puptake*sum(NNage);
+% u2      = fzero(up2fun,[0 1]);
+% uptake  = [u1,u2,u3,u4];
 % if ((uptake*NNage'/sum(NNage))-puptake)~=0;
 %     error('Vaccine uptake error!');
 % end
 
 %Vaccine Administration Rate
-t_ages     = min((uptake.*NNage)/arate,Inf);%arate may be 0
-if strcmp(inp2,'Influenza 1918');
-    t_ages     = [t_ages(3),t_ages(4),t_ages(2),t_ages(1)];
-    p2.aratep1 = [0;0;arate;0];%Period 1 - working-age%to be split across all economic sectors in heSimCovid19vax.m
-    p2.aratep2 = [0;0;0;arate];%Period 2 - retired-age
-    p2.aratep3 = [0;arate;0;0];%Period 3 - school-age
-    p2.aratep4 = [0;0;0;0];    %Period 4 - pre-school-age
-else
-    t_ages     = [t_ages(4),t_ages(3),t_ages(2),t_ages(1)];
-    p2.aratep1 = [0;0;0;arate];%Period 1 - retired-age
-    p2.aratep2 = [0;0;arate;0];%Period 2 - working-age%to be split across all economic sectors in heSimCovid19vax.m
-    p2.aratep3 = [0;arate;0;0];%Period 3 - school-age
-    p2.aratep4 = [0;0;0;0];    %Period 4 - pre-school-age
-end    
-tpoints    = cumsum([t_vax,t_ages]);
-p2.startp1 = tpoints(1);
-p2.startp2 = tpoints(2);
-p2.startp3 = tpoints(3);
-p2.startp4 = tpoints(4);
-p2.end     = tpoints(5);%End of Rollout
+% t_ages     = min((uptake.*NNage)/arate,Inf);%arate may be 0
+% if strcmp(inp2,'Influenza 1918');
+%     t_ages     = [t_ages(3),t_ages(4),t_ages(2),t_ages(1)];
+%     p2.aratep1 = [0;0;arate;0];%Period 1 - working-age%to be split across all economic sectors in heSimCovid19vax.m
+%     p2.aratep2 = [0;0;0;arate];%Period 2 - retired-age
+%     p2.aratep3 = [0;arate;0;0];%Period 3 - school-age
+%     p2.aratep4 = [0;0;0;0];    %Period 4 - pre-school-age
+% else
+%     t_ages     = [t_ages(4),t_ages(3),t_ages(2),t_ages(1)];
+%     p2.aratep1 = [0;0;0;arate];%Period 1 - retired-age
+%     p2.aratep2 = [0;0;arate;0];%Period 2 - working-age%to be split across all economic sectors in heSimCovid19vax.m
+%     p2.aratep3 = [0;arate;0;0];%Period 3 - school-age
+%     p2.aratep4 = [0;0;0;0];    %Period 4 - pre-school-age
+% end    
+% tpoints    = cumsum([t_vax,t_ages]);
+% p2.startp1 = tpoints(1);
+% p2.startp2 = tpoints(2);
+% p2.startp3 = tpoints(3);
+% p2.startp4 = tpoints(4);
+p2.end     = 5000; %tpoints(5);%End of Rollout
 
 %% COST PARAMETERS:
 
 na         = [data.Npop(1:16)',sum(data.Npop(17:end))];%length is 17 to match ifr
 la         = [data.la(1:16),...
-              dot(data.la(17:end),[data.Npop(17),sum(data.Npop(18:end))])/sum(data.Npop(17:end))];
+              dot(data.la(17:end),[data.Npop(17),sum(data.Npop(18:end))])/sum(data.Npop(17:end)+1e-10)];
 napd       = na.*dis.ifr;
 lg         = [dot(la(1),napd(1))/sum(napd(1)),...
               dot(la(2:4),napd(2:4))/sum(napd(2:4)),...
