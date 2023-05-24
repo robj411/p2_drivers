@@ -13,12 +13,12 @@
 % %63 of which have population by sector
 % %56 of which have current preparedness data: no testing in brunei, no social distancing in brunei, china, cyprus, ethiopia, iceland, laos(deaths), russia
 % %some of which have population < 1m
-% filename  = '../../../Data/Preparedness/5.gva_sector.xlsx';
+% filename  = '../data/5.gva_sector.xlsx';
 % T         = readtable(filename);
 % countries = T.ToIndustry_Sector;
 
 % Countries with Missing Data
-filename  = '../../../Data/Preparedness/1.population_age.xlsx';
+filename  = '../data/1.population_age.xlsx';
 T         = readtable(filename);
 countries = T.Location;
 
@@ -39,7 +39,7 @@ data = struct;
 
 %% income group
 
-filename = '../../../Data/Preparedness/0.income_group.xlsx';
+filename = '../data/0.income_group.xlsx';
 T        = readtable(filename);
 kr       = find(strcmp(T.Var1,country));
 
@@ -59,7 +59,7 @@ data.gnipc  = gnipc;
 
 %% population by age
 
-filename = '../../../Data/Preparedness/1.population_age.xlsx';
+filename = '../data/1.population_age.xlsx';
 T        = readtable(filename);
 kr       = find(strcmp(T.Location,country));
 
@@ -77,7 +77,7 @@ data.Npop = Npop;
 
 %% population by sector
   
-filename = '../../../Data/Preparedness/2.population_sector.xlsx';
+filename = '../data/2.population_sector.xlsx';
 T        = readtable(filename);
 kr       = find(strcmp(T.Country_,country));
 
@@ -88,7 +88,7 @@ if ~isempty(kr);
     NEC    = T(kr,:).NotElsewhereClassified;
     source = 'OECD/ILO';
     %% informal employment    
-    filename = '../../../Data/Preparedness/2.population_sector_informal.xlsx';
+    filename = '../data/2.population_sector_informal.xlsx';
     T        = readtable(filename);
     kr       = find(strcmp(T.Country,country));
     
@@ -114,7 +114,7 @@ if ~isempty(kr);
     end
     %% scaling
     if year<2019;
-        filename = '../../../Data/Preparedness/2.population_sector_change.xlsx';
+        filename = '../data/2.population_sector_change.xlsx';
         T        = readtable(filename);
         T.Properties.VariableNames = {'a','b','c','d','x2009','x2010','x2011','x2012','x2013',...
                                       'x2014','x2015','x2016','x2017','x2018','x2019'};
@@ -145,7 +145,7 @@ data.NNs = NNs;
 
 %% contact matrix
 
-filename = '../../../Data/Preparedness/3.contact_matrices_all.xlsx';
+filename = '../data/3.contact_matrices_all.xlsx';
 
 if any(strcmp(sheetnames(filename),country));
     opts       = detectImportOptions(filename);
@@ -168,20 +168,20 @@ data.CM = CM;
 %% contact rates
 
 if any(strcmp(sheetnames(filename),country));
-    filename = '../../../Data/Preparedness/4.contact_rates_home.xlsx';
+    filename = '../data/4.contact_rates_home.xlsx';
     T        = table2array(readtable(filename,opts));
     comm     = dot(sum(T,2),[Npop(1:15);sum(Npop(16:end))])/sum(Npop);
     
-    filename = '../../../Data/Preparedness/4.contact_rates_other.xlsx';
+    filename = '../data/4.contact_rates_other.xlsx';
     T        = table2array(readtable(filename,opts));
     travelA3 = dot(sum(T(5:13,5:13),2),Npop(5:13))/sum(Npop(5:13));
     
-    filename = '../../../Data/Preparedness/4.contact_rates_school.xlsx';
+    filename = '../data/4.contact_rates_school.xlsx';
     T        = table2array(readtable(filename,opts));
     schoolA1 = T(1,1);
     schoolA2 = dot(sum(T(2:4,2:4),2),Npop(2:4))/sum(Npop(2:4));
     
-    filename = '../../../Data/Preparedness/4.contact_rates_work.xlsx';
+    filename = '../data/4.contact_rates_work.xlsx';
     T        = table2array(readtable(filename,opts));
     workp    = dot(sum(T(5:13,:),2),Npop(5:13))/sum(Npop(5:13));
     
@@ -195,7 +195,7 @@ else
     source   = 'Estimated, 0';
 end
 
-filename   = '../../../Data/Preparedness/4.contact_rates_Beraud.xlsx';
+filename   = '../data/4.contact_rates_Beraud.xlsx';
 opts       = detectImportOptions(filename);
 opts.Sheet = 'Hospitality';
 T          = readtable(filename,opts).Var2;
@@ -227,7 +227,7 @@ data.C        = C';
 
 %% gva by sector
 
-filename = '../../../Data/Preparedness/5.gva_sector.xlsx';
+filename = '../data/5.gva_sector.xlsx';
 T        = readtable(filename);
 
 kr = find(strcmp(T.ToIndustry_Sector,country));
@@ -237,7 +237,7 @@ if ~isempty(kr);
     obj    = table2array(T(kr,kc:kc+44))';
     source = 'OECD, 2018';
     %% scaling
-    filename = '../../../Data/Preparedness/5.gva_sector_change.xlsx';
+    filename = '../data/5.gva_sector_change.xlsx';
     T        = readtable(filename);
     
     kr = find(strcmp(T.CountryName,country));
@@ -258,7 +258,7 @@ data.obj = obj;
 
 %% seasonality
 
-% filename = '../../../Data/Preparedness/6.latitude.xlsx';
+% filename = '../data/6.latitude.xlsx';
 % T        = readtable(filename);
 % 
 % kr = find(strcmp(T.Country,country));
@@ -275,7 +275,7 @@ data.obj = obj;
 
 %% economic closures
 
-filename   = '../../../Data/Preparedness/6.economic_closures.xlsx';
+filename   = '../data/6.economic_closures.xlsx';
 opts       = detectImportOptions(filename);
 % opts.Sheet = 'Alpha';
 % T          = readtable(filename,opts);
@@ -322,7 +322,7 @@ data.x_schc = x_schc;
 
 %% home-working
 
-filename   = '../../../Data/Preparedness/7.home_working.xlsx';
+filename   = '../data/7.home_working.xlsx';
 opts       = detectImportOptions(filename);
 opts.Sheet = 'LD vs. FO';
 T          = readtable(filename,opts);
@@ -358,7 +358,7 @@ data.wfh = wfh;
 
 %% vaccination
 
-filename = '../../../Data/Preparedness/8.vaccination.csv';
+filename = '../data/8.vaccination.csv';
 T        = readtable(filename);
 
 kr = strcmp(T.location,country);
@@ -412,7 +412,7 @@ data.puptake = puptake;
 
 %% hospital capacity
 
-filename = '../../../Data/Preparedness/9.hospital_capacity.xlsx';
+filename = '../data/9.hospital_capacity.xlsx';
 opts     = detectImportOptions(filename);
 
 opts.Sheet = 'Beds';
@@ -453,7 +453,7 @@ data.Hmax  = hcap*(1-BOR);
 
 %% testing
 
-filename = '../../../Data/Preparedness/10.testing.csv';
+filename = '../data/10.testing.csv';
 T        = readtable(filename);
 
 kr = strcmp(T.Entity,country);
@@ -549,7 +549,7 @@ data.trate = trate;
 
 %% response time
 
-filename = '../../../Data/Preparedness/11.response.csv';
+filename = '../data/11.response.csv';
 T        = readtable(filename);
 
 kc = find(strcmpi(T.Properties.VariableNames,strrep(strrep(strrep(country,' ',''),'-','_'),'''','_')));
@@ -573,7 +573,7 @@ data.Tres = Tres;
 
 %% social distancing
 
-filename = '../../../Data/Preparedness/12.mobility.csv';
+filename = '../data/12.mobility.csv';
 T        = readtable(filename);
 kr       = strcmp(T.Entity,country);
 
@@ -586,12 +586,12 @@ if any(kr);
     Gts  = min(T(kr,:).grocery_and_pharmacy,0);
     Mts  = 1+((Rts+Gts)/200);
 
-    filename = '../../../Data/Preparedness/12.excess_deaths.csv';
+    filename = '../data/12.excess_deaths.csv';
     T        = readtable(filename);
     kr       = strcmp(T.location_name,country);
     exd      = max(1,T(kr,:).mean_value);
     
-    filename = '../../../Data/Preparedness/12.deaths.csv';
+    filename = '../data/12.deaths.csv';
     T        = readtable(filename);
     kc       = find(strcmpi(T.Properties.VariableNames,strrep(strrep(strrep(country,' ',''),'-','_'),'''','_')));
     date     = T.date;
@@ -640,7 +640,7 @@ data.sdb = sdb;
 %% costing - vlyl
  
 %value of statistical life
-filename = '../../../Data/Preparedness/13.vly.csv';
+filename = '../data/13.vly.csv';
 T        = readtable(filename);
 kr       = strcmp(T.DataSource,country);
 
@@ -650,7 +650,7 @@ if any(kr);
     vsl      = 160*gnipcppp/10^6;%100*gnipcppp/10^6;%in millions
     
     %discounted population-weighted life expectancy (disease independent)
-    filename   = '../../../Data/Preparedness/13.life_expectancy.csv';
+    filename   = '../data/13.life_expectancy.csv';
     T          = readtable(filename);
     na         = [Npop(1:17)',sum(Npop(18:end))];%length is 18 to match life table
     for k = 1:18;
@@ -716,7 +716,7 @@ data.la  = la;
 
 %% costing - gdpl
 
-% filename = '../../../Data/Preparedness/15.consumption_sector.xlsx';
+% filename = '../data/15.consumption_sector.xlsx';
 % T        = readtable(filename);
 % kr       = strcmp(T.Var2,country);
 % 
@@ -729,7 +729,7 @@ data.la  = la;
 %     source = 'Estimated, 0';
 % end
 % 
-% filename = '../../../Data/Preparedness/15.consumption_sector_sweden.xlsx';
+% filename = '../data/15.consumption_sector_sweden.xlsx';
 % T        = readtable(filename);
 % hconsl   = T(:,:).Var5;
 % 
@@ -747,7 +747,7 @@ data.la  = la;
 
 %% costing - PPP factor
 
-% filename = '../../../Data/Preparedness/14.ppp.xlsx';
+% filename = '../data/14.ppp.xlsx';
 % T        = readtable(filename);
 % kr       = strcmp(T.CountryName,country);
 % 
@@ -755,7 +755,7 @@ data.la  = la;
 %     year = T(kr,:).Year;
 %     ppp  = T(kr,:).MOSTRECENT;
 %     
-%     filename = '../../../Data/Preparedness/14.exchange_rate.xlsx';
+%     filename = '../data/14.exchange_rate.xlsx';
 %     T        = readtable(filename);
 %     kr       = strcmp(T.CountryName,country);
 %     
