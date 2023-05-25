@@ -2,6 +2,7 @@ library(earth)
 library(ggplot2)
 library(infotheo)
 setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
+setwd('C:/Users/rj411/OneDrive - Imperial College London/p2_drivers')
 
 ## voi #####################################
 
@@ -76,8 +77,10 @@ evppifit <- function (outputs, inputs, pars = NULL, method = NULL, nsim = NULL,
 
 ## compute ########################
 
-#for (j in 1:length(diseases)){
 jd <- 5
+
+
+for (jd in 1:length(diseases)){
 ilistvoi <- list()
 ilistmi <- list()
 multisource <- list(c('Agriculture','Food_sector'),
@@ -159,9 +162,11 @@ voiall <- voiall[,colorder]
 miall <- miall[,colorder]
 
 
-saveRDS(voiall,'results/voi.Rds')
-saveRDS(miall,'results/mi.Rds')
+saveRDS(voiall,paste0('results/voi_',inp2,'.Rds'))
+saveRDS(miall,paste0('results/mi_',inp2,'.Rds'))
 
+
+}
 
 nscen <- nrow(voiall)
 nparam <- ncol(voiall)

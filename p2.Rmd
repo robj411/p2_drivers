@@ -9,6 +9,7 @@ output:
     toc_float: true
     number_sections: true
     keep_tex: true
+    latex_engine: xelatex
   bookdown::github_document2:
     toc: true
     appendix: true
@@ -23,7 +24,7 @@ output:
     variant: markdown_github
 always_allow_html: yes 
 bibliography: 
-  - "../../../Desktop/work/papers/DAEDALUS.bib"
+  - "DAEDALUS.bib"
 ---
   
 \AddToShipoutPictureFG{
@@ -69,6 +70,7 @@ internet <- read.csv('data/API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv',header 
 incomelevels <- read.csv('data/Metadata_Country_API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv')
 internet <- internet[-c(1:3),-c(3:63,65:nrow(internet))]
 colnames(internet) <- c('country','Country.Code','internet')
+colnames(incomelevels)[1] <- 'Country.Code'
 incomeint <- left_join(internet,incomelevels,by='Country.Code')
 internetplot <- ggplot(subset(incomeint,!is.na(IncomeGroup)&IncomeGroup!='')) +  geom_histogram(aes(x=internet),colour='navyblue',fill='grey') +
   facet_wrap(~IncomeGroup) +
@@ -181,7 +183,7 @@ income_levels <- c('LLMIC','MIC','HIC')
 allresults <- data.frame()
 
 for (i in 1:length(income_levels)){
-    for (j in 5){#1:length(diseases)){
+    for (j in 1:length(diseases)){
         for (k in 1:length(strategies)){
             inp2 <- diseases[j];
             inp3 <- strategies[k];
@@ -365,7 +367,7 @@ ggplot(subset(allresults,igroup=='MIC'&strategy=='No Closures'&virus=='SARS-CoV-
   labs(x='Food and accommodation services GVA as % of GDP',y='Percent of tourism that is international',colour='GDP loss, %')
 ```
 
-```{r Influenza2009,fig.cap='Model results for Influenza 2009.',echo=F,warning=F,message=F,eval=F}
+```{r Influenza2009,fig.cap='Model results for Influenza 2009.',echo=F,warning=F,message=F,fig.width=8}
 ggplot(subset(vioplot,virus=='Influenza 2009'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
@@ -374,10 +376,10 @@ ggplot(subset(vioplot,virus=='Influenza 2009'),aes(fill=igroup, y=value, x=igrou
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(panel.spacing = unit(0.5, "lines"))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r Influenza1957,fig.cap='Model results for Influenza 1957.',echo=F,warning=F,message=F,eval=F}
+```{r Influenza1957,fig.cap='Model results for Influenza 1957.',echo=F,warning=F,message=F,fig.width=8}
 ggplot(subset(vioplot,virus=='Influenza 1957'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
@@ -386,10 +388,10 @@ ggplot(subset(vioplot,virus=='Influenza 1957'),aes(fill=igroup, y=value, x=igrou
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(panel.spacing = unit(0.5, "lines"))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r Influenza1918,fig.cap='Model results for Influenza 1918.',echo=F,warning=F,message=F,eval=F}
+```{r Influenza1918,fig.cap='Model results for Influenza 1918.',echo=F,warning=F,message=F,fig.width=8}
 ggplot(subset(vioplot,virus=='Influenza 1918'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
@@ -398,10 +400,10 @@ ggplot(subset(vioplot,virus=='Influenza 1918'),aes(fill=igroup, y=value, x=igrou
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(panel.spacing = unit(0.5, "lines"))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r omicron,fig.cap='Model results for SARS-CoV-2 omicron.',echo=F,warning=F,message=F,eval=F}
+```{r omicron,fig.cap='Model results for SARS-CoV-2 omicron.',echo=F,warning=F,message=F,fig.width=8}
 ggplot(subset(vioplot,virus=='SARS-CoV-2 omicron'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
@@ -410,10 +412,10 @@ ggplot(subset(vioplot,virus=='SARS-CoV-2 omicron'),aes(fill=igroup, y=value, x=i
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(panel.spacing = unit(0.5, "lines"))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r delta,fig.cap='Model results for SARS-CoV-2 delta.',echo=F,warning=F,message=F,eval=F}
+```{r delta,fig.cap='Model results for SARS-CoV-2 delta.',echo=F,warning=F,message=F,fig.width=8}
 ggplot(subset(vioplot,virus=='SARS-CoV-2 delta'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
@@ -422,10 +424,10 @@ ggplot(subset(vioplot,virus=='SARS-CoV-2 delta'),aes(fill=igroup, y=value, x=igr
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(panel.spacing = unit(0.5, "lines"))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r sars,fig.cap='Model results for SARS-CoV-1.',echo=F,warning=F,message=F,eval=F}
+```{r sars,fig.cap='Model results for SARS-CoV-1.',echo=F,warning=F,message=F,fig.width=8}
 ggplot(subset(vioplot,virus=='SARS-CoV-1'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
@@ -434,7 +436,7 @@ ggplot(subset(vioplot,virus=='SARS-CoV-1'),aes(fill=igroup, y=value, x=igroup)) 
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(panel.spacing = unit(0.5, "lines"))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
 
@@ -742,7 +744,7 @@ PV <- (1-(1+dr)^(-45))/dr
 gdp <- c(.588,31,54)*1e12
 # PV*Y*alpha*r*S*beta/gdp*100
 
-labs <- setDT(read_dta('../Programs/Data/lab_share_data.dta'))
+labs <- setDT(read_dta('data/lab_share_data.dta'))
 labs[!is.na(labsh),maxyear:=max(year),by=countrycode]
 labincome <- left_join(subset(labs,year==maxyear),incomelevels,by=c('countrycode'="Country.Code"))
 labincome <- labincome[,.(labsh,IncomeGroup)]
@@ -846,7 +848,7 @@ ggplot() +
 ```{r schooldata,fig.cap="Extent of school closure. Horizontal lines (one per country) show the duration of the first year spent with schools partially closed. The space to the left of the line represents the duration schools were open. The space to the right of the line represents the duration schools were closed. (UNESCO)",echo=F,warning=F,message=F}
 
 
-schooldata <- read.csv('../data/Full dataset - Master file 30092021.csv')
+schooldata <- read.csv('data/Full dataset - Master file 30092021.csv')
 schooldata <- setDT(subset(schooldata,Status!='Academic break'))
 schooldata[,Date:=as.Date(Date,format = c("%d/%m/%Y"))]
 schooldata[,Note:=NULL]
