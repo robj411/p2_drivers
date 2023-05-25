@@ -505,7 +505,7 @@ As there is no "tourism" sector in the 45-sector classification we are using, to
 
 ```{r pairs, fig.cap="Correlations between tourism-related data. First: https://www.unwto.org/tourism-statistics/key-tourism-statistics. Second to fourth: https://www.unwto.org/tourism-data/international-tourism-and-covid-19. Fifth to seventh: OECD.",fig.height=7, fig.align="center",echo=F,warning=F,message=F}
 
-data <- readODS::read.ods('tourism.ods')[[1]]
+data <- readODS::read.ods('data/tourism.ods')[[1]]
 colnames(data) <- data[1,]
 data <- data[-1,]
 for(i in 2:ncol(data)) data[,i] <- as.numeric(data[,i])
@@ -578,7 +578,7 @@ Therefore, the contribution of the GVA of the food and accommodation services se
 ```{r ,echo=F,warning=F,message=F}
 
 
-ytd <- readODS::read.ods('tourism.ods')[[2]]
+ytd <- readODS::read.ods('data/tourism.ods')[[2]]
 
 colnames(ytd) <- ytd[1,]
 ytd <- ytd[-1,]
