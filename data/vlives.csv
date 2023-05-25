@@ -1,0 +1,373 @@
+"location_name","vlife","IncomeGroup"
+"Taiwan (Province of China)",0.00609646577441069,NA
+"Indonesia",7.90816777901067,"Lower middle income"
+"Malaysia",1.04549437446976,"Upper middle income"
+"Maldives",3.22398603973174,"Upper middle income"
+"Myanmar",4.58565565831994,"Lower middle income"
+"Philippines",3.22420160021394,"Lower middle income"
+"Sri Lanka",0.49652858257033,"Lower middle income"
+"Thailand",0.0534850258153818,"Upper middle income"
+"Viet Nam",0.589938284945244,"Lower middle income"
+"Armenia",41.4729230316963,"Upper middle income"
+"Azerbaijan",25.4228124259656,"Upper middle income"
+"Georgia",17.5547816436135,"Upper middle income"
+"Kazakhstan",13.2102163833389,"Upper middle income"
+"Kyrgyzstan",24.2487885526287,"Lower middle income"
+"Tajikistan",NA,"Lower middle income"
+"Uzbekistan",11.7584579093994,"Lower middle income"
+"Albania",46.4299733072238,"Upper middle income"
+"Bosnia and Herzegovina",33.9663394879462,"Upper middle income"
+"Bulgaria",44.3690058900014,"Upper middle income"
+"Croatia",28.0465950126382,"High income"
+"Czechia",40.5115372001397,"High income"
+"Hungary",29.9898553776443,"High income"
+"North Macedonia",46.2018510815732,"Upper middle income"
+"Montenegro",42.3061194008205,"Upper middle income"
+"Poland",31.5500911340135,"High income"
+"Romania",35.8064242007788,"High income"
+"Serbia",21.254127558262,"Upper middle income"
+"Slovakia",31.9481338359233,"High income"
+"Slovenia",41.6627615742242,"High income"
+"Belarus",34.8245908669244,"Upper middle income"
+"Estonia",19.7268873465224,"High income"
+"Latvia",32.3474003087041,"High income"
+"Lithuania",52.2111008803848,"High income"
+"Republic of Moldova",26.1060660334883,NA
+"Russian Federation",26.4066767399297,"Upper middle income"
+"Ukraine",16.5592277532506,"Lower middle income"
+"Japan",3.38348803453232,"High income"
+"Republic of Korea",0.484189632479898,NA
+"Singapore",0.0846941527559513,"High income"
+"Australia",0.591986845274268,"High income"
+"New Zealand",0.0925335419650205,"High income"
+"Andorra",39.4470728534249,"High income"
+"Austria",20.2412119153621,"High income"
+"Belgium",38.5517206929838,"High income"
+"Cyprus",3.09675719742833,"High income"
+"Denmark",14.1389366023285,"High income"
+"Finland",10.6306819637897,"High income"
+"France",22.310693204757,"High income"
+"Germany",22.0563229633177,"High income"
+"Greece",10.8130157966289,"High income"
+"Iceland",1.3454100977599,"High income"
+"Ireland",14.7215353819042,"High income"
+"Israel",10.8468530219209,"High income"
+"Italy",27.3540442540519,"High income"
+"Luxembourg",20.7796924438697,"High income"
+"Malta",17.5580047373748,"High income"
+"Netherlands",28.7551538233062,"High income"
+"Norway",1.91443128370672,"High income"
+"Portugal",50.9808915746283,"High income"
+"Spain",41.5774691354615,"High income"
+"Sweden",25.8060649818064,"High income"
+"Switzerland",24.2465753036782,"High income"
+"United Kingdom",39.6504546065366,"High income"
+"Argentina",20.2117861612867,"Upper middle income"
+"Chile",19.8945409993543,"High income"
+"Uruguay",5.03016076352776,"High income"
+"Canada",15.5932160642083,"High income"
+"United States of America",26.3378001432078,"High income"
+"Bahamas",11.827019414886,NA
+"Barbados",4.84883002300776,"High income"
+"Cuba",0.822981164926124,"Upper middle income"
+"Dominican Republic",13.5887867270154,"Upper middle income"
+"Guyana",7.58121242583673,"Upper middle income"
+"Haiti",4.78698334731482,"Lower middle income"
+"Jamaica",5.28456106165136,"Upper middle income"
+"Suriname",7.2964198019474,"Upper middle income"
+"Trinidad and Tobago",2.47774150460988,"High income"
+"Bolivia (Plurinational State of)",84.0142592901559,"Lower middle income"
+"Ecuador",47.9342775992677,"Upper middle income"
+"Peru",65.4245460001846,"Upper middle income"
+"Colombia",22.8044280740803,"Upper middle income"
+"Costa Rica",9.83390276079771,"Upper middle income"
+"El Salvador",16.4880122420007,"Lower middle income"
+"Guatemala",12.4994484432002,"Upper middle income"
+"Honduras",25.9864965418078,"Lower middle income"
+"Mexico",51.7173216142477,"Upper middle income"
+"Nicaragua",0.58117789223317,"Lower middle income"
+"Panama",25.6999084062636,"High income"
+"Venezuela (Bolivarian Republic of)",1.20183893598825,NA
+"Brazil",22.0352434666482,"Upper middle income"
+"Paraguay",9.79447377076189,"Upper middle income"
+"Algeria",5.72807658116515,"Lower middle income"
+"Bahrain",11.8596124859551,"High income"
+"Egypt",15.0655855648923,"Lower middle income"
+"Iran (Islamic Republic of)",16.4200737291793,"Lower middle income"
+"Iraq",22.7243245669835,"Upper middle income"
+"Jordan",14.1658377290829,"Upper middle income"
+"Kuwait",5.94082823817284,"High income"
+"Lebanon",39.3429108106245,"Lower middle income"
+"Libya",20.6972947182523,"Upper middle income"
+"Morocco",25.0987178252006,"Lower middle income"
+"Palestine",15.6515781287975,NA
+"Oman",10.9165827945516,"High income"
+"Qatar",2.72054073201846,"High income"
+"Saudi Arabia",8.43964829551477,"High income"
+"Syrian Arab Republic",6.69524171942713,"Low income"
+"Tunisia",21.8517942187244,"Lower middle income"
+"Turkey",11.9420549046494,"Upper middle income"
+"United Arab Emirates",9.79885095395321,"High income"
+"Yemen",8.49593501421952,"Low income"
+"Afghanistan",16.4750456974051,"Low income"
+"Bangladesh",6.84883329493548,"Lower middle income"
+"India",11.6151316247349,"Lower middle income"
+"Nepal",21.4662530049386,"Lower middle income"
+"Pakistan",12.8766051197143,"Lower middle income"
+"Angola",4.26355090190048,"Lower middle income"
+"Central African Republic",11.5825783224634,"Low income"
+"Congo",5.5898327552905,"Lower middle income"
+"Democratic Republic of the Congo",3.66640142507759,"Low income"
+"Equatorial Guinea",7.67016487044577,"Upper middle income"
+"Gabon",6.2429728694167,"Upper middle income"
+"Comoros",19.3970731997746,"Lower middle income"
+"Djibouti",11.6050863994904,"Lower middle income"
+"Ethiopia",6.32653144270197,"Low income"
+"Kenya",8.90839269628518,"Lower middle income"
+"Madagascar",11.6670927869911,"Low income"
+"Malawi",11.7896230551537,"Low income"
+"Mauritius",0.363823592922479,"Upper middle income"
+"Mozambique",8.58591179286808,"Low income"
+"Rwanda",3.76871673316536,"Low income"
+"Somalia",11.5919098626561,"Low income"
+"Uganda",11.5605054215417,"Low income"
+"Zambia",8.91621172246711,"Low income"
+"Namibia",38.1406880577369,"Upper middle income"
+"South Africa",39.6031831973226,"Upper middle income"
+"Eswatini",56.6292894695681,"Lower middle income"
+"Zimbabwe",13.7561065297845,"Lower middle income"
+"Benin",2.65596882950201,"Lower middle income"
+"Burkina Faso",3.67393059528539,"Low income"
+"Cameroon",4.36183678434808,"Lower middle income"
+"Cabo Verde",7.23141754872279,"Lower middle income"
+"Chad",5.7590540736008,"Low income"
+"Côte d'Ivoire",2.72812463119422,"Lower middle income"
+"Gambia",9.87905907759457,"Low income"
+"Ghana",4.6815028584641,"Lower middle income"
+"Guinea",4.27059431817821,"Low income"
+"Guinea-Bissau",7.61299450292816,"Low income"
+"Liberia",3.0108309388578,"Low income"
+"Mali",7.25056048180483,"Low income"
+"Mauritania",10.6065121196132,"Lower middle income"
+"Niger",4.38166017589084,"Low income"
+"Nigeria",4.79104861033507,"Lower middle income"
+"Sao Tome and Principe",7.29867800452428,NA
+"Senegal",12.2152490949407,"Lower middle income"
+"Sierra Leone",3.21251243647944,"Low income"
+"Togo",3.38898313492333,"Low income"
+"Guam",17.2511433349632,"High income"
+"Puerto Rico",12.3604735654768,"High income"
+"San Marino",38.2697593386635,"High income"
+"United States Virgin Islands",10.7938305046414,NA
+"Northern Ireland",33.737550385261,NA
+"Scotland",33.6744143507555,NA
+"South Sudan",6.52495110596454,"Low income"
+"Sudan",8.26192927882695,"Low income"
+"Alabama",41.4575740017607,NA
+"Alaska",7.30634371034444,NA
+"Arizona",41.6623539274395,NA
+"Arkansas",37.4754523121236,NA
+"California",26.5020206306347,NA
+"Colorado",19.5847074116847,NA
+"Connecticut",34.707820186043,NA
+"Delaware",36.2237459724269,NA
+"District of Columbia",25.8372296326503,NA
+"Florida",26.7038217554802,NA
+"Georgia",29.8508683829587,"Upper middle income"
+"Hawaii",4.98036021842257,NA
+"Idaho",20.6654195457254,NA
+"Illinois",32.1118147764777,NA
+"Indiana",31.7524847994785,NA
+"Iowa",29.5446569724327,NA
+"Kansas",28.0859048240693,NA
+"Kentucky",28.8762265791247,NA
+"Louisiana",39.7045061384249,NA
+"Maine",10.4901909584829,NA
+"Maryland",31.1120920806016,NA
+"Massachusetts",40.4903401966767,NA
+"Michigan",30.3342922231025,NA
+"Minnesota",19.7384427157623,NA
+"Mississippi",46.3664275907336,NA
+"Missouri",31.4358994506426,NA
+"Montana",23.834078922601,NA
+"Nebraska",21.516411868922,NA
+"Nevada",26.106425591778,NA
+"New Hampshire",20.10924185151,NA
+"New Jersey",45.4704352806526,NA
+"New Mexico",36.8261929734001,NA
+"New York",45.2705337372477,NA
+"North Carolina",28.1203978054207,NA
+"North Dakota",33.8411658643847,NA
+"Ohio",32.8436430120792,NA
+"Oklahoma",38.2779622569167,NA
+"Oregon",13.3976412496896,NA
+"Pennsylvania",32.241727021172,NA
+"Rhode Island",40.1160303230312,NA
+"South Carolina",38.0470123322183,NA
+"South Dakota",35.564147321891,NA
+"Tennessee",30.9815124474447,NA
+"Texas",30.6439403420584,NA
+"Utah",11.7607341360912,NA
+"Vermont",20.5196705216735,NA
+"Virginia",23.8910746940409,NA
+"Washington",13.1167061399039,NA
+"West Virginia",32.1217589721159,NA
+"Wisconsin",20.368607312417,NA
+"Wyoming",21.2551378342708,NA
+"Wales",42.5023318272921,NA
+"Aguascalientes",46.059320448226,NA
+"Baja California",52.7567623541177,NA
+"Baja California Sur",33.048200213016,NA
+"Campeche",35.3483976298533,NA
+"Coahuila",56.9083264410449,NA
+"Colima",28.9113419682582,NA
+"Chiapas",27.7198588657489,NA
+"Chihuahua",60.2928542031663,NA
+"Mexico City",113.192316218993,NA
+"Durango",37.1722746772085,NA
+"Guanajuato",45.7300567203536,NA
+"Guerrero",34.4102845454108,NA
+"Hidalgo",46.0305486058307,NA
+"Jalisco",33.758345902251,NA
+"México",69.7974796524729,NA
+"Michoacán de Ocampo",31.8844531908836,NA
+"Morelos",50.695519813533,NA
+"Nayarit",27.1932343318293,NA
+"Nuevo León",51.9061830331469,NA
+"Oaxaca",30.1740927649187,NA
+"Puebla",59.5888527478678,NA
+"Querétaro",41.9666652318186,NA
+"Quintana Roo",37.6505389282798,NA
+"San Luis Potosí",53.6159813783844,NA
+"Sinaloa",46.28381943821,NA
+"Sonora",52.1933533745956,NA
+"Tabasco",45.5838363435345,NA
+"Tamaulipas",45.7933129183792,NA
+"Tlaxcala",82.6367596540943,NA
+"Veracruz de Ignacio de la Llave",38.5891978536672,NA
+"Yucatán",39.1591957546882,NA
+"Zacatecas",51.0756701318581,NA
+"England",40.3331350426804,NA
+"Acre",23.9512911680282,NA
+"Alagoas",16.6626710619741,NA
+"Amazonas",47.7276483848646,NA
+"Amapá",25.8973125916069,NA
+"Bahia",16.7162669432255,NA
+"Ceará",24.1213616005828,NA
+"Distrito Federal",31.2348611472441,NA
+"Espírito Santo",31.1624353521465,NA
+"Goiás",26.1170680058647,NA
+"Maranhão",16.1526898393901,NA
+"Minas Gerais",17.9540554551969,NA
+"Mato Grosso do Sul",24.4031991357865,NA
+"Mato Grosso",34.948386357189,NA
+"Pará",20.2325571702531,NA
+"Paraíba",21.2474974066051,NA
+"Paraná",22.7432639816655,NA
+"Pernambuco",21.0607495255488,NA
+"Piaui",17.7027308445374,NA
+"Rio de Janeiro",32.1746424453991,NA
+"Rio Grande do Norte",19.2948777579698,NA
+"Rondônia",39.5750279651087,NA
+"Roraima",37.6267242596704,NA
+"Rio Grande do Sul",25.9785675815399,NA
+"Santa Catarina",23.3809746256973,NA
+"Sergipe",23.7319815177751,NA
+"São Paulo",23.7389040477428,NA
+"Tocantins",23.6366842181887,NA
+"Andhra Pradesh",16.9474491187046,NA
+"Arunachal Pradesh",7.83441186983485,NA
+"Assam",6.9497790686183,NA
+"Bihar",7.72102103271884,NA
+"Chhattisgarh",48.1980629570149,NA
+"Delhi",19.3201933061572,NA
+"Goa",33.390487912311,NA
+"Gujarat",9.10976148360389,NA
+"Haryana",14.8462022386353,NA
+"Himachal Pradesh",12.0177232020125,NA
+"Jammu & Kashmir and Ladakh",15.872327471466,NA
+"Jharkhand",6.27262165562436,NA
+"Karnataka",14.248323969023,NA
+"Kerala",7.00279445919369,NA
+"Madhya Pradesh",12.1303750481091,NA
+"Maharashtra",21.8617242899575,NA
+"Manipur",39.5554747316873,NA
+"Meghalaya",3.56443244407345,NA
+"Nagaland",23.187190341751,NA
+"Odisha",8.35508836326883,NA
+"Punjab",18.4982712022795,NA
+"Rajasthan",6.59431531212311,NA
+"Tamil Nadu",12.2189027476371,NA
+"Telangana",6.67071210167971,NA
+"Tripura",19.5302734644949,NA
+"Uttar Pradesh",10.0001310546519,NA
+"Uttarakhand",22.917283035715,NA
+"West Bengal",14.5550402182814,NA
+"Piemonte",41.4122426673286,NA
+"Valle d'Aosta",55.0414293119034,NA
+"Liguria",40.9962631994028,NA
+"Lombardia",45.1198422972985,NA
+"Provincia autonoma di Bolzano",36.7754872251832,NA
+"Provincia autonoma di Trento",38.7739272119971,NA
+"Veneto",33.1068796971712,NA
+"Friuli-Venezia Giulia",41.1433132559959,NA
+"Emilia-Romagna",37.0719993993705,NA
+"Toscana",24.2127568298724,NA
+"Umbria",27.3331029676157,NA
+"Marche",24.872644164549,NA
+"Lazio",21.4034179750139,NA
+"Abruzzo",22.974542765487,NA
+"Molise",35.6469263413187,NA
+"Campania",19.3408136504624,NA
+"Puglia",21.1577967959636,NA
+"Basilicata",18.7755009469121,NA
+"Calabria",11.8168118485745,NA
+"Sicilia",23.6310780444162,NA
+"Sardegna",24.5711289529003,NA
+"Alberta",14.7370811689922,NA
+"British Columbia",11.2410201540105,NA
+"Manitoba",23.8803962508833,NA
+"Nova Scotia",3.55756975838561,NA
+"Ontario",13.4136328401745,NA
+"Quebec",25.6431027606551,NA
+"Saskatchewan",16.366691577189,NA
+"Azad Jammu & Kashmir",21.8072590622312,NA
+"Balochistan",7.93567738839107,NA
+"Gilgit-Baltistan",14.269795839334,NA
+"Islamabad Capital Territory",12.7924365378984,NA
+"Khyber Pakhtunkhwa",17.0852986989611,NA
+"Punjab",15.0003347319106,NA
+"Sindh",16.9818944432747,NA
+"Andalucia",35.8046908160849,NA
+"Aragon",62.6179005690361,NA
+"Cantabria",30.0811100097381,NA
+"Castilla-La Mancha",67.6071965508042,NA
+"Community of Madrid",59.7633527914108,NA
+"Extremadura",43.0069276454461,NA
+"Balearic Islands",22.7178525107692,NA
+"Canary Islands",14.3402302165605,NA
+"Asturias",44.1961321187898,NA
+"Murcia",32.9040473837987,NA
+"Castile and León",58.485463721692,NA
+"Catalonia",65.0795961159605,NA
+"Navarre",47.2695492325439,NA
+"Valencian Community",38.3632675984492,NA
+"Galicia",26.0918846467752,NA
+"Basque Country",44.3541742121173,NA
+"La Rioja",55.7152695825936,NA
+"Baden-Württemberg",19.286920744469,NA
+"Bavaria",23.7200196392329,NA
+"Berlin",21.9699154178656,NA
+"Brandenburg",29.6698960899469,NA
+"Bremen",16.1220920425816,NA
+"Hamburg",19.1017237853666,NA
+"Hesse",24.7557414752557,NA
+"Lower Saxony",18.3055692361172,NA
+"Mecklenburg-Vorpommern",13.3585951921106,NA
+"North Rhine-Westphalia",20.7944946611641,NA
+"Rhineland-Palatinate",19.6849552235287,NA
+"Saarland",22.943822239526,NA
+"Saxony-Anhalt",26.6966552631767,NA
+"Saxony",44.4665724974372,NA
+"Schleswig-Holstein",13.2784286961868,NA
+"Thuringia",33.2773390934248,NA
