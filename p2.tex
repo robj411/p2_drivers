@@ -6,8 +6,8 @@
 ]{article}
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
@@ -33,13 +33,6 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\hypersetup{
-  pdftitle={DAEDALUS: economic variables},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
 \usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
@@ -68,23 +61,22 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
-\usepackage{eso-pic,graphicx,transparent}
-\ifluatex
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
 \newlength{\cslhangindent}
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
 \setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
 \newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
  {% don't indent paragraphs
   \setlength{\parindent}{0pt}
   % turn on hanging indent if param 1 is 1
-  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
-  % set entry spacing
-  \ifnum #2 > 0
-  \setlength{\parskip}{#2\baselineskip}
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
   \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
  }%
  {}
 \usepackage{calc}
@@ -92,10 +84,21 @@
 \newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\usepackage{eso-pic,graphicx,transparent}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={DAEDALUS: economic variables},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
 
 \title{DAEDALUS: economic variables}
 \author{}
-\date{\vspace{-2.5em}24 May, 2023}
+\date{\vspace{-2.5em}25 May, 2023}
 
 \begin{document}
 \maketitle
@@ -117,7 +120,7 @@
 
 The objective of the proposed work is to use scenario modelling to ascertain the vulnerability of a country to a hypothetical pandemic across several dimensions. The dimensions of vulnerability we consider here include economic loss, life loss, and education loss. The variables we consider as potential indicators of vulnerability relate to the reliance of the economy on two economic sectors, and the level of digitization and associated capacity to provide home-based work and education.
 
-We simulate hypothetical pandemics caused by one of seven respiratory pathogens, each with a disease profile informed by a past epidemic. We use the integrated epi-econ model DAEDALUS developed in our group for estimating the benefit of pandemic preparedness (P2) (Haw et al. 2022). The scenarios are informed by real-world demographic, societal and economic data for up to 197 countries. We evaluate outcomes for four mitigation strategies (``unmitigated,'' ``adaptive economic closures,'' ``school closures,'' and ``elimination'').
+We simulate hypothetical pandemics caused by one of seven respiratory pathogens, each with a disease profile informed by a past epidemic. We use the integrated epi-econ model DAEDALUS developed in our group for estimating the benefit of pandemic preparedness (P2) (Haw et al. 2022). The scenarios are informed by real-world demographic, societal and economic data for up to 197 countries. We evaluate outcomes for four mitigation strategies (``unmitigated'', ``adaptive economic closures'', ``school closures'', and ``elimination'').
 
 The impacts we project are losses to life, to education, and to GDP. We assess the impacts of the four variables of interest on the outcomes using value-of-information methods in order to identify which variables most influence outcomes, and in what circumstances.
 
@@ -129,7 +132,7 @@ The impacts we project are losses to life, to education, and to GDP. We assess t
 
 The seven pathogen profiles include influenza and coronaviruses, and are based on past epidemics. Influenza virus profiles correspond to pandemics of the years 1918, 1957 and 2009. Coronavirus profiles correspond to SARS-CoV-1 and SARS-CoV-2, with three profiles: one, corresponding to variants that predated the variant-of-concern nomenclature (which we label ``pre-alpha''), and one each for the Delta and Omicron variants.
 
-The four mitigation strategies are ``unmitigated,'' ``adaptive economic closures,'' ``school closures,'' and ``elimination.'' In the unmitigated strategy, no aversive actions are taken. With adaptive economic closures, sectors close according to a pre-specified programme when hospital occupancy approaches its capacity. With school closures, schools remain closed and other economic sectors have reduced operations. With the elimination strategy, stringent economic closures are maintained until case numbers can be contained by a testing programme. All economic configuration profiles are based on GVA profiles observed in 2020, where the monthly GVA of a sector relative to its value one year prior is interpreted as the degree to which it was open.
+The four mitigation strategies are ``unmitigated'', ``adaptive economic closures'', ``school closures'', and ``elimination''. In the unmitigated strategy, no aversive actions are taken. With adaptive economic closures, sectors close according to a pre-specified programme when hospital occupancy approaches its capacity. With school closures, schools remain closed and other economic sectors have reduced operations. With the elimination strategy, stringent economic closures are maintained until case numbers can be contained by a testing programme. All economic configuration profiles are based on GVA profiles observed in 2020, where the monthly GVA of a sector relative to its value one year prior is interpreted as the degree to which it was open.
 
 We consider three stylised ``countries'' and parametrise models using data from constituent countries according to the World Bank income-classification categories:
 
@@ -273,6 +276,42 @@ To understand the relationship between a parameter and an outcome, e.g.~whether 
 \caption{\label{fig:tourismgdp}Relationship between tourism parameters and GDP loss for middle-income countries in a pre-alpha SARS-CoV-2 pandemic with the ``No Closures'' strategy.}
 \end{figure}
 
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/Influenza2009-1.pdf}
+\caption{\label{fig:Influenza2009}Model results for Influenza 2009.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/Influenza1957-1.pdf}
+\caption{\label{fig:Influenza1957}Model results for Influenza 1957.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/Influenza1918-1.pdf}
+\caption{\label{fig:Influenza1918}Model results for Influenza 1918.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/omicron-1.pdf}
+\caption{\label{fig:omicron}Model results for SARS-CoV-2 omicron.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/delta-1.pdf}
+\caption{\label{fig:delta}Model results for SARS-CoV-2 delta.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/sars-1.pdf}
+\caption{\label{fig:sars}Model results for SARS-CoV-1.}
+\end{figure}
+
 \newpage
 
 \hypertarget{conclusions}{%
@@ -313,25 +352,25 @@ For example, Figure \ref{fig:gdpdata2} shows the relationship between GDP loss i
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
-\leavevmode\hypertarget{ref-Fraser2009}{}%
+\leavevmode\vadjust pre{\hypertarget{ref-Fraser2009}{}}%
 Fraser, Christophe, Christl A Donnelly, Simon Cauchemez, William P Hanage, Maria D Van Kerkhove, T Déirdre Hollingsworth, Jamie Griffin, et al. 2009. {``{Pandemic potential of a strain of Influenza A (H1N1): Early findings}.''} \emph{Science} 324: 1557--62.
 
-\leavevmode\hypertarget{ref-Gottlieb2021}{}%
+\leavevmode\vadjust pre{\hypertarget{ref-Gottlieb2021}{}}%
 Gottlieb, Charles, Jan Grobovšek, Markus Poschke, and Fernando Saltiel. 2021. {``{Working from home in developing countries}.''} \emph{European Economic Review} 133: 103679. \url{https://doi.org/10.1016/j.euroecorev.2021.103679}.
 
-\leavevmode\hypertarget{ref-Haw2020}{}%
+\leavevmode\vadjust pre{\hypertarget{ref-Haw2020}{}}%
 Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. {``{Optimizing social and economic activity while containing SARS-CoV-2 transmission using DAEDALUS}.''} \emph{Nature Computational Science} 2: 223--33. \url{https://doi.org/10.25561/83928}.
 
-\leavevmode\hypertarget{ref-Jackson2021}{}%
+\leavevmode\vadjust pre{\hypertarget{ref-Jackson2021}{}}%
 Jackson, Christopher, Robert Johnson, Audrey De Nazelle, Rahul Goel, Thiago Hérick De Sá, Marko Tainio, and James Woodcock. 2021. {``{A guide to value of information methods for prioritising research in health impact modelling}.''} \emph{Epidemiologic Methods} 10 (1): 1--22. \url{https://doi.org/10.1515/em-2021-0012}.
 
-\leavevmode\hypertarget{ref-NationalEconomicandDevelopmentAuthority2021}{}%
+\leavevmode\vadjust pre{\hypertarget{ref-NationalEconomicandDevelopmentAuthority2021}{}}%
 National Economic and Development Authority. 2021. {``{COVID-19 pandemic to cost PHP 41.4 T for the next 40 years}.''} National Economic; Development Authority. \url{https://neda.gov.ph/covid-19-pandemic-to-cost-php-41-4-t-for-the-next-40-years-neda/}.
 
-\leavevmode\hypertarget{ref-Psacharopoulos2021a}{}%
+\leavevmode\vadjust pre{\hypertarget{ref-Psacharopoulos2021a}{}}%
 Psacharopoulos, George, Victoria; Collis, and Patrinos. 2021. {``{The COVID-19 Cost of School Closures in Earnings and Income across the World}.''} \emph{Comparative Education Review} 65 (2).
 
-\leavevmode\hypertarget{ref-Robinson2019}{}%
+\leavevmode\vadjust pre{\hypertarget{ref-Robinson2019}{}}%
 Robinson, Lisa A., James K. Hammitt, and Lucy O'Keeffe. 2019. {``{Valuing mortality risk reductions in global benefit-cost analysis}.''} \emph{Journal of Benefit-Cost Analysis} 10: 15--50. \url{https://doi.org/10.1017/bca.2018.26}.
 
 \end{CSLReferences}
