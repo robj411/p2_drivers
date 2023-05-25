@@ -1,31 +1,41 @@
 ---
 title: "DAEDALUS: economic variables"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
+geometry: margin=1cm
 header-includes:
-   - \usepackage{eso-pic,graphicx,transparent}
+  - \usepackage{eso-pic,graphicx,transparent}
+  - \usepackage{fancyhdr}
+  - \usepackage{lastpage}
 output:
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
-    latex_engine: xelatex
+  bookdown::html_document2: 
+    toc: true
+    keep_md: true
+  md_document:
+    variant: markdown_github
+  bookdown::word_document2: default
   bookdown::github_document2:
     toc: true
     appendix: true
     fig_caption: yes
     number_sections: yes
     pandoc_args: --webtex
-  bookdown::html_document2: 
-    toc: true
-    keep_md: true
-  bookdown::word_document2: default
-  md_document:
-    variant: markdown_github
 always_allow_html: yes 
 bibliography: 
   - "DAEDALUS.bib"
 ---
+
+\fancypagestyle{plain}{%
+  \renewcommand{\headrulewidth}{0pt}%
+  \fancyhf{}%
+  \fancyfoot[R]{\footnotesize \thepage}
+  \setlength\footskip{0pt}
+}
+\pagestyle{plain}
   
 \AddToShipoutPictureFG{
   \AtPageCenter{% or \AtTextCenter
@@ -86,6 +96,7 @@ llmic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Low income
 
 ```
 
+\newpage
 
 # Introduction
 
@@ -102,7 +113,7 @@ The impacts we project are losses to life, to education, and to GDP. We assess t
 
 The seven pathogen profiles include influenza and coronaviruses, and are based on past epidemics. Influenza virus profiles correspond to pandemics of the years 1918, 1957 and 2009. Coronavirus profiles correspond to SARS-CoV-1 and SARS-CoV-2, with three profiles: one, corresponding to variants that predated the variant-of-concern nomenclature (which we label "pre-alpha"), and one each for the Delta and Omicron variants.
 
-The four mitigation strategies are "unmitigated", "adaptive economic closures", "school closures", and "elimination". In the unmitigated strategy, no aversive actions are taken. With adaptive economic closures, sectors close according to a pre-specified programme when hospital occupancy approaches its capacity. With school closures, schools remain closed and other economic sectors have reduced operations. With the elimination strategy, stringent economic closures are maintained until case numbers can be contained by a testing programme. All economic configuration profiles are based on GVA profiles observed in 2020, where the monthly GVA of a sector relative to its value one year prior is interpreted as the degree to which it was open. 
+The four mitigation strategies are "unmitigated", "adaptive economic closures", "school closures", and "elimination". In the unmitigated strategy, no aversive actions are taken. With adaptive economic closures, sectors close according to a pre-specified programme when hospital occupancy approaches its capacity. With school closures, schools remain closed and other economic sectors have reduced operations. With the elimination strategy, stringent economic closures are maintained until case numbers can be contained by a testing programme. All economic configuration profiles are based on GVA profiles observed in 2020 (OECD), where the monthly GVA of a sector relative to its value one year prior is interpreted as the degree to which it was open. 
 
 We consider three stylised "countries" and parametrise models using data from constituent countries according to the World Bank income-classification categories:
 
@@ -131,7 +142,7 @@ We report these outcomes as a percentage of GDP (for the year prior to the pande
 
 ## Modelling
 
-The integrated epi-econ model is used to project economic and epidemic outcomes. The epidemiological model is a population-structured compartmental SEIR model. It takes many inputs, including pathogen natural history parameters (such as R$_0$, case-fatality rates, etc) and population parameters (such as age structure, contact rates, etc). The economic model takes as input the GVA per sector, which uses the OECD classification of 45 economic sectors. Both models take as input the economic configuration over time: this is the extent to which each sector is open in each month. A sector is open to a maximum amount of 100%, when its full monthly GVA value is realised. If a sector is open to 50%, it contributes 50% of its maximum GVA that month. In the epidemic model, contacts associated with that sector -- between workers, from workers to consumers, and between consumers -- are likewise scaled down.
+The integrated epi-econ model is used to project economic and epidemic outcomes. The epidemiological model is a population-structured compartmental SEIR model. It takes many inputs, including pathogen natural history parameters (such as R$_0$, case-fatality rates, etc) and population parameters (such as age structure, contact rates, etc). The economic model takes as input the GVA per sector, which uses the OECD classification of 45 economic sectors. Both models take as input the economic configuration over time: this is the extent to which each sector is open in each period. A sector is open to a maximum amount of 100%, when its full monthly GVA value is realised. If a sector is open to 50%, it contributes 50% of its maximum GVA for that period. In the epidemic model, contacts associated with that sector -- between workers, from workers to consumers, and between consumers -- are likewise scaled down.
 
 The economic model is very simple: we do not model interdependencies between sectors, and the only way in which country interdependencies are taken into account is via changes to tourism which manifest in the "food and accommodation services" sector (see Section \@ref(impact-of-tourism)). We do not model seasonality or allow for sectors to grow (either in GDP or in workforce).
 
@@ -279,17 +290,17 @@ The final four items on the x axis are groups of variables: both age groups; two
 
 Some distributions in Figure \@ref(fig:prealpha) are bimodal. For example, GDP loss under the Economic Closures strategy have peaks in density close to zero and also far from zero, with a low-density region in between. Here, in some samples (low GDP loss), the epidemic was not severe enough to warrant closures. This could be because R$_0$ was low, because hospital capacity was high, or both. Similarly, under the Elimination strategy, there is an area of high density at higher costs where the strategy does not work: due to R$_0$ being high, and/or the capacity to test being low, case numbers are not brought low enough and severe economic closures persist throughout, leading to high GDP loss.
 
-These relationships are identified in the value-of-information analyses: the last two columns show value of information for R$_0$ and hospital capacity combined, and R$_0$ and testing rate combined. These variables together explain much of the variance in GDP loss for the Economic Closures and Elimination strategies, respectively.
+These relationships are identified in the value-of-information analyses: the last two columns show value of information for R$_0$, fraction of population aged 65 and over and hospital capacity combined, and R$_0$, testing parameters and social-distancing parameters combined. These variables together explain much of the variance in GDP loss for the Economic Closures and Elimination strategies, respectively.
 
 
-```{r voi,fig.cap='Value of information for pre-alpha variants of SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
+```{r voi,fig.cap='\\footnotesize Value of information for pre-alpha variants of SARS-CoV-2. First four columns: individual parameters of interest (agricultural sector as % of GDP, Food and accommodation services sector as % of GDP, international tourism as % of toursim, internet coverage). Next two columns: pairs of parameters of interest (both sectors, both tourism-related parameters). Next 11 columns: other random variables (fraction of population school age, fraction of population age 65 and over, population size, GDP, hospital capacity, testing rate, testing start time, government response time, social distancing minimum, social distancing responsiveness to case numbers, R$_0$). Final four columns: combinations of random variables (both age fractions, both social distancing parameters, hospital capacity + elders population + R$_0$, testing parameters + social distancing parameters + R$_0$).',echo=F,warning=F,message=F,fig.height=10}
 
-voiall <- readRDS('results/voi.Rds')
+voiall <- readRDS('results/voi_Covid Wildtype.Rds')
 
 nscen <- nrow(voiall)
 nparam <- ncol(voiall)
-brks <- c(-1,10,30,50,70,101)
-discxs <- matrix(cut(as.numeric(voiall),breaks=brks,labels=1:(length(brks)-1)),
+voibrks <- c(-1,10,30,50,70,101)
+discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
                  nrow=nscen,ncol=nparam)
 xvals <- 1:nparam
 xvals[xvals>17] <- xvals[xvals>17] + .1
@@ -300,10 +311,10 @@ yvals[yvals>12] <- yvals[yvals>12] + .1*(ceiling(yvals[yvals>12]/12)-1)
 df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
 
 options(repr.plot.width = 1, repr.plot.height = 0.75)
-lbls <- c('<10','10-30','30-50','50-70','70-100')
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(brks)-1),labels=lbls))) +
+voilbs <- c('<10','10-30','30-50','50-70','70-100')
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
   geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(brks)-1)) +   
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
@@ -321,22 +332,24 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(brks)-1),labels=lbls))) +
 ```
 
 
-```{r mi,fig.cap='Because of the very heavily skewed distribution of the food and accommodation services sector as a share of GDP, mutual information (MI) might be better.',echo=F,warning=F,message=F,fig.height=10}
+\enlargethispage{4\baselineskip}
 
-voiall <- readRDS('results/mi.Rds')
+```{r mi,fig.cap='Mutual information (MI) for pre-alpha variants of SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/mi_Covid Wildtype.Rds')
 
 nscen <- nrow(voiall)
 nparam <- ncol(voiall)
-brks <- c(-1,10,20,40,60,90)/100
-discxs <- matrix(cut(as.numeric(voiall),breaks=brks,labels=1:(length(brks)-1)),
+mibrks <- c(-1,20,40,70,100,150)/100
+discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
                  nrow=nscen,ncol=nparam)
 df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
 
 options(repr.plot.width = 1, repr.plot.height = 0.75)
-lbls <- c('<.1','.1-.2','.2-.4','.4-.6','.6-.9')
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(brks)-1),labels=lbls))) +
+milbs <- c('<.2','.2-.4','.4-.7','.7-1','1-1.5')
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
   geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(brks)-1)) +   
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
@@ -367,79 +380,6 @@ ggplot(subset(allresults,igroup=='MIC'&strategy=='No Closures'&virus=='SARS-CoV-
   labs(x='Food and accommodation services GVA as % of GDP',y='Percent of tourism that is international',colour='GDP loss, %')
 ```
 
-```{r Influenza2009,fig.cap='Model results for Influenza 2009.',echo=F,warning=F,message=F,fig.width=8}
-ggplot(subset(vioplot,virus=='Influenza 2009'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
-    xlab("") +
-    ylab("Percent") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
-```
-
-```{r Influenza1957,fig.cap='Model results for Influenza 1957.',echo=F,warning=F,message=F,fig.width=8}
-ggplot(subset(vioplot,virus=='Influenza 1957'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
-    xlab("") +
-    ylab("Percent") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
-```
-
-```{r Influenza1918,fig.cap='Model results for Influenza 1918.',echo=F,warning=F,message=F,fig.width=8}
-ggplot(subset(vioplot,virus=='Influenza 1918'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
-    xlab("") +
-    ylab("Percent") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
-```
-
-```{r omicron,fig.cap='Model results for SARS-CoV-2 omicron.',echo=F,warning=F,message=F,fig.width=8}
-ggplot(subset(vioplot,virus=='SARS-CoV-2 omicron'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
-    xlab("") +
-    ylab("Percent") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
-```
-
-```{r delta,fig.cap='Model results for SARS-CoV-2 delta.',echo=F,warning=F,message=F,fig.width=8}
-ggplot(subset(vioplot,virus=='SARS-CoV-2 delta'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
-    xlab("") +
-    ylab("Percent") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
-```
-
-```{r sars,fig.cap='Model results for SARS-CoV-1.',echo=F,warning=F,message=F,fig.width=8}
-ggplot(subset(vioplot,virus=='SARS-CoV-1'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
-    xlab("") +
-    ylab("Percent") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
-```
-
-
 
 
 \newpage
@@ -457,7 +397,7 @@ In parallel, we present a selection of other model parameters, including those r
 
 Ours is a mechanistic simulation model. The model encodes complex relationships between demographic, epidemic and economic variables. With simulation, it allows us to explore outcomes as consequences of inputs using information- and decision-theoretic methods. Modelling allows *in silico* experimentation, which is crucial for questions pertaining to rare events with small and confounded datasets, as cross-sectional country data are. The model allows us to ask questions about cause and effect that cannot be asked in reality and rarely can be inferred from observational data.
 
-The challenge we face with modelling, then, is to be confident that our model mimics reality, or at least captures the most salient aspects of it.
+The challenge we face with modelling, then, is to be confident that our model mimics reality, or at least captures the elements with which we are concerned.
 
 ## The economic model
 
@@ -482,6 +422,27 @@ ggplot(subset(gdpdata2,!is.na(IncomeGroup)&IncomeGroup!='')) +
 
 ```
 
+
+(confirm with Patrick) GVA for a sector is reduced as a consequence of illness and death of workers, but not due to a reduction in demand (e.g. private/final consumption).
+
+\newpage
+
+# Data sources
+
+- Workforce: ILO
+- GVA: OECD
+- Closure configurations: GVA 2020 for UK, Australia, Indonesia (OECD)
+- Contact matrices: [@Prem2021], [@Beraud2015]
+- Work from home: [@Gottlieb2021]
+- Hospital capacity: World Bank / OECD
+- Response time: Blavatnik 2022
+- Testing rate: 
+- Testing start time: 
+- Mobility: Our World in Data/Wang et al., 2022
+- Life expectancy: IHME?
+- Population: 
+- Tourism data: https://www.unwto.org/tourism-data/international-tourism-and-covid-19
+- International tourism: https://www.unwto.org/tourism-statistics/key-tourism-statistics
 
 \newpage
 
@@ -566,11 +527,11 @@ pairs(data[,c(11,2:4,7:9)],
 
 For many countries, tourism was reduced not because of domestic mandates but because of reduced international travel. Therefore, the fraction of tourism that comes from abroad is a factor that can determine the impact of a pandemic on a country's GDP potentially independently of what happens within the country. (A useful model extension would be to include some dependence on country factors, e.g. case numbers.)
 
-We model mitigation via business closures, which are mandated per month and by sector. We represent openness with values $x$ which range from 0 to 1, 1 representing maximum openness. To capture the impact of reduced international travel, we set the maximum openness of the food and accommodation services sector to be limited by international tourism as:
+We model mitigation via business closures, which are mandated by sector. We represent openness with values $x$ which range from 0 to 1, 1 representing maximum openness. To capture the impact of reduced international travel, we set the maximum openness of the food and accommodation services sector to be limited by international tourism as:
 
 $$x_\tau = \min\{\hat{x}_\tau, 1+ y(z-1)\}$$
 
-where $\hat{x}_\tau$ is the openness of the sector in month $\tau$ according to the schedule (i.e. the mitigation strategy), $y$ is the proportion of tourism that is international, and $z$ is the fraction international tourism reduces to as a consequence of the pandemic. I.e. the tourism remaining is the domestic ($1-y$) plus that that comes in from abroad ($yz$).
+where $\hat{x}_\tau$ is the openness of the sector at time $\tau$ according to the schedule (i.e. the mitigation strategy), $y$ is the proportion of tourism that is international, and $z$ is the fraction international tourism reduces to as a consequence of the pandemic. I.e. the tourism remaining is the domestic ($1-y$) plus that that comes in from abroad ($yz$).
 
 Therefore, the contribution of the GVA of the food and accommodation services sector is limited either by the pandemic, or by the mitigation measures - whichever is lower.
 
@@ -785,6 +746,436 @@ llmic <- fitdistr(subset(hmaxi,!is.na(Hmax)&igroup%in%c('LMIC','LIC'))$Hmax,"gam
 ```
 
 We model these values with gamma distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape'],2)` and  `r round(llmic$estimate['rate'],2)`. For MICs, we have parameters `r round(mic$estimate['shape'],2)` and  `r round(mic$estimate['rate'],2)`. For HICs, we have parameters `r round(hic$estimate['shape'],2)` and  `r round(hic$estimate['rate'],2)`.
+
+\newpage
+
+
+# Distributions over outcomes: other six pathogens
+
+```{r Influenza2009,fig.cap='Model results for Influenza 2009.',echo=F,warning=F,message=F,fig.width=8}
+ggplot(subset(vioplot,virus=='Influenza 2009'),aes(fill=igroup, y=value, x=igroup)) + 
+    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
+  facet_grid(variable~strategy, scales="free") + 
+    scale_fill_viridis(discrete=T, name="") +
+    theme_bw(base_size = 15)  +
+    xlab("") +
+    ylab("Percent") +
+  scale_x_discrete(labels=c('','',''))+ 
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+```
+
+```{r Influenza1957,fig.cap='Model results for Influenza 1957.',echo=F,warning=F,message=F,fig.width=8}
+ggplot(subset(vioplot,virus=='Influenza 1957'),aes(fill=igroup, y=value, x=igroup)) + 
+    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
+  facet_grid(variable~strategy, scales="free") + 
+    scale_fill_viridis(discrete=T, name="") +
+    theme_bw(base_size = 15)  +
+    xlab("") +
+    ylab("Percent") +
+  scale_x_discrete(labels=c('','',''))+ 
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+```
+
+```{r Influenza1918,fig.cap='Model results for Influenza 1918.',echo=F,warning=F,message=F,fig.width=8}
+ggplot(subset(vioplot,virus=='Influenza 1918'),aes(fill=igroup, y=value, x=igroup)) + 
+    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
+  facet_grid(variable~strategy, scales="free") + 
+    scale_fill_viridis(discrete=T, name="") +
+    theme_bw(base_size = 15)  +
+    xlab("") +
+    ylab("Percent") +
+  scale_x_discrete(labels=c('','',''))+ 
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+```
+
+```{r omicron,fig.cap='Model results for SARS-CoV-2 omicron.',echo=F,warning=F,message=F,fig.width=8}
+ggplot(subset(vioplot,virus=='SARS-CoV-2 omicron'),aes(fill=igroup, y=value, x=igroup)) + 
+    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
+  facet_grid(variable~strategy, scales="free") + 
+    scale_fill_viridis(discrete=T, name="") +
+    theme_bw(base_size = 15)  +
+    xlab("") +
+    ylab("Percent") +
+  scale_x_discrete(labels=c('','',''))+ 
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+```
+
+```{r delta,fig.cap='Model results for SARS-CoV-2 delta.',echo=F,warning=F,message=F,fig.width=8}
+ggplot(subset(vioplot,virus=='SARS-CoV-2 delta'),aes(fill=igroup, y=value, x=igroup)) + 
+    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
+  facet_grid(variable~strategy, scales="free") + 
+    scale_fill_viridis(discrete=T, name="") +
+    theme_bw(base_size = 15)  +
+    xlab("") +
+    ylab("Percent") +
+  scale_x_discrete(labels=c('','',''))+ 
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+```
+
+```{r sars,fig.cap='Model results for SARS-CoV-1.',echo=F,warning=F,message=F,fig.width=8}
+ggplot(subset(vioplot,virus=='SARS-CoV-1'),aes(fill=igroup, y=value, x=igroup)) + 
+    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
+  facet_grid(variable~strategy, scales="free") + 
+    scale_fill_viridis(discrete=T, name="") +
+    theme_bw(base_size = 15)  +
+    xlab("") +
+    ylab("Percent") +
+  scale_x_discrete(labels=c('','',''))+ 
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+```
+
+
+
+\newpage
+
+# VOI and MI: other six pathogens
+
+```{r voiInfluenza2009,fig.cap='Value of information for Influenza 2009.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/voi_Influenza 2009.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'EVPPI, % ',override.aes=list(colour='black')))
+```
+
+
+```{r miInfluenza2009,fig.cap='Mutual information (MI) for Influenza 2009.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/mi_Influenza 2009.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'MI, nats',override.aes=list(colour='black')))
+```
+
+```{r voiInfluenza1957,fig.cap='Value of information for Influenza 1957.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/voi_Influenza 1957.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'EVPPI, % ',override.aes=list(colour='black')))
+```
+
+
+```{r miInfluenza1957,fig.cap='Mutual information (MI) for Influenza 1957.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/mi_Influenza 1957.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'MI, nats',override.aes=list(colour='black')))
+```
+
+```{r voiInfluenza1918,fig.cap='Value of information for Influenza 1918.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/voi_Influenza 1918.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'EVPPI, % ',override.aes=list(colour='black')))
+```
+
+
+```{r miInfluenza1918,fig.cap='Mutual information (MI) for Influenza 1918.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/mi_Influenza 1918.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'MI, nats',override.aes=list(colour='black')))
+```
+
+```{r voiomicron,fig.cap='Value of information for omicron SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/voi_Covid Omicron.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'EVPPI, % ',override.aes=list(colour='black')))
+```
+
+
+```{r miomicron,fig.cap='Mutual information (MI) for omicron SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/mi_Covid Omicron.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'MI, nats',override.aes=list(colour='black')))
+```
+
+```{r voidelta,fig.cap='Value of information for delta SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/voi_Covid Delta.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'EVPPI, % ',override.aes=list(colour='black')))
+```
+
+
+```{r midelta,fig.cap='Mutual information (MI) for delta SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/mi_Covid Delta.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'MI, nats',override.aes=list(colour='black')))
+```
+
+```{r voisars,fig.cap='Value of information for SARS-CoV-1.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/voi_SARS.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'EVPPI, % ',override.aes=list(colour='black')))
+```
+
+
+```{r misars,fig.cap='Mutual information (MI) for SARS-CoV-1.',echo=F,warning=F,message=F,fig.height=10}
+
+voiall <- readRDS('results/mi_SARS.Rds')
+
+discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
+                 nrow=nscen,ncol=nparam)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
+
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'MI, nats',override.aes=list(colour='black')))
+```
+
+
+
+
+\newpage
 
 # Comparison of model results for SARS-CoV-2 (pre-alpha) to 2020 data
 

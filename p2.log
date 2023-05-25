@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.9.14)  25 MAY 2023 09:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.9.14)  25 MAY 2023 16:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -390,9 +390,23 @@ Package: eso-pic 2018/04/12 v2.0h eso-pic (RN)
 ) (/usr/share/texlive/texmf-dist/tex/latex/transparent/transparent.sty
 Package: transparent 2019/11/29 v1.4 Transparency via pdfTeX's color stack (HO)
 
+) (/usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2019/01/31 v3.10 Extensive control of page headers and footer
+s
+\f@nch@headwidth=\skip63
+\f@nch@O@elh=\skip64
+\f@nch@O@erh=\skip65
+\f@nch@O@olh=\skip66
+\f@nch@O@orh=\skip67
+\f@nch@O@elf=\skip68
+\f@nch@O@erf=\skip69
+\f@nch@O@olf=\skip70
+\f@nch@O@orf=\skip71
+) (/usr/share/texlive/texmf-dist/tex/latex/lastpage/lastpage.sty
+Package: lastpage 2015/03/29 v1.2m Refers to last page's name (HMM; JPG)
 )
-\cslhangindent=\skip63
-\csllabelwidth=\skip64
+\cslhangindent=\skip72
+\csllabelwidth=\skip73
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count283
@@ -400,32 +414,32 @@ File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
 ) (./p2.aux)
 \openout1 = `p2.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 100.
-LaTeX Font Info:    ... okay on input line 100.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 100.
-LaTeX Font Info:    ... okay on input line 100.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 100.
-LaTeX Font Info:    ... okay on input line 100.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 100.
-LaTeX Font Info:    ... okay on input line 100.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 100.
-LaTeX Font Info:    ... okay on input line 100.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 100.
-LaTeX Font Info:    ... okay on input line 100.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 100.
-LaTeX Font Info:    ... okay on input line 100.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 100.
-LaTeX Font Info:    ... okay on input line 100.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 100.
-LaTeX Font Info:    ... okay on input line 100.
-LaTeX Info: Redefining \microtypecontext on input line 100.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 102.
+LaTeX Font Info:    ... okay on input line 102.
+LaTeX Info: Redefining \microtypecontext on input line 102.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `basictext'.
-LaTeX Info: Redefining \showhyphens on input line 100.
+LaTeX Info: Redefining \showhyphens on input line 102.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -454,7 +468,7 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 \AtBeginShipoutBox=\box56
-Package hyperref Info: Link coloring OFF on input line 100.
+Package hyperref Info: Link coloring OFF on input line 102.
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
@@ -464,9 +478,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count290
 )
-LaTeX Info: Redefining \ref on input line 100.
-LaTeX Info: Redefining \pageref on input line 100.
-LaTeX Info: Redefining \nameref on input line 100.
+LaTeX Info: Redefining \ref on input line 102.
+LaTeX Info: Redefining \pageref on input line 102.
+LaTeX Info: Redefining \nameref on input line 102.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -475,15 +489,15 @@ LaTeX Info: Redefining \nameref on input line 100.
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
-* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
+* h-part:(L,W,R)=(28.45274pt, 557.38951pt, 28.45274pt)
+* v-part:(T,H,B)=(28.45274pt, 738.0645pt, 28.45274pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
-* \textwidth=469.75502pt
-* \textheight=650.43001pt
-* \oddsidemargin=0.0pt
-* \evensidemargin=0.0pt
-* \topmargin=-37.0pt
+* \textwidth=557.38951pt
+* \textheight=738.0645pt
+* \oddsidemargin=-43.81725pt
+* \evensidemargin=-43.81725pt
+* \topmargin=-80.81725pt
 * \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=10.0pt
@@ -501,40 +515,43 @@ LaTeX Info: Redefining \nameref on input line 100.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
+Package lastpage Info: Please have a look at the pageslts package at
+(lastpage)             https://www.ctan.org/pkg/pageslts
+(lastpage)             ! on input line 102.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-02.
+04.
 (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-02.
+04.
 (/usr/share/texmf/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-102.
+104.
 (/usr/share/texmf/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-102.
+104.
 (/usr/share/texmf/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 102.
+(Font)              <12> on input line 104.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 102.
+(Font)              <8> on input line 104.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 102.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 102
+(Font)              <6> on input line 104.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 104
 .
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 102
+LaTeX Font Info:    Trying to load font information for U+msb on input line 104
 .
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -551,163 +568,291 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 \tf@toc=\write3
 \openout3 = `p2.toc'.
 
+
+Package Fancyhdr Warning: \footskip is too small (0.0pt): 
+Make it at least 10.25pt.
+We now make it that large for the rest of the document.
+This may cause the page layout to be inconsistent, however.
+
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-39.
+51.
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [2] [3] [4]
-<p2_files/figure-latex/prealpha-1.pdf, id=102, 564.1075pt x 303.1325pt>
+) [2] [3]
+<p2_files/figure-latex/prealpha-1.pdf, id=105, 564.1075pt x 303.1325pt>
 File: p2_files/figure-latex/prealpha-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/prealpha-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/prealpha-1.pdf  used on input li
-ne 221.
-(pdftex.def)             Requested size: 469.75845pt x 252.43248pt.
-[5 <./p2_files/figure-latex/prealpha-1.pdf>]
-<p2_files/figure-latex/voi-1.pdf, id=123, 437.635pt x 675.52374pt>
+ne 233.
+(pdftex.def)             Requested size: 557.42662pt x 299.54242pt.
+[4 <./p2_files/figure-latex/prealpha-1.pdf>]
+<p2_files/figure-latex/voi-1.pdf, id=126, 437.635pt x 675.52374pt>
 File: p2_files/figure-latex/voi-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/voi-1.pdf>
-Package pdftex.def Info: p2_files/figure-latex/voi-1.pdf  used on input line 25
-6.
-(pdftex.def)             Requested size: 421.38692pt x 650.44357pt.
+Package pdftex.def Info: p2_files/figure-latex/voi-1.pdf  used on input line 26
+8.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
 
-LaTeX Warning: Float too large for page by 23.958pt on input line 258.
+LaTeX Warning: Float too large for page by 6.4679pt on input line 270.
 
-<p2_files/figure-latex/mi-1.pdf, id=124, 437.635pt x 675.52374pt>
+<p2_files/figure-latex/mi-1.pdf, id=127, 437.635pt x 675.52374pt>
 File: p2_files/figure-latex/mi-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/mi-1.pdf>
-Package pdftex.def Info: p2_files/figure-latex/mi-1.pdf  used on input line 262
+Package pdftex.def Info: p2_files/figure-latex/mi-1.pdf  used on input line 276
 .
-(pdftex.def)             Requested size: 421.38692pt x 650.44357pt.
-
-LaTeX Warning: Float too large for page by 36.51357pt on input line 264.
-
-[6] [7 <./p2_files/figure-latex/voi-1.pdf>] [8 <./p2_files/figure-latex/mi-1.pd
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+[5] [6 <./p2_files/figure-latex/voi-1.pdf>] [7 <./p2_files/figure-latex/mi-1.pd
 f>]
-<p2_files/figure-latex/tourismgdp-1.pdf, id=158, 447.6725pt x 308.15125pt>
+<p2_files/figure-latex/tourismgdp-1.pdf, id=162, 447.6725pt x 308.15125pt>
 File: p2_files/figure-latex/tourismgdp-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/tourismgdp-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/tourismgdp-1.pdf  used on input 
-line 272.
+line 286.
 (pdftex.def)             Requested size: 447.68506pt x 308.15988pt.
-[9 <./p2_files/figure-latex/tourismgdp-1.pdf>]
-<p2_files/figure-latex/gdpdata2-1.pdf, id=173, 455.7025pt x 311.1625pt>
+[8 <./p2_files/figure-latex/tourismgdp-1.pdf>]
+<p2_files/figure-latex/gdpdata2-1.pdf, id=177, 455.7025pt x 311.1625pt>
 File: p2_files/figure-latex/gdpdata2-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/gdpdata2-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/gdpdata2-1.pdf  used on input li
-ne 305.
+ne 319.
 (pdftex.def)             Requested size: 455.70831pt x 311.16649pt.
-[10] [11 <./p2_files/figure-latex/gdpdata2-1.pdf>] [12]
-<p2_files/figure-latex/pairs-1.pdf, id=214, 419.5675pt x 455.7025pt>
+[9] [10 <./p2_files/figure-latex/gdpdata2-1.pdf>] [11] [12]
+<p2_files/figure-latex/pairs-1.pdf, id=228, 419.5675pt x 455.7025pt>
 File: p2_files/figure-latex/pairs-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/pairs-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/pairs-1.pdf  used on input line 
-356.
+415.
 (pdftex.def)             Requested size: 419.56647pt x 455.70137pt.
-[13] [14 <./p2_files/figure-latex/pairs-1.pdf>]
-<p2_files/figure-latex/tourismhist-1.pdf, id=237, 618.31pt x 399.4925pt>
+[13 <./p2_files/figure-latex/pairs-1.pdf>]
+<p2_files/figure-latex/tourismhist-1.pdf, id=247, 618.31pt x 399.4925pt>
 File: p2_files/figure-latex/tourismhist-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/tourismhist-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/tourismhist-1.pdf  used on input
- line 385.
-(pdftex.def)             Requested size: 469.76953pt x 303.51991pt.
-<p2_files/figure-latex/ytd-1.pdf, id=238, 277.035pt x 202.7575pt>
+ line 444.
+(pdftex.def)             Requested size: 557.43619pt x 360.16168pt.
+<p2_files/figure-latex/ytd-1.pdf, id=248, 277.035pt x 202.7575pt>
 File: p2_files/figure-latex/ytd-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/ytd-1.pdf>
-Package pdftex.def Info: p2_files/figure-latex/ytd-1.pdf  used on input line 39
-4.
+Package pdftex.def Info: p2_files/figure-latex/ytd-1.pdf  used on input line 45
+3.
 (pdftex.def)             Requested size: 277.03432pt x 202.757pt.
-[15] [16 <./p2_files/figure-latex/tourismhist-1.pdf> <./p2_files/figure-latex/y
-td-1.pdf>]
-<sectortourism.png, id=269, 433.62pt x 433.62pt>
+[14 <./p2_files/figure-latex/tourismhist-1.pdf>]
+<sectortourism.png, id=268, 433.62pt x 433.62pt>
 File: sectortourism.png Graphic file (type png)
 <use sectortourism.png>
-Package pdftex.def Info: sectortourism.png  used on input line 422.
-(pdftex.def)             Requested size: 281.8695pt x 281.8695pt.
-[17 <./sectortourism.png>]
-<candidateinfectees.png, id=280, 652.68843pt x 275.52937pt>
+Package pdftex.def Info: sectortourism.png  used on input line 481.
+(pdftex.def)             Requested size: 334.45084pt x 334.45084pt.
+[15 <./p2_files/figure-latex/ytd-1.pdf>] [16 <./sectortourism.png>]
+<candidateinfectees.png, id=290, 652.68843pt x 275.52937pt>
 File: candidateinfectees.png Graphic file (type png)
 <use candidateinfectees.png>
-Package pdftex.def Info: candidateinfectees.png  used on input line 451.
-(pdftex.def)             Requested size: 375.82077pt x 158.65097pt.
-[18 <./candidateinfectees.png (PNG copy)>]
-<p2_files/figure-latex/internet-1.pdf, id=292, 436.63126pt x 311.1625pt>
+Package pdftex.def Info: candidateinfectees.png  used on input line 510.
+(pdftex.def)             Requested size: 445.93362pt x 188.24878pt.
+[17 <./candidateinfectees.png (PNG copy)>]
+<p2_files/figure-latex/internet-1.pdf, id=302, 436.63126pt x 311.1625pt>
 File: p2_files/figure-latex/internet-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/internet-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/internet-1.pdf  used on input li
-ne 491.
+ne 550.
 (pdftex.def)             Requested size: 436.63019pt x 311.16174pt.
-<p2_files/figure-latex/labsh-1.pdf, id=295, 437.635pt x 310.15875pt>
+[18 <./p2_files/figure-latex/internet-1.pdf>]
+<p2_files/figure-latex/labsh-1.pdf, id=321, 437.635pt x 310.15875pt>
 File: p2_files/figure-latex/labsh-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/labsh-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/labsh-1.pdf  used on input line 
-501.
+560.
 (pdftex.def)             Requested size: 437.63393pt x 310.15799pt.
-[19] [20 <./p2_files/figure-latex/internet-1.pdf>] [21 <./p2_files/figure-latex
-/labsh-1.pdf>]
-<p2_files/figure-latex/hmax-1.pdf, id=329, 436.63126pt x 311.1625pt>
+[19 <./p2_files/figure-latex/labsh-1.pdf>]
+<p2_files/figure-latex/hmax-1.pdf, id=335, 436.63126pt x 311.1625pt>
 File: p2_files/figure-latex/hmax-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/hmax-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/hmax-1.pdf  used on input line 5
-14.
+73.
 (pdftex.def)             Requested size: 436.63019pt x 311.16174pt.
-<p2_files/figure-latex/gdpdata-1.pdf, id=330, 437.635pt x 310.15875pt>
+[20 <./p2_files/figure-latex/hmax-1.pdf>]
+<p2_files/figure-latex/Influenza2009-1.pdf, id=349, 564.1075pt x 303.1325pt>
+File: p2_files/figure-latex/Influenza2009-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/Influenza2009-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/Influenza2009-1.pdf  used on inp
+ut line 586.
+(pdftex.def)             Requested size: 557.42662pt x 299.54242pt.
+<p2_files/figure-latex/Influenza1957-1.pdf, id=350, 564.1075pt x 303.1325pt>
+File: p2_files/figure-latex/Influenza1957-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/Influenza1957-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/Influenza1957-1.pdf  used on inp
+ut line 592.
+(pdftex.def)             Requested size: 557.42662pt x 299.54242pt.
+<p2_files/figure-latex/Influenza1918-1.pdf, id=351, 564.1075pt x 303.1325pt>
+File: p2_files/figure-latex/Influenza1918-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/Influenza1918-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/Influenza1918-1.pdf  used on inp
+ut line 598.
+(pdftex.def)             Requested size: 557.42662pt x 299.54242pt.
+<p2_files/figure-latex/omicron-1.pdf, id=352, 564.1075pt x 303.1325pt>
+File: p2_files/figure-latex/omicron-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/omicron-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/omicron-1.pdf  used on input lin
+e 604.
+(pdftex.def)             Requested size: 557.42662pt x 299.54242pt.
+<p2_files/figure-latex/delta-1.pdf, id=353, 564.1075pt x 303.1325pt>
+File: p2_files/figure-latex/delta-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/delta-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/delta-1.pdf  used on input line 
+610.
+(pdftex.def)             Requested size: 557.42662pt x 299.54242pt.
+<p2_files/figure-latex/sars-1.pdf, id=354, 564.1075pt x 303.1325pt>
+File: p2_files/figure-latex/sars-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/sars-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/sars-1.pdf  used on input line 6
+16.
+(pdftex.def)             Requested size: 557.42662pt x 299.54242pt.
+[21 <./p2_files/figure-latex/Influenza2009-1.pdf>] [22 <./p2_files/figure-latex
+/Influenza1957-1.pdf> <./p2_files/figure-latex/Influenza1918-1.pdf>] [23 <./p2_
+files/figure-latex/omicron-1.pdf> <./p2_files/figure-latex/delta-1.pdf>]
+<p2_files/figure-latex/voiInfluenza2009-1.pdf, id=424, 437.635pt x 675.52374pt>
+
+File: p2_files/figure-latex/voiInfluenza2009-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/voiInfluenza2009-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/voiInfluenza2009-1.pdf  used on 
+input line 627.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/miInfluenza2009-1.pdf, id=425, 437.635pt x 675.52374pt>
+File: p2_files/figure-latex/miInfluenza2009-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/miInfluenza2009-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/miInfluenza2009-1.pdf  used on i
+nput line 633.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/voiInfluenza1957-1.pdf, id=426, 437.635pt x 675.52374pt>
+
+File: p2_files/figure-latex/voiInfluenza1957-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/voiInfluenza1957-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/voiInfluenza1957-1.pdf  used on 
+input line 639.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/miInfluenza1957-1.pdf, id=427, 437.635pt x 675.52374pt>
+File: p2_files/figure-latex/miInfluenza1957-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/miInfluenza1957-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/miInfluenza1957-1.pdf  used on i
+nput line 645.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/voiInfluenza1918-1.pdf, id=428, 437.635pt x 675.52374pt>
+
+File: p2_files/figure-latex/voiInfluenza1918-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/voiInfluenza1918-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/voiInfluenza1918-1.pdf  used on 
+input line 651.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/miInfluenza1918-1.pdf, id=429, 437.635pt x 675.52374pt>
+File: p2_files/figure-latex/miInfluenza1918-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/miInfluenza1918-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/miInfluenza1918-1.pdf  used on i
+nput line 657.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/voiomicron-1.pdf, id=430, 437.635pt x 675.52374pt>
+File: p2_files/figure-latex/voiomicron-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/voiomicron-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/voiomicron-1.pdf  used on input 
+line 663.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/miomicron-1.pdf, id=431, 437.635pt x 675.52374pt>
+File: p2_files/figure-latex/miomicron-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/miomicron-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/miomicron-1.pdf  used on input l
+ine 669.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/voidelta-1.pdf, id=432, 437.635pt x 675.52374pt>
+File: p2_files/figure-latex/voidelta-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/voidelta-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/voidelta-1.pdf  used on input li
+ne 675.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/midelta-1.pdf, id=433, 437.635pt x 675.52374pt>
+File: p2_files/figure-latex/midelta-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/midelta-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/midelta-1.pdf  used on input lin
+e 681.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/voisars-1.pdf, id=434, 437.635pt x 675.52374pt>
+File: p2_files/figure-latex/voisars-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/voisars-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/voisars-1.pdf  used on input lin
+e 687.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+<p2_files/figure-latex/misars-1.pdf, id=435, 437.635pt x 675.52374pt>
+File: p2_files/figure-latex/misars-1.pdf Graphic file (type pdf)
+<use p2_files/figure-latex/misars-1.pdf>
+Package pdftex.def Info: p2_files/figure-latex/misars-1.pdf  used on input line
+ 693.
+(pdftex.def)             Requested size: 437.6406pt x 675.5324pt.
+[24 <./p2_files/figure-latex/sars-1.pdf>] [25 <./p2_files/figure-latex/voiInflu
+enza2009-1.pdf>] [26 <./p2_files/figure-latex/miInfluenza2009-1.pdf>] [27 <./p2
+_files/figure-latex/voiInfluenza1957-1.pdf>] [28 <./p2_files/figure-latex/miInf
+luenza1957-1.pdf>] [29 <./p2_files/figure-latex/voiInfluenza1918-1.pdf>] [30 <.
+/p2_files/figure-latex/miInfluenza1918-1.pdf>] [31 <./p2_files/figure-latex/voi
+omicron-1.pdf>] [32 <./p2_files/figure-latex/miomicron-1.pdf>] [33 <./p2_files/
+figure-latex/voidelta-1.pdf>] [34 <./p2_files/figure-latex/midelta-1.pdf>] [35 
+<./p2_files/figure-latex/voisars-1.pdf>] [36 <./p2_files/figure-latex/misars-1.
+pdf>]
+<p2_files/figure-latex/gdpdata-1.pdf, id=599, 437.635pt x 310.15875pt>
 File: p2_files/figure-latex/gdpdata-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/gdpdata-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/gdpdata-1.pdf  used on input lin
-e 530.
+e 709.
 (pdftex.def)             Requested size: 437.63393pt x 310.15799pt.
-<p2_files/figure-latex/gdpdatallmic-1.pdf, id=331, 429.605pt x 310.15875pt>
+<p2_files/figure-latex/gdpdatallmic-1.pdf, id=600, 429.605pt x 310.15875pt>
 File: p2_files/figure-latex/gdpdatallmic-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/gdpdatallmic-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/gdpdatallmic-1.pdf  used on inpu
-t line 536.
+t line 715.
 (pdftex.def)             Requested size: 429.60394pt x 310.15799pt.
-<p2_files/figure-latex/gdpdatamic-1.pdf, id=332, 429.605pt x 310.15875pt>
+<p2_files/figure-latex/gdpdatamic-1.pdf, id=601, 429.605pt x 310.15875pt>
 File: p2_files/figure-latex/gdpdatamic-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/gdpdatamic-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/gdpdatamic-1.pdf  used on input 
-line 542.
+line 721.
 (pdftex.def)             Requested size: 429.60394pt x 310.15799pt.
-<p2_files/figure-latex/gdpdatahic-1.pdf, id=333, 429.605pt x 310.15875pt>
+<p2_files/figure-latex/gdpdatahic-1.pdf, id=602, 429.605pt x 310.15875pt>
 File: p2_files/figure-latex/gdpdatahic-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/gdpdatahic-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/gdpdatahic-1.pdf  used on input 
-line 548.
+line 727.
 (pdftex.def)             Requested size: 429.60394pt x 310.15799pt.
-[22 <./p2_files/figure-latex/hmax-1.pdf>] [23 <./p2_files/figure-latex/gdpdata-
-1.pdf>] [24 <./p2_files/figure-latex/gdpdatallmic-1.pdf>] [25 <./p2_files/figur
-e-latex/gdpdatamic-1.pdf>] [26 <./p2_files/figure-latex/gdpdatahic-1.pdf>]
-<p2_files/figure-latex/schooldata-1.pdf, id=408, 438.63875pt x 311.1625pt>
+[37 <./p2_files/figure-latex/gdpdata-1.pdf>] [38 <./p2_files/figure-latex/gdpda
+tallmic-1.pdf> <./p2_files/figure-latex/gdpdatamic-1.pdf>]
+<p2_files/figure-latex/schooldata-1.pdf, id=644, 438.63875pt x 311.1625pt>
 File: p2_files/figure-latex/schooldata-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/schooldata-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/schooldata-1.pdf  used on input 
-line 559.
+line 738.
 (pdftex.def)             Requested size: 438.64435pt x 311.16649pt.
-[27 <./p2_files/figure-latex/schooldata-1.pdf>]
-<p2_files/figure-latex/lives-1.pdf, id=422, 437.635pt x 310.15875pt>
+[39 <./p2_files/figure-latex/gdpdatahic-1.pdf>]
+<p2_files/figure-latex/lives-1.pdf, id=661, 437.635pt x 310.15875pt>
 File: p2_files/figure-latex/lives-1.pdf Graphic file (type pdf)
 <use p2_files/figure-latex/lives-1.pdf>
 Package pdftex.def Info: p2_files/figure-latex/lives-1.pdf  used on input line 
-570.
+749.
 (pdftex.def)             Requested size: 437.63393pt x 310.15799pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 574.
-[28 <./p2_files/figure-latex/lives-1.pdf>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 574.
+
+AED: lastpage setting LastPage
+[40 <./p2_files/figure-latex/schooldata-1.pdf>] [41 <./p2_files/figure-latex/li
+ves-1.pdf>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 753.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 753.
 (./p2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 574.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 574.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 753.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 753.
  ) 
 Here is how much of TeX's memory you used:
- 13730 strings out of 483107
- 202368 string characters out of 5964630
- 486757 words of memory out of 5000000
- 28269 multiletter control sequences out of 15000+600000
- 592701 words of font info for 118 fonts, out of 8000000 for 9000
+ 14074 strings out of 483107
+ 209973 string characters out of 5964630
+ 493322 words of memory out of 5000000
+ 28535 multiletter control sequences out of 15000+600000
+ 596244 words of font info for 125 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 41i,12n,42p,954b,335s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,12n,45p,1039b,376s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}{/usr/share/texmf/fonts/en
 c/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/s
 hare/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/l
@@ -717,13 +862,14 @@ pfb></usr/share/texmf/fonts/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/
 type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi7.pfb></
 usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/p
 ublic/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr17.pfb></usr/shar
-e/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/type1/public/lm/
-lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf
-/fonts/type1/public/lm/lmsy7.pfb>
-Output written on p2.pdf (28 pages, 854062 bytes).
+e/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/
+lmr7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fon
+ts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb>
+Output written on p2.pdf (41 pages, 2145865 bytes).
 PDF statistics:
- 596 PDF objects out of 1000 (max. 8388607)
- 494 compressed objects within 5 object streams
- 123 named destinations out of 1000 (max. 500000)
- 12608 words of extra memory for PDF output out of 14400 (max. 10000000)
+ 872 PDF objects out of 1000 (max. 8388607)
+ 699 compressed objects within 7 object streams
+ 162 named destinations out of 1000 (max. 500000)
+ 14770 words of extra memory for PDF output out of 17280 (max. 10000000)
 

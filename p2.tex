@@ -6,8 +6,8 @@
 ]{article}
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{iftex}
-\ifPDFTeX
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
@@ -33,7 +33,14 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
-\usepackage[margin=1in]{geometry}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={DAEDALUS: economic variables},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1cm]{geometry}
 \usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
@@ -61,22 +68,25 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
+\usepackage{eso-pic,graphicx,transparent}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
 \newlength{\cslhangindent}
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
 \setlength{\csllabelwidth}{3em}
-\newlength{\cslentryspacingunit} % times entry-spacing
-\setlength{\cslentryspacingunit}{\parskip}
 \newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
  {% don't indent paragraphs
   \setlength{\parindent}{0pt}
   % turn on hanging indent if param 1 is 1
-  \ifodd #1
-  \let\oldpar\par
-  \def\par{\hangindent=\cslhangindent\oldpar}
-  \fi
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
   % set entry spacing
-  \setlength{\parskip}{#2\cslentryspacingunit}
+  \ifnum #2 > 0
+  \setlength{\parskip}{#2\baselineskip}
+  \fi
  }%
  {}
 \usepackage{calc}
@@ -84,17 +94,6 @@
 \newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
-\usepackage{eso-pic,graphicx,transparent}
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same} % disable monospaced font for URLs
-\hypersetup{
-  pdftitle={DAEDALUS: economic variables},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
 
 \title{DAEDALUS: economic variables}
 \author{}
@@ -107,6 +106,14 @@
 \setcounter{tocdepth}{5}
 \tableofcontents
 }
+\fancypagestyle{plain}{%
+  \renewcommand{\headrulewidth}{0pt}%
+  \fancyhf{}%
+  \fancyfoot[R]{\footnotesize \thepage}
+  \setlength\footskip{0pt}
+}
+\pagestyle{plain}
+
 \AddToShipoutPictureFG{
   \AtPageCenter{% or \AtTextCenter
     \makebox[0pt]{\rotatebox[origin=c]{45}{%
@@ -115,12 +122,14 @@
   }
 }
 
+\newpage
+
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
 The objective of the proposed work is to use scenario modelling to ascertain the vulnerability of a country to a hypothetical pandemic across several dimensions. The dimensions of vulnerability we consider here include economic loss, life loss, and education loss. The variables we consider as potential indicators of vulnerability relate to the reliance of the economy on two economic sectors, and the level of digitization and associated capacity to provide home-based work and education.
 
-We simulate hypothetical pandemics caused by one of seven respiratory pathogens, each with a disease profile informed by a past epidemic. We use the integrated epi-econ model DAEDALUS developed in our group for estimating the benefit of pandemic preparedness (P2) (Haw et al. 2022). The scenarios are informed by real-world demographic, societal and economic data for up to 197 countries. We evaluate outcomes for four mitigation strategies (``unmitigated'', ``adaptive economic closures'', ``school closures'', and ``elimination'').
+We simulate hypothetical pandemics caused by one of seven respiratory pathogens, each with a disease profile informed by a past epidemic. We use the integrated epi-econ model DAEDALUS developed in our group for estimating the benefit of pandemic preparedness (P2) (Haw et al. 2022). The scenarios are informed by real-world demographic, societal and economic data for up to 197 countries. We evaluate outcomes for four mitigation strategies (``unmitigated,'' ``adaptive economic closures,'' ``school closures,'' and ``elimination'').
 
 The impacts we project are losses to life, to education, and to GDP. We assess the impacts of the four variables of interest on the outcomes using value-of-information methods in order to identify which variables most influence outcomes, and in what circumstances.
 
@@ -132,7 +141,7 @@ The impacts we project are losses to life, to education, and to GDP. We assess t
 
 The seven pathogen profiles include influenza and coronaviruses, and are based on past epidemics. Influenza virus profiles correspond to pandemics of the years 1918, 1957 and 2009. Coronavirus profiles correspond to SARS-CoV-1 and SARS-CoV-2, with three profiles: one, corresponding to variants that predated the variant-of-concern nomenclature (which we label ``pre-alpha''), and one each for the Delta and Omicron variants.
 
-The four mitigation strategies are ``unmitigated'', ``adaptive economic closures'', ``school closures'', and ``elimination''. In the unmitigated strategy, no aversive actions are taken. With adaptive economic closures, sectors close according to a pre-specified programme when hospital occupancy approaches its capacity. With school closures, schools remain closed and other economic sectors have reduced operations. With the elimination strategy, stringent economic closures are maintained until case numbers can be contained by a testing programme. All economic configuration profiles are based on GVA profiles observed in 2020, where the monthly GVA of a sector relative to its value one year prior is interpreted as the degree to which it was open.
+The four mitigation strategies are ``unmitigated,'' ``adaptive economic closures,'' ``school closures,'' and ``elimination.'' In the unmitigated strategy, no aversive actions are taken. With adaptive economic closures, sectors close according to a pre-specified programme when hospital occupancy approaches its capacity. With school closures, schools remain closed and other economic sectors have reduced operations. With the elimination strategy, stringent economic closures are maintained until case numbers can be contained by a testing programme. All economic configuration profiles are based on GVA profiles observed in 2020 (OECD), where the monthly GVA of a sector relative to its value one year prior is interpreted as the degree to which it was open.
 
 We consider three stylised ``countries'' and parametrise models using data from constituent countries according to the World Bank income-classification categories:
 
@@ -173,7 +182,7 @@ We report these outcomes as a percentage of GDP (for the year prior to the pande
 \hypertarget{modelling}{%
 \subsection{Modelling}\label{modelling}}
 
-The integrated epi-econ model is used to project economic and epidemic outcomes. The epidemiological model is a population-structured compartmental SEIR model. It takes many inputs, including pathogen natural history parameters (such as R\(_0\), case-fatality rates, etc) and population parameters (such as age structure, contact rates, etc). The economic model takes as input the GVA per sector, which uses the OECD classification of 45 economic sectors. Both models take as input the economic configuration over time: this is the extent to which each sector is open in each month. A sector is open to a maximum amount of 100\%, when its full monthly GVA value is realised. If a sector is open to 50\%, it contributes 50\% of its maximum GVA that month. In the epidemic model, contacts associated with that sector -- between workers, from workers to consumers, and between consumers -- are likewise scaled down.
+The integrated epi-econ model is used to project economic and epidemic outcomes. The epidemiological model is a population-structured compartmental SEIR model. It takes many inputs, including pathogen natural history parameters (such as R\(_0\), case-fatality rates, etc) and population parameters (such as age structure, contact rates, etc). The economic model takes as input the GVA per sector, which uses the OECD classification of 45 economic sectors. Both models take as input the economic configuration over time: this is the extent to which each sector is open in each period. A sector is open to a maximum amount of 100\%, when its full monthly GVA value is realised. If a sector is open to 50\%, it contributes 50\% of its maximum GVA for that period. In the epidemic model, contacts associated with that sector -- between workers, from workers to consumers, and between consumers -- are likewise scaled down.
 
 The economic model is very simple: we do not model interdependencies between sectors, and the only way in which country interdependencies are taken into account is via changes to tourism which manifest in the ``food and accommodation services'' sector (see Section \ref{impact-of-tourism}). We do not model seasonality or allow for sectors to grow (either in GDP or in workforce).
 
@@ -252,18 +261,20 @@ The final four items on the x axis are groups of variables: both age groups; two
 
 Some distributions in Figure \ref{fig:prealpha} are bimodal. For example, GDP loss under the Economic Closures strategy have peaks in density close to zero and also far from zero, with a low-density region in between. Here, in some samples (low GDP loss), the epidemic was not severe enough to warrant closures. This could be because R\(_0\) was low, because hospital capacity was high, or both. Similarly, under the Elimination strategy, there is an area of high density at higher costs where the strategy does not work: due to R\(_0\) being high, and/or the capacity to test being low, case numbers are not brought low enough and severe economic closures persist throughout, leading to high GDP loss.
 
-These relationships are identified in the value-of-information analyses: the last two columns show value of information for R\(_0\) and hospital capacity combined, and R\(_0\) and testing rate combined. These variables together explain much of the variance in GDP loss for the Economic Closures and Elimination strategies, respectively.
+These relationships are identified in the value-of-information analyses: the last two columns show value of information for R\(_0\), fraction of population aged 65 and over and hospital capacity combined, and R\(_0\), testing parameters and social-distancing parameters combined. These variables together explain much of the variance in GDP loss for the Economic Closures and Elimination strategies, respectively.
 
 \begin{figure}
 \centering
 \includegraphics{p2_files/figure-latex/voi-1.pdf}
-\caption{\label{fig:voi}Value of information for pre-alpha variants of SARS-CoV-2.}
+\caption{\label{fig:voi}\footnotesize Value of information for pre-alpha variants of SARS-CoV-2. First four columns: individual parameters of interest (agricultural sector as \% of GDP, Food and accommodation services sector as \% of GDP, international tourism as \% of toursim, internet coverage). Next two columns: pairs of parameters of interest (both sectors, both tourism-related parameters). Next 11 columns: other random variables (fraction of population school age, fraction of population age 65 and over, population size, GDP, hospital capacity, testing rate, testing start time, government response time, social distancing minimum, social distancing responsiveness to case numbers, R\(_0\)). Final four columns: combinations of random variables (both age fractions, both social distancing parameters, hospital capacity + elders population + R\(_0\), testing parameters + social distancing parameters + R\(_0\)).}
 \end{figure}
+
+\enlargethispage{4\baselineskip}
 
 \begin{figure}
 \centering
 \includegraphics{p2_files/figure-latex/mi-1.pdf}
-\caption{\label{fig:mi}Because of the very heavily skewed distribution of the food and accommodation services sector as a share of GDP, mutual information (MI) might be better.}
+\caption{\label{fig:mi}Mutual information (MI) for pre-alpha variants of SARS-CoV-2.}
 \end{figure}
 
 \newpage
@@ -274,42 +285,6 @@ To understand the relationship between a parameter and an outcome, e.g.~whether 
 \centering
 \includegraphics{p2_files/figure-latex/tourismgdp-1.pdf}
 \caption{\label{fig:tourismgdp}Relationship between tourism parameters and GDP loss for middle-income countries in a pre-alpha SARS-CoV-2 pandemic with the ``No Closures'' strategy.}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{p2_files/figure-latex/Influenza2009-1.pdf}
-\caption{\label{fig:Influenza2009}Model results for Influenza 2009.}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{p2_files/figure-latex/Influenza1957-1.pdf}
-\caption{\label{fig:Influenza1957}Model results for Influenza 1957.}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{p2_files/figure-latex/Influenza1918-1.pdf}
-\caption{\label{fig:Influenza1918}Model results for Influenza 1918.}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{p2_files/figure-latex/omicron-1.pdf}
-\caption{\label{fig:omicron}Model results for SARS-CoV-2 omicron.}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{p2_files/figure-latex/delta-1.pdf}
-\caption{\label{fig:delta}Model results for SARS-CoV-2 delta.}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{p2_files/figure-latex/sars-1.pdf}
-\caption{\label{fig:sars}Model results for SARS-CoV-1.}
 \end{figure}
 
 \newpage
@@ -328,7 +303,7 @@ In parallel, we present a selection of other model parameters, including those r
 
 Ours is a mechanistic simulation model. The model encodes complex relationships between demographic, epidemic and economic variables. With simulation, it allows us to explore outcomes as consequences of inputs using information- and decision-theoretic methods. Modelling allows \emph{in silico} experimentation, which is crucial for questions pertaining to rare events with small and confounded datasets, as cross-sectional country data are. The model allows us to ask questions about cause and effect that cannot be asked in reality and rarely can be inferred from observational data.
 
-The challenge we face with modelling, then, is to be confident that our model mimics reality, or at least captures the most salient aspects of it.
+The challenge we face with modelling, then, is to be confident that our model mimics reality, or at least captures the elements with which we are concerned.
 
 \hypertarget{the-economic-model}{%
 \subsection{The economic model}\label{the-economic-model}}
@@ -345,6 +320,45 @@ For example, Figure \ref{fig:gdpdata2} shows the relationship between GDP loss i
 \caption{\label{fig:gdpdata2}GDP loss and recovery. On the x axis is the GDP of 2020 relative to its 2019 projected value (IMF). On the y axis is 2021 GDP relative to its 2019 projected value relative to the same value for 2020 (ratio of ratios). x values below 100 represent a loss in the year 2020. y values above 0 represent recovery (i.e.~growth exceeded what was expected in 2019); y values equal to zero represent a fixed level of loss; y values less than zero represent increasing loss.}
 \end{figure}
 
+(confirm with Patrick) GVA for a sector is reduced as a consequence of illness and death of workers, but not due to a reduction in demand (e.g.~private/final consumption).
+
+\newpage
+
+\hypertarget{data-sources}{%
+\section{Data sources}\label{data-sources}}
+
+\begin{itemize}
+\tightlist
+\item
+  Workforce: ILO
+\item
+  GVA: OECD
+\item
+  Closure configurations: GVA 2020 for UK, Australia, Indonesia (OECD)
+\item
+  Contact matrices: (Prem et al. 2021), (Béraud et al. 2015)
+\item
+  Work from home: (Gottlieb et al. 2021)
+\item
+  Hospital capacity: World Bank / OECD
+\item
+  Response time: Blavatnik 2022
+\item
+  Testing rate:
+\item
+  Testing start time:
+\item
+  Mobility: Our World in Data/Wang et al., 2022
+\item
+  Life expectancy: IHME?
+\item
+  Population:
+\item
+  Tourism data: \url{https://www.unwto.org/tourism-data/international-tourism-and-covid-19}
+\item
+  International tourism: \url{https://www.unwto.org/tourism-statistics/key-tourism-statistics}
+\end{itemize}
+
 \newpage
 
 \hypertarget{references}{%
@@ -352,25 +366,31 @@ For example, Figure \ref{fig:gdpdata2} shows the relationship between GDP loss i
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
-\leavevmode\vadjust pre{\hypertarget{ref-Fraser2009}{}}%
+\leavevmode\hypertarget{ref-Beraud2015}{}%
+Béraud, Guillaume, Sabine Kazmercziak, Philippe Beutels, Daniel Levy-Bruhl, Xavier Lenne, Nathalie Mielcarek, Yazdan Yazdanpanah, Pierre Yves Boëlle, Niel Hens, and Benoit Dervaux. 2015. {``{The French connection: The first large population-based contact survey in France relevant for the spread of infectious diseases}.''} \emph{PLoS ONE} 10 (7): 1--22. \url{https://doi.org/10.1371/journal.pone.0133203}.
+
+\leavevmode\hypertarget{ref-Fraser2009}{}%
 Fraser, Christophe, Christl A Donnelly, Simon Cauchemez, William P Hanage, Maria D Van Kerkhove, T Déirdre Hollingsworth, Jamie Griffin, et al. 2009. {``{Pandemic potential of a strain of Influenza A (H1N1): Early findings}.''} \emph{Science} 324: 1557--62.
 
-\leavevmode\vadjust pre{\hypertarget{ref-Gottlieb2021}{}}%
+\leavevmode\hypertarget{ref-Gottlieb2021}{}%
 Gottlieb, Charles, Jan Grobovšek, Markus Poschke, and Fernando Saltiel. 2021. {``{Working from home in developing countries}.''} \emph{European Economic Review} 133: 103679. \url{https://doi.org/10.1016/j.euroecorev.2021.103679}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-Haw2020}{}}%
+\leavevmode\hypertarget{ref-Haw2020}{}%
 Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. {``{Optimizing social and economic activity while containing SARS-CoV-2 transmission using DAEDALUS}.''} \emph{Nature Computational Science} 2: 223--33. \url{https://doi.org/10.25561/83928}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-Jackson2021}{}}%
+\leavevmode\hypertarget{ref-Jackson2021}{}%
 Jackson, Christopher, Robert Johnson, Audrey De Nazelle, Rahul Goel, Thiago Hérick De Sá, Marko Tainio, and James Woodcock. 2021. {``{A guide to value of information methods for prioritising research in health impact modelling}.''} \emph{Epidemiologic Methods} 10 (1): 1--22. \url{https://doi.org/10.1515/em-2021-0012}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-NationalEconomicandDevelopmentAuthority2021}{}}%
+\leavevmode\hypertarget{ref-NationalEconomicandDevelopmentAuthority2021}{}%
 National Economic and Development Authority. 2021. {``{COVID-19 pandemic to cost PHP 41.4 T for the next 40 years}.''} National Economic; Development Authority. \url{https://neda.gov.ph/covid-19-pandemic-to-cost-php-41-4-t-for-the-next-40-years-neda/}.
 
-\leavevmode\vadjust pre{\hypertarget{ref-Psacharopoulos2021a}{}}%
+\leavevmode\hypertarget{ref-Prem2021}{}%
+Prem, Kiesha, Kevin van Zandvoort, Petra Klepac, Rosalind M. Eggo, Nicholas G. Davies, Alex R. Cook, and Mark Jit. 2021. {``{Projecting contact matrices in 177 geographical regions: An update and comparison with empirical data for the COVID-19 era}.''} \emph{PLoS Computational Biology} 17 (7). \url{https://doi.org/10.1371/journal.pcbi.1009098}.
+
+\leavevmode\hypertarget{ref-Psacharopoulos2021a}{}%
 Psacharopoulos, George, Victoria; Collis, and Patrinos. 2021. {``{The COVID-19 Cost of School Closures in Earnings and Income across the World}.''} \emph{Comparative Education Review} 65 (2).
 
-\leavevmode\vadjust pre{\hypertarget{ref-Robinson2019}{}}%
+\leavevmode\hypertarget{ref-Robinson2019}{}%
 Robinson, Lisa A., James K. Hammitt, and Lucy O'Keeffe. 2019. {``{Valuing mortality risk reductions in global benefit-cost analysis}.''} \emph{Journal of Benefit-Cost Analysis} 10: 15--50. \url{https://doi.org/10.1017/bca.2018.26}.
 
 \end{CSLReferences}
@@ -406,11 +426,11 @@ As there is no ``tourism'' sector in the 45-sector classification we are using, 
 
 For many countries, tourism was reduced not because of domestic mandates but because of reduced international travel. Therefore, the fraction of tourism that comes from abroad is a factor that can determine the impact of a pandemic on a country's GDP potentially independently of what happens within the country. (A useful model extension would be to include some dependence on country factors, e.g.~case numbers.)
 
-We model mitigation via business closures, which are mandated per month and by sector. We represent openness with values \(x\) which range from 0 to 1, 1 representing maximum openness. To capture the impact of reduced international travel, we set the maximum openness of the food and accommodation services sector to be limited by international tourism as:
+We model mitigation via business closures, which are mandated by sector. We represent openness with values \(x\) which range from 0 to 1, 1 representing maximum openness. To capture the impact of reduced international travel, we set the maximum openness of the food and accommodation services sector to be limited by international tourism as:
 
 \[x_\tau = \min\{\hat{x}_\tau, 1+ y(z-1)\}\]
 
-where \(\hat{x}_\tau\) is the openness of the sector in month \(\tau\) according to the schedule (i.e.~the mitigation strategy), \(y\) is the proportion of tourism that is international, and \(z\) is the fraction international tourism reduces to as a consequence of the pandemic. I.e. the tourism remaining is the domestic (\(1-y\)) plus that that comes in from abroad (\(yz\)).
+where \(\hat{x}_\tau\) is the openness of the sector at time \(\tau\) according to the schedule (i.e.~the mitigation strategy), \(y\) is the proportion of tourism that is international, and \(z\) is the fraction international tourism reduces to as a consequence of the pandemic. I.e. the tourism remaining is the domestic (\(1-y\)) plus that that comes in from abroad (\(yz\)).
 
 Therefore, the contribution of the GVA of the food and accommodation services sector is limited either by the pandemic, or by the mitigation measures - whichever is lower.
 
@@ -555,6 +575,126 @@ We model these values with Beta distributions. For LLMICs, we have parameters 5.
 \end{figure}
 
 We model these values with gamma distributions. For LLMICs, we have parameters 1.3 and 0.05. For MICs, we have parameters 1.36 and 0.03. For HICs, we have parameters 2.05 and 0.02.
+
+\newpage
+
+\hypertarget{distributions-over-outcomes-other-six-pathogens}{%
+\section{Distributions over outcomes: other six pathogens}\label{distributions-over-outcomes-other-six-pathogens}}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/Influenza2009-1.pdf}
+\caption{\label{fig:Influenza2009}Model results for Influenza 2009.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/Influenza1957-1.pdf}
+\caption{\label{fig:Influenza1957}Model results for Influenza 1957.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/Influenza1918-1.pdf}
+\caption{\label{fig:Influenza1918}Model results for Influenza 1918.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/omicron-1.pdf}
+\caption{\label{fig:omicron}Model results for SARS-CoV-2 omicron.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/delta-1.pdf}
+\caption{\label{fig:delta}Model results for SARS-CoV-2 delta.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/sars-1.pdf}
+\caption{\label{fig:sars}Model results for SARS-CoV-1.}
+\end{figure}
+
+\newpage
+
+\hypertarget{voi-and-mi-other-six-pathogens}{%
+\section{VOI and MI: other six pathogens}\label{voi-and-mi-other-six-pathogens}}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/voiInfluenza2009-1.pdf}
+\caption{\label{fig:voiInfluenza2009}Value of information for Influenza 2009.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/miInfluenza2009-1.pdf}
+\caption{\label{fig:miInfluenza2009}Mutual information (MI) for Influenza 2009.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/voiInfluenza1957-1.pdf}
+\caption{\label{fig:voiInfluenza1957}Value of information for Influenza 1957.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/miInfluenza1957-1.pdf}
+\caption{\label{fig:miInfluenza1957}Mutual information (MI) for Influenza 1957.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/voiInfluenza1918-1.pdf}
+\caption{\label{fig:voiInfluenza1918}Value of information for Influenza 1918.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/miInfluenza1918-1.pdf}
+\caption{\label{fig:miInfluenza1918}Mutual information (MI) for Influenza 1918.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/voiomicron-1.pdf}
+\caption{\label{fig:voiomicron}Value of information for omicron SARS-CoV-2.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/miomicron-1.pdf}
+\caption{\label{fig:miomicron}Mutual information (MI) for omicron SARS-CoV-2.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/voidelta-1.pdf}
+\caption{\label{fig:voidelta}Value of information for delta SARS-CoV-2.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/midelta-1.pdf}
+\caption{\label{fig:midelta}Mutual information (MI) for delta SARS-CoV-2.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/voisars-1.pdf}
+\caption{\label{fig:voisars}Value of information for SARS-CoV-1.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{p2_files/figure-latex/misars-1.pdf}
+\caption{\label{fig:misars}Mutual information (MI) for SARS-CoV-1.}
+\end{figure}
+
+\newpage
 
 \hypertarget{comparison-of-model-results-for-sars-cov-2-pre-alpha-to-2020-data}{%
 \section{Comparison of model results for SARS-CoV-2 (pre-alpha) to 2020 data}\label{comparison-of-model-results-for-sars-cov-2-pre-alpha-to-2020-data}}
