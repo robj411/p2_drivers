@@ -372,6 +372,26 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
 To understand the relationship between a parameter and an outcome, e.g. whether the relationship is linear and increasing or decreasing, whether it is nonlinear, whether it is driven by extreme values, they must be plotted against each other. Likewise, a relationship between a parameter pair and an outcome can be plotted, e.g. Figure \@ref(fig:tourismgdp): for middle-income countries in a pre-alpha SARS-CoV-2 pandemic with the "No Closures" strategy, GDP loss is greatest when both the food and accommodation services GVA as fraction of GDP and international tourism as a fraction of tourism are high.
 
 
+```{r interneted,fig.cap='Relationship between internet coverage and education losses for middle-income countries in a Delta SARS-CoV-2 pandemic with the "School Closures" strategy.',echo=F,warning=F,message=F}
+
+ggplot(subset(allresults,igroup=='MIC'&strategy=='School Closures'&virus=='SARS-CoV-2 delta'),aes(x=qbeta(Internet,3.77,2.91)*100,y=School)) +
+  geom_point(colour='navyblue') +
+  theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
+  labs(x='Internet coverage, %',y='Cost of lost education, % of GDP')
+
+
+
+```
+
+```{r tourismsecgdp,fig.cap='Relationship between the "tourism sector" size and GDP loss for middle-income countries in a pre-alpha SARS-CoV-2 pandemic with the "No Closures" strategy.',echo=F,warning=F,message=F}
+ggplot(subset(allresults,igroup=='MIC'&strategy=='No Closures'&virus=='SARS-CoV-2 pre-alpha'),aes(y=GDP_loss,x=Food_sector*100)) +
+  geom_point(colour='navyblue') +
+  theme_bw(base_size=15) +
+  theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
+  labs(x='Food and accommodation services GVA as % of GDP',y='GDP loss, %')
+
+```
+
 ```{r tourismgdp,fig.cap='Relationship between tourism parameters and GDP loss for middle-income countries in a pre-alpha SARS-CoV-2 pandemic with the "No Closures" strategy.',echo=F,warning=F,message=F}
 
 ggplot(subset(allresults,igroup=='MIC'&strategy=='No Closures'&virus=='SARS-CoV-2 pre-alpha')) +
@@ -751,6 +771,25 @@ We model these values with gamma distributions. For LLMICs, we have parameters `
 
 
 # Distributions over outcomes: other six pathogens
+
+```{r tabres,tab.cap='Results for all scenarios shown. Mean values and 95% prediction intervals.',echo=F,warning=F,message=F}
+
+
+tabres <- setDT(allresults)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
+                        deaths=paste0(round(mean(Deaths),1),' (',paste0(round(quantile(Deaths,c(0.025,0.975)),1),collapse=', '),')'),
+                        education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
+                        gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
+                        ),by=.(virus,strategy,igroup)]
+colnames(tabres) <- c('Virus','Strategy','Income group','Total costs','YLLs','Education','GDP')
+
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(tabres,caption='Results for all scenarios shown. Mean values and 95% prediction intervals.) \\label{tab:tabres}')
+}else{
+    x <- knitr::kable(tabres,escape=F, "html",caption='Results for all scenarios shown. Mean values and 95% prediction intervals. \\label{tab:tabres}')
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+}
+
+```
 
 ```{r Influenza2009,fig.cap='Model results for Influenza 2009.',echo=F,warning=F,message=F,fig.width=8}
 ggplot(subset(vioplot,virus=='Influenza 2009'),aes(fill=igroup, y=value, x=igroup)) + 

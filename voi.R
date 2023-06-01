@@ -88,7 +88,7 @@ multisource <- list(c('Agriculture','Food_sector'),
                     c('School_age','Elders'),
                     c('Social_distancing_rate','Social_distancing_min'),
                     c('R0','Hospital_capacity','Elders'),
-                    c('R0','Social_distancing_rate','Test_rate','Test_start','Social_distancing_min','Response_time'))
+                    c('R0','Social_distancing_rate','Test_rate','Test_start','Social_distancing_min'))
 multisource_names <- c('Sectors','Tourism','Age_groups','Social_distancing','Hosp_elders_R0','Test_sd_R0')
 for (il in 1:length(income_levels)){
   klistvoi <- list()
