@@ -152,6 +152,26 @@ We include uncertainty in as many parameters as possible. We sample from specifi
 
 Parameter distributions are independent of each other (with the exception of loss in tourism, where the size of the sector is related to the fraction of tourism that comes in from abroad (see Section \@ref(loss-of-international-tourists))). This means that any relationships we uncover between input and output within an income group will be causal, and we will not discover any factors that are "indicative" by association. (Between income groups there are many systematic differences in inputs and learning which of those drives the differences in outcomes is part of the ongoing development of the model.)
 
+### Data sources
+
+1. Workforce: ILO
+2. GVA: OECD
+3. Closure configurations: GVA 2020 for UK, Australia, Indonesia (OECD)
+4. Contact matrices: [@Prem2021], [@Beraud2015]
+5. Work from home: [@Gottlieb2021]
+6. Hospital capacity: World Bank / OECD
+7. Response time: Blavatnik 2022
+8. Testing rate: 
+9. Testing start time: 
+10. Mobility: Our World in Data/Wang et al., 2022
+11. Life expectancy: IHME?
+12. Population: 
+13. Tourism data: https://www.unwto.org/tourism-data/international-tourism-and-covid-19
+14. International tourism: https://www.unwto.org/tourism-statistics/key-tourism-statistics
+15. Internet coverage: World Bank
+16. Labour share of GDP: [@Inklaar2013]
+
+
 
 ## Value of information
 
@@ -167,7 +187,7 @@ We assess the impacts of four parameters that relate to economic indicators:
 
 We use value-of-information methods to quantify these relationships. Specifically, we estimate the expected value of partial perfect information (EVPPI), which is the expected gain (in terms of reduction of uncertainty in the outcome) of knowing a parameter (or set of parameters) perfectly [@Jackson2021]. Equivalently, and in terms of identifying indicators of vulnerability, it tells us which parameters best predict the outcome.
 
-Value of information is a decision-theoretic quantity. We estimate it using the R package **voi**. Intuitively, EVPPI functions in a similar way to correlation. In the case of a linear relationship between one input and one output, the computation of EVPPI is essentially the same as that of a correlation. EVPPI extends a simple correlation analysis in two ways relevant to the results presented: 1) nonlinear relationships are also captured, and 2) we can assess the EVPPI of a set of parameters. While EVPPI allows us to identify important relationships in this way, it also means that we cannot make statements such as "a 3% increase in this input leads to a 1% increase in this outcome."
+Value of information is a decision-theoretic quantity. We estimate it using the R package **voi**. Intuitively, EVPPI functions in a similar way to correlation. In the case of a linear relationship between one input and one output, the computation of EVPPI is essentially the same as that of a correlation. EVPPI extends a simple correlation analysis in two ways relevant to the results presented: 1) nonlinear relationships are also captured, and 2) we can assess the EVPPI of a set of parameters. EVPPI allows us to identify influential parameters. Once identified, relationships between the influential parameter (sets) and outcomes need to be examined independently in order to understand the nature of the relationship.
 
 Finally, we can use mutual information (MI, via the R package **infotheo**) to assess mutual information between inputs and outputs. What MI offers beyond EVPPI is that it takes into account also how *likely* it is that the input parameter occupies a space where it is influential.
 
@@ -418,8 +438,15 @@ ggplot(subset(gdpdata2,!is.na(IncomeGroup)&IncomeGroup!='')) +
   geom_point(aes(x=X2020*100,y=relhit*100-100),colour='navyblue',fill='grey') +
   facet_wrap(~IncomeGroup) +
   theme_bw(base_size = 15) +
+  geom_smooth(aes(x=X2020*100,y=relhit*100-100),formula=y~x,method='glm',se=F) + 
   labs(x='2020 GDP, % of projected value',y='2021 recovery, %')
-
+# ggplot(subset(gdpdata2,!is.na(IncomeGroup)&IncomeGroup!='')) + 
+#   geom_histogram(aes(x=X2021),colour='navyblue',fill='grey') +
+#   facet_wrap(~IncomeGroup) +
+#   theme_bw(base_size = 15)
+# setDT(gdpdata2)[is.na(X2021)==F,quantile(X2021,c(0.1,0.5,0.9)),by=IncomeGroup]
+# summary(glm(X2021~X2020 + IncomeGroup + offset(X2020),data=gdpdata2))
+# with(gdpdata2,plot(X2020,X2021))
 ```
 
 
@@ -427,24 +454,7 @@ ggplot(subset(gdpdata2,!is.na(IncomeGroup)&IncomeGroup!='')) +
 
 \newpage
 
-# Data sources
 
-- Workforce: ILO
-- GVA: OECD
-- Closure configurations: GVA 2020 for UK, Australia, Indonesia (OECD)
-- Contact matrices: [@Prem2021], [@Beraud2015]
-- Work from home: [@Gottlieb2021]
-- Hospital capacity: World Bank / OECD
-- Response time: Blavatnik 2022
-- Testing rate: 
-- Testing start time: 
-- Mobility: Our World in Data/Wang et al., 2022
-- Life expectancy: IHME?
-- Population: 
-- Tourism data: https://www.unwto.org/tourism-data/international-tourism-and-covid-19
-- International tourism: https://www.unwto.org/tourism-statistics/key-tourism-statistics
-
-\newpage
 
 
 # References
@@ -452,6 +462,81 @@ ggplot(subset(gdpdata2,!is.na(IncomeGroup)&IncomeGroup!='')) +
 <div id="refs"></div>
 
 \newpage
+
+# Pathogen profiles
+
+```{r tabpp,tab.cap='Pathogen profiles.',echo=F,warning=F,message=F}
+
+
+pp <- data.frame(SARS=c(c(0.0578, 0.0578, 0.0578, 0.0578,	
+           0.0816, 0.0816, 0.0816, 0.0816,	
+           0.3026, 0.3026 ,0.3026, 0.3026,	
+           0.8670, 0.8670, 0.8670, 0.8670, 0.6018)*100,
+0.867*c(0.017, 0.017, 0.017, 0.017,
+                  0.024, 0.024, 0.024, 0.024,
+                  0.089, 0.089, 0.089, 0.089, 
+                  0.255, 0.255, 0.255, 0.255, 0.177)*100,
+c(0.867, 4.6, 2.1, 4.0, 3.75, 26.5-3.75,23.7-3.75,365,0.58,1.7500)),
+
+
+Flu2009=c(0.669*c(0.00697, 0.00274, 0.00274, 0.00274,
+                  0.00274, 0.00561, 0.00561, 0.00561,
+                  0.00561, 0.00561, 0.01060, 0.01060,
+                  0.01060, 0.01546, 0.01546, 0.01546, 0.01546)*100,
+0.669*c(0.000276, 0.00011, 0.00011, 0.00012,
+                  0.00012, 0.00030, 0.00030, 0.00030,
+                  0.00030, 0.00065, 0.00065, 0.00065,
+                  0.00065, 0.00980, 0.00980, 0.00980, 0.00980)*100,
+c(0.669, 1.1,2.5, 2.5,2.5, 5.0,5.0,365,0.58, 1.5800)),
+
+Flu1957=c(0.669*13.5*c(0.0001, 0.0001, 0.0001, 0.0001,
+                       0.0001, 0.0001, 0.0001, 0.0001,
+                       0.0001, 0.0025, 0.0025, 0.0025,
+                       0.0025, 0.0200, 0.0200, 0.0200, 0.0200)*100,   
+0.669*c(0.0001, 0.0001, 0.0001, 0.0001,
+                  0.0001, 0.0001, 0.0001, 0.0001,
+                  0.0001, 0.0025, 0.0025, 0.0025,
+                  0.0025, 0.0200, 0.0200, 0.0200, 0.0200)*100,
+c(0.669,1.1, 2.5, 2.5, 2.5, 5.0, 5.0, 365, 0.58,1.8000)),
+Flu1918=c(0.669*8*c(0.02284, 0.00398, 0.00478, 0.00983,
+                    0.01700, 0.02922, 0.02470, 0.02205,
+                    0.01647, 0.01195, 0.01647, 0.01169,
+                    0.03081, 0.04144, 0.04941, 0.04941, 0.04941)*100,
+0.669*c(0.02284, 0.00398, 0.00478, 0.00983,0.01700, 0.02922, 0.02470, 0.02205,0.01647, 0.01195, 0.01647, 0.01169,0.03081, 0.04144, 0.04941, 0.04941, 0.04941)*100,
+c(0.669, 1.1,2.5,2.5,2.5,5.0,5.0,365,0.58,2.5000)),
+CovidWT = c(c(0.000016, 0.000016, 0.000408, 0.000408,0.010400, 0.010400, 0.034300, 0.034300,0.042500, 0.042500, 0.081600, 0.081600, 0.118000, 0.118000, 0.166000, 0.166000, 0.184000)*100,
+c(0.000016, 0.000016, 0.000070, 0.000070,0.000309, 0.000309, 0.000844, 0.000844,0.001610, 0.001610, 0.005950, 0.005950,0.019300, 0.019300, 0.042800, 0.042800, 0.078000)*100,
+c(0.595, 4.6,2.1,4.0,4.0,12.0,12.0,365, 0.58,2.8700)),
+CovidOM = c(
+1.85*c(0.000016, 0.000016, 0.000408, 0.000408,0.010400, 0.010400, 0.034300, 0.034300,0.042500, 0.042500, 0.081600, 0.081600,0.118000, 0.118000, 0.166000, 0.166000, 0.184000)*
+c(1.10, 1.10, 0.78, 0.78,0.43, 0.43, 0.31, 0.31,0.20, 0.20, 0.14, 0.14,0.14, 0.14, 0.20, 0.20, 0.33)*100,
+1.85*c(0.000016, 0.000016, 0.000070, 0.000070,0.000309, 0.000309, 0.000844, 0.000844,0.001610, 0.001610, 0.005950, 0.005950,0.019300, 0.019300, 0.042800, 0.042800, 0.078000)*
+  c(1.10, 1.10, 0.78, 0.78,0.43, 0.43, 0.31, 0.31,0.20, 0.20, 0.14, 0.14,0.14, 0.14, 0.20, 0.20, 0.33)*100,
+c(0.595,4.0,2.1,4.0,4.0,5.5,5.5,365,0.58,5.9436)),
+CovidDE = c(
+ 1.85*c(0.000016, 0.000016, 0.000408, 0.000408,0.010400, 0.010400, 0.034300, 0.034300,0.042500, 0.042500, 0.081600, 0.081600,0.118000, 0.118000, 0.166000, 0.166000, 0.184000)*100,
+ 1.85*c(0.000016, 0.000016, 0.000070, 0.000070,0.000309, 0.000309, 0.000844, 0.000844,0.001610, 0.001610, 0.005950, 0.005950,0.019300, 0.019300, 0.042800, 0.042800, 0.078000)*100,
+c(0.595,4.0,2.1,4.0,4.0,7.6,7.6,365,0.58,5.0800)))
+
+start_ages <- seq(0,5*16,by=5)
+end_ages <- c(start_ages[-1] - 1,'+')
+agegroups <- paste(start_ages,end_ages,sep='-')
+rownames(pp) <- c(paste0('IHR, ages ',agegroups,', %'),
+  paste0('IFR, ages ',agegroups,', %'),
+  'Probability asymptomatic',
+  'Latent period','Time to recovery (asymptomatic)','Time to recovery (symptomatic)','Time to hospitalisation','Time to recovery (hospital)','Time to death','Immunity waning','Reduced infectivity asymptomatic','R0')
+
+
+pp <- pp %>% dplyr::mutate_if(is.numeric, funs(as.character(signif(., 2)))) 
+
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(pp,caption='Pathogen profiles. \\label{tab:tabres}')
+}else{
+    x <- knitr::kable(pp, "html",caption='Pathogen profiles. \\label{tab:tabres}')
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+}
+
+```
 
 # Methodological developments specific to this application
 
