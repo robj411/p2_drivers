@@ -140,7 +140,8 @@ FAAmax = 1 - frac_tourism_international + frac_tourism_international*remaining_i
 data.frac_tourism_international = frac_tourism_international;
 
 data.unmit = ones(size(data.x_elim));
-data.unmit(FAAind) = FAAmax;
+%%!! set min to one for now until we can allow for increased tourism
+data.unmit(FAAind) = min(FAAmax,1);
 data.x_elim(FAAind) = min(FAAmax,data.x_elim(FAAind));
 data.x_econ(FAAind,:) = min(FAAmax,data.x_econ(FAAind,:));
 data.x_schc(FAAind,:) = min(FAAmax,data.x_schc(FAAind,:));

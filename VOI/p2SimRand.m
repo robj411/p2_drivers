@@ -14,7 +14,7 @@ data      = rmfield(data,fields(~ismember(1:numel(fields),ikeep)));
 lx        = length(data.B);
 data.tvec = [-75 365];
 CD        = readtable('country_data.csv');
-nsamples  = 1000;
+nsamples  = 4096;
 
 synthetic_countries_base = cell(nsamples,length(income_levels));
 synthetic_countries = cell(nsamples,length(income_levels),length(diseases));
@@ -63,7 +63,7 @@ outputs   = zeros(nsamples,4);
 
 for il = 1:n_income
     income_level = income_levels{il};
-    for j = 5%1:n_diseases
+    for j = 1:n_diseases
         pathogen = diseases{j};
         for ms = 1:length(strategies)
             strategy = strategies{ms};
@@ -109,11 +109,12 @@ for il = 1:n_income
                     sec(3)      = sum(cost([6],:),'all');
                     sec(4)      = sum(cost([7:10],:),'all');
                 catch
-                    disp(strcat('VOI_',string(pathogen),'_',string(strategy),'_',string(income_level),'.csv'))
+                    disp(strcat('VOI_',string(pathogen),'_',string(strategy),'_',string(income_level),'.NA'))
                     disp(i);
             %             dis2
                 end
                 if any(sec<0)
+                    disp(strcat('VOI_',string(pathogen),'_',string(strategy),'_',string(income_level),'.0'))
                     disp(i)
                 end
 
