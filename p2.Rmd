@@ -323,9 +323,8 @@ voibrks <- c(-1,10,30,50,70,101)
 discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
                  nrow=nscen,ncol=nparam)
 xvals <- 1:nparam
-xvals[xvals>17] <- xvals[xvals>17] + .1
-xvals[xvals>6] <- xvals[xvals>6] + .1
-xvals[xvals>4] <- xvals[xvals>4] + .1
+shiftx <- which(colnames(voiall)=='Internet')
+xvals[xvals>shiftx] <- xvals[xvals>shiftx] + .1
 yvals <- 1:nscen
 yvals[yvals>12] <- yvals[yvals>12] + .1*(ceiling(yvals[yvals>12]/12)-1)
 df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))

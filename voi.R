@@ -1,7 +1,7 @@
 library(earth)
 library(ggplot2)
 library(infotheo)
-setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
+# setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
 setwd('C:/Users/rj411/OneDrive - Imperial College London/p2_drivers')
 
 ## voi #####################################
@@ -79,8 +79,13 @@ evppifit <- function (outputs, inputs, pars = NULL, method = NULL, nsim = NULL,
 
 jd <- 5
 
+library(doParallel)
+cl <- makeCluster(4)
+registerDoParallel(cl)
+registerDoParallel(cores=4)
 
-for (jd in 1:length(diseases)){
+
+foreach (jd = 4:length(diseases)) %dopar%{
 ilistvoi <- list()
 ilistmi <- list()
 multisource <- list(c('Agriculture','Food_sector'),
@@ -119,15 +124,15 @@ for (il in 1:length(income_levels)){
         # model outcome as a function of input(s)
         sourcesj <- sourcemat[,j]
         max_degree <- ifelse(is.vector(sourcesj),1,ncol(sourcesj))
-        model <- earth(y ~ sourcesj, degree=min(4,max_degree))
+        model <- earth::earth(y ~ sourcesj, degree=min(4,max_degree))
         # compute evppi as percentage
         voi[j] <- (vary - mean((y - model$fitted) ^ 2)) / vary * 100
-        mi[j] <- mutinformation(discretize(sourcesj),discretize(y))
+        mi[j] <- infotheo::mutinformation(infotheo::discretize(sourcesj),infotheo::discretize(y))
       }
       for(j in 1:length(sourcelist)){
         sourcesj <- sourcelist[[j]]
         fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj))
-        mi[j+ncol(sourcemat)] <- mutinformation(discretize(fittedvalues),discretize(y))
+        mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
         # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
         voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
       }
@@ -154,13 +159,6 @@ roworder <- unlist(lapply(colnames(outcomes),function(x)which(grepl(paste0(x,':'
 voiall <- voiall[roworder,]
 miall <- do.call(rbind,ilistmi)
 miall <- miall[roworder,]
-
-first_four <- which(colnames(voiall)=='Agriculture')
-last_group <- which(colnames(voiall)=='Tourism')
-colorder <- c(first_four:last_group,c(1:ncol(voiall))[-c(first_four:last_group)])
-voiall <- voiall[,colorder]
-miall <- miall[,colorder]
-
 
 saveRDS(voiall,paste0('results/voi_',inp2,'.Rds'))
 saveRDS(miall,paste0('results/mi_',inp2,'.Rds'))
