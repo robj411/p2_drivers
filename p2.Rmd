@@ -250,12 +250,12 @@ vioplot$variable <- factor(vioplot$variable,
 ```
 
 
-```{r prealpha,fig.cap='Model results for pre-alpha variants of SARS-CoV-2.',echo=F,warning=F,message=F,fig.width=8}
+```{r prealpha,fig.cap='Model results for pre-alpha variants of SARS-CoV-2.',echo=F,warning=F,message=F,fig.width=6}
 ggplot(subset(vioplot,virus=='SARS-CoV-2 pre-alpha'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
+    theme_bw(base_size = 13)  +
     xlab("") +
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
@@ -875,72 +875,72 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ```
 
-```{r Influenza2009,fig.cap='Model results for Influenza 2009.',echo=F,warning=F,message=F,fig.width=8}
+```{r Influenza2009,fig.cap='Model results for Influenza 2009.',echo=F,warning=F,message=F,fig.width=6}
 ggplot(subset(vioplot,virus=='Influenza 2009'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
+    theme_bw(base_size = 13)  +
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r Influenza1957,fig.cap='Model results for Influenza 1957.',echo=F,warning=F,message=F,fig.width=8}
+```{r Influenza1957,fig.cap='Model results for Influenza 1957.',echo=F,warning=F,message=F,fig.width=6}
 ggplot(subset(vioplot,virus=='Influenza 1957'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
+    theme_bw(base_size = 13)  +
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r Influenza1918,fig.cap='Model results for Influenza 1918.',echo=F,warning=F,message=F,fig.width=8}
+```{r Influenza1918,fig.cap='Model results for Influenza 1918.',echo=F,warning=F,message=F,fig.width=6}
 ggplot(subset(vioplot,virus=='Influenza 1918'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
+    theme_bw(base_size = 13)  +
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r omicron,fig.cap='Model results for SARS-CoV-2 omicron.',echo=F,warning=F,message=F,fig.width=8}
+```{r omicron,fig.cap='Model results for SARS-CoV-2 omicron.',echo=F,warning=F,message=F,fig.width=6}
 ggplot(subset(vioplot,virus=='SARS-CoV-2 omicron'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
+    theme_bw(base_size = 13)  +
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r delta,fig.cap='Model results for SARS-CoV-2 delta.',echo=F,warning=F,message=F,fig.width=8}
+```{r delta,fig.cap='Model results for SARS-CoV-2 delta.',echo=F,warning=F,message=F,fig.width=6}
 ggplot(subset(vioplot,virus=='SARS-CoV-2 delta'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
+    theme_bw(base_size = 13)  +
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
 ```
 
-```{r sars,fig.cap='Model results for SARS-CoV-1.',echo=F,warning=F,message=F,fig.width=8}
+```{r sars,fig.cap='Model results for SARS-CoV-1.',echo=F,warning=F,message=F,fig.width=6}
 ggplot(subset(vioplot,virus=='SARS-CoV-1'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
+    theme_bw(base_size = 13)  +
     xlab("") +
     ylab("Percent") +
   scale_x_discrete(labels=c('','',''))+ 
