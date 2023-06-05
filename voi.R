@@ -108,17 +108,18 @@ for (il in 1:length(income_levels)){
     
     firstreultcol <- which(colnames(results)=='Cost')
     
-    sourcemat <- results[,1:(firstreultcol-1)]
-    sourcelist <- list()
-    for(src in 1:length(multisource)) sourcelist[[src]] <- sourcemat[,colnames(sourcemat)%in%multisource[[src]]]
-    outcomes <- results[,firstreultcol:(ncol(results))]
-    for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$GDP
-    
     colnames(results) <- gsub('_',' ',colnames(results))
     colnames(results)[colnames(results)=='School age'] <- 'School-age'
     colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
     colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
 
+    sourcemat <- results[,1:(firstreultcol-1)]
+    sourcelist <- list()
+    for(src in 1:length(multisource)) sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
+    
+    outcomes <- results[,firstreultcol:(ncol(results))]
+    for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$GDP
+    
     voilist <- list()
     milist <- list()
     
