@@ -85,16 +85,18 @@ registerDoParallel(cl)
 registerDoParallel(cores=4)
 
 
-foreach (jd = 4:length(diseases)) %dopar%{
+foreach (jd = 1:length(diseases)) %dopar%{
 ilistvoi <- list()
 ilistmi <- list()
 multisource <- list(c('Agriculture','Food_sector'),
                     c('International_tourism','Food_sector'),
                     c('School_age','Elders'),
+                    c('Test_rate','Test_start'),
                     c('Social_distancing_rate','Social_distancing_min'),
                     c('R0','Hospital_capacity','Elders'),
-                    c('R0','Social_distancing_rate','Test_rate','Test_start','Social_distancing_min'))
-multisource_names <- c('Sectors','Tourism','Age_groups','Social_distancing','Hosp_elders_R0','Test_sd_R0')
+                    c('R0','Social_distancing_rate','Test_rate','Test_start','Social_distancing_min'),
+                    c('R0','beta'))
+multisource_names <- c('Sectors','Tourism','Age groups','Testing','Social distancing','Hosp, elders, R0','Test, SD, R0','R0, beta')
 for (il in 1:length(income_levels)){
   klistvoi <- list()
   klistmi <- list()
@@ -103,7 +105,7 @@ for (il in 1:length(income_levels)){
     inp3 <- strategies[ks];
     income_level <- income_levels[il];
     results <- read.csv(paste0('results/VOI_',inp2,'_',inp3,'_',income_level,'.csv'),header=T);
-
+    
     firstreultcol <- which(colnames(results)=='Cost')
     
     sourcemat <- results[,1:(firstreultcol-1)]
@@ -111,6 +113,11 @@ for (il in 1:length(income_levels)){
     for(src in 1:length(multisource)) sourcelist[[src]] <- sourcemat[,colnames(sourcemat)%in%multisource[[src]]]
     outcomes <- results[,firstreultcol:(ncol(results))]
     for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$GDP
+    
+    colnames(results) <- gsub('_',' ',colnames(results))
+    colnames(results)[colnames(results)=='School age'] <- 'School-age'
+    colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
+    colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
 
     voilist <- list()
     milist <- list()
