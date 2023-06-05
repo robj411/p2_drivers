@@ -81,12 +81,12 @@ for il = 1:n_income
                     ldata.imand = [2];
                     ldata.inext = [2,2,3,2,5];
                 elseif strcmp(strategy,'Economic Closures')
-                    xoptim      = [ones(2*lx,1);ldata.x_econ(:,2);ldata.x_econ(:,1);ones(lx,1)];
+                    xoptim      = [ones(1*lx,1);ldata.unmit;ldata.x_econ(:,2);ldata.x_econ(:,1);ones(lx,1)];
                     ldata.hw    = [zeros(1,lx);ldata.wfh(1,:);ldata.wfh(2,:);ldata.wfh(1,:);zeros(1,lx)];
                     ldata.imand = [3];
                     ldata.inext = [2,3,3,4,5];
                 elseif strcmp(strategy,'School Closures')
-                    xoptim      = [ones(2*lx,1);ldata.x_schc(:,2);ldata.x_schc(:,1);ones(lx,1)];
+                    xoptim      = [ones(1*lx,1);ldata.unmit;ldata.x_schc(:,2);ldata.x_schc(:,1);ones(lx,1)];
                     ldata.hw    = [zeros(1,lx);ldata.wfh(1,:);ldata.wfh(2,:);ldata.wfh(1,:);zeros(1,lx)];
                     ldata.imand = [3];
                     ldata.inext = [2,3,3,4,5];
