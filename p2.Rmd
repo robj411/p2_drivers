@@ -250,16 +250,17 @@ vioplot$variable <- factor(vioplot$variable,
 ```
 
 
-```{r prealpha,fig.cap='Model results for pre-alpha variants of SARS-CoV-2.',echo=F,warning=F,message=F,fig.width=6}
+```{r prealpha,fig.cap='Model results for pre-alpha variants of SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 ggplot(subset(vioplot,virus=='SARS-CoV-2 pre-alpha'),aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 13)  +
+    theme_bw(base_size = 18)  +
     xlab("") +
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
+  ggsave(p,filename = 'prealpha.pdf',width=12,height=10)
 
 ```
 
@@ -337,7 +338,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -372,7 +373,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -880,11 +881,12 @@ ggplot(subset(vioplot,virus=='Influenza 2009'),aes(fill=igroup, y=value, x=igrou
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 13)  +
+    theme_bw(base_size = 18)  +
     xlab("") +
-    ylab("Percent") +
+    ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
+  ggsave(p,filename = 'Influenza2009.pdf',width=12,height=10)
 ```
 
 ```{r Influenza1957,fig.cap='Model results for Influenza 1957.',echo=F,warning=F,message=F,fig.width=6}
@@ -892,11 +894,12 @@ ggplot(subset(vioplot,virus=='Influenza 1957'),aes(fill=igroup, y=value, x=igrou
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 13)  +
+    theme_bw(base_size = 18)  +
     xlab("") +
-    ylab("Percent") +
+    ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
+  ggsave(p,filename = 'Influenza1957.pdf',width=12,height=10)
 ```
 
 ```{r Influenza1918,fig.cap='Model results for Influenza 1918.',echo=F,warning=F,message=F,fig.width=6}
@@ -904,11 +907,12 @@ ggplot(subset(vioplot,virus=='Influenza 1918'),aes(fill=igroup, y=value, x=igrou
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 13)  +
+    theme_bw(base_size = 18)  +
     xlab("") +
-    ylab("Percent") +
+    ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
+  ggsave(p,filename = 'Influenza1918.pdf',width=12,height=10)
 ```
 
 ```{r omicron,fig.cap='Model results for SARS-CoV-2 omicron.',echo=F,warning=F,message=F,fig.width=6}
@@ -916,11 +920,12 @@ ggplot(subset(vioplot,virus=='SARS-CoV-2 omicron'),aes(fill=igroup, y=value, x=i
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 13)  +
+    theme_bw(base_size = 18)  +
     xlab("") +
-    ylab("Percent") +
+    ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
+  ggsave(p,filename = 'omicron.pdf',width=12,height=10)
 ```
 
 ```{r delta,fig.cap='Model results for SARS-CoV-2 delta.',echo=F,warning=F,message=F,fig.width=6}
@@ -928,11 +933,12 @@ ggplot(subset(vioplot,virus=='SARS-CoV-2 delta'),aes(fill=igroup, y=value, x=igr
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 13)  +
+    theme_bw(base_size = 18)  +
     xlab("") +
-    ylab("Percent") +
+    ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
+  ggsave(p,filename = 'delta.pdf',width=12,height=10)
 ```
 
 ```{r sars,fig.cap='Model results for SARS-CoV-1.',echo=F,warning=F,message=F,fig.width=6}
@@ -940,11 +946,12 @@ ggplot(subset(vioplot,virus=='SARS-CoV-1'),aes(fill=igroup, y=value, x=igroup)) 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 13)  +
+    theme_bw(base_size = 18)  +
     xlab("") +
-    ylab("Percent") +
+    ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom',legend.box.spacing=unit(-1,'cm'))
+  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
+  ggsave(p,filename = 'sars.pdf',width=12,height=10)
 ```
 
 
@@ -968,7 +975,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -997,7 +1004,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1025,7 +1032,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1054,7 +1061,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1082,7 +1089,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1111,7 +1118,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1139,7 +1146,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1168,7 +1175,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1196,7 +1203,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1225,7 +1232,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1253,7 +1260,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
@@ -1282,7 +1289,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
   theme(
     plot.title = element_text(hjust = 1),        
