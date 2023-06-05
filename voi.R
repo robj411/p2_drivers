@@ -187,7 +187,7 @@ foreach (jd = 1:length(diseases)) %do%{
       firstreultcol <- which(colnames(results)=='Cost')
       outcomes <- results[,firstreultcol:(ncol(results))]
 
-      meltedres <- melt(outcomes[,2:4]/outcomes[,1]*100,value.name = 'variable')
+      meltedres <- melt(outcomes[,2:4]/outcomes[,1]*100,value.name = 'value')
       meltedres$Income_group <- income_level
       meltedres$Strategy <- inp3
       voioutcomelist[[ks]] <- meltedres
@@ -205,7 +205,7 @@ foreach (jd = 1:length(diseases)) %do%{
     theme_bw(base_size = 18) +
     labs(x='Contribution to total cost, %',y='') +
     theme(legend.position = 'bottom') -> p
-  ggsave(p,filename = paste0('costshare_',inp2,'.png'),width=10,height=10)
+  ggsave(p,filename = paste0('costshare_',inp2,'.pdf'),width=10,height=10)
 }
     
     
