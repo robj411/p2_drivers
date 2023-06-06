@@ -175,7 +175,8 @@ foreach (jd = 1:length(diseases)) %dopar%{
   saveRDS(miall,paste0('results/mi_',inp2,'.Rds'))
 }
 
-foreach (jd = 1:length(diseases)) %do%{
+library(scales)
+for (jd in 1:length(diseases)) {
   ivoioutcomelist <- list()
   for (il in 1:length(income_levels)){
     voioutcomelist <- list()
@@ -188,25 +189,59 @@ foreach (jd = 1:length(diseases)) %do%{
       firstreultcol <- which(colnames(results)=='Cost')
       outcomes <- results[,firstreultcol:(ncol(results))]
 
-      meltedres <- melt(outcomes[,2:4]/outcomes[,1]*100,value.name = 'value')
-      meltedres$Income_group <- income_level
-      meltedres$Strategy <- inp3
-      voioutcomelist[[ks]] <- meltedres
+      # meltedres <- melt(outcomes[,2:4]/outcomes[,1]*100,value.name = 'value')
+      for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/results$GDP*100
+      for(i in 2:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/outcomes[,1]
+      
+      
+      setDT(outcomes)
+      outcomes[,log10cost:=log10(Cost)]
+      x <- hist(outcomes$log10cost,plot = F, breaks=seq(-10,10,by=.15))
+      breaks <- x$breaks
+      outcomes[,costcat:=cut(log10cost,breaks,labels=1:(length(breaks)-1))]
+      outcomes[,density:=x$density[costcat]/max(x$density),by=costcat]
+      barplt <- outcomes[,.(School=mean(School)*mean(density),
+                            GDP_loss=mean(GDP_loss)*mean(density),
+                            Deaths=mean(Deaths)*mean(density)),by=costcat]
+      barplt[,midpoint:=x$mids[costcat],by=costcat]
+      
+      
+      meltbarplt <- reshape2::melt((barplt[,2:5]),value.name = 'value',measure.vars=c('School','Deaths','GDP_loss'))
+
+      # meltedres <- reshape2::melt((outcomes[,2:4]),value.name = 'value',measure.vars=c('School','Deaths','GDP_loss'))
+      meltbarplt$Income_group <- income_level
+      meltbarplt$Strategy <- inp3
+      voioutcomelist[[ks]] <- meltbarplt
     }
     ivoioutcomelist[[il]] <- do.call(rbind,voioutcomelist)
   }
   voioutcomes <- do.call(rbind,ivoioutcomelist)
   voioutcomes$Income_group <- factor(voioutcomes$Income_group,levels=c('LLMIC','MIC','HIC'))
   voioutcomes$Strategy <- factor(voioutcomes$Strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
-  voioutcomes$variable <- factor(voioutcomes$variable,levels=c('Deaths','School','GDP_loss'),labels=c('YLLs','Education','GDP'))
-  ggplot(voioutcomes) + geom_histogram(aes(x=value,colour=variable,fill=variable),alpha=.5,position='identity') +
+  voioutcomes$variable <- factor(voioutcomes$variable,levels=c('School','Deaths','GDP_loss'),labels=c('Education','YLLs','GDP'))
+  
+  ggplot(voioutcomes) + 
+    annotate(geom = "rect",xmin = 10,xmax = 50,ymin = -Inf,ymax = +Inf,alpha = 0.2) +
+    annotate(geom = "rect",xmin = 50,xmax = 100,ymin = -Inf,ymax = +Inf,alpha = 0.4) +
+    annotate(geom = "rect",xmin = 100,xmax = 500,ymin = -Inf,ymax = +Inf,alpha = 0.6) +
+    annotate(geom = "rect",xmin = 500,xmax = 1000,ymin = -Inf,ymax = +Inf,alpha = 0.8) +
+    # geom_vline(aes(xintercept=100),colour='grey',size=1) +
+    # geom_vline(aes(xintercept=10),colour='grey',size=0.5) +
+    # geom_vline(aes(xintercept=1000),colour='grey',size=1.5) +
+    geom_bar(aes(x=10^midpoint,y=value,fill=variable),stat="identity") +
+    # geom_histogram(aes(x=value,colour=variable,fill=variable,y=..density..),alpha=.7)+#,position='identity') +
     facet_grid(Strategy~Income_group,scales='free_y') +
     scale_fill_viridis(discrete=T, name="",option='inferno') +
     scale_colour_viridis(discrete=T, name="",option='inferno') +
+    scale_x_continuous(trans = log10_trans(),
+                       breaks = trans_breaks("log10", function(x) 10^x),
+                       labels = trans_format("log10", math_format(10^.x)),
+                       limits=c(10e-1,10e2),expand = c(0,0)) +
+    scale_y_continuous(expand = c(0,0)) +
     theme_bw(base_size = 18) +
-    labs(x='Contribution to total cost, %',y='') +
-    theme(legend.position = 'bottom') -> p
-  ggsave(p,filename = paste0('costshare_',inp2,'.pdf'),width=10,height=10)
+    labs(x='Total cost, % of GDP',y='Relative frequency') +
+    theme(legend.position = 'bottom',axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) -> p
+  ggsave(p,filename = paste0('logcostshare_',inp2,'.pdf'),width=10,height=10)
 }
     
     
