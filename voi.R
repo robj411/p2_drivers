@@ -221,10 +221,10 @@ for (jd in 1:length(diseases)) {
   voioutcomes$variable <- factor(voioutcomes$variable,levels=c('School','Deaths','GDP_loss'),labels=c('Education','YLLs','GDP'))
   
   ggplot(voioutcomes) + 
-    annotate(geom = "rect",xmin = 10,xmax = 50,ymin = -Inf,ymax = +Inf,alpha = 0.2) +
-    annotate(geom = "rect",xmin = 50,xmax = 100,ymin = -Inf,ymax = +Inf,alpha = 0.4) +
-    annotate(geom = "rect",xmin = 100,xmax = 500,ymin = -Inf,ymax = +Inf,alpha = 0.6) +
-    annotate(geom = "rect",xmin = 500,xmax = 1000,ymin = -Inf,ymax = +Inf,alpha = 0.8) +
+    annotate(geom = "rect",xmin = 10,xmax = 10^1.5,ymin = -Inf,ymax = +Inf,alpha = 0.2) +
+    annotate(geom = "rect",xmin = 10^1.5,xmax = 100,ymin = -Inf,ymax = +Inf,alpha = 0.4) +
+    annotate(geom = "rect",xmin = 100,xmax = 10^2.5,ymin = -Inf,ymax = +Inf,alpha = 0.6) +
+    annotate(geom = "rect",xmin = 10^2.5,xmax = 1000,ymin = -Inf,ymax = +Inf,alpha = 0.8) +
     # geom_vline(aes(xintercept=100),colour='grey',size=1) +
     # geom_vline(aes(xintercept=10),colour='grey',size=0.5) +
     # geom_vline(aes(xintercept=1000),colour='grey',size=1.5) +
