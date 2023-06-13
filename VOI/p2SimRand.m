@@ -33,7 +33,7 @@ parfor i = 1:nsamples
     end
 end
 
-parfor i = 1:nsamples
+for i = 1:nsamples
     for j = 1:n_diseases
         dis = get_dis_params(diseases{j}); 
         for il = 1:n_income
@@ -51,7 +51,7 @@ end
 
 
 
-columnnames = {'School_age','Elders','Population_size','GDP','workp',...
+columnnames = {'School_age','Elders','Population_size','GDP','Labour_share','workp','School_contacts',...
     'Hospital_capacity','Test_rate','Test_start','Response_time',...
     'Social_distancing_min','Social_distancing_rate','R0','beta',...
     'Agriculture','Food_sector','International_tourism','Internet',...
@@ -111,7 +111,6 @@ for il = 1:n_income
                 catch
                     disp(strcat('VOI_',string(pathogen),'_',string(strategy),'_',string(income_level),'.NA'))
                     disp(i);
-            %             dis2
                 end
                 if any(sec<0)
                     disp(strcat('VOI_',string(pathogen),'_',string(strategy),'_',string(income_level),'.0'))
@@ -128,7 +127,7 @@ for il = 1:n_income
                 gdp = sum(ldata.obj);
                 popsize = sum(ldata.Npop);
                 inputs(i,:)  = [ldata.NNs(47)/popsize ldata.NNs(49)/popsize popsize...
-                    ldata.gdp ldata.workp ldata.Hmax ldata.trate ldata.t_tit ldata.Tres ...
+                    ldata.gdp ldata.labsh ldata.workp ldata.schoolA2 ldata.Hmax ldata.trate ldata.t_tit ldata.Tres ...
                     ldata.sdl ldata.sdb dis2.R0sample dis2.beta ...
                     ldata.obj([1 32])'/gdp ldata.frac_tourism_international ldata.remote_quantile];
             %         sectorprops(i,:) = ldata.NNs([1:45,48])' ./ sum(ldata.NNs([1:45,48]));
