@@ -7,23 +7,23 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
-  bookdown::pdf_document2: 
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
-    keep_tex: true
   bookdown::html_document2: 
     toc: true
     keep_md: true
-  md_document:
-    variant: markdown_github
-  bookdown::word_document2: default
   bookdown::github_document2:
     toc: true
     appendix: true
     fig_caption: yes
     number_sections: yes
     pandoc_args: --webtex
+  md_document:
+    variant: markdown_github
+  bookdown::word_document2: default
+  bookdown::pdf_document2: 
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
+    keep_tex: true
 always_allow_html: yes 
 bibliography: 
   - "DAEDALUS.bib"
@@ -317,6 +317,8 @@ These relationships are identified in the value-of-information analyses: the las
 ```{r voi,fig.cap='\\footnotesize Value of information for pre-Alpha variants of SARS-CoV-2. First four columns: individual parameters of interest (agricultural sector as % of GDP, Food and accommodation services sector as % of GDP, international tourism as % of toursim, internet coverage). Next two columns: pairs of parameters of interest (both sectors, both tourism-related parameters). Next 11 columns: other random variables (fraction of population school age, fraction of population age 65 and over, population size, GDP, hospital capacity, testing rate, testing start time, government response time, social distancing minimum, social distancing responsiveness to case numbers, R$_0$). Final four columns: combinations of random variables (both age fractions, both social distancing parameters, hospital capacity + elders population + R$_0$, testing parameters + social distancing parameters + R$_0$).',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('results/voi_Covid Wildtype.Rds')
+rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
+rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
 nscen <- nrow(voiall)
 nparam <- ncol(voiall)
@@ -354,7 +356,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 
 \enlargethispage{4\baselineskip}
 
-```{r mi,fig.cap='Mutual information (MI) for pre-Alpha variants of SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
+```{r mi,fig.cap='Mutual information (MI) for pre-Alpha variants of SARS-CoV-2.',eval=F,echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('results/mi_Covid Wildtype.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
@@ -1026,7 +1028,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```
 
 
-```{r miInfluenza2009,fig.cap='Mutual information (MI) for Influenza 2009.',echo=F,warning=F,message=F,fig.height=10}
+```{r miInfluenza2009,eval=F,fig.cap='Mutual information (MI) for Influenza 2009.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('results/mi_Influenza 2009.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
@@ -1087,7 +1089,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```
 
 
-```{r miInfluenza1957,fig.cap='Mutual information (MI) for Influenza 1957.',echo=F,warning=F,message=F,fig.height=10}
+```{r miInfluenza1957,eval=F,fig.cap='Mutual information (MI) for Influenza 1957.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('results/mi_Influenza 1957.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
@@ -1148,7 +1150,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```
 
 
-```{r miInfluenza1918,fig.cap='Mutual information (MI) for Influenza 1918.',echo=F,warning=F,message=F,fig.height=10}
+```{r miInfluenza1918,eval=F,fig.cap='Mutual information (MI) for Influenza 1918.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('results/mi_Influenza 1918.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
@@ -1209,7 +1211,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```
 
 
-```{r miomicron,fig.cap='Mutual information (MI) for Omicron SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
+```{r miomicron,eval=F,fig.cap='Mutual information (MI) for Omicron SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('results/mi_Covid Omicron.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
@@ -1270,7 +1272,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```
 
 
-```{r midelta,fig.cap='Mutual information (MI) for Delta SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
+```{r midelta,eval=F,fig.cap='Mutual information (MI) for Delta SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('results/mi_Covid Delta.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
@@ -1331,7 +1333,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```
 
 
-```{r misars,fig.cap='Mutual information (MI) for SARS-CoV-1.',echo=F,warning=F,message=F,fig.height=10}
+```{r misars,eval=F,fig.cap='Mutual information (MI) for SARS-CoV-1.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('results/mi_SARS.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
@@ -1482,11 +1484,61 @@ ggplot(subset(vlives,!is.na(IncomeGroup)&IncomeGroup!='')) +
 
 ```
 
+\newpage
 
 
+# Pathogen profiles
+
+## Parameters from Pandemic Potential, plus seven P2 profiles
+
+![Profiles from the game Pandemic Potential](pandemicprofiles.png)
+
+![Profiles made using distribution from game](pathogenprofilessynth.png)
 
 
+![Intensity and frequency of extreme novel epidemics, Marani et al., PNAS, 2021](marani2021.png)
+
+\newpage
+
+## Infection-hospitalisation rate (IHR)
+
+![IHR by age for seven P2 pathogen profiles](trainingihr.png)
+
+![Posterior samples for seven P2 pathogen IHR profiles](pathogenplot.png)
+
+![Posterior distributions for IHR smooths](pairsplot.png)
+
+![New IHR samples for synthetic pathogens](samplelogplot.png)
+
+\newpage
 
 
+## Hospital-fatality rate (HFR)
 
+![HFR by age for seven P2 pathogen profiles](traininghfr.png)
+
+![Posterior samples for seven P2 pathogen HFR profiles](pathogenplothfr.png)
+
+![Posterior distributions for HFR smooths](pairsplothfr.png)
+
+![New HFR samples for synthetic pathogens](samplelogplothfr.png)
+
+\newpage
+
+# Population health
+
+From the Mexico BMI work, we can model disease transition rates as depending on population mean BMI. There are data available for many countries (though some are very old).
+
+We could use a linear model with boundaries beyond which there is no further change. The range in population mean BMI in the Mexico scenarios (excluding the no-obesity scenario) was 26.9 to 28.9. Therefore we could extrapolate to 25.9 and 29.9, and assume fixed after that?
+
+Writing relative risk $RR_{a,t} \sim \mathcal{N}(m_{a,t}\cdot \text{BMI} + c_{a,t},\sigma_{a,t}^2)$ for age groups $a$ and transitions $t$:
+
+| Age group | Transition | $m$ | $c$ | $\sigma$ |
+|:---- |:---- |:---- |:---- |:---- |
+| 20-64 | Infection | 0.040 | -0.030 | 0.0016 |
+| 20-64 | Hospitalisation | 0.13 | -0.092 | 0.0054 |
+| 20-64 | Death | 0.133 | -0.096 | 0.018 |
+| 65 plus | Infection | 0.011 | -0.0070 | 0.0019 |
+| 65 plus | Hospitalisation | 0.063 | -0.048 | 0.0060 |
+| 65 plus | Death | 0.027 | -0.022 | 0.012 |
 
