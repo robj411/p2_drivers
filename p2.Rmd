@@ -7,9 +7,11 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
-  bookdown::html_document2: 
-    toc: true
-    keep_md: true
+  bookdown::pdf_document2: 
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
+    keep_tex: true
   bookdown::github_document2:
     toc: true
     appendix: true
@@ -19,11 +21,9 @@ output:
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
-  bookdown::pdf_document2: 
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
-    keep_tex: true
+  bookdown::html_document2: 
+    toc: true
+    keep_md: true
 always_allow_html: yes 
 bibliography: 
   - "DAEDALUS.bib"
@@ -260,7 +260,7 @@ ggplot(subset(vioplot,virus=='SARS-CoV-2 pre-Alpha'),aes(fill=igroup, y=value, x
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'prealpha.pdf',width=12,height=10)
+  ggsave(p,filename = 'figures/prealpha.pdf',width=12,height=10)
 
 ```
 
@@ -745,7 +745,7 @@ $$p_2u + p_3 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
   
 Here, $p_1$ controls the variance of the distribution and $p_2$ and $p_3$ the linear relationship between $u$ and $y$. Using an optimisation routine in R we find $p_1=5.93$, $p_2=3.66$ and $p_3=0.099$. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
 
- ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](sectortourism.png){ width=60% }
+ ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=60% }
 
 \newpage
 
@@ -766,7 +766,7 @@ The distribution of people among sectors of the workforce impacts the numbers of
 
 
 
- ![(\#fig:candidateinfectees) The number of candidate infectees is mapped to the basic reproduction number $R_0$ via matching quantiles from the simulated null distribution (left) to the parametric distribution (right). 10, 50 and 90% quantiles shown.](candidateinfectees.png){ width=80% }
+ ![(\#fig:candidateinfectees) The number of candidate infectees is mapped to the basic reproduction number $R_0$ via matching quantiles from the simulated null distribution (left) to the parametric distribution (right). 10, 50 and 90% quantiles shown.](figures/candidateinfectees.png){ width=80% }
 
 
 \newpage
@@ -858,7 +858,7 @@ We model these values with Beta distributions. For LLMICs, we have parameters `r
 ```{r hmax,fig.cap='Fraction of GVA that goes to labour (PWT, 2011).',echo=F,warning=F,message=F}
 
 
-hmaxi <- setDT(read.csv('VOI/country_data.csv'))
+hmaxi <- setDT(read.csv('data/country_data.csv'))
 ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) + 
   geom_histogram(aes(x=Hmax),colour='navyblue',fill='grey') +
   facet_wrap(~igroup) +
@@ -892,7 +892,7 @@ ggplot(reshape2::melt(meantab)) + geom_bar(aes(x=factor(strategy,levels=c('No Cl
     scale_fill_viridis(discrete=T, name="",option='inferno') +
   labs(x='',y='Cost, % of GDP',fill='Cost type') +
     theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1)) -> p
-ggsave(p,filename='expectedcosts.pdf',height=10)
+ggsave(p,filename='figures/expectedcosts.pdf',height=10)
 
 
 tabres <- setDT(allresults)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
@@ -923,7 +923,7 @@ ggplot(subset(vioplot,virus=='Influenza 2009'),aes(fill=igroup, y=value, x=igrou
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'Influenza2009.pdf',width=12,height=10)
+  ggsave(p,filename = 'figures/Influenza2009.pdf',width=12,height=10)
 ```
 
 ```{r Influenza1957,fig.cap='Model results for Influenza 1957.',echo=F,warning=F,message=F,fig.width=6}
@@ -936,7 +936,7 @@ ggplot(subset(vioplot,virus=='Influenza 1957'),aes(fill=igroup, y=value, x=igrou
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'Influenza1957.pdf',width=12,height=10)
+  ggsave(p,filename = 'figures/Influenza1957.pdf',width=12,height=10)
 ```
 
 ```{r Influenza1918,fig.cap='Model results for Influenza 1918.',echo=F,warning=F,message=F,fig.width=6}
@@ -949,7 +949,7 @@ ggplot(subset(vioplot,virus=='Influenza 1918'),aes(fill=igroup, y=value, x=igrou
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'Influenza1918.pdf',width=12,height=10)
+  ggsave(p,filename = 'figures/Influenza1918.pdf',width=12,height=10)
 ```
 
 ```{r Omicron,fig.cap='Model results for SARS-CoV-2 Omicron.',echo=F,warning=F,message=F,fig.width=6}
@@ -962,7 +962,7 @@ ggplot(subset(vioplot,virus=='SARS-CoV-2 Omicron'),aes(fill=igroup, y=value, x=i
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'omicron.pdf',width=12,height=10)
+  ggsave(p,filename = 'figures/omicron.pdf',width=12,height=10)
 ```
 
 ```{r Delta,fig.cap='Model results for SARS-CoV-2 Delta.',echo=F,warning=F,message=F,fig.width=6}
@@ -975,7 +975,7 @@ ggplot(subset(vioplot,virus=='SARS-CoV-2 Delta'),aes(fill=igroup, y=value, x=igr
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'delta.pdf',width=12,height=10)
+  ggsave(p,filename = 'figures/delta.pdf',width=12,height=10)
 ```
 
 ```{r sars,fig.cap='Model results for SARS-CoV-1.',echo=F,warning=F,message=F,fig.width=6}
@@ -988,7 +988,7 @@ ggplot(subset(vioplot,virus=='SARS-CoV-1'),aes(fill=igroup, y=value, x=igroup)) 
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'sars.pdf',width=12,height=10)
+  ggsave(p,filename = 'figures/sars.pdf',width=12,height=10)
 ```
 
 
@@ -1491,37 +1491,37 @@ ggplot(subset(vlives,!is.na(IncomeGroup)&IncomeGroup!='')) +
 
 ## Parameters from Pandemic Potential, plus seven P2 profiles
 
-![Profiles from the game Pandemic Potential](pandemicprofiles.png)
+![Profiles from the game Pandemic Potential](figures/pandemicprofiles.png)
 
-![Profiles made using distribution from game](pathogenprofilessynth.png)
+![Profiles made using distribution from game](figures/pathogenprofilessynth.png)
 
 
-![Intensity and frequency of extreme novel epidemics, Marani et al., PNAS, 2021](marani2021.png)
+![Intensity and frequency of extreme novel epidemics, Marani et al., PNAS, 2021](figures/marani2021.png)
 
 \newpage
 
 ## Infection-hospitalisation rate (IHR)
 
-![IHR by age for seven P2 pathogen profiles](trainingihr.png)
+![IHR by age for seven P2 pathogen profiles](figures/trainingihr.png)
 
-![Posterior samples for seven P2 pathogen IHR profiles](pathogenplot.png)
+![Posterior samples for seven P2 pathogen IHR profiles](figures/pathogenplot.png)
 
-![Posterior distributions for IHR smooths](pairsplot.png)
+![Posterior distributions for IHR smooths](figures/pairsplot.png)
 
-![New IHR samples for synthetic pathogens](samplelogplot.png)
+![New IHR samples for synthetic pathogens](figures/samplelogplot.png)
 
 \newpage
 
 
 ## Hospital-fatality rate (HFR)
 
-![HFR by age for seven P2 pathogen profiles](traininghfr.png)
+![HFR by age for seven P2 pathogen profiles](figures/traininghfr.png)
 
-![Posterior samples for seven P2 pathogen HFR profiles](pathogenplothfr.png)
+![Posterior samples for seven P2 pathogen HFR profiles](figures/pathogenplothfr.png)
 
-![Posterior distributions for HFR smooths](pairsplothfr.png)
+![Posterior distributions for HFR smooths](figures/pairsplothfr.png)
 
-![New HFR samples for synthetic pathogens](samplelogplothfr.png)
+![New HFR samples for synthetic pathogens](figures/samplelogplothfr.png)
 
 \newpage
 
