@@ -261,6 +261,7 @@ PV = (1-(1+discount_rate)^(-working_years))/discount_rate;
 
 students_affected = 1 - 0.86 * internet_coverage;
 mean_annual_income = labsh*gdp/workingagepop;
+data.labsh = labsh;
 
 educationloss_all_students = ...
     PV*mean_annual_income*rate_of_return_one_year*students_affected*sum(data.Npop(2:4));

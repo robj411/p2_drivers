@@ -88,7 +88,7 @@ registerDoParallel(cl)
 registerDoParallel(cores=4)
 
 
-foreach (jd = 1:length(diseases)) %dopar%{
+foreach (jd = 1:length(diseases)) %do%{
   ilistvoi <- list()
   ilistmi <- list()
   multisource <- list(c('Agriculture','Food_sector'),
@@ -108,6 +108,9 @@ foreach (jd = 1:length(diseases)) %dopar%{
       inp3 <- strategies[ks];
       income_level <- income_levels[il];
       results <- read.csv(paste0('results/VOI_',inp2,'_',inp3,'_',income_level,'.csv'),header=T);
+      # labsh <- read.csv(paste0('results/labsh_',inp2,'_',inp3,'_',income_level,'.csv'),header=T);
+      # colnames(labsh) <- c('Labour share of GVA','School contacts')
+      # results <- cbind(labsh,results)
       sourcelist <- list()
       for(src in 1:length(multisource)) sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
       
