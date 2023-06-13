@@ -1,4 +1,4 @@
-function CIa = p2getCandidateInfectees(data,dis)
+function [CIa, beta, R0] = p2getCandidateInfectees(data,dis)
 
 %% COUNTRY PARAMETERS:
 
@@ -50,8 +50,11 @@ V    = diag(vvec);
 V(ntot+1:2*ntot,1:ntot)   = diag(-dis.sig1.*onesn);
 V(2*ntot+1:3*ntot,1:ntot) = diag(-dis.sig2.*onesn);
 
-GD=F/V;
-d=eigs(GD,1);%largest in magnitude (+/-) 
-CIa=max(d); 
+GD = F/V;
+d = eigs(GD,1);%largest in magnitude (+/-) 
+CIa = max(d); 
+
+R0 = normrnd(dis.R0,dis.R0/10,1,1);
+beta = R0/CIa;
 
 end

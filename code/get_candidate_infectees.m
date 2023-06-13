@@ -1,13 +1,12 @@
 
-addpath('VOI');
 
-load('Argentina.mat','data');%loading Argentina, but only keeping country-independent parameters
+load('../country_mats/Argentina.mat','data');%loading Argentina, but only keeping country-independent parameters
 fields    = fieldnames(data);
 ikeep     = [6,7,8,13,14,16,17,18];
 data      = rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
 data.tvec = [-75 365*3+1];
-CD        = readtable('country_data.csv');
-nsamples  = 10000;
+CD        = readtable('../data/country_data.csv');
+nsamples  = 1000;
 
 inp2s = {'Influenza 2009','Influenza 1957','Influenza 1918','Covid Wildtype','Covid Omicron','Covid Delta','SARS'};
     
@@ -16,6 +15,8 @@ for j = 1:length(inp2s)
     dis = get_dis_params(inp2s{j});   
 
     CIs = [];
+    betas = [];
+    R0s = [];
 
     for i = 1:nsamples;
 
@@ -23,9 +24,12 @@ for j = 1:length(inp2s)
         ldata     = p2RandCountry(ldata,CD,'all');
 
         [ldata,~,~]    = p2Params(ldata,'Covid Wildtype',dis);%to define wnorm and Td_CWT
-        CI = p2getCandidateInfectees(ldata,dis);
+        [CI, beta, R0] = p2getCandidateInfectees(ldata,dis);
         CIs(i) = CI;
+        betas(i) = beta;
+        R0s(i) = R0;
     end
+    scatter3(CIs, R0s, betas, 30, 'filled')
 %     inp2s{j}
 %     min(R0s)
 %     max(R0s)

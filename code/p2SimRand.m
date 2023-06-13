@@ -1,19 +1,17 @@
 
-addpath('../');
-
 income_levels = {'LLMIC','MIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
 diseases   = {'Influenza 2009','Influenza 1957','Influenza 1918',...
           'Covid Omicron','Covid Wildtype','Covid Delta',...
           'SARS'};
 
-load('Argentina.mat','data');%loading Argentina, but only keeping country-independent parameters
+load('../country_mats/Argentina.mat','data');%loading Argentina, but only keeping country-independent parameters
 fields    = fieldnames(data);
 ikeep     = [6,7,8,13,14,16,17,18];
 data      = rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
 lx        = length(data.B);
 data.tvec = [-75 365];
-CD        = readtable('country_data.csv');
+CD        = readtable('../data/country_data.csv');
 nsamples  = 4096;
 
 synthetic_countries_base = cell(nsamples,length(income_levels));
