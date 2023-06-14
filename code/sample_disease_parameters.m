@@ -15,15 +15,28 @@ for i = 1:size(disparams,2)
     if strmatch('R0',thisparam)
         samples = samples - 1;
     end
+    if strmatch('ps',thisparam)
+        samples = log(samples./(1-samples));
+    end
     pHat = lognfit(samples);
     newparams = lognrnd(pHat(1),pHat(2),nsamples,1);
     if strmatch('R0',thisparam)
         newparams = newparams + 1;
     end
+    if strmatch('ps',thisparam)
+        newparams = 1./(1+exp(-exp(newparams)));
+    end
     param_struct.(thisparam) = newparams;
 end
 
+% use beta for ps
+thisparam = 'ps';
+samples = disparams.(thisparam);
+pHat = betafit(samples);
+newparams = betarnd(pHat(1),pHat(2),nsamples,1);
+param_struct.(thisparam) = newparams;
 
+%% ihr and hfr 
 ihrs = table2array(sevenpathogens(:,ircolumns(:,1)));
 ifrs = table2array(sevenpathogens(:,ircolumns(:,2)));
 hfrs = ifrs./ihrs;
@@ -37,7 +50,7 @@ maxihr = betarnd(pHat(1),pHat(2),nsamples,1);
 pHat = betafit(maxhfrs);
 %%!! max val = 1
 maxhfr = betarnd(pHat(1),pHat(2),nsamples,1);
-maxhfr = unifrnd(0,1,nsamples,1);
+% maxhfr = unifrnd(0,1,nsamples,1);
 
 
 ihrrr = exp(table2array(readtable('ihrrr.csv')));
