@@ -7,7 +7,7 @@ library(viridis)
 if(Sys.info()[['sysname']]=='Linux'){
   setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/code')
 }else{
-  setwd('C:/Users/rj411/OneDrive - Imperial College London/p2_drivers')
+  setwd('C:/Users/rj411/OneDrive - Imperial College London/p2_drivers/code')
 }
 
 ## voi #####################################
@@ -96,10 +96,10 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Social distancing'=c('Social_distancing_rate','Social_distancing_min'),
                     'Hosp, elders, R0'=c('R0','Hospital_capacity','Elders'),
                     # 'Test, SD, R0'=c('R0','Social_distancing_rate','Test_rate','Test_start','Social_distancing_min'),
-                    'IHR, HFR'=c('IHR','HFR'),
-                    'IHR, HFR, R0'=c('IHR','HFR, R0'),
+                    'IHR, HFR'=c('Max_IHR','Max_HFR'),
+                    'IHR, HFR, R0'=c('Max_IHR','Max_HFR, R0'),
                     'R0, beta'=c('R0','beta'))
-foreach (il = 1:length(income_levels))%dopar%{
+foreach (il = 1:length(income_levels))%do%{
   klistvoi <- list()
   klistmi <- list()
   for (ks in 1:length(strategies)){
