@@ -2,7 +2,7 @@
 
 
 rnms <- c(paste0('ihr',1:17),paste0('ifr',1:17),
-          'ps','tlat','tay','tsr','tsh','threc','thd','ti','red','R0')
+          'ps','Tlat','Tay','Tsr','Tsh','Threc','Thd','Ti','red','R0')
 pp <- data.frame(SARS=c(c(0.0578, 0.0578, 0.0578, 0.0578,	
            0.0816, 0.0816, 0.0816, 0.0816,	
            0.3026, 0.3026 ,0.3026, 0.3026,	
@@ -69,7 +69,7 @@ tpp <- as.data.frame(t(pp))
 colnames(tpp) <- c(rnms,'ihr','ifr')
 pairs(tpp[,-c(1:34,42:43)])
 
-
+write.csv(tpp,'../data/sevenpathogens.csv',row.names = F)
 
 
 cards <- subset(data.frame(
@@ -223,7 +223,7 @@ covmat <- cov(castps[,3:7])
 parametertoihr <- function(x) c(0,x[1] + cov_model_matrix*x[2] + spline_model %*% (x[3:4]))
 
 newpoints <- samples <- c()
-for(i in 1:100){
+for(i in 1:1000){
   newpoint <- mvrnorm(1,colMeans(castps[,3:7]),covmat)
   newpoint[1] <- min(newpoint[1],1.1*max(castps[,3]))
   funeval <- parametertoihr(newpoint)
@@ -231,7 +231,10 @@ for(i in 1:100){
   samples <- rbind(samples,funeval)
 }
 x11(); matplot(t(samples),typ='l')
-meltnew <- melt(samples)
+write.csv(samples,'ihrrr.csv',row.names = F)
+
+
+meltnew <- melt(samples[1:100,])
 meltnew$sample <- 1:100
 ggplot() + 
   geom_line(data=allsampleslonglong,aes(x=Var2,y=value,group=Var1),colour='grey',alpha=1,size=1) +
@@ -309,13 +312,16 @@ parametertoihr <- function(x)
   c(0,x[1] + cov_model_matrix*x[2] + spline_model %*% (x[3:4]))
 
 newpoints <- c()
-for(i in 1:100){
+for(i in 1:1000){
   newpoint <- mvrnorm(1,colMeans(castps[,3:7]),covmat)
   funeval <- parametertoihr(newpoint)
   newpoints <- rbind(newpoints,funeval)
 }
 x11(); matplot(t(newpoints),typ='l')
-meltnew <- melt(newpoints)
+write.csv(samples,'hfrrr.csv',row.names = F)
+
+
+meltnew <- melt(newpoints[1:100,])
 meltnew$sample <- 1:100
 ggplot() + 
   geom_line(data=allsampleslonglong,aes(x=Var2,y=value,group=Var1),colour='grey',alpha=1,size=1) +

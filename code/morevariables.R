@@ -16,13 +16,20 @@ get_most_recent(wb_data('IT.RAD.HOUS.ZS') %>%
                   filter(!is.na(IT.RAD.HOUS.ZS)&date<2020))
 
 indicators <- wb_indicators()
-View(indicators[grepl('BMI',indicators$indicator),])
+View(indicators[grepl('obesity',indicators$indicator),])
+# HF.STA.OB18.ZS
+adultobesity <- get_most_recent(wb_data('HF.STA.OB18.ZS') %>%
+                  filter(!is.na(HF.STA.OB18.ZS)))
 
 meanbmiadultsid <- 'HF.STA.BM18'
 meanbmiadults <- wb_data(meanbmiadultsid) %>%
-  filter(!is.na(HF.STA.BM18)&date<2020)
+  filter(!is.na(HF.STA.BM18))
 
-get_most_recent(meanbmiadults)
+meanbmiadults <- get_most_recent(meanbmiadults)
+ggplot(meanbmiadults)+geom_label(aes(x=mostrecent,y=HF.STA.BM18,label=country))
+ggplot(adultobesity)+geom_label(aes(x=mostrecent,y=HF.STA.OB18.ZS,label=country))
+
+
 
 View(indicators[grepl('tourism',indicators$indicator),])
 
