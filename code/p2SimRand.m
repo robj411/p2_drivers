@@ -2,22 +2,12 @@
 income_levels = {'LLMIC','MIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
 
-load('../country_mats/Argentina.mat','data');%loading Argentina, but only keeping country-independent parameters
-fields    = fieldnames(data);
-ikeep     = [6,7,8,13,14,16,17,18];
-data      = rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
-data.adInd = 3;
-data.lx = length(data.B);
-data.tvec = [-75 365];
-data.alp = 1;
-data.EdInd    = 41;%education sector index
-data.HospInd  = [32,43,44];%hospitality sector indices
-
+data = data_start();
 
 dis_ref = get_dis_params('Covid Wildtype'); 
 
 CD        = readtable('../data/country_data.csv');
-nsamples  = 4096;
+nsamples  = 512;
 
 alldissamples = sample_disease_parameters(nsamples);
 
@@ -114,6 +104,8 @@ columnnames = {'School_contacts','School_age','Working_age','Elders','Population
     'GDP','Labour_share','workp',...
     'Hospital_capacity','Test_rate','Test_start','Response_time',...
     'Social_distancing_min','Social_distancing_rate','Candidate_infectees','R0','beta','Max_IHR','Max_HFR','Max_IFR',...
+    'Probability symptomatic','Latent period','Asymptomatic period',...
+    'Symptomatic period','Time to hospitalisation','Time to discharge','Time to death',...
     'Agriculture','Food_sector','International_tourism','Internet',...
     'Cost','Deaths','School','GDP_loss'};
 inputs    = zeros(nsamples,length(columnnames)-4);
@@ -176,11 +168,6 @@ for il = 1:n_income
                 disp(i)
             end
 
-        %         inputs(i,:)  = [i,NaN,NaN,ldata.Npop',ldata.NNs(1:45)',...
-        %                         ldata.CM(:)',ldata.comm,ldata.travelA3,ldata.schoolA1,ldata.schoolA2,ldata.workp,...
-        %                         ldata.obj',ldata.wfh(1,:),ldata.wfh(2,:),...
-        %                         ldata.t_vax,ldata.arate,ldata.puptake,ldata.Hmax,ldata.t_tit,ldata.trate,ldata.Tres,ldata.sdl,ldata.sdb,...
-        %                         NaN,ldata.la];
             outputs(i,:) = sec;
 
             gdp = sum(ldata.obj);
@@ -190,19 +177,15 @@ for il = 1:n_income
             inputs(i,:)  = [ldata.schoolA2 ldata.NNs(47)/popsize working_age/popsize ldata.NNs(49)/popsize popsize...
                 unemployment_rate ldata.gdp ldata.labsh ldata.workp ldata.Hmax ldata.trate ldata.t_tit ldata.Tres ...
                 ldata.sdl ldata.sdb dis2.CI dis2.R0 dis2.beta max(dis2.ihr) max(dis2.hfr) max(dis2.ifr) ...
+                dis2.ps dis2.Tlat dis2.Tay dis2.Tsr dis2.Tsh dis2.Threc dis2.Thd...
                 ldata.obj([1 32])'/gdp ldata.frac_tourism_international ldata.remote_quantile];
-        %         sectorprops(i,:) = ldata.NNs([1:45,48])' ./ sum(ldata.NNs([1:45,48]));
-        %         R0samples(i) = ;
 
         end
 
         T                          = array2table([inputs,outputs]);
         T.Properties.VariableNames = columnnames;
 
-        %     'SEC','VLYL','VSYL','GDPL'};
         writetable(T,strcat('results/VOI_',string(strategy),'_',string(income_level),'.csv'));
-        %plots = p2Plot(data,f,p2,g,cost,ccost_t,sec(1),inp1,inp2,inp3);
-
 
     end
 end
