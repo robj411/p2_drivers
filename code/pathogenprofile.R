@@ -80,31 +80,31 @@ cards <- subset(data.frame(
   rr>1/365)
 
 cards <- rbind(cards,
-cbind(pp=10,ifr=tpp$ifr*100,r0=log(tpp$R0),rr=1/tpp$threc)
+cbind(pp=10,ifr=tpp$ifr*100,r0=log(tpp$R0),rr=1/tpp$Threc)
 )
 colnames(cards) <- c('Pandemic potential','IFR','log(R0)','Recovery/death rate')
 png('pandemicprofiles.png', height = 700, width = 700)
 pairs(cards,main='Top Trumps',cex.axis=1.5,pch=16)
 dev.off()
 
-f.dens = density(cards$ifr)
-cdf.estimate = cumsum(f.dens$y) / cumsum(f.dens$y)[length(f.dens$y)] 
-# Here I make sure that the last value in CDF is 1.
-
-plot(cdf.estimate, type = 'l', main='Cumulative Distribution')
-N.draw = 1000
-gen.sample = replicate(N.draw, f.dens$x[findInterval(runif(1), cdf.estimate)+1])
-
-plot(f.dens)
-lines(density(gen.sample),col='red')
-legend('topleft',legend=c('Density Function estimate', 
-                          'Generated sample density'), 
-       col=c("black", "red"), 
-       lty=c(1,1), 
-       cex=1.5)
-
-
-cards
+# f.dens = density(cards$ifr)
+# cdf.estimate = cumsum(f.dens$y) / cumsum(f.dens$y)[length(f.dens$y)] 
+# # Here I make sure that the last value in CDF is 1.
+# 
+# plot(cdf.estimate, type = 'l', main='Cumulative Distribution')
+# N.draw = 1000
+# gen.sample = replicate(N.draw, f.dens$x[findInterval(runif(1), cdf.estimate)+1])
+# 
+# plot(f.dens)
+# lines(density(gen.sample),col='red')
+# legend('topleft',legend=c('Density Function estimate', 
+#                           'Generated sample density'), 
+#        col=c("black", "red"), 
+#        lty=c(1,1), 
+#        cex=1.5)
+# 
+# 
+# cards
 
 meancards <- colMeans(cards)
 sdcards <- apply(cards,2,sd)
@@ -120,7 +120,7 @@ totaldistance <- rowSums(distances)
 
 weights <- 1/distances
 
-nsamples <- 1000
+nsamples <- 4096
 draws <- c()
 for(i in 1:nsamples){
   particle <- sample(1:nrow(transcards),size=1,replace=T)
@@ -159,7 +159,7 @@ library(gtools)
 
 hfr <- tpp[,1:17+17]/tpp[,1:17]
 
-logitihr <- logit(tpp[,1:17])
+# logitihr <- logit(tpp[,1:17])
 rrtpp <- tpp[,1:17]/t(repmat(unlist(tpp[,1]),17,1))
 logihr <- log(rrtpp)
 x <- (1:length(logihr))*5 - 3
@@ -223,7 +223,7 @@ covmat <- cov(castps[,3:7])
 parametertoihr <- function(x) c(0,x[1] + cov_model_matrix*x[2] + spline_model %*% (x[3:4]))
 
 newpoints <- samples <- c()
-for(i in 1:1000){
+for(i in 1:nsamples){
   newpoint <- mvrnorm(1,colMeans(castps[,3:7]),covmat)
   newpoint[1] <- min(newpoint[1],1.1*max(castps[,3]))
   funeval <- parametertoihr(newpoint)
@@ -312,7 +312,7 @@ parametertoihr <- function(x)
   c(0,x[1] + cov_model_matrix*x[2] + spline_model %*% (x[3:4]))
 
 newpoints <- c()
-for(i in 1:1000){
+for(i in 1:nsamples){
   newpoint <- mvrnorm(1,colMeans(castps[,3:7]),covmat)
   funeval <- parametertoihr(newpoint)
   newpoints <- rbind(newpoints,funeval)
