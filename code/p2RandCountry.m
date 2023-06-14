@@ -1,4 +1,4 @@
-function data = p2RandCountry(data,CD,income_level)
+function data = p2RandCountry(data,CD,income_level,dis_ref,R0betafun)
 
 
 
@@ -48,6 +48,8 @@ defivalue = randvalue/sum(table2array(CD(randindex,3+[5:13])));%proportion of ad
 defivalue = sum(data.Npop(5:13))*defivalue;%number of workers by sector in artificial country
 defivalue = [defivalue,data.Npop(1),sum(data.Npop(2:4)),sum(data.Npop(5:13))-sum(defivalue),sum(data.Npop(14:end))]';
 data.NNs  = defivalue;
+data.NNs(data.NNs==0) = 1;
+data.ntot     = size(data.NNs,1);
 
 %CM
 nonempind = find(~isnan(CD.CMaa) & country_indices);
@@ -273,5 +275,17 @@ educationloss_per_student = ...
 defivalue = 0.5454*gdp/sum(data.Npop(2:4));
 data.vsy  = educationloss_per_student;
 data.educationloss_all_students  = educationloss_all_students;
+
+%Contact Matrix
+[basic_contact_matrix,data] = p2MakeDs(data,data.NNs,ones(data.lx,1),zeros(1,data.lx));
+data.basic_contact_matrix = basic_contact_matrix;
+
+%% get covid wt doubling time
+
+dis = population_disease_parameters(data,dis_ref,R0betafun);
+
+data.Td_CWT = dis.Td;
+
+
 
 end

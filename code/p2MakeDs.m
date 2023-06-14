@@ -35,9 +35,6 @@ matA(:,[1:lx,lx+adInd]) = repmat(matA(:,lx+adInd),1,lx+1).*repmat(NNrel',ln,1);
 
 %%
 
-data.EdInd    = 41;%education sector index
-data.HospInd  = [32,43,44];%hospitality sector indices
-
 w             = x.^(1/data.alp);
 w(data.EdInd) = x(data.EdInd);
 
