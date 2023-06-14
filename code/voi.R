@@ -96,6 +96,8 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Social distancing'=c('Social_distancing_rate','Social_distancing_min'),
                     'Hosp, elders, R0'=c('R0','Hospital_capacity','Elders'),
                     'Test, SD, R0'=c('R0','Social_distancing_rate','Test_rate','Test_start','Social_distancing_min'),
+                    'IHR, HFR'=c('IHR','HFR'),
+                    'IHR, HFR, R0'=c('IHR','HFR, R0'),
                     'R0, beta'=c('R0','beta'))
 foreach (il = 1:length(income_levels))%dopar%{
   klistvoi <- list()
