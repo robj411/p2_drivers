@@ -4,14 +4,14 @@ library(infotheo)
 library(data.table)
 library(viridis)
 
-# setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
-setwd('C:/Users/rj411/OneDrive - Imperial College London/p2_drivers')
+if(Sys.info()[['sysname']]=='Linux'){
+  setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/code')
+}else{
+  setwd('C:/Users/rj411/OneDrive - Imperial College London/p2_drivers')
+}
 
 ## voi #####################################
 
-diseases   <- c('Influenza 2009','Influenza 1957','Influenza 1918',
-                'Covid Omicron','Covid Wildtype','Covid Delta',
-                'SARS')
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','MIC','HIC')
 
@@ -80,103 +80,99 @@ evppifit <- function (outputs, inputs, pars = NULL, method = NULL, nsim = NULL,
 
 ## compute ########################
 
-jd <- 5
-
 library(doParallel)
 cl <- makeCluster(4)
 registerDoParallel(cl)
 registerDoParallel(cores=4)
 
 
-foreach (jd = 1:length(diseases)) %do%{
-  ilistvoi <- list()
-  ilistmi <- list()
-  multisource <- list(c('Agriculture','Food_sector'),
-                      c('International_tourism','Food_sector'),
-                      c('School_age','Elders'),
-                      c('Test_rate','Test_start'),
-                      c('Social_distancing_rate','Social_distancing_min'),
-                      c('R0','Hospital_capacity','Elders'),
-                      c('R0','Social_distancing_rate','Test_rate','Test_start','Social_distancing_min'),
-                      c('R0','beta'))
-  multisource_names <- c('Sectors','Tourism','Age groups','Testing','Social distancing','Hosp, elders, R0','Test, SD, R0','R0, beta')
-  for (il in 1:length(income_levels)){
-    klistvoi <- list()
-    klistmi <- list()
-    for (ks in 1:length(strategies)){
-      inp2 <- diseases[jd];
-      inp3 <- strategies[ks];
-      income_level <- income_levels[il];
-      results <- read.csv(paste0('results/VOI_',inp2,'_',inp3,'_',income_level,'.csv'),header=T);
-      # labsh <- read.csv(paste0('results/labsh_',inp2,'_',inp3,'_',income_level,'.csv'),header=T);
-      # colnames(labsh) <- c('Labour share of GVA','School contacts')
-      # results <- cbind(labsh,results)
-      sourcelist <- list()
-      for(src in 1:length(multisource)) sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
-      
-      firstreultcol <- which(colnames(results)=='Cost')
-      
-      colnames(results) <- gsub('_',' ',colnames(results))
-      colnames(results)[colnames(results)=='School age'] <- 'School-age'
-      colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
-      colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
-      
-      sourcemat <- results[,1:(firstreultcol-1)]
-      
-      outcomes <- results[,firstreultcol:(ncol(results))]
-      for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$GDP
-      
-      voilist <- list()
-      milist <- list()
-      
-      for(i in 1:ncol(outcomes)){
-        voi <- c()
-        mi <- c()
-        y <- outcomes[,i]
-        vary <- var(y) 
-        for(j in 1:ncol(sourcemat)){
-          # model outcome as a function of input(s)
-          sourcesj <- sourcemat[,j]
-          max_degree <- ifelse(is.vector(sourcesj),1,ncol(sourcesj))
-          model <- earth::earth(y ~ sourcesj, degree=min(4,max_degree))
-          # compute evppi as percentage
-          voi[j] <- (vary - mean((y - model$fitted) ^ 2)) / vary * 100
-          mi[j] <- infotheo::mutinformation(infotheo::discretize(sourcesj),infotheo::discretize(y))
-        }
-        for(j in 1:length(sourcelist)){
-          sourcesj <- sourcelist[[j]]
-          fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj))
-          mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
-          # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
-          voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
-        }
-        milist[[i]] <- mi
-        voilist[[i]] <- voi
+ilistvoi <- list()
+ilistmi <- list()
+multisource <- list('Sectors'=c('Agriculture','Food_sector'),
+                    'Tourism'=c('International_tourism','Food_sector'),
+                    'School factors'=c('School_age','School_contacts','Labour_share'),
+                    'Age groups'=c('School_age','Working_age','Elders'),
+                    'Testing'=c('Test_rate','Test_start'),
+                    'Social distancing'=c('Social_distancing_rate','Social_distancing_min'),
+                    'Hosp, elders, R0'=c('R0','Hospital_capacity','Elders'),
+                    'Test, SD, R0'=c('R0','Social_distancing_rate','Test_rate','Test_start','Social_distancing_min'),
+                    'R0, beta'=c('R0','beta'))
+foreach (il = 1:length(income_levels))%dopar%{
+  klistvoi <- list()
+  klistmi <- list()
+  for (ks in 1:length(strategies)){
+    inp3 <- strategies[ks];
+    income_level <- income_levels[il];
+    results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
+    print(paste0('results/VOI_',inp3,'_',income_level,'.csv'))
+    sourcelist <- list()
+    for(src in 1:length(multisource)) sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
+    
+    firstreultcol <- which(colnames(results)=='Cost')
+    
+    colnames(results) <- gsub('_',' ',colnames(results))
+    colnames(results)[colnames(results)=='School age'] <- 'School-age'
+    colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
+    colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
+    colnames(results)[colnames(results)=='Labour share'] <- 'Labour share of GVA'
+    
+    sourcemat <- results[,1:(firstreultcol-1)]
+    
+    outcomes <- results[,firstreultcol:(ncol(results))]
+    for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$GDP
+    
+    voilist <- list()
+    milist <- list()
+    
+    for(i in 1:ncol(outcomes)){
+      voi <- c()
+      mi <- c()
+      y <- outcomes[,i]
+      vary <- var(y) 
+      for(j in 1:ncol(sourcemat)){
+        # model outcome as a function of input(s)
+        sourcesj <- sourcemat[,j]
+        max_degree <- ifelse(is.vector(sourcesj),1,ncol(sourcesj))
+        model <- earth::earth(y ~ sourcesj, degree=min(4,max_degree))
+        # compute evppi as percentage
+        voi[j] <- (vary - mean((y - model$fitted) ^ 2)) / vary * 100
+        mi[j] <- infotheo::mutinformation(infotheo::discretize(sourcesj),infotheo::discretize(y))
       }
-      
-      voitab <- do.call(rbind,voilist)
-      colnames(voitab) <- c(colnames(sourcemat),multisource_names)
-      rownames(voitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3)
-      mitab <- do.call(rbind,milist)
-      colnames(mitab) <- c(colnames(sourcemat),multisource_names)
-      rownames(mitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3)
-      
-      klistvoi[[ks]] <- voitab
-      klistmi[[ks]] <- mitab
+      for(j in 1:length(sourcelist)){
+        sourcesj <- sourcelist[[j]]
+        fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj))
+        mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
+        # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
+        voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
+      }
+      milist[[i]] <- mi
+      voilist[[i]] <- voi
     }
-    ilistvoi[[il]] <- do.call(rbind,klistvoi)
-    ilistmi[[il]] <- do.call(rbind,klistmi)
+    
+    voitab <- do.call(rbind,voilist)
+    colnames(voitab) <- c(colnames(sourcemat),names(multisource))
+    rownames(voitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3)
+    mitab <- do.call(rbind,milist)
+    colnames(mitab) <- c(colnames(sourcemat),names(multisource))
+    rownames(mitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3)
+    
+    klistvoi[[ks]] <- voitab
+    klistmi[[ks]] <- mitab
   }
-  
-  voiall <- do.call(rbind,ilistvoi)
-  roworder <- unlist(lapply(colnames(outcomes),function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
-  voiall <- voiall[roworder,]
-  miall <- do.call(rbind,ilistmi)
-  miall <- miall[roworder,]
-  
-  saveRDS(voiall,paste0('results/voi_',inp2,'.Rds'))
-  saveRDS(miall,paste0('results/mi_',inp2,'.Rds'))
+  ilistvoi[[il]] <- do.call(rbind,klistvoi)
+  ilistmi[[il]] <- do.call(rbind,klistmi)
 }
+
+voiall <- do.call(rbind,ilistvoi)
+roworder <- unlist(lapply(colnames(outcomes),function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
+voiall <- voiall[roworder,]
+miall <- do.call(rbind,ilistmi)
+miall <- miall[roworder,]
+
+saveRDS(voiall,paste0('results/voi.Rds'))
+saveRDS(miall,paste0('results/mi.Rds'))
+
+## something else ###################################
 
 library(scales)
 for (jd in 1:length(diseases)) {

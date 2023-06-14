@@ -7,17 +7,17 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
-  bookdown::pdf_document2: 
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
-    keep_tex: true
   bookdown::github_document2:
     toc: true
     appendix: true
     fig_caption: yes
     number_sections: yes
     pandoc_args: --webtex
+  bookdown::pdf_document2: 
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
+    keep_tex: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -205,29 +205,22 @@ These distributions show that vulnerability to a pandemic depends on a country's
 ```{r results,echo=F,warning=F,message=F}
 
 
-diseases   <- c('Influenza 2009','Influenza 1957','Influenza 1918',
-              'Covid Omicron','Covid Wildtype','Covid Delta',
-              'SARS')
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','MIC','HIC')
 
 allresults <- data.frame()
 
 for (i in 1:length(income_levels)){
-    for (j in 1:length(diseases)){
-        for (k in 1:length(strategies)){
-            inp2 <- diseases[j];
-            inp3 <- strategies[k];
-            income_level <- income_levels[i];
-            results <- read.csv(paste0('results/VOI_',inp2,'_',inp3,'_',income_level,'.csv'),header=T);
-            results$virus <- inp2
-            results$strategy <- inp3
-            results$igroup <- income_level
-            allresults <- rbind(allresults,results)
-        }
+    for (k in 1:length(strategies)){
+        inp3 <- strategies[k];
+        income_level <- income_levels[i];
+        results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'.csv'),header=T);
+        results$strategy <- inp3
+        results$igroup <- income_level
+        allresults <- rbind(allresults,results)
     }
 }
-nvar <- ncol(results) - 3
+nvar <- ncol(results) - 2
 for(i in 1:nvar){
   allresults[,i] = as.numeric(allresults[,i]);
 }
@@ -235,11 +228,7 @@ for(i in (nvar-3):nvar){
   allresults[,i] = allresults[,i]/allresults$GDP*100;
   # allresults[,i] = log(allresults[,i]);
 }
-allresults$virus[allresults$virus=="Covid Wildtype"] <- 'SARS-CoV-2 pre-Alpha'
-allresults$virus[allresults$virus=="Covid Omicron"] <- 'SARS-CoV-2 Omicron'
-allresults$virus[allresults$virus=="Covid Delta"] <- 'SARS-CoV-2 Delta'
-allresults$virus[allresults$virus=="SARS"] <- 'SARS-CoV-1'
-vioplot <- melt(allresults[,(nvar-3):ncol(allresults)],id.vars=c('virus','strategy','igroup'))
+vioplot <- melt(allresults[,(nvar-3):ncol(allresults)],id.vars=c('strategy','igroup'))
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','MIC','HIC'))
 vioplot$strategy <- factor(vioplot$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
 vioplot$variable <- factor(vioplot$variable,
@@ -251,7 +240,7 @@ vioplot$variable <- factor(vioplot$variable,
 
 
 ```{r prealpha,fig.cap='Model results for pre-Alpha variants of SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
-ggplot(subset(vioplot,virus=='SARS-CoV-2 pre-Alpha'),aes(fill=igroup, y=value, x=igroup)) + 
+ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(variable~strategy, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
@@ -261,6 +250,42 @@ ggplot(subset(vioplot,virus=='SARS-CoV-2 pre-Alpha'),aes(fill=igroup, y=value, x
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
   ggsave(p,filename = 'figures/prealpha.pdf',width=12,height=10)
+  p
+
+```
+
+
+```{r tabres,tab.cap='Results for all scenarios shown. Mean values and 95% prediction intervals.',echo=F,warning=F,message=F}
+
+
+meantab <- setDT(allresults)[,.(deaths=mean(Deaths),
+                        education=mean(School),
+                        gdp=mean(GDP_loss)),by=.(strategy,igroup)]
+
+ggplot(reshape2::melt(meantab)) + 
+  geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP'))),stat='identity') + facet_grid(~factor(igroup,levels=c('LLMIC','MIC','HIC')),scales='free') + 
+  theme_bw(base_size=9) +
+    scale_fill_viridis(discrete=T, name="",option='inferno') +
+  labs(x='',y='Cost, % of GDP',fill='Cost type') +
+    theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1)) -> p
+ggsave(p,filename='figures/expectedcosts.pdf',height=10)
+
+
+tabres <- setDT(allresults)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
+                        deaths=paste0(round(mean(Deaths),1),' (',paste0(round(quantile(Deaths,c(0.025,0.975)),1),collapse=', '),')'),
+                        education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
+                        gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
+                        ),by=.(strategy,igroup)]
+colnames(tabres) <- c('Strategy','Income group','Total costs','YLLs','Education','GDP')
+
+write.csv(tabres,'results.csv',row.names = F)
+
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(tabres,caption='Results for all scenarios shown. Mean values and 95% prediction intervals.) \\label{tab:tabres}')
+}else{
+    x <- knitr::kable(tabres,escape=F, "html",caption='Results for all scenarios shown. Mean values and 95% prediction intervals. \\label{tab:tabres}')
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+}
 
 ```
 
@@ -269,7 +294,7 @@ ggplot(subset(vioplot,virus=='SARS-CoV-2 pre-Alpha'),aes(fill=igroup, y=value, x
 
 
 ```{r,echo=F,warning=F,message=F}
-subs3 <- subset(allresults,igroup=='LLMIC'&strategy=='Elimination'&virus=='SARS-CoV-2 pre-Alpha'&Food_sector<0.035&Food_sector>0.025)
+subs3 <- subset(allresults,igroup=='LLMIC'&strategy=='Elimination'&Food_sector<0.035&Food_sector>0.025)
 gdpmean3 <- round(mean(subs3$GDP_loss),2)
 gdpquant3 <- round(quantile(subs3$GDP_loss,c(0.025,0.975)),2)
 yllmean3 <- round(mean(subs3$Deaths),2)
@@ -277,7 +302,7 @@ yllquant3 <- round(quantile(subs3$Deaths,c(0.025,0.975)),2)
 edmean3 <- round(mean(subs3$School),2)
 edquant3 <- round(quantile(subs3$School,c(0.025,0.975)),2)
 
-subs6 <- subset(allresults,igroup=='LLMIC'&strategy=='Elimination'&virus=='SARS-CoV-2 pre-Alpha'&Food_sector<0.065&Food_sector>0.055)
+subs6 <- subset(allresults,igroup=='LLMIC'&strategy=='Elimination'&Food_sector<0.065&Food_sector>0.055)
 gdpmean6 <- round(mean(subs6$GDP_loss),2)
 gdpquant6 <- round(quantile(subs6$GDP_loss,c(0.025,0.975)),2)
 yllmean6 <- round(mean(subs6$Deaths),2)
@@ -316,7 +341,7 @@ These relationships are identified in the value-of-information analyses: the las
 
 ```{r voi,fig.cap='\\footnotesize Value of information for pre-Alpha variants of SARS-CoV-2. First four columns: individual parameters of interest (agricultural sector as % of GDP, Food and accommodation services sector as % of GDP, international tourism as % of toursim, internet coverage). Next two columns: pairs of parameters of interest (both sectors, both tourism-related parameters). Next 11 columns: other random variables (fraction of population school age, fraction of population age 65 and over, population size, GDP, hospital capacity, testing rate, testing start time, government response time, social distancing minimum, social distancing responsiveness to case numbers, R$_0$). Final four columns: combinations of random variables (both age fractions, both social distancing parameters, hospital capacity + elders population + R$_0$, testing parameters + social distancing parameters + R$_0$).',echo=F,warning=F,message=F,fig.height=10}
 
-voiall <- readRDS('results/voi_Covid Wildtype.Rds')
+voiall <- readRDS('code/results/voi.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
@@ -356,9 +381,9 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 
 \enlargethispage{4\baselineskip}
 
-```{r mi,fig.cap='Mutual information (MI) for pre-Alpha variants of SARS-CoV-2.',eval=F,echo=F,warning=F,message=F,fig.height=10}
+```{r mi,fig.cap='Mutual information (MI) for pre-Alpha variants of SARS-CoV-2.',eval=T,echo=F,warning=F,message=F,fig.height=10}
 
-voiall <- readRDS('results/mi_Covid Wildtype.Rds')
+voiall <- readRDS('code/results/mi.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
@@ -398,7 +423,7 @@ To understand the relationship between a parameter and an outcome, e.g. whether 
 
 ```{r interneted,fig.cap='Relationship between internet coverage and education losses for middle-income countries in a Delta SARS-CoV-2 pandemic with the "School Closures" strategy.',echo=F,warning=F,message=F}
 
-ggplot(subset(allresults,igroup=='MIC'&strategy=='School Closures'&virus=='SARS-CoV-2 Delta'),aes(x=qbeta(Internet,3.77,2.91)*100,y=School)) +
+ggplot(subset(allresults,igroup=='MIC'&strategy=='School Closures'),aes(x=qbeta(Internet,3.77,2.91)*100,y=School)) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
   labs(x='Internet coverage, %',y='Cost of lost education, % of GDP')
@@ -408,7 +433,7 @@ ggplot(subset(allresults,igroup=='MIC'&strategy=='School Closures'&virus=='SARS-
 ```
 
 ```{r tourismsecgdp,fig.cap='Relationship between the "tourism sector" size and GDP loss for middle-income countries in a pre-Alpha SARS-CoV-2 pandemic with the "No Closures" strategy.',echo=F,warning=F,message=F}
-ggplot(subset(allresults,igroup=='MIC'&strategy=='No Closures'&virus=='SARS-CoV-2 pre-Alpha'),aes(y=GDP_loss,x=Food_sector*100)) +
+ggplot(subset(allresults,igroup=='MIC'&strategy=='No Closures'),aes(y=GDP_loss,x=Food_sector*100)) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
@@ -418,7 +443,7 @@ ggplot(subset(allresults,igroup=='MIC'&strategy=='No Closures'&virus=='SARS-CoV-
 
 ```{r tourismgdp,fig.cap='Relationship between tourism parameters and GDP loss for middle-income countries in a pre-Alpha SARS-CoV-2 pandemic with the "No Closures" strategy.',echo=F,warning=F,message=F}
 
-ggplot(subset(allresults,igroup=='MIC'&strategy=='No Closures'&virus=='SARS-CoV-2 pre-Alpha')) +
+ggplot(subset(allresults,igroup=='MIC'&strategy=='No Closures')) +
   geom_point(aes(y=International_tourism*100,x=Food_sector*100,colour=GDP_loss)) +
   theme_bw(base_size=15) +
   labs(x='Food and accommodation services GVA as % of GDP',y='Percent of tourism that is international',colour='GDP loss, %')
@@ -874,497 +899,6 @@ llmic <- fitdistr(subset(hmaxi,!is.na(Hmax)&igroup%in%c('LMIC','LIC'))$Hmax,"gam
 
 We model these values with gamma distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape'],2)` and  `r round(llmic$estimate['rate'],2)`. For MICs, we have parameters `r round(mic$estimate['shape'],2)` and  `r round(mic$estimate['rate'],2)`. For HICs, we have parameters `r round(hic$estimate['shape'],2)` and  `r round(hic$estimate['rate'],2)`.
 
-\newpage
-
-
-# Distributions over outcomes: other six pathogens
-
-```{r tabres,tab.cap='Results for all scenarios shown. Mean values and 95% prediction intervals.',echo=F,warning=F,message=F}
-
-
-meantab <- setDT(allresults)[,.(deaths=mean(Deaths),
-                        education=mean(School),
-                        gdp=mean(GDP_loss)),by=.(virus,strategy,igroup)]
-reshape2::melt(meantab)
-
-ggplot(reshape2::melt(meantab)) + geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP'))),stat='identity') + facet_grid(virus~factor(igroup,levels=c('LLMIC','MIC','HIC')),scales='free') + 
-  theme_bw(base_size=9) +
-    scale_fill_viridis(discrete=T, name="",option='inferno') +
-  labs(x='',y='Cost, % of GDP',fill='Cost type') +
-    theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1)) -> p
-ggsave(p,filename='figures/expectedcosts.pdf',height=10)
-
-
-tabres <- setDT(allresults)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
-                        deaths=paste0(round(mean(Deaths),1),' (',paste0(round(quantile(Deaths,c(0.025,0.975)),1),collapse=', '),')'),
-                        education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
-                        gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
-                        ),by=.(virus,strategy,igroup)]
-colnames(tabres) <- c('Virus','Strategy','Income group','Total costs','YLLs','Education','GDP')
-
-write.csv(tabres,'results.csv',row.names = F)
-
-if (!knitr::is_html_output(excludes = "markdown")) { 
-  pander(tabres,caption='Results for all scenarios shown. Mean values and 95% prediction intervals.) \\label{tab:tabres}')
-}else{
-    x <- knitr::kable(tabres,escape=F, "html",caption='Results for all scenarios shown. Mean values and 95% prediction intervals. \\label{tab:tabres}')
-  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
-}
-
-```
-
-```{r Influenza2009,fig.cap='Model results for Influenza 2009.',echo=F,warning=F,message=F,fig.width=6}
-ggplot(subset(vioplot,virus=='Influenza 2009'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 18)  +
-    xlab("") +
-    ylab("Percent of GDP") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'figures/Influenza2009.pdf',width=12,height=10)
-```
-
-```{r Influenza1957,fig.cap='Model results for Influenza 1957.',echo=F,warning=F,message=F,fig.width=6}
-ggplot(subset(vioplot,virus=='Influenza 1957'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 18)  +
-    xlab("") +
-    ylab("Percent of GDP") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'figures/Influenza1957.pdf',width=12,height=10)
-```
-
-```{r Influenza1918,fig.cap='Model results for Influenza 1918.',echo=F,warning=F,message=F,fig.width=6}
-ggplot(subset(vioplot,virus=='Influenza 1918'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 18)  +
-    xlab("") +
-    ylab("Percent of GDP") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'figures/Influenza1918.pdf',width=12,height=10)
-```
-
-```{r Omicron,fig.cap='Model results for SARS-CoV-2 Omicron.',echo=F,warning=F,message=F,fig.width=6}
-ggplot(subset(vioplot,virus=='SARS-CoV-2 Omicron'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 18)  +
-    xlab("") +
-    ylab("Percent of GDP") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'figures/omicron.pdf',width=12,height=10)
-```
-
-```{r Delta,fig.cap='Model results for SARS-CoV-2 Delta.',echo=F,warning=F,message=F,fig.width=6}
-ggplot(subset(vioplot,virus=='SARS-CoV-2 Delta'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 18)  +
-    xlab("") +
-    ylab("Percent of GDP") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'figures/delta.pdf',width=12,height=10)
-```
-
-```{r sars,fig.cap='Model results for SARS-CoV-1.',echo=F,warning=F,message=F,fig.width=6}
-ggplot(subset(vioplot,virus=='SARS-CoV-1'),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(variable~strategy, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 18)  +
-    xlab("") +
-    ylab("Percent of GDP") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),panel.spacing = unit(0.5, "lines"),legend.position = 'bottom')-> p
-  ggsave(p,filename = 'figures/sars.pdf',width=12,height=10)
-```
-
-
-
-\newpage
-
-# VOI and MI: other six pathogens
-
-```{r voiInfluenza2009,fig.cap='Value of information for Influenza 2009.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/voi_Influenza 2009.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'EVPPI, % ',override.aes=list(colour='black')))
-```
-
-
-```{r miInfluenza2009,eval=F,fig.cap='Mutual information (MI) for Influenza 2009.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/mi_Influenza 2009.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'MI, nats',override.aes=list(colour='black')))
-```
-
-```{r voiInfluenza1957,fig.cap='Value of information for Influenza 1957.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/voi_Influenza 1957.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'EVPPI, % ',override.aes=list(colour='black')))
-```
-
-
-```{r miInfluenza1957,eval=F,fig.cap='Mutual information (MI) for Influenza 1957.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/mi_Influenza 1957.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'MI, nats',override.aes=list(colour='black')))
-```
-
-```{r voiInfluenza1918,fig.cap='Value of information for Influenza 1918.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/voi_Influenza 1918.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'EVPPI, % ',override.aes=list(colour='black')))
-```
-
-
-```{r miInfluenza1918,eval=F,fig.cap='Mutual information (MI) for Influenza 1918.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/mi_Influenza 1918.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'MI, nats',override.aes=list(colour='black')))
-```
-
-```{r voiomicron,fig.cap='Value of information for Omicron SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/voi_Covid Omicron.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'EVPPI, % ',override.aes=list(colour='black')))
-```
-
-
-```{r miomicron,eval=F,fig.cap='Mutual information (MI) for Omicron SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/mi_Covid Omicron.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'MI, nats',override.aes=list(colour='black')))
-```
-
-```{r voidelta,fig.cap='Value of information for Delta SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/voi_Covid Delta.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'EVPPI, % ',override.aes=list(colour='black')))
-```
-
-
-```{r midelta,eval=F,fig.cap='Mutual information (MI) for Delta SARS-CoV-2.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/mi_Covid Delta.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'MI, nats',override.aes=list(colour='black')))
-```
-
-```{r voisars,fig.cap='Value of information for SARS-CoV-1.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/voi_SARS.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(voibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'EVPPI, % ',override.aes=list(colour='black')))
-```
-
-
-```{r misars,eval=F,fig.cap='Mutual information (MI) for SARS-CoV-1.',echo=F,warning=F,message=F,fig.height=10}
-
-voiall <- readRDS('results/mi_SARS.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-
-discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
-                 nrow=nscen,ncol=nparam)
-df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
-
-options(repr.plot.width = 1, repr.plot.height = 0.75)
-ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
-  geom_tile() +
-  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
-  theme_bw(base_size=12) +                                   # Minimal theme
-  labs(title = "") +
-  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
-  theme(
-    plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
-  guides(fill = guide_legend(#nrow = 1,
-    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
-    #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
-    #label.theme = element_text(size=8,angle = 45),
-    title = 'MI, nats',override.aes=list(colour='black')))
-```
-
-
-
 
 \newpage
 
@@ -1392,7 +926,7 @@ ggplot() +
   # facet_wrap(~IncomeGroup,scales='free_y') +
   theme_bw(base_size = 15) +
   labs(x='GDP loss, %',y='',colour='LLMIC') +
-  geom_density(data=subset(vioplot,virus=='SARS-CoV-2 pre-Alpha'&igroup=='LLMIC'&variable=='GDP'),aes(x=value, colour=strategy),size=2) + 
+  geom_density(data=subset(vioplot,igroup=='LLMIC'&variable=='GDP'),aes(x=value, colour=strategy),size=2) + 
   geom_histogram(data=subset(gdpdata,!is.na(IncomeGroup)&IncomeGroup%in%c('Low income','Lower middle income')),aes(x=hit,y = ..density..),colour='navyblue',fill='grey',alpha=.5)
 ```
 
@@ -1402,7 +936,7 @@ ggplot() +
   # facet_wrap(~IncomeGroup,scales='free_y') +
   theme_bw(base_size = 15) +
   labs(x='GDP loss, %',y='',colour='MIC') +
-  geom_density(data=subset(vioplot,virus=='SARS-CoV-2 pre-Alpha'&igroup=='MIC'&variable=='GDP'),aes(x=value, colour=strategy),size=2) + 
+  geom_density(data=subset(vioplot,igroup=='MIC'&variable=='GDP'),aes(x=value, colour=strategy),size=2) + 
   geom_histogram(data=subset(gdpdata,!is.na(IncomeGroup)&IncomeGroup%in%c('Upper middle income','Lower middle income')),aes(x=hit,y = ..density..),colour='navyblue',fill='grey',alpha=.5)
 ```
 
@@ -1412,7 +946,7 @@ ggplot() +
   # facet_wrap(~IncomeGroup,scales='free_y') +
   theme_bw(base_size = 15) +
   labs(x='GDP loss, %',y='',colour='HIC') +
-  geom_density(data=subset(vioplot,virus=='SARS-CoV-2 pre-Alpha'&igroup=='HIC'&variable=='GDP'),aes(x=value, colour=strategy),size=2) + 
+  geom_density(data=subset(vioplot,igroup=='HIC'&variable=='GDP'),aes(x=value, colour=strategy),size=2) + 
   geom_histogram(data=subset(gdpdata,!is.na(IncomeGroup)&IncomeGroup=='High income'),aes(x=hit,y = ..density..),colour='navyblue',fill='grey',alpha=.5)
 
 
