@@ -29,8 +29,4 @@ dis.Ti    = 365;
 dis.red = 0.58;
 dis.R0  = 2.8700;
 
-load(sprintf('%sR0.mat','Covid Wildtype'));
-dis.R0values = R0;
-dis.R0quantiles = qR0;
-
 end
