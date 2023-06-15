@@ -76,6 +76,7 @@ randvalue     = table2array(CD(randindex,327));
 defivalue     = randvalue;
 data.travelA3 =  unifrnd(mina3,maxa3,1,1);
 
+% sample_uniform({'travelA3'},CD,country_indices)
 
 %schoolA1&schoolA2
 nonempind     = find(~isnan(CD.schoolA1) & country_indices);
@@ -89,6 +90,8 @@ randvalue1    = table2array(CD(randindex,328));
 randvalue2    = table2array(CD(randindex,329));
 data.schoolA1 = unifinv(school_contact_quantile,mina1,maxa1) ; 
 data.schoolA2 = unifinv(school_contact_quantile,mina2,maxa2);
+
+% sample_uniform({'schoolA1','schoolA2'},CD,country_indices)
 
 %workp
 nonempind  = find(~isnan(CD.workp) & country_indices);
