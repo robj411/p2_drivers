@@ -46,6 +46,12 @@ maxhfrs = mean(hfrs');
 
 pHat = betafit(maxihrs);
 maxihr = betarnd(pHat(1),pHat(2),nsamples,1);
+%%!! ihr cannot exceed probability symptomatic
+while(sum(maxihr>param_struct.ps)>0)
+    resample = find(maxihr>param_struct.ps);
+    newihr = betarnd(pHat(1),pHat(2),length(resample),1);
+    maxihr(resample) = newihr;
+end
 
 pHat = betafit(maxhfrs);
 %%!! max val = 1

@@ -144,7 +144,7 @@ foreach (il = 1:length(income_levels))%do%{
       }
       for(j in 1:length(sourcelist)){
         sourcesj <- sourcelist[[j]]
-        fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),degree=3)
+        fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
         mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
         # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
         voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100

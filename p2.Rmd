@@ -1093,9 +1093,9 @@ ggplot(subset(bmi,!is.na(IncomeGroup)&IncomeGroup!='')) +
   labs(x='Adult average BMI',y='')
 
 
-hic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup=='HIC')$FactValueNumeric,"gamma")
-mic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup%in%c('UMIC','LMIC'))$FactValueNumeric,"gamma")
-llmic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup%in%c('LMIC','LIC'))$FactValueNumeric,"gamma")
+# hic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup=='HIC')$FactValueNumeric,"gamma")
+# mic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup%in%c('UMIC','LMIC'))$FactValueNumeric,"gamma")
+# llmic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup%in%c('LMIC','LIC'))$FactValueNumeric,"gamma")
 
 
 ```
