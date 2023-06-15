@@ -1,3 +1,5 @@
+library(wbstats)
+indicators <- wb_indicators()
 
 get_most_recent <- function(dataset){
   setDT(dataset)
@@ -6,6 +8,7 @@ get_most_recent <- function(dataset){
 }
 
 
+indicators[grepl('ventilators',indicators$indicator),]
 indicators[grepl('bed',indicators$indicator),]
 # SH.MED.BEDS.ZS per thousand
 get_most_recent(wb_data('SH.MED.BEDS.ZS') %>%
@@ -20,7 +23,6 @@ get_most_recent(wb_data('IT.TVS.HOUS.ZS') %>%
 get_most_recent(wb_data('IT.RAD.HOUS.ZS') %>%
                   filter(!is.na(IT.RAD.HOUS.ZS)&date<2020))
 
-indicators <- wb_indicators()
 View(indicators[grepl('obesity',indicators$indicator),])
 # HF.STA.OB18.ZS
 adultobesity <- get_most_recent(wb_data('HF.STA.OB18.ZS') %>%
