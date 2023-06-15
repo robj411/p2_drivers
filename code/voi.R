@@ -101,7 +101,7 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','Work_contacts','Max_IHR','R0','Min_IHR','Hospital_capacity'),
                     'Hosp, elders, R0'=c('R0','Hospital_capacity','Elders'),
                     'IHR, HFR, R0'=c('Max_IHR','Max_HFR', 'R0'))
-foreach (il = 1:length(income_levels))%do%{
+listout <- foreach (il = 1:length(income_levels))%dopar%{
   klistvoi <- list()
   klistmi <- list()
   for (ks in 1:length(strategies)){
@@ -144,7 +144,7 @@ foreach (il = 1:length(income_levels))%do%{
       }
       for(j in 1:length(sourcelist)){
         sourcesj <- sourcelist[[j]]
-        fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),degree=3)
+        fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
         mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
         # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
         voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
@@ -165,7 +165,11 @@ foreach (il = 1:length(income_levels))%do%{
   }
   ilistvoi[[il]] <- do.call(rbind,klistvoi)
   ilistmi[[il]] <- do.call(rbind,klistmi)
+  list(do.call(rbind,klistvoi), do.call(rbind,klistmi))
 }
+
+ilistvoi <- list(listout[[1]][[1]], listout[[2]][[1]], listout[[3]][[1]])
+ilistmi <- list(listout[[1]][[2]], listout[[2]][[2]], listout[[3]][[2]])
 
 voiall <- do.call(rbind,ilistvoi)
 roworder <- unlist(lapply(colnames(outcomes),function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
