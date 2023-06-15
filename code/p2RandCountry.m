@@ -60,32 +60,44 @@ data.CM   = defivalue;
 
 %comm
 nonempind = find(~isnan(CD.comm) & country_indices);
+mincomm = min(CD.comm(nonempind));
+maxcomm = max(CD.comm(nonempind));
 randindex = nonempind(randi(numel(nonempind)));
 randvalue = table2array(CD(randindex,326));
 defivalue = randvalue;
-data.comm = defivalue;
+data.comm = unifrnd(mincomm,maxcomm,1,1);
 
 %travelA3
 nonempind     = find(~isnan(CD.travelA3) & country_indices);
+mina3 = min(CD.travelA3(nonempind));
+maxa3 = max(CD.travelA3(nonempind));
 randindex     = nonempind(randi(numel(nonempind)));
 randvalue     = table2array(CD(randindex,327));
 defivalue     = randvalue;
-data.travelA3 = defivalue;
+data.travelA3 =  unifrnd(mina3,maxa3,1,1);
+
 
 %schoolA1&schoolA2
 nonempind     = find(~isnan(CD.schoolA1) & country_indices);
+school_contact_quantile = unifrnd(0,1,1,1);
+mina1 = min(CD.schoolA1);
+maxa1 = max(CD.schoolA1);
+mina2 = min(CD.schoolA2);
+maxa2 = max(CD.schoolA2);
 randindex     = nonempind(randi(numel(nonempind)));
 randvalue1    = table2array(CD(randindex,328));
 randvalue2    = table2array(CD(randindex,329));
-data.schoolA1 = randvalue1;
-data.schoolA2 = randvalue2;
+data.schoolA1 = unifinv(school_contact_quantile,mina1,maxa1) ; 
+data.schoolA2 = unifinv(school_contact_quantile,mina2,maxa2);
 
 %workp
 nonempind  = find(~isnan(CD.workp) & country_indices);
+minwp = min(CD.workp(nonempind));
+maxwp = max(CD.workp(nonempind));
 randindex  = nonempind(randi(numel(nonempind)));
 randvalue  = table2array(CD(randindex,330));
 defivalue  = randvalue;
-data.workp = defivalue;
+data.workp = unifrnd(minwp,maxwp,1,1);
 
 % change sizes of tourism and agricultural sectors
 % rescale sectors
@@ -170,38 +182,48 @@ data.wfh  = [newprop; newprop];
 
 %Tres
 nonempind = find(~isnan(CD.Tres) & country_indices);
+mint = min(CD.Tres(nonempind));
+maxt = max(CD.Tres(nonempind));
 randindex = nonempind(randi(numel(nonempind)));
 randvalue = table2array(CD(randindex,472));
 defivalue = randvalue;
-data.Tres = defivalue;
+data.Tres = unifrnd(mint,maxt,1,1);
 
 %t_tit
 nonempind  = find(~isnan(CD.t_tit) & country_indices);
+mint = min(CD.t_tit(nonempind));
+maxt = max(CD.t_tit(nonempind));
 randindex  = nonempind(randi(numel(nonempind)));
 randvalue  = table2array(CD(randindex,470));
 defivalue  = randvalue;
-data.t_tit = defivalue;
+data.t_tit = unifrnd(mint,maxt,1,1);
 
 %trate
 nonempind  = find(~isnan(CD.trate) & country_indices);
+mint = min(CD.trate(nonempind));
+maxt = max(CD.trate(nonempind));
 randindex  = nonempind(randi(numel(nonempind)));
 randvalue  = table2array(CD(randindex,471));
 defivalue  = randvalue;
-data.trate = defivalue;
+data.trate = unifrnd(mint,maxt,1,1);
 
 %sdl
 nonempind = find(~isnan(CD.sdl) & country_indices);
+mins = min(CD.sdl(nonempind));
+maxs = max(CD.sdl(nonempind));
 randindex = nonempind(randi(numel(nonempind)));
 randvalue = table2array(CD(randindex,473));
 defivalue = randvalue;
-data.sdl  = defivalue;
+data.sdl  = unifrnd(mins,maxs,1,1);
 
 %sdb
 nonempind = find(~isnan(CD.sdb) & country_indices);
+mins = min(CD.sdb(nonempind));
+maxs = max(CD.sdb(nonempind));
 randindex = nonempind(randi(numel(nonempind)));
 randvalue = table2array(CD(randindex,474));
 defivalue = randvalue;
-data.sdb  = defivalue;
+data.sdb  = unifrnd(mins,maxs,1,1);
 
 %Hmax
 nonempind = find(~isnan(CD.Hmax) & country_indices);

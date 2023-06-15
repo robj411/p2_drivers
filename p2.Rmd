@@ -1076,3 +1076,41 @@ Writing relative risk $RR_{a,t} \sim \mathcal{N}(m_{a,t}\cdot \text{BMI} + c_{a,
 | 65 plus | Hospitalisation | 0.063 | -0.048 | 0.0060 |
 | 65 plus | Death | 0.027 | -0.022 | 0.012 |
 
+
+```{r }
+bmi <- read.csv('data/bmidata.csv',stringsAs=F)
+bmi <- subset(bmi,Dim1=='Both sexes'&!is.na(FactValueNumeric))
+setDT(bmi)
+bmi[,latest:=max(Period),by=Location]
+bmi <- bmi[Period==latest,colnames(bmi)%in%c('SpatialDimValueCode','Location','FactValueNumeric'),with=F]
+
+bmi <- left_join(bmi,incomelevels,by=c('SpatialDimValueCode'="Country.Code"))
+
+ggplot(subset(bmi,!is.na(IncomeGroup)&IncomeGroup!='')) + 
+  geom_histogram(aes(x=FactValueNumeric),colour='navyblue',fill='grey') +
+  facet_wrap(~IncomeGroup) +
+  theme_bw(base_size = 15) +
+  labs(x='Adult average BMI',y='')
+
+
+hic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup=='HIC')$FactValueNumeric,"gamma")
+mic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup%in%c('UMIC','LMIC'))$FactValueNumeric,"gamma")
+llmic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup%in%c('LMIC','LIC'))$FactValueNumeric,"gamma")
+
+
+```
+
+# Hospital fatality rate
+
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7685049/
+
+Mean (min, max)
+
+|  | LIC | LMIC | UMIC | HIC |
+|:---- |:---- |:---- |:---- |:---- |
+| ACBs per hundred thousand | 425 | 439 (334, 613) | 424.75 (210, 866) | 402.32 (190, 1119)|
+| ICU bed per hundred thousand | 6.44 (0.03, 65) | 2.05 (0.03, 15) | 9.23 (0.16, 57) | 12.79 (1.8, 86) |
+
+
+
+ In regards to World Bank Income Regions, low-income regions had a mean of 6.44 ICU bed/100,000 (maximum = 65, minimum = 0.03, range = 64.97, SD = 19.45), lower middle-income regions had a mean of 2.05 ICU beds/100,000 (maximum = 15, minimum = 0.03, range = 14.97, SD = 3.54), upper middle-income regions had a mean of 9.23 ICU beds/100,000 (maximum = 57, minimum = 0.16, range = 56.84, SD = 13.60) and high-income regions had a mean of 12.79 ICU beds/100,000 (maximum = 86, minimum = 1.8, range = 84.2, SD = 14.57).

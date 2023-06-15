@@ -92,13 +92,15 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Tourism'=c('International_tourism','Food_sector'),
                     'School factors'=c('School_age','School_contacts','Labour_share'),
                     'Age groups'=c('School_age','Working_age','Elders'),
+                    'Working'=c('Working_age','Work_contacts','R0'),
                     'Testing'=c('Test_rate','Test_start'),
                     'Social distancing'=c('Social_distancing_rate','Social_distancing_min'),
+                    'IHR, IHR, R0'=c('Min_IHR','Max_IHR', 'R0'),
+                    'Hosp + IHR + R0'=c('Work_contacts','Max_IHR','R0','Min_IHR','Hospital_capacity'),
+                    'SD rate + IHR + R0'=c('Social_distancing_rate','Work_contacts','Max_IHR','R0','Min_IHR'),
+                    'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','Work_contacts','Max_IHR','R0','Min_IHR','Hospital_capacity'),
                     'Hosp, elders, R0'=c('R0','Hospital_capacity','Elders'),
-                    # 'Test, SD, R0'=c('R0','Social_distancing_rate','Test_rate','Test_start','Social_distancing_min'),
-                    'IHR, HFR'=c('Max_IHR','Max_HFR'),
-                    'IHR, HFR, R0'=c('Max_IHR','Max_HFR, R0'),
-                    'R0, beta'=c('R0','beta'))
+                    'IHR, HFR, R0'=c('Max_IHR','Max_HFR', 'R0'))
 foreach (il = 1:length(income_levels))%do%{
   klistvoi <- list()
   klistmi <- list()
@@ -142,7 +144,7 @@ foreach (il = 1:length(income_levels))%do%{
       }
       for(j in 1:length(sourcelist)){
         sourcesj <- sourcelist[[j]]
-        fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj))
+        fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),degree=3)
         mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
         # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
         voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
@@ -173,6 +175,13 @@ miall <- miall[roworder,]
 
 saveRDS(voiall,paste0('results/voi.Rds'))
 saveRDS(miall,paste0('results/mi.Rds'))
+
+library(GGally)
+colnames(results)
+results$outcome <- results$Cost/results$GDP
+results$high <- cut(results$outcome,breaks=c(0,1,2,12))
+x11(); ggpairs(results,columns=c(1:4,6:14,37),aes(colour=high))
+x11(); ggpairs(results,columns=c(15:28,37),aes(colour=high))
 
 ## something else ###################################
 
