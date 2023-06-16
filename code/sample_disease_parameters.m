@@ -15,17 +15,12 @@ for i = 1:size(disparams,2)
     if strmatch('R0',thisparam)
         samples = samples - 1;
     end
-    if strmatch('ps',thisparam)
-        samples = log(samples./(1-samples));
-    end
-    pHat = lognfit(samples);
-    newparams = lognrnd(pHat(1),pHat(2),nsamples,1);
+    pHat = gamfit(samples);
+    newparams = gamrnd(pHat(1),pHat(2),nsamples,1);
     if strmatch('R0',thisparam)
         newparams = newparams + 1;
     end
-    if strmatch('ps',thisparam)
-        newparams = 1./(1+exp(-exp(newparams)));
-    end
+    newparams(isnan(newparams)) = mean(samples);
     param_struct.(thisparam) = newparams;
 end
 
