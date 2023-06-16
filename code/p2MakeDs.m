@@ -71,6 +71,12 @@ x(lx+1:ln)    = 0;
 w(lx+1:ln)    = 0;
 matB          = diag(w.*valB');
 matC          = repmat(x.*valC',1,ln).*NNrep;
+% move school contacts to students
+teacher_contacts = x(data.EdInd).*valC(data.EdInd);
+matC(data.EdInd,:) = 0.1 * teacher_contacts .* NNrep(data.EdInd,:);
+frac_infant = data.NNs(lx+1)/sum(data.NNs(lx+[1:2]));
+matC(data.EdInd,lx+1) = matC(data.EdInd,lx+1) + 0.9*frac_infant * teacher_contacts;
+matC(data.EdInd,lx+2) = matC(data.EdInd,lx+2) + 0.9*(1-frac_infant) * teacher_contacts;
 
 %%
 
