@@ -7,12 +7,9 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
-  bookdown::github_document2:
+  bookdown::html_document2: 
     toc: true
-    appendix: true
-    fig_caption: yes
-    number_sections: yes
-    pandoc_args: --webtex
+    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
@@ -21,9 +18,12 @@ output:
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
-  bookdown::html_document2: 
+  bookdown::github_document2:
     toc: true
-    keep_md: true
+    appendix: true
+    fig_caption: yes
+    number_sections: yes
+    pandoc_args: --webtex
 always_allow_html: yes 
 bibliography: 
   - "DAEDALUS.bib"
@@ -345,6 +345,10 @@ voiall <- readRDS('code/results/voi.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
+fullnames <- rownames(voiall)
+splitnames <- do.call(rbind,sapply(fullnames,strsplit,': '))
+strats <- do.call(rbind,sapply(splitnames[,2],strsplit,', '))
+
 nscen <- nrow(voiall)
 nparam <- ncol(voiall)
 voibrks <- c(-1,10,30,50,70,101)
@@ -365,8 +369,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(axis.text.x.bottom = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   theme(
     plot.title = element_text(hjust = 1),        
     legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
@@ -375,13 +378,16 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
     #label.position="bottom", 
     label.hjust = 0, #label.vjust = 0.3, 
     #label.theme = element_text(size=8,angle = 45),
-    title = 'EVPPI, % ',override.aes=list(colour='black')))
+    title = 'EVPPI, % ',override.aes=list(colour='black')))  +
+  scale_y_continuous(name='',breaks=rev(yvals)[seq(2,48,by=3)],labels=strats[seq(2,48,by=3),2],expand=c(0,0),
+                     sec.axis=sec_axis(trans='identity',breaks=seq(6.5,48,by=12),labels=rev(unique(splitnames[,1])))) +
+  coord_flip()
 ```
 
 
 \enlargethispage{4\baselineskip}
 
-```{r mi,fig.cap='Mutual information (MI) for pre-Alpha variants of SARS-CoV-2.',eval=T,echo=F,warning=F,message=F,fig.height=10}
+```{r mi,fig.cap='Mutual information (MI) for pre-Alpha variants of SARS-CoV-2.',eval=T,echo=F,warning=F,message=F,fig.height=12}
 
 voiall <- readRDS('code/results/mi.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
@@ -389,21 +395,20 @@ rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
 nscen <- nrow(voiall)
 nparam <- ncol(voiall)
-mibrks <- c(-1,20,40,70,100,150)/100
+mibrks <- c(-1,10,30,50,70,100)/100
 discxs <- matrix(cut(as.numeric(voiall),breaks=mibrks,labels=1:(length(mibrks)-1)),
                  nrow=nscen,ncol=nparam)
 df <- data.frame(x=rep(xvals,each=nscen),y=rep(yvals,nparam),xs=c(discxs[nscen:1,]))
 
 options(repr.plot.width = 1, repr.plot.height = 0.75)
-milbs <- c('<.2','.2-.4','.4-.7','.7-1','1-1.5')
+milbs <- c('<.1','.1-.3','.3-.5','.5-.7','.7-1')
 ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))) +
   geom_tile() +
   scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(mibrks)-1)) +   
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x = element_text(angle = 90,  hjust=1,vjust=0.5)) +
-  scale_y_continuous(name='',breaks=rev(yvals),labels=rownames(voiall),expand=c(0,0))+
+  theme(axis.text.x.bottom = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   theme(
     plot.title = element_text(hjust = 1),        
     legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
@@ -412,7 +417,10 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
     #label.position="bottom", 
     label.hjust = 0, #label.vjust = 0.3, 
     #label.theme = element_text(size=8,angle = 45),
-    title = 'MI, nats',override.aes=list(colour='black')))
+    title = 'MI, nats',override.aes=list(colour='black'))) +
+  scale_y_continuous(name='',breaks=rev(yvals)[seq(2,48,by=3)],labels=strats[seq(2,48,by=3),2],expand=c(0,0),
+                     sec.axis=sec_axis(trans='identity',breaks=seq(6.5,48,by=12),labels=rev(unique(splitnames[,1])))) +
+  coord_flip()
 ```
 
 

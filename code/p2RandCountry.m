@@ -49,6 +49,13 @@ data.bmi_rr = bmi_rr;
 data.bmi = bmi;
 data.bmi_rr_quantile = bmi_rr_quantile(1,:);
 
+% contacts
+data.B = unifrnd(max(data.B/2-1,0),data.B*2+1);
+data.c = unifrnd(max(data.C/2-1,0),data.C*2+1);
+data.hospitality_contact_quantile = unifrnd(0,1);
+data.hospA2 = logninv(data.hospitality_contact_quantile,log(0.5),0.5);
+data.hospA3 = logninv(data.hospitality_contact_quantile,log(1),0.5);
+data.hospA4 = logninv(data.hospitality_contact_quantile,log(1.5),0.5);
 
 %Npop
 nonempind = find(~isnan(CD.Npop1) & country_indices);
