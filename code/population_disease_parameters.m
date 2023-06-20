@@ -12,6 +12,8 @@ nntot  = repelem(nntot,ranges);
 nnprop = nn./nntot;
 subs   = 1:4;
 subs   = repelem(subs,ranges);
+lx = data.lx;
+adInd = data.adInd;
 
 
 %Probabilities
@@ -19,13 +21,21 @@ phgs    = dis.ihr./dis.ps;
 pdgh    = dis.ifr./dis.ihr;
 dis.hfr = pdgh;
 phgs    = accumarray(subs',phgs.*nnprop);
-dis.ph  = [repmat(phgs(data.adInd),data.lx,1);phgs];
+dis.ph  = [repmat(phgs(adInd),data.lx,1);phgs];
 nnh     = nn.*dis.ihr;
 nnhtot  = [nnh(1),sum(nnh(2:4)),sum(nnh(5:13)),sum(nnh(14:end))];
 nnhtot  = repelem(nnhtot,ranges);
 nnhprop = nnh./nnhtot;
 pdgh    = accumarray(subs',pdgh.*nnhprop);
-dis.pd  = [repmat(pdgh(data.adInd),data.lx,1);pdgh];
+dis.pd  = [repmat(pdgh(adInd),data.lx,1);pdgh];
+
+dis.rr_infection = [repmat(data.bmi_rr(1,1),1,lx) 1 1 data.bmi_rr(1,1) data.bmi_rr(2,1)];
+
+dis.ph([1:lx, lx+adInd]) = data.bmi_rr(1,2) * dis.ph([1:lx, lx+adInd]);
+dis.pd([1:lx, lx+adInd]) = data.bmi_rr(1,3) * dis.pd([1:lx, lx+adInd]);
+
+dis.ph(lx + data.adInd + 1) = data.bmi_rr(2,2) * dis.ph(lx + data.adInd + 1);
+dis.pd(lx + data.adInd + 1) = data.bmi_rr(2,3) * dis.pd(lx + data.adInd + 1);
 
 %Durations
 dis.Ts = ((1-dis.ph).*dis.Tsr)   + (dis.ph.*dis.Tsh);
