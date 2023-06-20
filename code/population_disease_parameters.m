@@ -29,7 +29,7 @@ nnhprop = nnh./nnhtot;
 pdgh    = accumarray(subs',pdgh.*nnhprop);
 dis.pd  = [repmat(pdgh(adInd),data.lx,1);pdgh];
 
-dis.rr_infection = [repmat(data.bmi_rr(1,1),1,lx) 1 1 data.bmi_rr(1,1) data.bmi_rr(2,1)];
+dis.rr_infection = [repmat(data.bmi_rr(1,1),lx,1); 1; 1; data.bmi_rr(1,1); data.bmi_rr(2,1)];
 
 dis.ph([1:lx, lx+adInd]) = data.bmi_rr(1,2) * dis.ph([1:lx, lx+adInd]);
 dis.pd([1:lx, lx+adInd]) = data.bmi_rr(1,3) * dis.pd([1:lx, lx+adInd]);
