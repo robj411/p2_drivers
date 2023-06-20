@@ -4,6 +4,7 @@ function data = p2RandCountry(data,CD,income_level,dis_ref,R0betafun)
 
 remote_quantile = unifrnd(0,1);
 labsh_quantile = unifrnd(0,1);
+bmi_quantile = unifrnd(0,1);
 
 data.remote_quantile = remote_quantile;
 
@@ -12,16 +13,19 @@ if strcmp(income_level,'LLMIC')
     country_indices = strcmp(CD.igroup,'LIC') | strcmp(CD.igroup,'LMIC');
     internet_coverage = betainv(remote_quantile,1.78,3.11);
     labsh = betainv(labsh_quantile,5.09,4.52);
+    bmi = norminv(bmi_quantile,24.29,2.28);
     Hmax = gamrnd(1.296265366, 1/0.049499412 );
 elseif strcmp(income_level,'MIC')
     country_indices = strcmp(CD.igroup,'UMIC') | strcmp(CD.igroup,'LMIC');
     internet_coverage = betainv(remote_quantile,3.77,2.91);    
     labsh = betainv(labsh_quantile,6.29,6.54);
+    bmi = norminv(bmi_quantile,25.96,2.22);
     Hmax = gamrnd(1.360805416, 1/0.027592345);
 elseif strcmp(income_level,'HIC')
     country_indices = strcmp(CD.igroup,'HIC');
     internet_coverage = betainv(remote_quantile,9.57,1.39);
     labsh = betainv(labsh_quantile,7.97,6.87);
+    bmi = norminv(bmi_quantile,26.81,1.52);
     Hmax = gamrnd(2.045582620,   1/0.021471378);
 else
     country_indices = strcmp(CD.igroup,'LIC') | strcmp(CD.igroup,'LMIC') |...
@@ -31,6 +35,19 @@ else
     Hmax = lognrnd(2.83235908, 0.87983858);
 end
 
+% bmi
+bmi = min(max(25.9,bmi), 29.9);
+% three outcomes (infection, hospitalisation, death)
+% two age groups (20 to 64, 65 plus)
+bmi_gradients = [0.0166 0.0518 0.0534; 0.0045 0.026 0.0111];
+bmi_intercepts= [0.524 -0.484 -0.531; 0.872 0.254 0.68];
+bmi_sigma= [0.00185 0.00501 0.0168; 0.00155 0.0059 0.0121];
+
+bmi_rr_quantile = repmat(unifrnd(0,1,1,3), 2, 1);
+bmi_rr = norminv(bmi_rr_quantile, bmi.*bmi_gradients + bmi_intercepts, bmi_sigma);
+data.bmi_rr = bmi_rr;
+data.bmi = bmi;
+data.bmi_rr_quantile = bmi_rr_quantile(1,:);
 
 
 %Npop
