@@ -8,7 +8,11 @@ get_most_recent <- function(dataset){
 }
 
 
-indicators[grepl('ventilators',indicators$indicator),]
+View(indicators[grepl('mobile',indicators$indicator),])
+gwp1_n
+IT.MOB.COV.ZS
+get_most_recent(wb_data('gwp1_n') %>%
+                  filter(!is.na(gwp1_n)&date<2020))
 indicators[grepl('bed',indicators$indicator),]
 # SH.MED.BEDS.ZS per thousand
 get_most_recent(wb_data('SH.MED.BEDS.ZS') %>%
