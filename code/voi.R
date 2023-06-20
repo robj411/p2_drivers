@@ -94,7 +94,8 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Age groups'=c('School_age','Working_age','Elders'),
                     'Working'=c('Working_age','Work_contacts','R0'),
                     'Testing'=c('Test_rate','Test_start'),
-                    'Social distancing'=c('Social_distancing_rate','Social_distancing_min'),
+                    'Social distancing'=c('Social_distancing_rate','Social_distancing_max'),
+                    'BMI RR' = c('BMI','BMI_hospitalisation','BMI_infection','BMI_death'),
                     'mean IHR, R0'=c('Mean_IHR', 'R0'),
                     'mean IFR, R0'=c('Mean_IFR', 'R0'),
                     'IHR + R0'=c('Work_contacts','R0','Mean_IHR'),
@@ -108,7 +109,7 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
 
 ## income levels separately ####################################
 
-listout <- foreach (ks = 1:length(strategies))%dopar%{
+listout <- foreach (ks = 1:length(strategies))%do%{
   klistvoi <- list()
   klistmi <- list()
   for (il in 1:length(income_levels)){
@@ -117,7 +118,10 @@ listout <- foreach (ks = 1:length(strategies))%dopar%{
     results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
     print(paste0('results/VOI_',inp3,'_',income_level,'.csv'))
     sourcelist <- list()
-    for(src in 1:length(multisource)) sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
+    for(src in 1:length(multisource)) {
+      sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
+      if(ncol(sourcelist[[src]])<length(multisource[[src]])) print(src)
+    }
     
     firstreultcol <- which(colnames(results)=='Cost')
     
