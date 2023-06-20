@@ -302,7 +302,7 @@ infos <- as.data.frame(t(infos))
 infos$example <- 1:5
 infos$text <- paste0('VOI = ',round(infos$V1),'\n MI = ',round((infos$V2),2),'\n corr = ',round(infos$V3,2))
 ggplot() +
-  geom_point(data=scatter,aes(x=x1,y=yi),colour='grey',alpha=.5) +
+  geom_point(data=scatter,aes(x=x1,y=yi),colour='gainsboro',alpha=.5) +
   geom_text(data=infos,aes(x=0,y=0,label=text),colour='navyblue',size=7.5) +
   facet_grid(~example) +
   theme_bw(base_size = 15)+ 
@@ -332,7 +332,7 @@ infos <- as.data.frame(t(infos))
 infos$example <- 1:5
 infos$text <- paste0('VOI = ',round(infos$V1),'\n MI = ',round((infos$V2),2),'\n corr = ',round(infos$V3,2))
 ggplot() +
-  geom_point(data=scatter,aes(x=x1,y=yi),colour='grey',alpha=.5) +
+  geom_point(data=scatter,aes(x=x1,y=yi),colour='gainsboro',alpha=1) +
   geom_text(data=infos,aes(x=50,y=50,label=text),colour='navyblue',size=7.5) +
   facet_grid(~example) +
   theme_bw(base_size = 15)+ 
@@ -342,5 +342,33 @@ ggplot() +
   ) +
   labs(x='Input',y='Output') -> p
 png("../figures/voimicorr100.png", height = 200, width = 900)
+print(p)
+dev.off()
+
+x1[1] <- 100
+for(i in 1:length(y)) y[[i]][1] <- 0
+infos <- sapply(y,function(yi){
+  model <- earth::earth(yi ~ x1, degree=min(4,max_degree))
+  # compute evppi as percentage
+  voi <- (var(yi) - mean((yi - model$fitted) ^ 2)) / var(yi) * 100
+  mi <- infotheo::mutinformation(infotheo::discretize(x1),infotheo::discretize(yi))
+  c(voi,mi,cor(x1,yi))
+})
+scatter <- as.data.frame(do.call(rbind,lapply(y,function(yi)cbind(x1,yi))))
+scatter$example <- rep(1:5,each=1000)
+infos <- as.data.frame(t(infos))
+infos$example <- 1:5
+infos$text <- paste0('VOI = ',round(infos$V1),'\n MI = ',round((infos$V2),2),'\n corr = ',round(infos$V3,2))
+ggplot() +
+  geom_point(data=scatter,aes(x=x1,y=yi),colour='gainsboro',alpha=1) +
+  geom_text(data=infos,aes(x=50,y=0,label=text),colour='navyblue',size=7.5) +
+  facet_grid(~example) +
+  theme_bw(base_size = 15)+ 
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank()
+  ) +
+  labs(x='Input',y='Output') -> p
+png("../figures/voimicorr0.png", height = 200, width = 900)
 print(p)
 dev.off()
