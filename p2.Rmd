@@ -92,7 +92,7 @@ hic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup=='High income')$in
 mic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Upper middle income','Lower middle income'))$internet/100,"beta",start=list(shape1=1,shape2=1))
 llmic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Low income','Lower middle income'))$internet/100,"beta",start=list(shape1=1,shape2=1))
 
-
+subset(internet,Country.Code%in%c('IDN'))
 
 ```
 
@@ -1069,15 +1069,15 @@ Writing relative risk $RR_{a,t} \sim \mathcal{N}(m_{a,t}\cdot \text{BMI} + c_{a,
 
 | Age group | Transition | $m$ | $c$ | $\sigma$ |
 |:---- |:---- |:---- |:---- |:---- |
-| 20-64 | Infection | 0.040 | -0.030 | 0.0016 |
-| 20-64 | Hospitalisation | 0.13 | -0.092 | 0.0054 |
-| 20-64 | Death | 0.133 | -0.096 | 0.018 |
-| 65 plus | Infection | 0.011 | -0.0070 | 0.0019 |
-| 65 plus | Hospitalisation | 0.063 | -0.048 | 0.0060 |
-| 65 plus | Death | 0.027 | -0.022 | 0.012 |
+| 20-64 | Infection | 0.0166 | 0.524 | 0.00185 |
+| 20-64 | Hospitalisation | 0.0518 | -0.484 | 0.00501 |
+| 20-64 | Death | 0.0534 | -0.531 | 0.0168 |
+| 65 plus | Infection | 0.00450 | 0.872 | 0.00155 |
+| 65 plus | Hospitalisation | 0.0260 | 0.254 | 0.00590 |
+| 65 plus | Death | 0.0111 | 0.680 | 0.0121 |
 
 
-```{r }
+```{r bmi, fig.cap="Distributions of mean BMI among adults by country income level.",echo=F,warning=F,message=F}
 bmi <- read.csv('data/bmidata.csv',stringsAs=F)
 bmi <- subset(bmi,Dim1=='Both sexes'&!is.na(FactValueNumeric))
 setDT(bmi)
@@ -1093,12 +1093,16 @@ ggplot(subset(bmi,!is.na(IncomeGroup)&IncomeGroup!='')) +
   labs(x='Adult average BMI',y='')
 
 
-# hic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup=='HIC')$FactValueNumeric,"gamma")
-# mic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup%in%c('UMIC','LMIC'))$FactValueNumeric,"gamma")
-# llmic <- fitdistr(subset(hmaxi,!is.na(FactValueNumeric)&igroup%in%c('LMIC','LIC'))$FactValueNumeric,"gamma")
+hic <- fitdistr(subset(bmi,!is.na(FactValueNumeric)&IncomeGroup=='High income')$FactValueNumeric,"normal")
+mic <- fitdistr(subset(bmi,!is.na(FactValueNumeric)&IncomeGroup%in%c('Upper middle income','Lower middle income'))$FactValueNumeric,"normal")
+llmic <- fitdistr(subset(bmi,!is.na(FactValueNumeric)&IncomeGroup%in%c('Lower middle income','Low income'))$FactValueNumeric,"normal")
 
 
 ```
+
+We model these values with normal distributions. For LLMICs, we have mean and standard deviation parameters `r round(llmic$estimate['mean'],2)` and  `r round(llmic$estimate['sd'],2)`. For MICs, we have parameters `r round(mic$estimate['mean'],2)` and  `r round(mic$estimate['sd'],2)`. For HICs, we have parameters `r round(hic$estimate['mean'],2)` and  `r round(hic$estimate['sd'],2)`.
+
+
 
 # Hospital fatality rate
 
