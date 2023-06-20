@@ -376,7 +376,7 @@ qh     = ph./(Ts-dur);
 
 %% FOI:
 
-phi = 1;%+data.amp*cos((t-32-data.phi)/(365/2*pi));
+phi = 1 .* dis.rr_infection;  %+data.amp*cos((t-32-data.phi)/(365/2*pi));
 
 ddk    = 10^5*sum(mu.*(H))/sum(NN0);%+Hv1
 sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
@@ -390,10 +390,10 @@ else
 end
 
 I       = (red*Ina+Ins); %+(1-trv1)*(red*Inav1+Insv1);%Only non-self-isolating compartments
-foi     = phi*beta*betamod*(D*(I./NN0));
+foi     = phi.*beta.*betamod.*(D*(I./NN0));
 
 seedvec = 10^-15*sum(data.Npop)*ones(ntot,1);
-seed    = phi*beta*betamod*(D*(seedvec./NN0));
+seed    = phi.*beta.*betamod.*(D*(seedvec./NN0));
 
 %% SELF-ISOLATION:
 
