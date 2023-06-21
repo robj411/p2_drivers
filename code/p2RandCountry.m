@@ -49,6 +49,9 @@ data.bmi_rr = bmi_rr;
 data.bmi = bmi;
 data.bmi_rr_quantile = bmi_rr_quantile(1,:);
 
+% self isolation compliance
+data.self_isolation_compliance = unifrnd(0,1,1,1);
+
 % contacts
 data.B = unifrnd(max(data.B/2-1,0),data.B*2+1);
 data.c = unifrnd(max(data.C/2-1,0),data.C*2+1);
