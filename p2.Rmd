@@ -9,6 +9,7 @@ header-includes:
 output:
   bookdown::html_document2: 
     toc: true
+    toc_float: true
     keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
@@ -23,6 +24,7 @@ output:
     appendix: true
     fig_caption: yes
     number_sections: yes
+    toc_float: true
     pandoc_args: --webtex
 always_allow_html: yes 
 bibliography: 
@@ -75,12 +77,21 @@ format_to_print <- function(x,z=-1){
 
 ```{r,echo=F,warning=F,message=F}
 
-
-internet <- read.csv('data/API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv',header = F)
-incomelevels <- read.csv('data/Metadata_Country_API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv')
+internet <- read.csv('data/API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv',header = F) ## more recent
 internet <- internet[-c(1:3),-c(3:63,65:nrow(internet))]
 colnames(internet) <- c('country','Country.Code','internet')
+
+dataset <- read.csv('data/internetdata.csv',stringsAs=F) ## 2015/2016
+internetdata <- subset(dataset,Indicator=='Households w/ Internet access, %'&Subindicator.Type=='% households')
+internetdata$internet <- internetdata$X2016
+icols <- which(grepl('X',colnames(internetdata)))
+for(i in rev(icols)) internetdata$internet[is.na(internetdata$internet)] <- internetdata[[i]][is.na(internetdata$internet)]
+internetdata <- internetdata[,colnames(internetdata)%in%c('Country.ISO3','Country.Name','internet')]
+colnames(internetdata) <- c('Country.Code','country','internet')
+
+incomelevels <- read.csv('data/Metadata_Country_API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv')
 colnames(incomelevels)[1] <- 'Country.Code'
+
 incomeint <- left_join(internet,incomelevels,by='Country.Code')
 internetplot <- ggplot(subset(incomeint,!is.na(IncomeGroup)&IncomeGroup!='')) +  geom_histogram(aes(x=internet),colour='navyblue',fill='grey') +
   facet_wrap(~IncomeGroup) +
@@ -92,9 +103,9 @@ hic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup=='High income')$in
 mic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Upper middle income','Lower middle income'))$internet/100,"beta",start=list(shape1=1,shape2=1))
 llmic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Low income','Lower middle income'))$internet/100,"beta",start=list(shape1=1,shape2=1))
 
-subset(internet,Country.Code%in%c('IDN'))
-
 ```
+
+
 
 \newpage
 
@@ -190,6 +201,15 @@ We use value-of-information methods to quantify these relationships. Specificall
 Value of information is a decision-theoretic quantity. We estimate it using the R package **voi**. Intuitively, EVPPI functions in a similar way to correlation. In the case of a linear relationship between one input and one output, the computation of EVPPI is essentially the same as that of a correlation. EVPPI extends a simple correlation analysis in two ways relevant to the results presented: 1) nonlinear relationships are also captured, and 2) we can assess the EVPPI of a set of parameters. EVPPI allows us to identify influential parameters. Once identified, relationships between the influential parameter (sets) and outcomes need to be examined independently in order to understand the nature of the relationship.
 
 Finally, we can use mutual information (MI, via the R package **infotheo**) to assess mutual information between inputs and outputs. What MI offers beyond EVPPI is that it takes into account also how *likely* it is that the input parameter occupies a space where it is influential.
+
+### Value of information, mutual information, or correlation?
+
+![(\#fig:voimicorr) Value of information (VOI), mutual information (MI), and correlation (corr) for a standard normal input with outputs of varying covariance with the input.](figures/voimicorr.png){ width=80% }
+
+![(\#fig:voimicorr100) Value of information (VOI), mutual information (MI), and correlation (corr) for a standard normal input with outputs of varying covariance with the input (as in  Figure \@ref(fig:voimicorr)), with a single outlier with input and output values both equal to 100.](figures/voimicorr100.png){ width=80% }
+
+![(\#fig:voimicorr0) Value of information (VOI), mutual information (MI), and correlation (corr) for a standard normal input with outputs of varying covariance with the input (as in  Figure \@ref(fig:voimicorr)), with a single outlier with input equal to 100 and output equal to 0.](figures/voimicorr0.png){ width=80% }
+
 
 \newpage
 
@@ -795,11 +815,7 @@ To learn about the impacts of changes to sector sizes, we use the following proc
 
 ## Impact of sector sizes
 
-The distribution of people among sectors of the workforce impacts the numbers of contacts made. In order to propagate these influences through the model, we sample a null distribution of contacts from the generating model and save the corresponding average number of candidate infectees (CI, where CI $=R_0/\beta$). Separately, we define a distribution over R$_0$, e.g. a normal distribution with its stated mean value and a coefficient of variation of 0.1. (E.g. for H1N1, with mean 1.58, the standard deviation given 95% interval {1.34, 2.04} is `r round((2.04-1.34)/qnorm(0.975)/2,2)` which is a coefficient of variation of `r round((2.04-1.34)/qnorm(0.975)/2/((2.04+1.58+1.34)/3),2)` [@Fraser2009].) Then, for each simulation, we compute the quantile of the CI distribution corresponding to the contacts generated, and select the corresponding quantile from the R$_0$ distribution. Shown illustratively in Figure \@ref(fig:candidateinfectees).
-
-
-
- ![(\#fig:candidateinfectees) The number of candidate infectees is mapped to the basic reproduction number $R_0$ via matching quantiles from the simulated null distribution (left) to the parametric distribution (right). 10, 50 and 90% quantiles shown.](figures/candidateinfectees.png){ width=80% }
+The distribution of people among sectors of the workforce impacts the numbers of contacts made. In order to propagate these influences through the model, we sample a null distribution of $\beta$ values from the generating model using the average number of candidate infectees (CI, where CI $=R_0/\beta$). We regress $\beta$ against $R_0$ to get a one-to-one mapping from the $R_0$ we sample to the $\beta$ used in simulations. This means that a single disease sample has a fixed $\beta$, and its $R_0$ will depend on the country characteristics.
 
 
 \newpage
@@ -885,6 +901,28 @@ llmic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup%in%c('Low income','
 We model these values with Beta distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape1'],2)` and  `r round(llmic$estimate['shape2'],2)`. For MICs, we have parameters `r round(mic$estimate['shape1'],2)` and  `r round(mic$estimate['shape2'],2)`. For HICs, we have parameters `r round(hic$estimate['shape1'],2)` and  `r round(hic$estimate['shape2'],2)`.
 
 \newpage
+
+```{r,echo=F,warning=F,message=F}
+
+tvradio <- readxl::read_xlsx('data/DHS_MICS_MIS_assets-for-remote-learning_nat_subnat-1.xlsx')
+tvradio <- tvradio[,c(2,13,21,29,56)]
+
+tvradio <- readODS::read_ods('data/educationlosses.ods',col_names=T,sheet=2)
+
+ggplot(subset(tvradio,is.na(mobile)&!country%in%c('sweden','china','botswana'))) +
+  geom_label(aes(x=internet,y=`loss per week`,label=country)) + 
+  theme_bw(base_size = 15) + labs(x='Internet',y='Education loss per week')
+ggplot(subset(tvradio,!is.na(radio))) +
+  geom_label(aes(x=radio,y=`loss per week`,label=country)) + 
+  theme_bw(base_size = 15) + labs(x='Radio',y='Education loss per week')
+ggplot(subset(tvradio,!is.na(tv))) +
+  geom_label(aes(x=tv,y=`loss per week`,label=country)) + 
+  theme_bw(base_size = 15) + labs(x='Mobile',y='Education loss per week')
+ggplot(subset(tvradio,!is.na(mobile))) +
+  geom_label(aes(x=mobile,y=`loss per week`,label=country)) + 
+  theme_bw(base_size = 15) + labs(x='TV',y='Education loss per week')
+
+```
 
 ## Hospital capacity
 
