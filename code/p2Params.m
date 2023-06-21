@@ -8,6 +8,7 @@ dis = population_disease_parameters(data,dis,R0betafun);
 
 p2 = struct;
 
+p2.self_isolation_compliance = data.self_isolation_compliance;
 p2.Tres  = data.Tres;                       %Response Time
 p2.t_tit = data.t_tit;                      %Test-Isolate-Trace Time
 p2.trate = data.trate;                      %Test-Isolate-Trace Rate
