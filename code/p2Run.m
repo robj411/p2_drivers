@@ -35,7 +35,7 @@ lx            = ntot-4;
 NNbar         = NNvec(:,1);
 sumWorkingAge = sum(NNbar([1:lx,lx+3]));
 
-nc = 20;
+nc = max(struct2array(data.compindex));
     
 zn = zeros(ntot,1);
 
@@ -197,16 +197,28 @@ end
 
 %% OUTPUT VARIABLES:
 
-Iclass   = yout(:, 2*ntot+1: 3*ntot) + yout(:, 3*ntot+1: 4*ntot) + ...
-           yout(:, 4*ntot+1: 5*ntot) + yout(:, 5*ntot+1: 6*ntot) + ...
-           yout(:,11*ntot+1:12*ntot) + yout(:,12*ntot+1:13*ntot) + ...
-           yout(:,13*ntot+1:14*ntot) + yout(:,14*ntot+1:15*ntot);
-Isaclass = yout(:, 3*ntot+1: 4*ntot) + yout(:,12*ntot+1:13*ntot);
-Issclass = yout(:, 5*ntot+1: 6*ntot) + yout(:,14*ntot+1:15*ntot);
-Insclass = yout(:, 4*ntot+1: 5*ntot) + yout(:,13*ntot+1:14*ntot); 
-Hclass   = yout(:, 6*ntot+1: 7*ntot) + yout(:,15*ntot+1:16*ntot);
-Dclass   = yout(:,17*ntot+1:18*ntot);
-Vclass   = yout(:,18*ntot+1:19*ntot);
+indices = 1:ntot;
+compindex = data.compindex;
+S     = yout(:,(compindex.S_index(1)-1)*ntot + indices);
+Sn    = yout(:,(compindex.S_index(2)-1)*ntot + indices);
+Ina   = yout(:,(compindex.I_index(1)-1)*ntot + indices);
+Isa   = yout(:,(compindex.I_index(2)-1)*ntot + indices);
+Ins   = yout(:,(compindex.I_index(3)-1)*ntot + indices);
+Iss   = yout(:,(compindex.I_index(4)-1)*ntot + indices);
+H     = yout(:,(compindex.H_index(1)-1)*ntot + indices);
+D     = yout(:,(compindex.D_index(1)-1)*ntot + indices);
+
+
+Iclass   = Ina + Isa + Ins + Iss; %yout(:, 2*ntot+1: 3*ntot) + yout(:, 3*ntot+1: 4*ntot) + ...
+%            yout(:, 4*ntot+1: 5*ntot) + yout(:, 5*ntot+1: 6*ntot) + ...
+%            yout(:,11*ntot+1:12*ntot) + yout(:,12*ntot+1:13*ntot) + ...
+%            yout(:,13*ntot+1:14*ntot) + yout(:,14*ntot+1:15*ntot);
+Isaclass = Isa; %yout(:, 3*ntot+1: 4*ntot) + yout(:,12*ntot+1:13*ntot);
+Issclass = Iss; %yout(:, 5*ntot+1: 6*ntot) + yout(:,14*ntot+1:15*ntot);
+Insclass = Ins; %yout(:, 4*ntot+1: 5*ntot) + yout(:,13*ntot+1:14*ntot); 
+Hclass   = H; %yout(:, 6*ntot+1: 7*ntot) + yout(:,15*ntot+1:16*ntot);
+Dclass   = D;%yout(:,17*ntot+1:18*ntot);
+Vclass   = zeros(size(D));%yout(:,18*ntot+1:19*ntot);
 
 %% TIME-DEPENDENT PARAMETERS:
 
@@ -230,11 +242,6 @@ else
     betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
 end
 
-S     = yout(:,0*ntot+1:1*ntot);
-Sn    = yout(:,19*ntot+1:20*ntot);
-Ins   = yout(:,4*ntot+1:5*ntot);
-Iss   = yout(:,5*ntot+1:6*ntot);
-H     = yout(:,6*ntot+1:7*ntot);
 
 amp   = (Sn+(1-dis.heff).*(S-Sn))./S;
 ph    = amp.*dis.ph';
@@ -248,8 +255,6 @@ Hdot   = h.*Ins      +qh.*Iss        -(g3+mu).*H;
 occdot = sum(Hdot,2);%+Hv1dot
 r      = occdot./occ;
 
-Ina   = yout(:,2*ntot+1:3*ntot);
-Isa   = yout(:,3*ntot+1:4*ntot);
 
 Ip    = 10^5*sum(Ina+Ins+Isa+Iss,2)/sum(NN0);%+Inav1+Insv1+Isav1+Issv1
 trate = p2.trate;
@@ -273,18 +278,30 @@ function [f,g]=ODEs(data,NN0,D,i,t,dis,y,p2)
 
 ntot=size(data.NNs,1);
 
+y_mat = reshape(y,ntot,[]); 
+
+
 %% IC:
+compindex = data.compindex;
+% S=      y(0*ntot+1:1*ntot);
+% E=      y(1*ntot+1:2*ntot);
+% Ina=    y(2*ntot+1:3*ntot);
+% Isa=    y(3*ntot+1:4*ntot);
+% Ins=    y(4*ntot+1:5*ntot);
+% Iss=    y(5*ntot+1:6*ntot);
+% H=      y(6*ntot+1:7*ntot);
+% R=      y(7*ntot+1:8*ntot);
+% Sn=     y(19*ntot+1:20*ntot);
 
-S=      y(0*ntot+1:1*ntot);
-E=      y(1*ntot+1:2*ntot);
-Ina=    y(2*ntot+1:3*ntot);
-Isa=    y(3*ntot+1:4*ntot);
-Ins=    y(4*ntot+1:5*ntot);
-Iss=    y(5*ntot+1:6*ntot);
-H=      y(6*ntot+1:7*ntot);
-R=      y(7*ntot+1:8*ntot);
-
-Sn=     y(19*ntot+1:20*ntot);
+S=      y_mat(:,compindex.S_index(1));
+E=      y_mat(:,compindex.E_index(1));
+Ina=    y_mat(:,compindex.I_index(1));
+Isa=    y_mat(:,compindex.I_index(2));
+Ins=    y_mat(:,compindex.I_index(3));
+Iss=    y_mat(:,compindex.I_index(4));
+H=      y_mat(:,compindex.H_index(1));
+R=      y_mat(:,compindex.R_index(1));
+Sn=     y_mat(:,compindex.S_index(2));
 
 %% HOSPITAL OCCUPANCY:
 
@@ -438,16 +455,16 @@ Rdot=       g1.*Ina     +qg1.*Isa   +g2.*Ins        +qg2.*Iss       +g3.*H      
 
 DEdot=      mu.*H    ; %           +mu.*Hv1;     
 
-Shv1dot = zeros(size(Rdot));
-Sv1dot = zeros(ntot,1);
-Ev1dot = zeros(ntot,1);
-Inav1dot = zeros(ntot,1);
-Insv1dot = zeros(ntot,1);
-Isav1dot = zeros(ntot,1);
-Issv1dot = zeros(ntot,1);
-Hv1dot = zeros(ntot,1);
-Rv1dot = zeros(ntot,1);
-Vdot = zeros(ntot,1);
+% Shv1dot = zeros(size(Rdot));
+% Sv1dot = zeros(ntot,1);
+% Ev1dot = zeros(ntot,1);
+% Inav1dot = zeros(ntot,1);
+% Insv1dot = zeros(ntot,1);
+% Isav1dot = zeros(ntot,1);
+% Issv1dot = zeros(ntot,1);
+% Hv1dot = zeros(ntot,1);
+% Rv1dot = zeros(ntot,1);
+% Vdot = zeros(ntot,1);
 
 % Hdot=       h.*(Ins+Iss)    -(g3+mu).*(min(occ,SHmax)/occ).*H   -(g3_oc+mu_oc).*(max(0,occ-SHmax)/occ).*H;
 % Hv1dot=     h_v1.*(Insv1+Issv1)  -(g3+mu).*(min(occ,SHmax)/occ).*Hv1   -(g3_oc+mu_oc).*(max(0,occ-SHmax)/occ).*Hv1;
@@ -462,10 +479,11 @@ Vdot = zeros(ntot,1);
 f= [Sdot;Edot;...
     Inadot;Isadot;Insdot;Issdot;...
     Hdot;Rdot;...
-    Shv1dot;Sv1dot;Ev1dot;...
-    Inav1dot;Isav1dot;Insv1dot;Issv1dot;...
-    Hv1dot;Rv1dot;...
-    DEdot;Vdot;Sndot];
+%     Shv1dot;Sv1dot;Ev1dot;...
+%     Inav1dot;Isav1dot;Insv1dot;Issv1dot;...
+%     Hv1dot;Rv1dot;...
+    DEdot;...%Vdot;
+    Sndot];
 % f= [Sdot;Edot;...
 %     Iadot;Ipdot;...
 %     Inmdot;Ismdot;...
@@ -482,17 +500,18 @@ end
 
 function [value,isterminal,direction] = elimination(t,y,data,N,D,ntot,dis,i,p2)
     
-    S     = y(0*ntot+1:1*ntot);
-    Ina   = y(2*ntot+1:3*ntot);
-    Isa   = y(3*ntot+1:4*ntot);
-    Ins   = y(4*ntot+1:5*ntot);
-    Iss   = y(5*ntot+1:6*ntot);
-    H     = y(6*ntot+1:7*ntot);
-    Shv1  = y(8*ntot+1:9*ntot);
-    Sv1   = y(9*ntot+1:10*ntot);
-    Hv1   = y(15*ntot+1:16*ntot);
-    Sn    = y(19*ntot+1:20*ntot);
-    occ   = max(1,sum(H+Hv1));
+    ymat = reshape(y,ntot,[]);
+    compindex = data.compindex;
+    
+    S    = ymat(:,compindex.S_index(1));
+    H    = ymat(:,compindex.H_index(1));
+    Sn   = ymat(:,compindex.S_index(2));
+    
+    Ina   = ymat(:,compindex.I_index(1));
+    Isa   = ymat(:,compindex.I_index(2));
+    Ins   = ymat(:,compindex.I_index(3));
+    Iss   = ymat(:,compindex.I_index(4));
+    occ   = max(1,sum(H)); %+Hv1
     
     amp   = (Sn+(1-dis.heff).*(S-Sn))./S;
     ph    = amp.*dis.ph;
@@ -515,8 +534,9 @@ function [value,isterminal,direction] = elimination(t,y,data,N,D,ntot,dis,i,p2)
         p4    = p3;
     end
     
-    Rt1 = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,data.NNvec(:,3),data.Dvec(:,:,3),1,p3,p4);
-    Rt2 = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
+    zn = zeros(size(S));
+    Rt1 = rep_num(ntot,dis,h,g2,S,zn,zn,data.NNvec(:,3),data.Dvec(:,:,3),1,p3,p4);
+    Rt2 = rep_num(ntot,dis,h,g2,S,zn,zn,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
     
     %% Event 1: Early Lockdown
     
@@ -553,11 +573,16 @@ end
 
 function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,i,p2)
     
-    S     = y(0*ntot+1:1*ntot);
-    Ins   = y(4*ntot+1:5*ntot);
-    Iss   = y(5*ntot+1:6*ntot);
-    H     = y(6*ntot+1:7*ntot);
-    Sn    = y(19*ntot+1:20*ntot);
+    ymat = reshape(y,ntot,[]);
+    compindex = data.compindex;
+
+    
+    S    = ymat(:,compindex.S_index(1));
+    H    = ymat(:,compindex.H_index(1));
+    Sn   = ymat(:,compindex.S_index(2));
+    
+    Ins   = ymat(:,compindex.I_index(3));
+    Iss   = ymat(:,compindex.I_index(4));
     occ   = max(1,sum(H)); %+Hv1
     zn = zeros(size(S));
     
@@ -624,9 +649,13 @@ end
 
 function [value,isterminal,direction] = unmitigated(t,y,data,N,D,ntot,dis,i,p2)
     
-    S    = y(0*ntot+1:1*ntot);
-    H    = y(6*ntot+1:7*ntot);
-    Sn   = y(19*ntot+1:20*ntot);
+
+    ymat = reshape(y,ntot,[]);
+    compindex = data.compindex;
+
+    S    = ymat(:,compindex.S_index(1));
+    H    = ymat(:,compindex.H_index(1));
+    Sn   = ymat(:,compindex.S_index(2));
     occ  = max(1,sum(H)); %+Hv1
     zn = zeros(size(S));
         

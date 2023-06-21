@@ -10,5 +10,19 @@ function data = data_start()
     data.alp = 1;
     data.EdInd    = 41;%education sector index
     data.HospInd  = [32,43,44];%hospitality sector indices
+    
+    compindex = struct;
+    compindex.S_index = [1,10];
+    compindex.E_index = [2];
+    compindex.I_index = [3,4,5,6];
+%     Ina=    y_mat(:,compindex.I_index(1));
+%     Isa=    y_mat(:,compindex.I_index(2));
+%     Ins=    y_mat(:,compindex.I_index(3));
+%     Iss=    y_mat(:,compindex.I_index(4));
+    compindex.H_index = [7];
+    compindex.R_index = [8];
+    compindex.D_index = [9];
+    data.compindex = compindex;
+
 
 end
