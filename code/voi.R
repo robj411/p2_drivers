@@ -200,8 +200,8 @@ results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T
 colnames(results)
 results$outcome <- results$Cost/results$GDP
 results$high <- cut(results$outcome,breaks=c(0,1,5,30))
-x11(); ggpairs(results,columns=c(1:14,38),aes(colour=high))
-x11(); ggpairs(results,columns=c(15:29,38),aes(colour=high))
+x11(); ggpairs(results,columns=c(1:17,41),aes(colour=high))
+x11(); ggpairs(results,columns=c(18:36,41),aes(colour=high))
 
 ## income levels together ####################################
 
