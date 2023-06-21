@@ -93,25 +93,26 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Education factors'=c('School_age','Internet','Labour_share'),
                     'Age groups'=c('School_age','Working_age','Elders'),
                     'Working'=c('Working_age','Work_contacts','R0'),
+                    'Contacts'=c('Work_contacts','Hospitality_contacts','Community_contacts','School_contacts'),
                     'Testing'=c('Test_rate','Test_start'),
                     'Social distancing'=c('Social_distancing_rate','Social_distancing_max'),
                     'BMI RR' = c('BMI','BMI_hospitalisation','BMI_infection','BMI_death'),
-                    'mean IHR, R0'=c('Mean_IHR', 'R0'),
-                    'mean IFR, R0'=c('Mean_IFR', 'R0'),
-                    'IHR + R0'=c('Work_contacts','R0','Mean_IHR'),
-                    'Duration + IHR + R0'=c('Work_contacts','R0','Mean_IHR','Time_to_discharge'),
-                    'Hosp + IHR + R0'=c('Work_contacts','R0','Mean_IHR','Hospital_capacity'),
-                    'SD rate + IHR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR'),
-                    'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR','Hospital_capacity'),
-                    'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR','Mean_IFR','Hospital_capacity'),
-                    'Hosp, elders, R0'=c('R0','Hospital_capacity','Elders'),
-                    'IHR, IFR, R0'=c('Mean_IHR','Mean_IFR', 'R0'))
+                    'IHR + R0'=c('Mean_IHR', 'R0'),
+                    'IFR + R0'=c('Mean_IFR', 'R0'),
+                    'IHR + IFR + R0'=c('Mean_IHR','Mean_IFR', 'R0'),
+                    'Duration + IHR + R0'=c('R0','Mean_IHR','Time_to_discharge'),
+                    'Hosp + Duration + R0'=c('R0','Hospital_capacity','Time_to_discharge'),
+                    'Hosp + IHR + R0'=c('R0','Mean_IHR','Hospital_capacity'),
+                    'SD rate + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR'),
+                    'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Hospital_capacity')
+                    # 'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR','Mean_IFR','Hospital_capacity'),
+                    )
 
 ## income levels separately ####################################
 
-listout <- foreach (ks = 1:length(strategies))%do%{
-  klistvoi <- list()
-  klistmi <- list()
+klistvoi <- list()
+klistmi <- list()
+listout <- foreach (ks = 1:length(strategies))%dopar%{
   for (il in 1:length(income_levels)){
     inp3 <- strategies[ks];
     income_level <- income_levels[il];
@@ -174,8 +175,8 @@ listout <- foreach (ks = 1:length(strategies))%do%{
     klistvoi[[il]] <- voitab
     klistmi[[il]] <- mitab
   }
-  ilistvoi[[ks]] <- do.call(rbind,klistvoi)
-  ilistmi[[ks]] <- do.call(rbind,klistmi)
+  # ilistvoi[[ks]] <- do.call(rbind,klistvoi)
+  # ilistmi[[ks]] <- do.call(rbind,klistmi)
   list(do.call(rbind,klistvoi), do.call(rbind,klistmi))
 }
 
