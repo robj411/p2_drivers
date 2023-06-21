@@ -234,30 +234,22 @@ S     = yout(:,0*ntot+1:1*ntot);
 Sn    = yout(:,19*ntot+1:20*ntot);
 Ins   = yout(:,4*ntot+1:5*ntot);
 Iss   = yout(:,5*ntot+1:6*ntot);
-Insv1 = yout(:,13*ntot+1:14*ntot);
-Issv1 = yout(:,14*ntot+1:15*ntot);
 H     = yout(:,6*ntot+1:7*ntot);
-Hv1   = yout(:,15*ntot+1:16*ntot);
 
 amp   = (Sn+(1-dis.heff).*(S-Sn))./S;
 ph    = amp.*dis.ph';
 Ts    = ((1-ph).*dis.Tsr) + (ph.*dis.Tsh);
 g3    = (1-pd)./Th;
 h     = ph./Ts;
-% h_v1  = dis.h_v1;
 dur   = p2.dur;
 qh    = ph./(Ts-dur);
-% qh_v1 = p2.qh_v1;
 
 Hdot   = h.*Ins      +qh.*Iss        -(g3+mu).*H;
-% Hv1dot = h_v1'.*Insv1 +qh_v1'.*Issv1   -(g3+mu).*Hv1;
 occdot = sum(Hdot,2);%+Hv1dot
 r      = occdot./occ;
 
 Ina   = yout(:,2*ntot+1:3*ntot);
 Isa   = yout(:,3*ntot+1:4*ntot);
-% Inav1 = yout(:,11*ntot+1:12*ntot);
-% Isav1 = yout(:,12*ntot+1:13*ntot);
 
 Ip    = 10^5*sum(Ina+Ins+Isa+Iss,2)/sum(NN0);%+Inav1+Insv1+Isav1+Issv1
 trate = p2.trate;
@@ -292,18 +284,6 @@ Iss=    y(5*ntot+1:6*ntot);
 H=      y(6*ntot+1:7*ntot);
 R=      y(7*ntot+1:8*ntot);
 
-% Shv1=   y(8*ntot+1:9*ntot);
-% Sv1=    y(9*ntot+1:10*ntot);
-% Ev1=    y(10*ntot+1:11*ntot);
-% Inav1=  y(11*ntot+1:12*ntot);
-% Isav1=  y(12*ntot+1:13*ntot);
-% Insv1=  y(13*ntot+1:14*ntot);
-% Issv1=  y(14*ntot+1:15*ntot);
-% Hv1=    y(15*ntot+1:16*ntot);
-% Rv1=    y(16*ntot+1:17*ntot);
-
-% DE=     y(17*ntot+1:18*ntot);
-% V=      y(18*ntot+1:19*ntot);
 Sn=     y(19*ntot+1:20*ntot);
 
 %% HOSPITAL OCCUPANCY:
@@ -339,40 +319,12 @@ nu   = dis.nu;
 red  = dis.red;
 beta = dis.beta;
 
-%Vaccination
-% hrv1  = dis.hrv1;    
-% scv1  = dis.scv1;  
-% g2_v1 = dis.g2_v1;
-% h_v1  = dis.h_v1;
-% trv1  = dis.trv1;
-% nuv1  = dis.nuv1;
-
 %Preparedness
-%Tm      = p2.Tm;
-%p3      = p2.p3;
-%p4      = p2.p4;
 dur    = p2.dur;
 qg1    = p2.qg1;
 qg2    = (1-ph)./(Ts-dur);
-% qg2_v1 = p2.qg2_v1;
 qh     = ph./(Ts-dur);
-% qh_v1  = p2.qh_v1;
-%betamod = p2.betamod;
-%Hmax    = p2.Hmax;
-%FHmax   = p2.FHmax;
-%g3_oc   = p2.g3_oc;
-%mu_oc   = p2.mu_oc;
 
-% startp1 = p2.startp1;
-% startp2 = p2.startp2;
-% startp3 = p2.startp3;
-% startp4 = p2.startp4;
-% pend    = p2.end;
-% 
-% ratep1 = p2.ratep1;
-% ratep2 = p2.ratep2;
-% ratep3 = p2.ratep3;
-% ratep4 = p2.ratep4;
 
 %% FOI:
 
@@ -396,28 +348,10 @@ seedvec = 10^-15*sum(data.Npop)*ones(ntot,1);
 seed    = phi.*beta.*betamod.*(D*(seedvec./NN0));
 
 %% SELF-ISOLATION:
-
-if t<p2.t_tit;   
-    p3=0;
-    p4=0;
     
-elseif t<p2.end && i~=5;
-%     x1    = 10^5*sum(Ina+Ins+Inav1+Insv1)/sum(NN0);
-%     x2    = log10(max(0,x1));%log10-scaled prevalence per 100k
-%     trate = p2.trate;
-%     mp    = 0.5*(-1+log10(trate));%p3~1 when prevalence~1/10^6 and p3~0 when prevalence~trate
-%     sl    = 4;
-%     p3    = (x2<log10(trate)).*(1-(1./(1+10.^(-sl*(x2-mp)))))/dur + ...
-%             (x2>=log10(trate)).*min(trate/10^5,1-(1./(1+10.^(-sl*(x2-mp)))))/dur;
-%     p4    = p3;
+if t<p2.end && i~=5 && t>=p2.t_tit;
     Ip    = 10^5*sum(Ina+Ins+Isa+Iss)/sum(NN0);%+Inav1+Insv1+Isav1+Issv1
     trate = p2.trate;
-%     b0    = 2;
-%     b1    = 0.03132;
-%     b2    = -0.006671;
-%     p3    = (Ip<trate) .*   (1./(1+10.^(b0+b1*Ip+b2*trate)))/dur + ...
-%             (Ip>=trate).*min(1./(1+10.^(b0+b1*Ip+b2*trate)),trate/10^5)/dur;
-%     p4    = p3;
     b0    = 2.197;
     b1    = 0.1838;
     b2    = -1.024;

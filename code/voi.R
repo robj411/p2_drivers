@@ -93,31 +93,36 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Education factors'=c('School_age','Internet','Labour_share'),
                     'Age groups'=c('School_age','Working_age','Elders'),
                     'Working'=c('Working_age','Work_contacts','R0'),
+                    'Contacts'=c('Work_contacts','Hospitality_contacts','Community_contacts','School_contacts'),
                     'Testing'=c('Test_rate','Test_start'),
-                    'Social distancing'=c('Social_distancing_rate','Social_distancing_min'),
-                    'mean IHR, R0'=c('Mean_IHR', 'R0'),
-                    'mean IFR, R0'=c('Mean_IFR', 'R0'),
-                    'IHR + R0'=c('Work_contacts','R0','Mean_IHR'),
-                    'Duration + IHR + R0'=c('Work_contacts','R0','Mean_IHR','Time_to_discharge'),
-                    'Hosp + IHR + R0'=c('Work_contacts','R0','Mean_IHR','Hospital_capacity'),
-                    'SD rate + IHR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR'),
-                    'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR','Hospital_capacity'),
-                    'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR','Mean_IFR','Hospital_capacity'),
-                    'Hosp, elders, R0'=c('R0','Hospital_capacity','Elders'),
-                    'IHR, IFR, R0'=c('Mean_IHR','Mean_IFR', 'R0'))
+                    'Social distancing'=c('Social_distancing_rate','Social_distancing_max'),
+                    'BMI RR' = c('BMI','BMI_hospitalisation','BMI_infection','BMI_death'),
+                    'IHR + R0'=c('Mean_IHR', 'R0'),
+                    'IFR + R0'=c('Mean_IFR', 'R0'),
+                    'IHR + IFR + R0'=c('Mean_IHR','Mean_IFR', 'R0'),
+                    'Duration + IHR + R0'=c('R0','Mean_IHR','Time_to_discharge'),
+                    'Hosp + Duration + R0'=c('R0','Hospital_capacity','Time_to_discharge'),
+                    'Hosp + IHR + R0'=c('R0','Mean_IHR','Hospital_capacity'),
+                    'SD rate + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR'),
+                    'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Hospital_capacity')
+                    # 'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR','Mean_IFR','Hospital_capacity'),
+                    )
 
 ## income levels separately ####################################
 
+klistvoi <- list()
+klistmi <- list()
 listout <- foreach (ks = 1:length(strategies))%dopar%{
-  klistvoi <- list()
-  klistmi <- list()
   for (il in 1:length(income_levels)){
     inp3 <- strategies[ks];
     income_level <- income_levels[il];
     results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
     print(paste0('results/VOI_',inp3,'_',income_level,'.csv'))
     sourcelist <- list()
-    for(src in 1:length(multisource)) sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
+    for(src in 1:length(multisource)) {
+      sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
+      if(ncol(sourcelist[[src]])<length(multisource[[src]])) print(src)
+    }
     
     firstreultcol <- which(colnames(results)=='Cost')
     
@@ -170,8 +175,8 @@ listout <- foreach (ks = 1:length(strategies))%dopar%{
     klistvoi[[il]] <- voitab
     klistmi[[il]] <- mitab
   }
-  ilistvoi[[ks]] <- do.call(rbind,klistvoi)
-  ilistmi[[ks]] <- do.call(rbind,klistmi)
+  # ilistvoi[[ks]] <- do.call(rbind,klistvoi)
+  # ilistmi[[ks]] <- do.call(rbind,klistmi)
   list(do.call(rbind,klistvoi), do.call(rbind,klistmi))
 }
 
@@ -195,8 +200,8 @@ results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T
 colnames(results)
 results$outcome <- results$Cost/results$GDP
 results$high <- cut(results$outcome,breaks=c(0,1,5,30))
-x11(); ggpairs(results,columns=c(1:14,38),aes(colour=high))
-x11(); ggpairs(results,columns=c(15:29,38),aes(colour=high))
+x11(); ggpairs(results,columns=c(1:17,41),aes(colour=high))
+x11(); ggpairs(results,columns=c(18:36,41),aes(colour=high))
 
 ## income levels together ####################################
 
