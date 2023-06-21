@@ -1,63 +1,76 @@
 close all;
 clear all;
 
+%% ons estimates
+onsprev = readtable('onsprevalence.csv');
+starts = arrayfun(@(i)sprintf('%d/%d/%d',onsprev.Var1(i),month(onsprev.Var2(i),"mmmm"),onsprev.Var3(i)),1:size(onsprev,1),'UniformOutput',false);
+starts = starts(:);
+ends = arrayfun(@(i)sprintf('%d/%d/%d',onsprev.Var5(i),month(onsprev.Var6(i),"mmmm"),onsprev.Var7(i)),1:size(onsprev,1),'UniformOutput',false);
+ends = ends(:);
+startdays = caldays(arrayfun(@(i) between(datetime('01/01/2020','Format','dd/M/yyyy'),datetime(starts(i),'Format','dd/M/yyyy'),'Days'),1:length(starts)));
+enddays = caldays(arrayfun(@(i) between(datetime('01/01/2020','Format','dd/M/yyyy'),datetime(ends(i),'Format','dd/M/yyyy'),'Days'),1:length(ends)));
+cases_per_day = onsprev.Var8 ./ (enddays' - startdays') .* 4;
+
+
+
 %% infections
 
-table = readtable('../../Data/Preparedness/10.UKprevalence.csv');
-tt    = table.t;
-I     = table.I;
+prevtable = readtable('10.UKprevalence.csv');
+prevt    = prevtable.t;
+prevI     = prevtable.I;
 t1    = 1:244; 
-I     = interp1(tt,I,t1)'; 
+all_cases_raw     = interp1(prevt,prevI,t1)'; 
 
-%scatter(t1,I);
+scatter(t1,all_cases_raw);
 
-% table = load('../../Data/11.UKprevalence.mat');
-% table = table.f;
-% tt    = table(:,1);
-% I     = table(:,3);
-% t1    = 1:579; 
-% I     = interp1(tt,I,t1)';
-% 
-%scatter(t1,I);
+%% compare to ons
+
+prevIsums = arrayfun(@(i) sum(prevI(prevt<=enddays(i)&prevt>=startdays(i))),1:length(enddays));
+plot(prevIsums(prevIsums>0)',cases_per_day(prevIsums>0))
+
 
 %% tests
 
-table = readtable('../../Data/Preparedness/10.UKtesting.csv');
-t2    = flipud(table.date);
-T     = flipud(table.newVirusTestsByPublishDate);
-dvec  = datevec(t2);
+testtable = readtable('10.UKtesting.csv');
+testt2    = flipud(testtable.date);
+daily_tests_raw     = flipud(testtable.newVirusTestsByPublishDate);
+dvec  = datevec(testt2);
 dvec  = dvec(:,1)-2020;
-t2    = day(t2,'dayofyear')+366*min(1,dvec)+365*max(0,dvec-1);
+t2    = day(testt2,'dayofyear')+366*min(1,dvec)+365*max(0,dvec-1);
 
-%scatter(t2,T);
+scatter(t2,daily_tests_raw);
 
 %% infections identified
 
-table = readtable('../../Data/Preparedness/10.UKcases.csv');
-t3    = flipud(table.date);
-C     = flipud(table.newCasesBySpecimenDate);
-dvec  = datevec(t3);
+casetable = readtable('10.UKcases.csv');
+caset3    = flipud(casetable.date);
+positive_tests_raw     = flipud(casetable.newCasesBySpecimenDate);
+dvec  = datevec(caset3);
 dvec  = dvec(:,1)-2020;
-t3    = day(t3,'dayofyear')+366*min(1,dvec)+365*max(0,dvec-1);
+t3    = day(caset3,'dayofyear')+366*min(1,dvec)+365*max(0,dvec-1);
 
-%scatter(t3,C);
+scatter(t3,positive_tests_raw);
 
 %% proportion of infections identified
 
-[t,i1,i3] = intersect(t1,t3);
-I         = I(i1);
-C         = C(i3);
-p         = C./I;
+[newt,i1,i3] = intersect(t1,t3);
+all_cases_tmp         = all_cases_raw(i1);
+positive_tests_tmp         = positive_tests_raw(i3);
+fraction_cases_identified_raw         = positive_tests_tmp./all_cases_tmp;
 
-%scatter(t,p);
+scatter(newt,fraction_cases_identified_raw);
 
 %% collation
 
-[t,i,i2] = intersect(t,t2);
-I        = I(i);
-T        = T(i2);
-C        = C(i);
-p        = p(i);
+[t,i,i2] = intersect(newt,t2);
+all_cases        = all_cases_tmp(i);
+daily_tests        = daily_tests_raw(i2);
+positive_tests        = positive_tests_tmp(i);
+fraction_cases_identified        = fraction_cases_identified_raw(i);
+
+[t,all_cases,positive_tests]
+scatter(all_cases,positive_tests)
+scatter(daily_tests,fraction_cases_identified)
 
 Npop = 675.29;
 
@@ -70,25 +83,25 @@ Npop = 675.29;
 
 %not log,not log
 tit_fun1        = @(b0,b1,b2,x,y) 1./(1+exp(b0+b1*x+b2*y));
-[tit_fit1,gof1] = fit([I/Npop,T/Npop],p,tit_fun1,...
+[tit_fit1,gof1] = fit([all_cases/Npop,daily_tests/Npop],fraction_cases_identified,tit_fun1,...
                       'StartPoint',[2.5,2.5,-2.5],'Lower',[log(9),0,-10],'Upper',[10,10,0],...
                       'Robust','LAR','MaxIter',10^3,'MaxFunEvals',10^3);
 
 %not log,log (original)
 tit_fun2        = @(b0,b1,b2,x,y) 1./(1+exp(b0+b1*x+b2*log10(y)));
-[tit_fit2,gof2] = fit([I/Npop,T/Npop],p,tit_fun2,...
+[tit_fit2,gof2] = fit([all_cases/Npop,daily_tests/Npop],fraction_cases_identified,tit_fun2,...
                       'StartPoint',[2.5,2.5,-2.5],'Lower',[log(9),0,-10],'Upper',[10,10,0],...
                       'Robust','LAR','MaxIter',10^3,'MaxFunEvals',10^3);
 
 %log,not log
 tit_fun3        = @(b0,b1,b2,x,y) 1./(1+exp(b0+b1*log10(x)+b2*y));
-[tit_fit3,gof3] = fit([I/Npop,T/Npop],p,tit_fun3,...
+[tit_fit3,gof3] = fit([all_cases/Npop,daily_tests/Npop],fraction_cases_identified,tit_fun3,...
                       'StartPoint',[2.5,2.5,-2.5],'Lower',[log(9),0,-100],'Upper',[100,100,0],...
                       'Robust','LAR','MaxIter',10^3,'MaxFunEvals',10^3);
 
 %log,log
 tit_fun4        = @(b0,b1,b2,x,y) 1./(1+exp(b0+b1*log10(x)+b2*log10(y)));
-[tit_fit4,gof4] = fit([I/Npop,T/Npop],p,tit_fun4,...
+[tit_fit4,gof4] = fit([all_cases/Npop,daily_tests/Npop],fraction_cases_identified,tit_fun4,...
                       'StartPoint',[2.5,2.5,-2.5],'Lower',[log(9),0,-10],'Upper',[10,10,0],...
                       'Robust','LAR','MaxIter',10^3,'MaxFunEvals',10^3);
 
@@ -98,7 +111,7 @@ Tp      = logspace(-2,3,500);
                 
 figure;
 hold on;
-scatter3(I/Npop,T/Npop,p,'r*');
+scatter3(all_cases/Npop,daily_tests/Npop,fraction_cases_identified,'r*');
 surf(Ip,Tp,tit_fun2(tit_fit2.b0,tit_fit2.b1,tit_fit2.b2,Ip,Tp));
 xlim([0 1000]);
 ylim([0 1000]);
