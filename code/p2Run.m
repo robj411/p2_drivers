@@ -421,8 +421,8 @@ elseif t<p2.end && i~=5;
     b0    = 2.197;
     b1    = 0.1838;
     b2    = -1.024;
-    p3    = (Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
-            (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur;
+    p3    = p2.self_isolation_compliance .* ((Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
+            (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur);
     p4    = p3;
 else       
     p3=0;
@@ -556,43 +556,23 @@ function [value,isterminal,direction] = elimination(t,y,data,N,D,ntot,dis,i,p2)
     H     = y(6*ntot+1:7*ntot);
     Shv1  = y(8*ntot+1:9*ntot);
     Sv1   = y(9*ntot+1:10*ntot);
-    Inav1 = y(11*ntot+1:12*ntot);
-    Isav1 = y(12*ntot+1:13*ntot);
-    Insv1 = y(13*ntot+1:14*ntot);
-    Issv1 = y(14*ntot+1:15*ntot);
     Hv1   = y(15*ntot+1:16*ntot);
     Sn    = y(19*ntot+1:20*ntot);
     occ   = max(1,sum(H+Hv1));
     
-%     Hmax  = p2.Hmax;
-%     SHmax = p2.SHmax;
     amp   = (Sn+(1-dis.heff).*(S-Sn))./S;
-%     th0   = max(1,1+1.87*((occ-Hmax)/(SHmax-Hmax)));
     ph    = amp.*dis.ph;
-%     pd    = min(th0*dis.pd,1);
     Ts    = ((1-ph).*dis.Tsr) + (ph.*dis.Tsh);
-%     Th    = ((1-pd).*dis.Threc)+(pd.*dis.Thd);
     g2    = (1-ph)./Ts;
-%     g3    = (1-pd)./Th;
     h     = ph./Ts;
-%     mu    = pd./Th;
-%     h_v1  = dis.h_v1;
      dur   = p2.dur;
-%     qh    = ph./(Ts-dur);
-%     qh_v1 = p2.qh_v1;
     
     if t<p2.t_tit;   
         p3 = 0;
         p4 = 0;
     else
-        Ip    = 10^5*sum(Ina+Ins+Isa+Iss+Inav1+Insv1+Isav1+Issv1)/sum(N);
+        Ip    = 10^5*sum(Ina+Ins+Isa+Iss)/sum(N); %+Inav1+Insv1+Isav1+Issv1
         trate = p2.trate;
-%         b0    = 2;
-%         b1    = 0.03132;
-%         b2    = -0.006671;
-%         p3    = (Ip<trate) .*   (1./(1+10.^(b0+b1*Ip+b2*trate)))/dur + ...
-%                 (Ip>=trate).*min(1./(1+10.^(b0+b1*Ip+b2*trate)),trate/10^5)/dur;
-%         p4    = p3;
         b0    = 2.197;
         b1    = 0.1838;
         b2    = -1.024;
@@ -600,24 +580,6 @@ function [value,isterminal,direction] = elimination(t,y,data,N,D,ntot,dis,i,p2)
                 (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur;
         p4    = p3;
     end
-    
-%     ddk    = 10^5*sum(mu.*(H+Hv1))/sum(N);
-%     sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
-%
-%     if i==1;
-%         betamod = 1;
-%     elseif any(i==data.imand);
-%         betamod = min(max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk)), max(p2.sdl,sd_fun(p2.sdl,p2.sdb,2)));
-%     else
-%         betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
-%     end
-%    
-%     Hdot   = h.*Ins      +qh.*Iss        -(g3+mu).*H;
-%     Hv1dot = h_v1.*Insv1 +qh_v1.*Issv1   -(g3+mu).*Hv1;
-%     occdot = sum(Hdot+Hv1dot);
-%     r      = occdot/occ;%H(t)=occ*exp(r*t)
-%     Tcap   = t+log(p2.Hmax/occ)/r;
-%     Tcap   = Tcap-3;
     
     Rt1 = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,data.NNvec(:,3),data.Dvec(:,:,3),1,p3,p4);
     Rt2 = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
@@ -658,20 +620,12 @@ end
 function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,i,p2)
     
     S     = y(0*ntot+1:1*ntot);
-%     Ina   = y(2*ntot+1:3*ntot);
-%     Isa   = y(3*ntot+1:4*ntot);
     Ins   = y(4*ntot+1:5*ntot);
     Iss   = y(5*ntot+1:6*ntot);
     H     = y(6*ntot+1:7*ntot);
-    Shv1  = y(8*ntot+1:9*ntot);
-    Sv1   = y(9*ntot+1:10*ntot);
-%     Inav1 = y(11*ntot+1:12*ntot);
-%     Isav1 = y(12*ntot+1:13*ntot);
-    Insv1 = y(13*ntot+1:14*ntot);
-    Issv1 = y(14*ntot+1:15*ntot);
-    Hv1   = y(15*ntot+1:16*ntot);
     Sn    = y(19*ntot+1:20*ntot);
-    occ   = max(1,sum(H+Hv1));
+    occ   = max(1,sum(H)); %+Hv1
+    zn = zeros(size(S));
     
     Hmax  = p2.Hmax;
     SHmax = p2.SHmax;
@@ -688,40 +642,14 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,
 %     h_v1  = dis.h_v1;
     dur   = p2.dur;
     qh    = ph./(Ts-dur);
-%     qh_v1 = p2.qh_v1;
-  
-%     if t<p2.t_tit;   
-%         p3=0;
-%         p4=0;
-%     else
-%         Ip    = 10^5*sum(Ina+Ins+Isa+Iss+Inav1+Insv1+Isav1+Issv1)/sum(N);
-%         trate = p2.trate;
-%         b0    = 2;
-%         b1    = 0.03132;
-%         b2    = -0.006671;
-%         p3    = (Ip<trate) .*   (1./(1+10.^(b0+b1*Ip+b2*trate)))/dur + ...
-%                 (Ip>=trate).*min(1./(1+10.^(b0+b1*Ip+b2*trate)),trate/10^5)/dur;
-%         p4    = p3;  
-%     end
-%    
-%     ddk    = 10^5*sum(mu.*(H+Hv1))/sum(N);
-%     sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
-%
-%     if i==1;
-%         betamod = 1;
-%     elseif any(i==data.imand);
-%         betamod = min(max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk)), max(p2.sdl,sd_fun(p2.sdl,p2.sdb,2)));
-%     else
-%         betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
-%     end
+
 
     Hdot   = h.*Ins      +qh.*Iss        -(g3+mu).*H;
-%     Hv1dot = h_v1.*Insv1 +qh_v1.*Issv1   -(g3+mu).*Hv1;
     occdot = sum(Hdot);%+Hv1dot
-    r      = occdot/occ;%disp(num2str([t,r]));%H(t)=occ*exp(r*t)
+    r      = occdot/occ;
     Tcap   = t + log(p2.Hmax/occ)/r;
     Tcap   = Tcap-4;
-    Rt2    = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
+    Rt2    = rep_num(ntot,dis,h,g2,S,zn,zn,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
     
     %% Event 1: Response Time
     
@@ -733,7 +661,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,
     
     value(2)     = - abs((i-2)*(i-4)) + min(t-(data.tvec(end-1)+0.1),0) + min(t-Tcap,0);
     direction(2) = 1;
-    if r>0.025;
+    if r>0.025
         isterminal(2) = 1;
     else
         isterminal(2) = 0;
@@ -753,7 +681,6 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,
     
     %% Event 5: End
     
-    %value(5)      = abs((i-1)*(i-2)*(i-4)*(abs(i-3) + abs(min(t-(data.tvec(end-1)+56),0)))) + abs(min(t-(data.tvec(end-1)+0.1),0)) + min(t-p2.end,0)*min(1.00-Rt2,0);
     value(5)      = abs((i-1)*(i-2)*(i-4)) + abs(min(t-(data.tvec(end-1)+0.1),0)) + (min(0.025-r,0)*max(0,occ-p2.thl) + min(t-p2.end,0))*min(1.00-Rt2,0);
     %measures can be removed if (not in hard lockdown) and ((Rt<1) or (after end of vaccination campaign and below 25% occupancy or low growth rate))
     direction(5)  = 0;
@@ -765,11 +692,9 @@ function [value,isterminal,direction] = unmitigated(t,y,data,N,D,ntot,dis,i,p2)
     
     S    = y(0*ntot+1:1*ntot);
     H    = y(6*ntot+1:7*ntot);
-    Shv1 = y(8*ntot+1:9*ntot);
-    Sv1  = y(9*ntot+1:10*ntot);
-    Hv1  = y(15*ntot+1:16*ntot);
     Sn   = y(19*ntot+1:20*ntot);
-    occ  = max(1,sum(H+Hv1));
+    occ  = max(1,sum(H)); %+Hv1
+    zn = zeros(size(S));
         
     amp  = (Sn+(1-dis.heff).*(S-Sn))./S;
     ph   = amp.*dis.ph;
@@ -777,7 +702,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,N,D,ntot,dis,i,p2)
     g2   = (1-ph)./Ts;
     h    = ph./Ts;
     
-    Rt2  = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
+    Rt2  = rep_num(ntot,dis,h,g2,S,zn,zn,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
 
     %% Event 1: Response Time
     
@@ -802,12 +727,10 @@ end
 
 function Rt = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,N,D,betamod,p3,p4)
         
-    FOIu = repmat(S+Shv1,1,ntot).*dis.beta.*betamod.*D./repmat(N',ntot,1);
-%     FOIv = repmat(Sv1,   1,ntot).*dis.beta.*betamod.*D./repmat(N',ntot,1).*(1-dis.scv1);
+    FOIu = repmat(S+Shv1,1,ntot).*dis.beta.*dis.rr_infection.*betamod.*D./repmat(N',ntot,1);
     
     F                                = zeros(4*ntot,4*ntot);
     F(1:ntot,       2*ntot+1:4*ntot) = [dis.red*FOIu,  FOIu]; %,  dis.red*(1-dis.trv1)*FOIu,  (1-dis.trv1)*FOIu
-%     F(ntot+1:2*ntot,2*ntot+1:6*ntot) = [dis.red*FOIv,  FOIv,  dis.red*(1-dis.trv1)*FOIv,  (1-dis.trv1)*FOIv];
     
     onesn                            = ones(ntot,1);
     zerosn                            = zeros(ntot,1);
@@ -816,8 +739,6 @@ function Rt = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,N,D,betamod,p3,p4)
     V                                = diag(vvec);
     V(2*ntot+1:3*ntot,1:ntot)        = diag(-dis.sig1.*onesn);
     V(3*ntot+1:4*ntot,1:ntot)        = diag(-dis.sig2.*onesn);
-%     V(4*ntot+1:5*ntot,ntot+1:2*ntot) = diag(-dis.sig1.*onesn);
-%     V(5*ntot+1:6*ntot,ntot+1:2*ntot) = diag(-dis.sig2.*onesn);
     
     NGM = F/V;
     Rt  = eigs(NGM,1);

@@ -29,7 +29,7 @@ nnhprop = nnh./nnhtot;
 pdgh    = accumarray(subs',pdgh.*nnhprop);
 dis.pd  = [repmat(pdgh(adInd),data.lx,1);pdgh];
 
-dis.rr_infection = [repmat(data.bmi_rr(1,1),1,lx) 1 1 data.bmi_rr(1,1) data.bmi_rr(2,1)];
+dis.rr_infection = [repmat(data.bmi_rr(1,1),lx,1); 1; 1; data.bmi_rr(1,1); data.bmi_rr(2,1)];
 
 dis.ph([1:lx, lx+adInd]) = data.bmi_rr(1,2) * dis.ph([1:lx, lx+adInd]);
 dis.pd([1:lx, lx+adInd]) = data.bmi_rr(1,3) * dis.pd([1:lx, lx+adInd]);
@@ -52,7 +52,7 @@ dis.mu   = dis.pd./dis.Th;
 dis.nu   = 1/dis.Ti;
 
 %Transmission
-Deff  = data.basic_contact_matrix .* repmat(data.NNs,1,data.ntot)./repmat(data.NNs',data.ntot,1);
+Deff  = data.basic_contact_matrix .* repmat(dis.rr_infection,1,data.ntot) .* repmat(data.NNs,1,data.ntot)./repmat(data.NNs',data.ntot,1);
 onesn = ones(data.ntot,1);
 F     = zeros(3*data.ntot,3*data.ntot);
 F(1:data.ntot,data.ntot+1:end)=[dis.red*Deff,Deff];
