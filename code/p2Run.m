@@ -263,8 +263,10 @@ b1    = 0.1838;
 b2    = -1.024;
 
 if i~=5;
-    pout = (Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
-           (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur;
+    pout = p2.self_isolation_compliance .* ((Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
+           (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur);
+    p4 = get_case_ID_rate(p2, Ip);
+
     pout = pout.*(tout>p2.t_tit).*(tout<p2.end);    
 else
     pout = zeros(size(tout));
@@ -366,7 +368,7 @@ seed    = phi.*beta.*betamod.*(D*(seedvec./NN0));
 
 %% SELF-ISOLATION:
     
-if t<p2.end && i~=5 && t>=p2.t_tit;
+if t<p2.end && i~=5 && t>=p2.t_tit
     Ip    = 10^5*sum(Ina+Ins+Isa+Iss)/sum(NN0);%+Inav1+Insv1+Isav1+Issv1
     trate = p2.trate;
     b0    = 2.197;
@@ -374,7 +376,9 @@ if t<p2.end && i~=5 && t>=p2.t_tit;
     b2    = -1.024;
     p3    = p2.self_isolation_compliance .* ((Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
             (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur);
+    p4 = get_case_ID_rate(p2, Ip);
     p4    = p3;
+    
 else       
     p3=0;
     p4=0;
@@ -531,6 +535,8 @@ function [value,isterminal,direction] = elimination(t,y,data,N,D,ntot,dis,i,p2)
         b2    = -1.024;
         p3    = p2.self_isolation_compliance .* ((Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
                 (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur);
+        p4 = get_case_ID_rate(p2, Ip);
+
         p4    = p3;
     end
     

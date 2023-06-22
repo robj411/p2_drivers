@@ -101,7 +101,24 @@ columnnames = {'BMI','BMI_infection','BMI_hospitalisation','BMI_death',...
 inputs    = zeros(nsamples,length(columnnames)-4);
 outputs   = zeros(nsamples,4);
 
+schoolRs = zeros(nsamples,n_income);
+econRs = zeros(nsamples,n_income);
+for il = 1:n_income
+     for i = 1:nsamples
+        dis2 = synthetic_countries_dis{i,il};
+        p2 = synthetic_countries_p2{i,il};
+        ldata = synthetic_countries{i,il};
+        Rs = test_lockdown(p2,ldata,dis2);
+        econRs(i,il) = Rs(1);
+        schoolRs(i,il) = Rs(2);
+     end
+end
 
+[econrows,econcols] = find(econRs>1);
+[schoolrows,schoolcols] = find(schoolRs>1);
+disp(length(schoolrows))
+
+%% 
 
 for il = 1:n_income
     income_level = income_levels{il};
