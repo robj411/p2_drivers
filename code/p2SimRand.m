@@ -8,7 +8,7 @@ lx = data.lx;
 dis_ref = get_dis_params('Covid Wildtype'); 
 
 CD        = readtable('../data/country_data.csv');
-nsamples  = 1000;
+nsamples  = 4096;
 
 alldissamples = sample_disease_parameters(nsamples);
 
