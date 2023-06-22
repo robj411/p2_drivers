@@ -10,6 +10,8 @@ function p3 = get_case_ID_rate(p2, Ip)
     
     coef(Ip >= trate) = min(coef(Ip >= trate),trate/10^5);
     
+    coef = max(coef, trate/10^5 .* Ip/10^5);
+    
     p3 = p2.self_isolation_compliance .* coef / p2.dur;
     
 end
