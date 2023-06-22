@@ -267,7 +267,7 @@ if i~=5;
            (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur);
     p4 = get_case_ID_rate(p2, Ip);
 
-    pout = pout.*(tout>p2.t_tit).*(tout<p2.end);    
+    pout = p4.*(tout>p2.t_tit).*(tout<p2.end);    
 else
     pout = zeros(size(tout));
 end
@@ -377,7 +377,7 @@ if t<p2.end && i~=5 && t>=p2.t_tit
     p3    = p2.self_isolation_compliance .* ((Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
             (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur);
     p4 = get_case_ID_rate(p2, Ip);
-    p4    = p3;
+    p3    = p4;
     
 else       
     p3=0;
@@ -537,7 +537,7 @@ function [value,isterminal,direction] = elimination(t,y,data,N,D,ntot,dis,i,p2)
                 (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur);
         p4 = get_case_ID_rate(p2, Ip);
 
-        p4    = p3;
+        p3    = p4;
     end
     
     Rt1 = get_R(ntot,dis,h,g2,S,data.NNvec(:,3),data.Dvec(:,:,3),dis.beta,1,p3,p4);
