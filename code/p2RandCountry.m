@@ -211,7 +211,7 @@ data.wfh  = defivalue;
 data.wfh  = [newprop; newprop];
 
 %Tres
-nonempind = find(~isnan(CD.Tres) & country_indices);
+nonempind = find(~isnan(CD.Tres) & country_indices & CD.Tres<365);
 mint = min(CD.Tres(nonempind));
 maxt = max(CD.Tres(nonempind));
 randindex = nonempind(randi(numel(nonempind)));
@@ -220,7 +220,7 @@ defivalue = randvalue;
 data.Tres = unifrnd(mint,maxt,1,1);
 
 %t_tit
-nonempind  = find(~isnan(CD.t_tit) & country_indices);
+nonempind  = find(~isnan(CD.t_tit) & country_indices & CD.t_tit<365);
 mint = min(CD.t_tit(nonempind));
 maxt = max(CD.t_tit(nonempind));
 randindex  = nonempind(randi(numel(nonempind)));
