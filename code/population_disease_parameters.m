@@ -52,20 +52,22 @@ dis.mu   = dis.pd./dis.Th;
 dis.nu   = 1/dis.Ti;
 
 %Transmission
-Deff  = data.basic_contact_matrix .* repmat(dis.rr_infection,1,data.ntot) .* repmat(data.NNs,1,data.ntot)./repmat(data.NNs',data.ntot,1);
-onesn = ones(data.ntot,1);
-F     = zeros(3*data.ntot,3*data.ntot);
-F(1:data.ntot,data.ntot+1:end)=[dis.red*Deff,Deff];
+% Deff  = data.basic_contact_matrix .* repmat(dis.rr_infection,1,data.ntot) .* repmat(data.NNs,1,data.ntot)./repmat(data.NNs',data.ntot,1);
+% onesn = ones(data.ntot,1);
+% F     = zeros(3*data.ntot,3*data.ntot);
+% F(1:data.ntot,data.ntot+1:end)=[dis.red*Deff,Deff];
+% 
+% vvec = [(dis.sig1+dis.sig2).*onesn;      dis.g1.*onesn;       (dis.g2+dis.h).*onesn];%g2 and h are vectors
+% V    = diag(vvec);
+% V(data.ntot+1:2*data.ntot,1:data.ntot)   = diag(-dis.sig1.*onesn);
+% V(2*data.ntot+1:3*data.ntot,1:data.ntot) = diag(-dis.sig2.*onesn);
+% 
+% GD = F/V;
+% d = eigs(GD,1);%largest in magnitude (+/-) 
+% R0a = max(d); 
 
-vvec = [(dis.sig1+dis.sig2).*onesn;      dis.g1.*onesn;       (dis.g2+dis.h).*onesn];%g2 and h are vectors
-V    = diag(vvec);
-V(data.ntot+1:2*data.ntot,1:data.ntot)   = diag(-dis.sig1.*onesn);
-V(2*data.ntot+1:3*data.ntot,1:data.ntot) = diag(-dis.sig2.*onesn);
 
-GD = F/V;
-d = eigs(GD,1);%largest in magnitude (+/-) 
-R0a = max(d); 
-dis.CI = R0a;
+dis.CI = get_R(data.ntot, dis, dis.h, dis.g2, data.NNs, data.NNs, data.basic_contact_matrix, 1, 1, 0, 0); %R0a;
 
 
 R0beta = R0betafun(dis);

@@ -529,14 +529,13 @@ function [value,isterminal,direction] = elimination(t,y,data,N,D,ntot,dis,i,p2)
         b0    = 2.197;
         b1    = 0.1838;
         b2    = -1.024;
-        p3    = (Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
-                (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur;
+        p3    = p2.self_isolation_compliance .* ((Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
+                (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur);
         p4    = p3;
     end
     
-    zn = zeros(size(S));
-    Rt1 = rep_num(ntot,dis,h,g2,S,zn,zn,data.NNvec(:,3),data.Dvec(:,:,3),1,p3,p4);
-    Rt2 = rep_num(ntot,dis,h,g2,S,zn,zn,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
+    Rt1 = get_R(ntot,dis,h,g2,S,data.NNvec(:,3),data.Dvec(:,:,3),dis.beta,1,p3,p4);
+    Rt2 = get_R(ntot,dis,h,g2,S,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
     
     %% Event 1: Early Lockdown
     
@@ -584,7 +583,6 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,
     Ins   = ymat(:,compindex.I_index(3));
     Iss   = ymat(:,compindex.I_index(4));
     occ   = max(1,sum(H)); %+Hv1
-    zn = zeros(size(S));
     
     Hmax  = p2.Hmax;
     SHmax = p2.SHmax;
@@ -608,7 +606,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,
     r      = occdot/occ;
     Tcap   = t + log(p2.Hmax/occ)/r;
     Tcap   = Tcap-4;
-    Rt2    = rep_num(ntot,dis,h,g2,S,zn,zn,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
+    Rt2    = get_R(ntot,dis,h,g2,S,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
     
     %% Event 1: Response Time
     
@@ -657,7 +655,6 @@ function [value,isterminal,direction] = unmitigated(t,y,data,N,D,ntot,dis,i,p2)
     H    = ymat(:,compindex.H_index(1));
     Sn   = ymat(:,compindex.S_index(2));
     occ  = max(1,sum(H)); %+Hv1
-    zn = zeros(size(S));
         
     amp  = (Sn+(1-dis.heff).*(S-Sn))./S;
     ph   = amp.*dis.ph;
@@ -665,7 +662,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,N,D,ntot,dis,i,p2)
     g2   = (1-ph)./Ts;
     h    = ph./Ts;
     
-    Rt2  = rep_num(ntot,dis,h,g2,S,zn,zn,data.NNvec(:,5),data.Dvec(:,:,5),1,0,0);
+    Rt2  = get_R(ntot,dis,h,g2,S,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
 
     %% Event 1: Response Time
     
@@ -688,22 +685,22 @@ function [value,isterminal,direction] = unmitigated(t,y,data,N,D,ntot,dis,i,p2)
     
 end
 
-function Rt = rep_num(ntot,dis,h,g2,S,Shv1,Sv1,N,D,betamod,p3,p4)
-        
-    FOIu = repmat(S+Shv1,1,ntot).*dis.beta.*dis.rr_infection.*betamod.*D./repmat(N',ntot,1);
-    
-    F                                = zeros(4*ntot,4*ntot);
-    F(1:ntot,       2*ntot+1:4*ntot) = [dis.red*FOIu,  FOIu]; %,  dis.red*(1-dis.trv1)*FOIu,  (1-dis.trv1)*FOIu
-    
-    onesn                            = ones(ntot,1);
-    zerosn                            = zeros(ntot,1);
-    vvec                             = [(dis.sig1+dis.sig2).*onesn;  (dis.sig1+dis.sig2).*onesn;  (dis.g1+p3).*onesn;...
-                                        (g2+h+p4).*onesn;  ];          (dis.g1+p3).*onesn;     %     (dis.g2_v1+dis.h_v1+p4).*onesn
-    V                                = diag(vvec);
-    V(2*ntot+1:3*ntot,1:ntot)        = diag(-dis.sig1.*onesn);
-    V(3*ntot+1:4*ntot,1:ntot)        = diag(-dis.sig2.*onesn);
-    
-    NGM = F/V;
-    Rt  = eigs(NGM,1);
-    
-end
+% function Rt = rep_num(ntot,dis,h,g2,S,N,D,betamod,p3,p4)
+%         
+%     FOIu = repmat(S,1,ntot).*dis.beta.*dis.rr_infection.*betamod.*D./repmat(N',ntot,1);%+Shv1
+%     
+%     F                                = zeros(3*ntot,3*ntot);
+%     F(1:ntot, 1*ntot+1:3*ntot) = [dis.red*FOIu,  FOIu]; %,  dis.red*(1-dis.trv1)*FOIu,  (1-dis.trv1)*FOIu
+%     
+%     onesn                            = ones(ntot,1);
+%     vvec                             = [(dis.sig1+dis.sig2).*onesn;  (dis.g1+p3).*onesn;...
+%                                         (g2+h+p4).*onesn;  ];  %    (dis.sig1+dis.sig2).*onesn;      (dis.g1+p3).*onesn;         (dis.g2_v1+dis.h_v1+p4).*onesn
+%     V                                = diag(vvec);
+%     V(1*ntot+1:2*ntot,1:ntot)        = diag(-dis.sig1.*onesn);
+%     V(2*ntot+1:3*ntot,1:ntot)        = diag(-dis.sig2.*onesn);
+%     
+%     NGM = F/V;
+%     Rt  = eigs(NGM,1);
+%     
+% end
+
