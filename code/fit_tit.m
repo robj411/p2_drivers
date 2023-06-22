@@ -3,7 +3,7 @@ clear all;
 
 %% infections
 
-table = readtable('../../Data/Preparedness/10.UKprevalence.csv');
+table = readtable('10.UKprevalence.csv');
 tt    = table.t;
 I     = table.I;
 t1    = 1:244; 
@@ -22,7 +22,7 @@ I     = interp1(tt,I,t1)';
 
 %% tests
 
-table = readtable('../../Data/Preparedness/10.UKtesting.csv');
+table = readtable('10.UKtesting.csv');
 t2    = flipud(table.date);
 T     = flipud(table.newVirusTestsByPublishDate);
 dvec  = datevec(t2);
@@ -33,7 +33,7 @@ t2    = day(t2,'dayofyear')+366*min(1,dvec)+365*max(0,dvec-1);
 
 %% infections identified
 
-table = readtable('../../Data/Preparedness/10.UKcases.csv');
+table = readtable('10.UKcases.csv');
 t3    = flipud(table.date);
 C     = flipud(table.newCasesBySpecimenDate);
 dvec  = datevec(t3);
