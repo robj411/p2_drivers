@@ -7,12 +7,14 @@ function R = test_lockdown(p2,ldata,dis2)
     NN(lx+ldata.adInd) = NN(lx+ldata.adInd) + workpop - sum(NN(1:lx));
 
     betamod = p2.sdl;
-    % assume cases to high for testing to make any differece
-    p3 = 0; %p2.self_isolation_compliance;
-    p4 = 0; %p2.self_isolation_compliance;
+    % assume cases per 100k
+    Ip = 10000; % = 10%
+    p3 = get_case_ID_rate(p2, Ip); 
+    p4 = p3; 
 
     
-    R = zeros(1,2);
+    R = zeros(1,3);
+    R(3) = p3;
     
     contact_matrix = p2MakeDs(ldata,NN,ldata.x_econ(:,2),ldata.wfh(2,:));
 
