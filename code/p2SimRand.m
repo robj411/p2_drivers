@@ -87,7 +87,8 @@ end
 
 
 
-columnnames = {'BMI','BMI_infection','BMI_hospitalisation','BMI_death',...
+columnnames = {'Econ_LD_R','School_LD_R',...
+    'BMI','BMI_infection','BMI_hospitalisation','BMI_death',...
     'School_contacts','School_age','Working_age','Elders',...
     'Unemployment_rate','GDP','Labour_share','Work_contacts',...
     'Hospitality_contacts','Community_contacts','Hospital_capacity','Test_rate','Test_start',...
@@ -103,6 +104,7 @@ outputs   = zeros(nsamples,4);
 
 schoolRs = zeros(nsamples,n_income);
 econRs = zeros(nsamples,n_income);
+p3s = zeros(nsamples,n_income);
 for il = 1:n_income
      for i = 1:nsamples
         dis2 = synthetic_countries_dis{i,il};
@@ -111,6 +113,7 @@ for il = 1:n_income
         Rs = test_lockdown(p2,ldata,dis2);
         econRs(i,il) = Rs(1);
         schoolRs(i,il) = Rs(2);
+        p3s(i,il) = Rs(3);
      end
 end
 
@@ -194,7 +197,7 @@ for il = 1:n_income
 
         end
 
-        T                          = array2table([inputs,outputs]);
+        T                          = array2table([econRs(:,il),schoolRs(:,il),inputs,outputs]);
         T.Properties.VariableNames = columnnames;
 
         writetable(T,strcat('results/VOI_',string(strategy),'_',string(income_level),'.csv'));
