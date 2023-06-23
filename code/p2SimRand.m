@@ -77,16 +77,6 @@ end
 sigmoid = @(x) 1./(1+exp(-x));
 logit = @(x) log(x./(1-x));
 
-bmodel = glmfit([R0s',other_parameters],logit(betas)');
-bmodelintercept = bmodel(1);
-bmodelgrad = bmodel(2);
-
-pred1 = sigmoid(bmodel(1) + bmodel(2)*R0s' + other_parameters*bmodel(3:length(bmodel)));
-scatter(betas,pred1)
-
-beta_to_R0 = @(dis) [sigmoid([dis.R0 dis.sig1 dis.sig2 dis.g1 dis.Tsr dis.Tsh mean(dis.ihr)]*bmodel(2:length(bmodel)) + bmodel(1))*dis.CI ,...
-    sigmoid([dis.R0 dis.sig1 dis.sig2 dis.g1 dis.Tsr dis.Tsh mean(dis.ihr)]*bmodel(2:length(bmodel)) + bmodel(1))];
-
 beta_to_R0 = @(dis) [dis.beta.*dis.CI, dis.beta];
 
 betameans = mean(betas,2);

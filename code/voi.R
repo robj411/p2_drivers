@@ -83,11 +83,8 @@ evppifit <- function (outputs, inputs, pars = NULL, method = NULL, nsim = NULL,
 library(doParallel)
 cl <- makeCluster(4)
 registerDoParallel(cl)
-registerDoParallel(cores=4)
 
 
-ilistvoi <- list()
-ilistmi <- list()
 multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Tourism'=c('International_tourism','Food_sector'),
                     'Education factors'=c('School_age','Internet','Labour_share'),
@@ -96,6 +93,8 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Contacts'=c('Work_contacts','Hospitality_contacts','Community_contacts','School_contacts'),
                     'Testing'=c('Test_rate','Test_start','Self_isolation_compliance'),
                     'Social distancing'=c('Social_distancing_rate','Social_distancing_max'),
+                    'Lockdown (econ)'=c('Econ_LD_R','Response_time'),
+                    'Lockdown (school)'=c('School_LD_R','Response_time'),
                     'BMI RR' = c('BMI','BMI_hospitalisation','BMI_infection','BMI_death'),
                     'IHR + R0'=c('Mean_IHR', 'R0'),
                     'HFR + R0'=c('Mean_HFR', 'R0'),
@@ -195,8 +194,8 @@ saveRDS(voiall,paste0('results/voi.Rds'))
 saveRDS(miall,paste0('results/mi.Rds'))
 
 library(GGally)
-inp3 <- strategies[3];
-income_level <- income_levels[2];
+inp3 <- strategies[1];
+income_level <- income_levels[1];
 results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
 colnames(results)
 ggplot(results) + 
@@ -212,6 +211,77 @@ plot(results$outcome,mod$fitted.values)
 results$high <- cut(results$outcome,breaks=c(0,1,5,30))
 x11(); ggpairs(results,columns=c(1:17,41),aes(colour=high))
 x11(); ggpairs(results,columns=c(18:36,41),aes(colour=high))
+
+
+
+## decision #####################################
+
+listout <- foreach (il = 1:length(income_levels))%dopar%{
+  resultslist <- list()
+  for (ks in 1:length(strategies)){
+    inp3 <- strategies[ks];
+    income_level <- income_levels[il];
+    results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
+    firstreultcol <- which(colnames(results)=='Cost')
+    resultslist[[ks]] <- results[,firstreultcol:(ncol(results))]
+    for(i in 1:ncol(resultslist[[ks]])) resultslist[[ks]][,i] <- -resultslist[[ks]][,i]/results$GDP
+    print(paste0('results/VOI_',inp3,'_',income_level,'.csv'))
+  }
+  
+  sourcelist <- list()
+  for(src in 1:length(multisource)) {
+    sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
+    if(ncol(sourcelist[[src]])<length(multisource[[src]])) print(src)
+  }
+    
+  colnames(results) <- gsub('_',' ',colnames(results))
+  colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
+  colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
+  colnames(results)[colnames(results)=='Labour share'] <- 'Labour share of GVA'
+  
+  sourcemat <- results[,1:(firstreultcol-1)]
+    
+    
+  voilist <- list()
+  
+  for(i in 1:ncol(outcomes)){
+    voi <- c()
+    y <- do.call(cbind,lapply(resultslist,'[',i))
+    colnames(y) <- paste0(colnames(y),1:ncol(y))
+    keeprows <- rowSums(y < -.05)>0
+    for(j in 1:ncol(sourcemat)){
+      # model outcome as a function of input(s)
+      sourcesj <- sourcemat[,j]
+      voi[j] <- voi::evppi(y[keeprows,],sourcesj[keeprows])$evppi
+    }
+    for(j in 1:length(sourcelist)){
+      sourcesj <- sourcelist[[j]]
+      voi[j+ncol(sourcemat)] <- voi::evppi(y[keeprows,],sourcesj[keeprows,],pars=colnames(sourcesj),method='gam')$evppi
+    }
+    voilist[[i]] <- voi
+  }
+    
+  voitab <- do.call(rbind,voilist)
+  colnames(voitab) <- c(colnames(sourcemat),names(multisource))
+  rownames(voitab) <- paste0(colnames(outcomes),': ',income_level)
+  
+  # klistvoi[[il]] <- voitab
+  voitab
+}
+
+ilistvoi <- list(listout[[1]][[1]], listout[[2]][[1]], listout[[3]][[1]], listout[[4]][[1]])
+ilistmi <- list(listout[[1]][[2]], listout[[2]][[2]], listout[[3]][[2]], listout[[4]][[2]])
+
+voiall <- do.call(rbind,listout)
+roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
+                          function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
+voiall <- voiall[roworder,]
+miall <- do.call(rbind,ilistmi)
+miall <- miall[roworder,]
+
+saveRDS(voiall,paste0('results/decisionvoi.Rds'))
+
+
 
 ## income levels together ####################################
 
