@@ -195,11 +195,20 @@ saveRDS(voiall,paste0('results/voi.Rds'))
 saveRDS(miall,paste0('results/mi.Rds'))
 
 library(GGally)
-inp3 <- strategies[1];
-income_level <- income_levels[1];
+inp3 <- strategies[3];
+income_level <- income_levels[2];
 results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
 colnames(results)
+ggplot(results) + 
+  geom_point(aes(x=Econ_LD_R,y=Cost/GDP*100),colour='navyblue') +
+  theme_bw(base_size = 15) +
+  labs(x='Minimum R under economic lockdown',y='Cost, % GDP')
 results$outcome <- results$Cost/results$GDP
+summary(glm(outcome~(Econ_LD_R>1),data=results))
+library(splines)
+summary(mod <- glm(outcome~ns(Econ_LD_R,df=2)*ns(Response_time,df=2),data=results))
+plot(results$outcome,mod$fitted.values)
+
 results$high <- cut(results$outcome,breaks=c(0,1,5,30))
 x11(); ggpairs(results,columns=c(1:17,41),aes(colour=high))
 x11(); ggpairs(results,columns=c(18:36,41),aes(colour=high))
