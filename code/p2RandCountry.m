@@ -54,7 +54,7 @@ data.self_isolation_compliance = unifrnd(0,1,1,1);
 
 % contacts
 data.B = unifrnd(max(data.B/2-1,0),data.B*2+1);
-data.c = unifrnd(max(data.C/2-1,0),data.C*2+1);
+data.C = unifrnd(max(data.C/2-1,0),data.C*2+1);
 data.hospitality_contact_quantile = unifrnd(0,1);
 data.hospA2 = logninv(data.hospitality_contact_quantile,log(0.5),0.5);
 data.hospA3 = logninv(data.hospitality_contact_quantile,log(1),0.5);
@@ -154,9 +154,9 @@ FAAfrac = unifrnd( minFAAworkers , maxFAAworkers );
 agFrac = unifrnd( minagWorkers, min(maxagWorkers, 1-FAAfrac) );
 leftover_frac = 1 - FAAfrac - agFrac;
 
-data.NNs(agInd) = agFrac * workingagepop;
-data.NNs(FAAind) = FAAfrac * workingagepop;
-data.NNs(otherindices) = data.NNs(otherindices)./leftoverpop .* workingagepop .* leftover_frac;
+% data.NNs(agInd) = agFrac * workingagepop;
+% data.NNs(FAAind) = FAAfrac * workingagepop;
+% data.NNs(otherindices) = data.NNs(otherindices)./leftoverpop .* workingagepop .* leftover_frac;
 
 %obj: income per worker
 nonempind                   = find(~isnan(CD.obj1)&~isnan(CD.NNs1) & country_indices);
