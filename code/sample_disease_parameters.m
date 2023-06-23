@@ -6,12 +6,19 @@ ircolumns = cell2mat(cellfun(@(a) strmatch(a, sevenpathogens.Properties.Variable
     {'ihr','ifr'},'uniform',false));
 
 disparams = sevenpathogens(:,setdiff(1:size(sevenpathogens,2),ircolumns));
-
+sample_struct = struct;
+% replicate non covid
+for i = 1:size(disparams,2)
+    thisparam = disparams.Properties.VariableNames{i};
+    samples = disparams.(thisparam);
+    sample_struct.(thisparam) = [samples; samples(1:4); samples(1:4)];
+end
+    
 param_struct = struct;
 
 for i = 1:size(disparams,2)
     thisparam = disparams.Properties.VariableNames{i};
-    samples = disparams.(thisparam);
+    samples = sample_struct.(thisparam);
     if strmatch('R0',thisparam)
         samples = samples - 1;
     end
