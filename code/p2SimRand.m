@@ -1,16 +1,11 @@
 
+%% global variables
+
 income_levels = {'LLMIC','MIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
 
-data = data_start();
-lx = data.lx;
-
-dis_ref = get_dis_params('Covid Wildtype'); 
-
-CD        = readtable('../data/country_data.csv');
 nsamples  = 4096;
-
-alldissamples = sample_disease_parameters(nsamples);
+n_income = numel(income_levels);
 
 synthetic_countries_base = cell(nsamples,length(income_levels));
 synthetic_countries = cell(nsamples,length(income_levels));
@@ -18,7 +13,17 @@ synthetic_countries_dis = cell(nsamples,length(income_levels));
 synthetic_countries_dis_basis = cell(nsamples,1);
 synthetic_countries_p2 = cell(nsamples,length(income_levels));
 
-n_income = numel(income_levels);
+%% country variables
+
+CD        = readtable('../data/country_data.csv');
+data = data_start();
+lx = data.lx;
+
+%% disease variables
+
+dis_ref = get_dis_params('Covid Wildtype'); 
+
+alldissamples = sample_disease_parameters(nsamples);
 
 R0_to_beta = @(dis) [dis.R0, dis.R0/dis.CI];
 
@@ -35,16 +40,19 @@ for i = 1:nsamples
     synthetic_countries_dis_basis{i} = dis;
 end
 
+%% countries by disease
+
 % 2: get all countries
 % get covid doubling time
 % 3: get beta and R0, where beta depends on R0
-betas = [];
-R0s = [];
-CIs = [];
+betas = zeros(nsamples,n_income);
+R0s = zeros(nsamples,n_income);
+CIs = zeros(nsamples,n_income);
+other_parameters = zeros(nsamples*n_income,7);
 for i = 1:nsamples
-    rng(i);
     dis = synthetic_countries_dis_basis{i};
     for il = 1:n_income
+        rng(i);
         income_level = income_levels{il};
         
         % country data. defines wnorm and Td_CWT
@@ -53,24 +61,42 @@ for i = 1:nsamples
         
         % get beta and R0
         dis2 = population_disease_parameters(ldata1,dis,R0_to_beta);
-        betas(i+(il-1)*nsamples) = dis2.beta;
-        R0s(i+(il-1)*nsamples) = dis2.R0;
-        CIs(i+(il-1)*nsamples) = dis2.CI;
-        
+        betas(i,il) = dis2.beta;
+        R0s(i,il) = dis2.R0;
+        CIs(i,il) = dis2.CI;
+        other_parameters(i+(il-1)*nsamples,:) = [dis2.ps, dis2.sig1, dis2.sig2, dis2.g1, dis2.Tsr, dis2.Tsh, mean(dis2.ihr)];
     end
 end
 
+%% generate new R0 using beta
 
 % 4: get relationship between R0 and beta.
 % Resample R0.
 % use covid doubling time
-betamodel = glmfit(R0s,betas);
-bmodelintercept = betamodel(1);
-bmodelgrad = betamodel(2);
-beta_to_R0 = @(dis) [(bmodelgrad*dis.R0 + bmodelintercept)*dis.CI , bmodelgrad*dis.R0 + bmodelintercept];
 
+sigmoid = @(x) 1./(1+exp(-x));
+logit = @(x) log(x./(1-x));
+
+bmodel = glmfit([R0s',other_parameters],logit(betas)');
+bmodelintercept = bmodel(1);
+bmodelgrad = bmodel(2);
+
+pred1 = sigmoid(bmodel(1) + bmodel(2)*R0s' + other_parameters*bmodel(3:length(bmodel)));
+scatter(betas,pred1)
+
+beta_to_R0 = @(dis) [sigmoid([dis.R0 dis.sig1 dis.sig2 dis.g1 dis.Tsr dis.Tsh mean(dis.ihr)]*bmodel(2:length(bmodel)) + bmodel(1))*dis.CI ,...
+    sigmoid([dis.R0 dis.sig1 dis.sig2 dis.g1 dis.Tsr dis.Tsh mean(dis.ihr)]*bmodel(2:length(bmodel)) + bmodel(1))];
+
+beta_to_R0 = @(dis) [dis.beta.*dis.CI, dis.beta];
+
+betameans = mean(betas,2);
+
+betas2 = zeros(nsamples,n_income);
+R0s2 = zeros(nsamples,n_income);
+CIs2 = zeros(nsamples,n_income);
 for i = 1:nsamples
     dis = synthetic_countries_dis_basis{i};
+    dis.beta = betameans(i);
     for il = 1:n_income
         ldata0 = synthetic_countries_base{i,il};
         
@@ -79,28 +105,14 @@ for i = 1:nsamples
         synthetic_countries_dis{i,il} = dis2;
         synthetic_countries_p2{i,il} = p2;
         synthetic_countries{i,il}     = ldata;
-        betas(i+(il-1)*nsamples) = dis2.beta;
-        R0s(i+(il-1)*nsamples) = dis2.R0;
-        CIs(i+(il-1)*nsamples) = dis2.CI;
+        betas2(i,il) = dis2.beta;
+        R0s2(i,il) = dis2.R0;
+        CIs2(i,il) = dis2.CI;
     end
 end
+scatter(R0s(:),R0s2(:))
 
-
-
-columnnames = {'Econ_LD_R','School_LD_R',...
-    'BMI','BMI_infection','BMI_hospitalisation','BMI_death',...
-    'School_contacts','School_age','Working_age','Elders',...
-    'Unemployment_rate','GDP','Labour_share','Work_contacts',...
-    'Hospitality_contacts','Community_contacts','Hospital_capacity','Test_rate','Test_start',...
-    'Response_time','Social_distancing_max','Social_distancing_rate','Self_isolation_compliance','Candidate_infectees',...
-    'R0','beta','Mean_IHR',...
-    'Mean_HFR','Mean_IFR','Probability_symptomatic','Latent_period',...
-    'Asymptomatic_period','Symptomatic_period','Time_to_hospitalisation','Time_to_discharge',...
-    'Time_to_death','Agriculture','Food_sector','International_tourism',...
-    'Internet',...
-    'Cost','Deaths','School','GDP_loss'};
-inputs    = zeros(nsamples,length(columnnames)-4);
-outputs   = zeros(nsamples,4);
+%% which samples cannot be contained
 
 schoolRs = zeros(nsamples,n_income);
 econRs = zeros(nsamples,n_income);
@@ -121,7 +133,23 @@ end
 [schoolrows,schoolcols] = find(schoolRs>1);
 disp(length(schoolrows))
 
-%% 
+%% set up simulation
+columnnames = {'Econ_LD_R','School_LD_R',...
+    'BMI','BMI_infection','BMI_hospitalisation','BMI_death',...
+    'School_contacts','School_age','Working_age','Elders',...
+    'Unemployment_rate','GDP','Labour_share','Work_contacts',...
+    'Hospitality_contacts','Community_contacts','Hospital_capacity','Test_rate','Test_start',...
+    'Response_time','Social_distancing_max','Social_distancing_rate','Self_isolation_compliance','Candidate_infectees',...
+    'R0','beta','Mean_IHR',...
+    'Mean_HFR','Mean_IFR','Probability_symptomatic','Latent_period',...
+    'Asymptomatic_period','Symptomatic_period','Time_to_hospitalisation','Time_to_discharge',...
+    'Time_to_death','Agriculture','Food_sector','International_tourism',...
+    'Internet',...
+    'Cost','Deaths','School','GDP_loss'};
+inputs    = zeros(nsamples,length(columnnames)-6);
+outputs   = zeros(nsamples,4);
+
+%% simulate
 
 for il = 1:n_income
     income_level = income_levels{il};
