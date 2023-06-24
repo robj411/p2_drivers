@@ -234,48 +234,6 @@ randvalue = table2array(CD(randindex,476:493));
 defivalue = randvalue;
 data.la   = defivalue;
 
-%vly
-na        = [data.Npop(1:17)',sum(data.Npop(18:end))];%length is 18 to match life table
-gdp       = 365*sum(data.obj);
-la        = data.la;
-lg        = [dot(la(1),na(1))/sum(na(1)),...
-             dot(la(2:4),na(2:4))/sum(na(2:4)),...
-             dot(la(5:13),na(5:13))/sum(na(5:13)),...
-             dot(la(14:end),na(14:end))/sum(na(14:end))];
-for k = 1:length(lg); 
-    lgh(k) = sum(1./((1+0.03).^[1:lg(k)]));
-end 
-vsl       = 160*gdp/sum(na);
-defivalue = vsl/(dot(lgh,[na(1);sum(na(2:4));sum(na(5:13));sum(na(14:end))])/sum(na));
-data.vly  = defivalue;
-data.gdp = gdp;
-data.gdppc = gdp/sum(data.Npop);
-
-%vsy
-working_years = 45;
-discount_rate = 0.03;
-rate_of_return_one_year = 0.08;
-PV = (1-(1+discount_rate)^(-working_years))/discount_rate;
-
-adultindices = [1:lx,lx+data.adInd];
-workingagepop = sum(data.NNs(adultindices));
-
-students_affected = 1 - 0.86 * internet_coverage;
-mean_annual_income = labsh*gdp/workingagepop;
-data.labsh = labsh;
-
-educationloss_all_students = ...
-    PV*mean_annual_income*rate_of_return_one_year*students_affected*sum(data.Npop(2:4));
-educationloss_per_student = ...
-    PV*mean_annual_income*rate_of_return_one_year*students_affected;
-
-
-
-defivalue = 0.5454*gdp/sum(data.Npop(2:4));
-data.vsy  = educationloss_per_student;
-data.educationloss_all_students  = educationloss_all_students;
-
-
 
 %% change sizes of sectors
 % rescale sectors
@@ -283,6 +241,9 @@ data.educationloss_all_students  = educationloss_all_students;
 % agInd = 1;
 FAAind = 32;
 pointiness = 1000;
+
+adultindices = [1:lx,lx+data.adInd];
+workingagepop = sum(data.NNs(adultindices));
 
 adult_props = data.NNs(adultindices)./workingagepop;
 small_sectors = find(adult_props<1e-3);
@@ -333,6 +294,49 @@ defivalue(isinf(defivalue)) = 0;
 defivalue                   = data.NNs(1:45).*defivalue';%gva by sector in artificial country
 %%!! need to check food and accomm gva as % of gdp
 data.obj                    = defivalue;
+
+%% valuations
+
+%vly
+na        = [data.Npop(1:17)',sum(data.Npop(18:end))];%length is 18 to match life table
+gdp       = 365*sum(data.obj);
+la        = data.la;
+lg        = [dot(la(1),na(1))/sum(na(1)),...
+             dot(la(2:4),na(2:4))/sum(na(2:4)),...
+             dot(la(5:13),na(5:13))/sum(na(5:13)),...
+             dot(la(14:end),na(14:end))/sum(na(14:end))];
+for k = 1:length(lg); 
+    lgh(k) = sum(1./((1+0.03).^[1:lg(k)]));
+end 
+vsl       = 160*gdp/sum(na);
+defivalue = vsl/(dot(lgh,[na(1);sum(na(2:4));sum(na(5:13));sum(na(14:end))])/sum(na));
+data.vly  = defivalue;
+data.gdp = gdp;
+data.gdppc = gdp/sum(data.Npop);
+
+%vsy
+working_years = 45;
+discount_rate = 0.03;
+rate_of_return_one_year = 0.08;
+PV = (1-(1+discount_rate)^(-working_years))/discount_rate;
+
+students_affected = 1 - 0.86 * internet_coverage;
+mean_annual_income = labsh*gdp/workingagepop;
+data.labsh = labsh;
+
+educationloss_all_students = ...
+    PV*mean_annual_income*rate_of_return_one_year*students_affected*sum(data.Npop(2:4));
+educationloss_per_student = ...
+    PV*mean_annual_income*rate_of_return_one_year*students_affected;
+
+
+
+defivalue = 0.5454*gdp/sum(data.Npop(2:4));
+data.vsy  = educationloss_per_student;
+data.educationloss_all_students  = educationloss_all_students;
+
+
+
 
 %% international tourism 
 
