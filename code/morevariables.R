@@ -8,6 +8,10 @@ get_most_recent <- function(dataset){
 }
 
 
+View(indicators[grepl('education',indicators$indicator),])
+wb_data('CC.SE.NYRS.AVG') %>%filter(!is.na(`CC.SE.NYRS.AVG`))
+
+
 View(indicators[grepl('mobile',indicators$indicator),])
 gwp1_n
 IT.MOB.COV.ZS
