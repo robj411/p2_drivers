@@ -405,7 +405,44 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```
 
 
-\enlargethispage{4\baselineskip}
+```{r dvoi,fig.cap='Decision VOI. Which parameters would enable the decision maker to choose a strategy that minimises expected losses?',eval=T,echo=F,warning=F,message=F,fig.height=12}
+
+voiall <- readRDS('code/results/decisionvoi.Rds')*100
+rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
+rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
+
+nscen <- nrow(voiall)
+nparam <- ncol(voiall)
+dvoibrks <- c(-1,seq(0,ceiling(max(voiall)),by=1))
+discxs <- matrix(cut(as.numeric(voiall),breaks=dvoibrks,labels=1:(length(dvoibrks)-1),include.lowest = T),
+                 nrow=nscen,ncol=nparam)
+dyvals <- 1:nscen
+dyvals[dyvals>3] <- dyvals[dyvals>3] + .1*(ceiling(dyvals[dyvals>3]/3)-1)
+df <- data.frame(x=rep(xvals,each=nscen),y=rep(dyvals,nparam),xs=c(discxs[nscen:1,]))
+ilevels <- do.call(rbind,sapply(rownames(voiall),strsplit,': '))
+options(repr.plot.width = 1, repr.plot.height = 0.75)
+milbs <- dvoibrks[-1]
+ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs))) +
+  geom_tile() +
+  scale_fill_manual(values = colorRampPalette(c("midnightblue","royalblue","lightskyblue","white"))(length(dvoibrks)-1)) +   
+  theme_bw(base_size=12) +                                   # Minimal theme
+  labs(title = "") +
+  scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
+  theme(axis.text.x.bottom = element_text(angle = 90,  hjust=1,vjust=0.5)) +
+  theme(
+    plot.title = element_text(hjust = 1),        
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+  guides(fill = guide_legend(#nrow = 1,
+    title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
+    #label.position="bottom", 
+    label.hjust = 0, #label.vjust = 0.3, 
+    #label.theme = element_text(size=8,angle = 45),
+    title = 'EVPPI, % of GDP',override.aes=list(colour='black'))) +
+  scale_y_continuous(name='',breaks=dyvals,labels=rev(ilevels[,2]),expand=c(0,0),
+                     sec.axis=sec_axis(trans='identity',breaks=dyvals[seq(2,nscen,by=3)],labels=rev(unique(splitnames[,1])))) +
+  coord_flip()
+```
+
 
 ```{r mi,fig.cap='Mutual information (MI) for pre-Alpha variants of SARS-CoV-2.',eval=T,echo=F,warning=F,message=F,fig.height=12}
 
