@@ -117,6 +117,7 @@ listout <- foreach (ks = 1:length(strategies))%dopar%{
     inp3 <- strategies[ks];
     income_level <- income_levels[il];
     results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
+    results <- subset(results,R0>1)
     print(paste0('results/VOI_',inp3,'_',income_level,'.csv'))
     sourcelist <- list()
     for(src in 1:length(multisource)) {
@@ -222,6 +223,7 @@ listout <- foreach (il = 1:length(income_levels))%dopar%{
     inp3 <- strategies[ks];
     income_level <- income_levels[il];
     results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
+    results <- subset(results,R0>1)
     firstreultcol <- which(colnames(results)=='Cost')
     resultslist[[ks]] <- results[,firstreultcol:(ncol(results))]
     for(i in 1:ncol(resultslist[[ks]])) resultslist[[ks]][,i] <- -resultslist[[ks]][,i]/results$GDP
@@ -251,8 +253,8 @@ listout <- foreach (il = 1:length(income_levels))%dopar%{
     keeprows <- rowSums(y < -.05)>0
     for(j in 1:ncol(sourcemat)){
       # model outcome as a function of input(s)
-      sourcesj <- sourcemat[,j]
-      voi[j] <- voi::evppi(y[keeprows,],sourcesj[keeprows])$evppi
+      sourcesj <- sourcemat[,j,drop=F]
+      voi[j] <- voi::evppi(y[keeprows,],sourcesj[keeprows,,drop=F],pars=colnames(sourcesj))$evppi
     }
     for(j in 1:length(sourcelist)){
       sourcesj <- sourcelist[[j]]
@@ -269,15 +271,10 @@ listout <- foreach (il = 1:length(income_levels))%dopar%{
   voitab
 }
 
-ilistvoi <- list(listout[[1]][[1]], listout[[2]][[1]], listout[[3]][[1]], listout[[4]][[1]])
-ilistmi <- list(listout[[1]][[2]], listout[[2]][[2]], listout[[3]][[2]], listout[[4]][[2]])
-
 voiall <- do.call(rbind,listout)
 roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
                           function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
 voiall <- voiall[roworder,]
-miall <- do.call(rbind,ilistmi)
-miall <- miall[roworder,]
 
 saveRDS(voiall,paste0('results/decisionvoi.Rds'))
 
