@@ -262,32 +262,10 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,Vcla
     else
         betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
     end
-
-
-%     amp   = (Sn+(1-dis.hv2).*(S-Sn))./S;
-%     ph    = amp.*dis.ph';
-%     Ts    = ((1-ph).*dis.Tsr) + (ph.*dis.Tsh);
-%     g3    = (1-pd)./Th;
-%     h     = ph./Ts;
-%     dur   = p2.dur;
-%     qh    = ph./(Ts-dur);
-
-%     Hdot   = h.*Ins      +qh.*Iss        -(g3+mu).*H;
-%     occdot = sum(Hdot,2);%+Hv1dot
-%     r      = occdot./occ;
-
-
+    
     Ip    = 10^5*sum(Iclass,2)/sum(NN0);
-%     trate = p2.trate;
-%     b0    = 2.197;
-%     b1    = 0.1838;
-%     b2    = -1.024;
-
     if i~=5
-%         pout = p2.self_isolation_compliance .* ((Ip<trate) .*   (1./(1+exp(b0+b1*Ip+b2*log10(trate))))/dur + ...
-%                (Ip>=trate).*min(1./(1+exp(b0+b1*Ip+b2*log10(trate))),trate/10^5)/dur);
         p4 = get_case_ID_rate(p2, Ip);
-
         pout = p4.*(tout>p2.t_tit).*(tout<max(p2.tpoints)); 
     else
         pout = zeros(size(tout));
@@ -297,7 +275,7 @@ end
 
 %%
 
-function [f,g] = ODEs(data,NN0,D,i,t,dis,y,p2)
+function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
 
     ntot = size(data.NNs,1);
 
@@ -590,7 +568,7 @@ function [f,g] = ODEs(data,NN0,D,i,t,dis,y,p2)
     
     f(y<eps) = max(0,f(y<eps)); 
 
-    g = h.*(Ins+Iss) + h_v1.*(Insv1+Issv1) + h_v2.*(Insv2+Issv2);
+%     g = h.*Ins + qh.*Iss + h_v1.*Insv1 + qh_v1.*Issv1 + h_v2.*Insv2 + qh_v2.*Issv2;
 
 end
 
@@ -683,11 +661,13 @@ function [value,isterminal,direction] = elimination(t,y,data,N,D,ntot,dis,i,p2)
     tval = min(t-(data.tvec(end-1)+0.1),0);
     % t is greater than the end of the vaccine rollout: otherval = 0
     otherval = min(t-max(p2.tpoints),0);
-    R2flag = ~(ival==0 && tval==0 && otherval==0);
-    if R2flag ~= 0 && ival==0 && tval==0
-        Rt2 = get_R(ntot,dis,h,g2,S+Shv1,Sv1,Sv2,...
-            data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
-        R2flag = min(1.00-Rt2,0);
+    R2flag = otherval + ival + tval;
+    if ival==0 && tval==0
+        if otherval~=0
+            Rt2 = get_R(ntot,dis,h,g2,S+Shv1,Sv1,Sv2,...
+                data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
+            R2flag = min(1.00-Rt2,0);
+        end
     end
     
     value(5)      = R2flag; % min(t-max(p2.tpoints),0)*min(1.00-Rt2,0); 
@@ -783,12 +763,14 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,N,D,ntot,dis,
     % (low growth rate OR occupancy is low) AND have reached end of vaccine
     % rollout: otherval = 0
     otherval = min(0.025-r,0)*max(0,occ-p2.thl) + min(t-max(p2.tpoints),0);
-    R2flag = ~(ivals==0 && tval==0 && otherval==0);
-    % only compute R if R2flag is not already 0 and ivals and tval
-    % conditions are both met
-    if R2flag~=0 && ivals==0 && tval==0
-        Rt2    = get_R(ntot,dis,h,g2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
-        R2flag = min(1.00-Rt2,0);
+    R2flag = otherval + ivals + tval;
+    if ivals==0 && tval==0
+        if otherval~=0
+        % only compute R if R2flag is not already 0 and ivals and tval
+        % conditions are both met
+            Rt2    = get_R(ntot,dis,h,g2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
+            R2flag = min(1.00-Rt2,0);
+        end
     end
     
     value(5)      = R2flag; 
@@ -841,12 +823,14 @@ function [value,isterminal,direction] = unmitigated(t,y,data,N,D,ntot,dis,i,p2)
     tval = min(t-(data.tvec(end-1)+0.1),0);
     % have reached end of vaccine rollout: otherval = 0
     otherval = min(t-max(p2.tpoints),0);
-    R2flag = ~(ivals==0 && tval==0 && otherval==0);
-    % only compute R if R2flag is not already 0 and ivals and tval
-    % conditions are both met
-    if R2flag~=0 && ivals==0 && tval==0
-        Rt2    = get_R(ntot,dis,h,g2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
-        R2flag = min(1.00-Rt2,0);
+    R2flag = otherval + ivals + tval;
+    if ivals==0 && tval==0 
+        if otherval~=0
+        % only compute R if R2flag is not already 0 and ivals and tval
+        % conditions are both met
+            Rt2    = get_R(ntot,dis,h,g2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
+            R2flag = min(1.00-Rt2,0);
+        end
     end
     
     value(3)      = R2flag; 

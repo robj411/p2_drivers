@@ -93,8 +93,6 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Contacts'=c('Work_contacts','Hospitality_contacts','Community_contacts','School_contacts'),
                     'Testing'=c('Test_rate','Test_start','Self_isolation_compliance'),
                     'Social distancing'=c('Social_distancing_rate','Social_distancing_max'),
-                    'Lockdown (econ)'=c('Econ_LD_R','Response_time'),
-                    'Lockdown (school)'=c('School_LD_R','Response_time'),
                     'BMI RR' = c('BMI','BMI_hospitalisation','BMI_infection','BMI_death'),
                     'IHR + R0'=c('Mean_IHR', 'R0'),
                     'HFR + R0'=c('Mean_HFR', 'R0'),
@@ -199,15 +197,8 @@ inp3 <- strategies[1];
 income_level <- income_levels[1];
 results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
 colnames(results)
-ggplot(results) + 
-  geom_point(aes(x=Econ_LD_R,y=Cost/GDP*100),colour='navyblue') +
-  theme_bw(base_size = 15) +
-  labs(x='Minimum R under economic lockdown',y='Cost, % GDP')
 results$outcome <- results$Cost/results$GDP
-summary(glm(outcome~(Econ_LD_R>1),data=results))
 library(splines)
-summary(mod <- glm(outcome~ns(Econ_LD_R,df=2)*ns(Response_time,df=2),data=results))
-plot(results$outcome,mod$fitted.values)
 
 results$high <- cut(results$outcome,breaks=c(0,1,5,30))
 x11(); ggpairs(results,columns=c(1:17,41),aes(colour=high))
@@ -442,6 +433,8 @@ miall <- miall[roworder,]
 # saveRDS(voiall,paste0('results/voi.Rds'))
 # saveRDS(miall,paste0('results/mi.Rds'))
 
+## ggpairs ################################
+
 library(GGally)
 inp3 <- strategies[1];
 income_level <- income_levels[1];
@@ -452,7 +445,7 @@ results$high <- cut(results$outcome,breaks=c(0,1,5,30))
 x11(); ggpairs(results,columns=c(1:14,38),aes(colour=high))
 x11(); ggpairs(results,columns=c(15:29,38),aes(colour=high))
 
-## something else ###################################
+## log cost share plot ###################################
 
 library(scales)
 ivoioutcomelist <- list()

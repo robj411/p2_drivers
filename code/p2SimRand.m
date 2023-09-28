@@ -4,7 +4,7 @@
 income_levels = {'LLMIC','MIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
 
-nsamples  = 1000;
+nsamples  = 100;
 n_income = numel(income_levels);
 
 synthetic_countries_base = cell(nsamples,length(income_levels));
