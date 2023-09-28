@@ -17,13 +17,15 @@ function R = test_lockdown(p2,ldata,dis2)
     R(3) = p3;
     
     contact_matrix = p2MakeDs(ldata,NN,ldata.x_econ(:,2),ldata.wfh(2,:));
+    
+    zn = zeros(size(NN));
 
-    R(1) = get_R(ldata.ntot, dis2, dis2.h, dis2.g2, NN, NN, contact_matrix, dis2.beta, betamod, p3, p4);
+    R(1) = get_R(ldata.ntot, dis2, dis2.h, dis2.g2, NN, zn, zn, NN, contact_matrix, dis2.beta, betamod, p3, p4);
        
     
     contact_matrix = p2MakeDs(ldata,NN,ldata.x_schc(:,2),ldata.wfh(2,:));
 
 
-    R(2) = get_R(ldata.ntot, dis2, dis2.h, dis2.g2, NN, NN, contact_matrix, dis2.beta, betamod, p3, p4);
+    R(2) = get_R(ldata.ntot, dis2, dis2.h, dis2.g2, NN, zn, zn, NN, contact_matrix, dis2.beta, betamod, p3, p4);
 
 end

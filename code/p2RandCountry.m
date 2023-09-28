@@ -92,32 +92,20 @@ data.CM   = defivalue;
 nonempind = find(~isnan(CD.comm) & country_indices);
 mincomm = min(CD.comm(nonempind));
 maxcomm = max(CD.comm(nonempind));
-randindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(randindex,326));
-defivalue = randvalue;
 data.comm = unifrnd(mincomm,maxcomm,1,1);
 
 %travelA3
 nonempind     = find(~isnan(CD.travelA3) & country_indices);
 mina3 = min(CD.travelA3(nonempind));
 maxa3 = max(CD.travelA3(nonempind));
-randindex     = nonempind(randi(numel(nonempind)));
-randvalue     = table2array(CD(randindex,327));
-defivalue     = randvalue;
 data.travelA3 =  unifrnd(mina3,maxa3,1,1);
 
-% sample_uniform({'travelA3'},CD,country_indices)
-
 %schoolA1&schoolA2
-nonempind     = find(~isnan(CD.schoolA1) & country_indices);
 school_contact_quantile = unifrnd(0,1,1,1);
 mina1 = min(CD.schoolA1);
 maxa1 = max(CD.schoolA1);
 mina2 = min(CD.schoolA2);
 maxa2 = max(CD.schoolA2);
-randindex     = nonempind(randi(numel(nonempind)));
-randvalue1    = table2array(CD(randindex,328));
-randvalue2    = table2array(CD(randindex,329));
 data.schoolA1 = unifinv(school_contact_quantile,mina1,maxa1) ; 
 data.schoolA2 = unifinv(school_contact_quantile,mina2,maxa2);
 
@@ -127,105 +115,66 @@ data.schoolA2 = unifinv(school_contact_quantile,mina2,maxa2);
 nonempind  = find(~isnan(CD.workp) & country_indices);
 minwp = min(CD.workp(nonempind));
 maxwp = max(CD.workp(nonempind));
-randindex  = nonempind(randi(numel(nonempind)));
-randvalue  = table2array(CD(randindex,330));
-defivalue  = randvalue;
 data.workp = unifrnd(minwp,maxwp,1,1);
 
 
 %%
 %wfh
 nonempind = find(~isnan(CD.wfhl1) & country_indices);
-randindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(randindex,376:465));
-defivalue = reshape(randvalue,45,2)';
-
 mins = min(table2array(CD(nonempind,376:420)));
 maxs = max(table2array(CD(nonempind,421:465)));
-% props = reshape([mins,maxs],45,2)';
-% props(props==0) = 1e-6;
-% sigmoid = -log(1./props - 1);
-% meansig = mean(sigmoid);
-% sdsig = (meansig-sigmoid(1,:))./norminv(.95);
-% qsig = norminv(quantile,meansig,sdsig);
-% newprop = 1./(1+exp(-qsig));
 newprop = unifinv(remote_quantile,mins,maxs);
-
-data.wfh  = defivalue;
 data.wfh  = [newprop; newprop];
 
 %Tres
 nonempind = find(~isnan(CD.Tres) & country_indices & CD.Tres<365);
 mint = min(CD.Tres(nonempind));
 maxt = max(CD.Tres(nonempind));
-randindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(randindex,472));
-defivalue = randvalue;
 data.Tres = unifrnd(mint,maxt,1,1);
 
 %t_tit
 nonempind  = find(~isnan(CD.t_tit) & country_indices & CD.t_tit<365);
 mint = min(CD.t_tit(nonempind));
 maxt = max(CD.t_tit(nonempind));
-randindex  = nonempind(randi(numel(nonempind)));
-randvalue  = table2array(CD(randindex,470));
-defivalue  = randvalue;
 data.t_tit = unifrnd(mint,maxt,1,1);
 
 %trate
 nonempind  = find(~isnan(CD.trate) & country_indices);
 mint = min(CD.trate(nonempind));
 maxt = max(CD.trate(nonempind));
-randindex  = nonempind(randi(numel(nonempind)));
-randvalue  = table2array(CD(randindex,471));
-defivalue  = randvalue;
 data.trate = unifrnd(mint,maxt,1,1);
 
 %sdl
 nonempind = find(~isnan(CD.sdl) & country_indices);
 mins = min(CD.sdl(nonempind));
 maxs = max(CD.sdl(nonempind));
-randindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(randindex,473));
-defivalue = randvalue;
 data.sdl  = unifrnd(mins,maxs,1,1);
 
 %sdb
 nonempind = find(~isnan(CD.sdb) & country_indices);
 mins = min(CD.sdb(nonempind));
 maxs = max(CD.sdb(nonempind));
-randindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(randindex,474));
-defivalue = randvalue;
 data.sdb  = unifrnd(mins,maxs,1,1);
 
-%Hmax
-nonempind = find(~isnan(CD.Hmax) & country_indices);
-randindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(randindex,469));
-defivalue = randvalue;
-data.Hmax = Hmax; %defivalue;
+data.Hmax = Hmax; 
 
 %t_vax
 nonempind  = find(~isnan(CD.t_vax) & country_indices);
-randindex  = nonempind(randi(numel(nonempind)));
-randvalue  = table2array(CD(randindex,466));
-defivalue  = randvalue;
-data.t_vax = defivalue;
+mint = min(CD.t_vax(nonempind));
+maxt = max(CD.t_vax(nonempind));
+data.t_vax = unifrnd(mint,maxt,1,1);
 
 %arate
 nonempind  = find(~isnan(CD.arate) & country_indices);
-randindex  = nonempind(randi(numel(nonempind)));
-randvalue  = table2array(CD(randindex,467));
-defivalue  = randvalue;
-data.arate = defivalue;
+mint = min(CD.arate(nonempind));
+maxt = max(CD.arate(nonempind));
+data.arate = unifrnd(mint,maxt,1,1);
 
 %puptake
 nonempind    = find(~isnan(CD.puptake) & country_indices);
-randindex    = nonempind(randi(numel(nonempind)));
-randvalue    = table2array(CD(randindex,468));
-defivalue    = randvalue;
-data.puptake = defivalue;
+mint = min(CD.puptake(nonempind));
+maxt = max(CD.puptake(nonempind));
+data.puptake = unifrnd(mint,maxt,1,1);
 
 %la
 nonempind = find(~isnan(CD.la1) & country_indices);
@@ -320,7 +269,8 @@ discount_rate = 0.03;
 rate_of_return_one_year = 0.08;
 PV = (1-(1+discount_rate)^(-working_years))/discount_rate;
 
-students_affected = 1 - 0.86 * internet_coverage;
+remote_teaching_effectiveness = betarnd(5,5,1,1);
+students_affected = 1 - remote_teaching_effectiveness;
 mean_annual_income = labsh*gdp/workingagepop;
 data.labsh = labsh;
 
