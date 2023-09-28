@@ -2,6 +2,7 @@ function param_struct = sample_disease_parameters(nsamples)
 
 sevenpathogens = readtable('../data/sevenpathogens.csv');
 
+%% single parameters
 ircolumns = cell2mat(cellfun(@(a) strmatch(a, sevenpathogens.Properties.VariableNames),...
     {'ihr','ifr'},'uniform',false));
 
@@ -20,7 +21,7 @@ for i = 1:size(disparams,2)
     thisparam = disparams.Properties.VariableNames{i};
     samples = sample_struct.(thisparam);
     if strmatch('R0',thisparam)
-        samples = samples - 1;
+        samples = samples(samples<5.5) - 1;
     end
     pHat = gamfit(samples);
     newparams = gamrnd(pHat(1),pHat(2),nsamples,1);
@@ -39,6 +40,7 @@ newparams = betarnd(pHat(1),pHat(2),nsamples,1);
 param_struct.(thisparam) = newparams;
 
 %% ihr and hfr 
+
 ihrs = table2array(sevenpathogens(:,ircolumns(:,1)));
 ifrs = table2array(sevenpathogens(:,ircolumns(:,2)));
 hfrs = ifrs./ihrs;
@@ -75,5 +77,28 @@ for i = 1:nsamples
     hfr = hfrrr(i,:) ./ maxhfrrr(i) .* maxhfr(i);
     param_struct.ifr(i,:) = param_struct.ihr(i,:) .* hfr;
 end
+
+%% CEPI ifr
+
+newifr = readtable('../data/IFR Distributions.xlsx','ReadRowNames',true).IFR(1:17);
+% ps > ihr > ifr
+% hfr > ifr
+upperbound = sevenpathogens.ps;
+vals = mean(ihrs')';
+lowerbound = mean(ifrs')';
+
+transformedvals = (vals-lowerbound)./(upperbound-lowerbound);
+
+pHat = betafit(transformedvals);
+relvals = betarnd(pHat(1),pHat(2),nsamples,1);
+
+
+p1=7; newparams = gamrnd(p1,1/p1,nsamples,1);
+
+for i = 1:nsamples
+    param_struct.ifr(i,:) = newifr'*newparams(i);
+    param_struct.ihr(i,:) = relvals(i) * (param_struct.ps(i) - param_struct.ifr(i,:)) + param_struct.ifr(i,:); 
+end
+
 
 end

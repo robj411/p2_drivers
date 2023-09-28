@@ -66,8 +66,9 @@ dis.nu   = 1/dis.Ti;
 % d = eigs(GD,1);%largest in magnitude (+/-) 
 % R0a = max(d); 
 
-
-dis.CI = get_R(data.ntot, dis, dis.h, dis.g2, data.NNs, data.NNs, data.basic_contact_matrix, 1, 1, 0, 0); %R0a;
+zs = zeros(size(data.NNs));
+dis.CI = get_R(data.ntot, dis, dis.h, dis.g2, data.NNs, zs, zs,...
+    data.NNs, data.basic_contact_matrix, 1, 1, 0, 0); %R0a;
 
 
 R0beta = R0betafun(dis);
