@@ -87,22 +87,22 @@ registerDoParallel(cl)
 
 multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Tourism'=c('International_tourism','Food_sector'),
-                    'Education factors'=c('School_age','Internet','Labour_share'),
-                    'Age groups'=c('School_age','Working_age','Elders'),
+                    'Education factors'=c('School_age','Labour_share'),
+                    #'Age groups'=c('School_age','Working_age','Elders'),
                     'Working'=c('Working_age','Work_contacts'),
-                    'Contacts'=c('Work_contacts','Hospitality_contacts','Community_contacts','School_contacts'),
-                    'Testing'=c('Test_rate','Test_start','Self_isolation_compliance'),
+                    #'Contacts'=c('Work_contacts','Hospitality_contacts','Community_contacts','School_contacts'),
+                    #'Testing'=c('Test_rate','Test_start','Self_isolation_compliance'),
                     'Social distancing'=c('Social_distancing_rate','Social_distancing_max'),
-                    'BMI RR' = c('BMI','BMI_hospitalisation','BMI_infection','BMI_death'),
+                    #'BMI RR' = c('BMI','BMI_hospitalisation','BMI_infection','BMI_death'),
                     'IHR + R0'=c('Mean_IHR', 'R0'),
                     'HFR + R0'=c('Mean_HFR', 'R0'),
-                    'IFR + R0'=c('Mean_IFR', 'R0'),
-                    'IHR + IFR + R0'=c('Mean_IHR','Mean_IFR', 'R0'),
-                    'Duration + IHR + R0'=c('R0','Mean_IHR','Time_to_discharge'),
-                    'Hosp + Duration + R0'=c('R0','Hospital_capacity','Time_to_discharge'),
-                    'Hosp + IHR + R0'=c('R0','Mean_IHR','Hospital_capacity'),
-                    'SD rate + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR'),
-                    'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Hospital_capacity')
+                    'IFR + R0'=c('Mean_IFR', 'R0')
+                    #'IHR + IFR + R0'=c('Mean_IHR','Mean_IFR', 'R0'),
+                    #'Duration + IHR + R0'=c('R0','Mean_IHR','Time_to_discharge'),
+                    #'Hosp + Duration + R0'=c('R0','Hospital_capacity','Time_to_discharge'),
+                    #'Hosp + IHR + R0'=c('R0','Mean_IHR','Hospital_capacity'),
+                    #'SD rate + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR'),
+                    #'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Hospital_capacity')
                     # 'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR','Mean_IFR','Hospital_capacity'),
                     )
 
@@ -201,8 +201,8 @@ results$outcome <- results$Cost/results$GDP
 library(splines)
 
 results$high <- cut(results$outcome,breaks=c(0,1,5,30))
-x11(); ggpairs(results,columns=c(1:17,41),aes(colour=high))
-x11(); ggpairs(results,columns=c(18:36,41),aes(colour=high))
+# x11(); ggpairs(results,columns=c(1:17,41),aes(colour=high))
+# x11(); ggpairs(results,columns=c(18:36,41),aes(colour=high))
 
 
 
@@ -237,7 +237,7 @@ listout <- foreach (il = 1:length(income_levels))%dopar%{
     
   voilist <- list()
   
-  for(i in 1:ncol(outcomes)){
+  for(i in 1:ncol(resultslist[[1]])){
     voi <- c()
     y <- do.call(cbind,lapply(resultslist,'[',i))
     colnames(y) <- paste0(colnames(y),1:ncol(y))
@@ -256,7 +256,7 @@ listout <- foreach (il = 1:length(income_levels))%dopar%{
     
   voitab <- do.call(rbind,voilist)
   colnames(voitab) <- c(colnames(sourcemat),names(multisource))
-  rownames(voitab) <- paste0(colnames(outcomes),': ',income_level)
+  rownames(voitab) <- paste0(colnames(results)[firstreultcol:(ncol(results))],': ',income_level)
   
   # klistvoi[[il]] <- voitab
   voitab
