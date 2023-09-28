@@ -4,7 +4,7 @@
 income_levels = {'LLMIC','MIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
 
-nsamples  = 4096;
+nsamples  = 1000;
 n_income = numel(income_levels);
 
 synthetic_countries_base = cell(nsamples,length(income_levels));
@@ -47,8 +47,6 @@ end
 % 3: get beta and R0, where beta depends on R0
 betas = zeros(nsamples,n_income);
 R0s = zeros(nsamples,n_income);
-CIs = zeros(nsamples,n_income);
-other_parameters = zeros(nsamples*n_income,7);
 for i = 1:nsamples
     dis = synthetic_countries_dis_basis{i};
     for il = 1:n_income
@@ -63,8 +61,6 @@ for i = 1:nsamples
         dis2 = population_disease_parameters(ldata1,dis,R0_to_beta);
         betas(i,il) = dis2.beta;
         R0s(i,il) = dis2.R0;
-        CIs(i,il) = dis2.CI;
-        other_parameters(i+(il-1)*nsamples,:) = [dis2.ps, dis2.sig1, dis2.sig2, dis2.g1, dis2.Tsr, dis2.Tsh, mean(dis2.ihr)];
     end
 end
 
@@ -74,16 +70,12 @@ end
 % Resample R0.
 % use covid doubling time
 
-sigmoid = @(x) 1./(1+exp(-x));
-logit = @(x) log(x./(1-x));
-
 beta_to_R0 = @(dis) [dis.beta.*dis.CI, dis.beta];
 
 betameans = mean(betas,2);
 
 betas2 = zeros(nsamples,n_income);
 R0s2 = zeros(nsamples,n_income);
-CIs2 = zeros(nsamples,n_income);
 for i = 1:nsamples
     dis = synthetic_countries_dis_basis{i};
     dis.beta = betameans(i);
@@ -97,34 +89,12 @@ for i = 1:nsamples
         synthetic_countries{i,il}     = ldata;
         betas2(i,il) = dis2.beta;
         R0s2(i,il) = dis2.R0;
-        CIs2(i,il) = dis2.CI;
     end
 end
 scatter(R0s(:),R0s2(:))
 
-%% which samples cannot be contained
-
-schoolRs = zeros(nsamples,n_income);
-econRs = zeros(nsamples,n_income);
-p3s = zeros(nsamples,n_income);
-for il = 1:n_income
-     for i = 1:nsamples
-        dis2 = synthetic_countries_dis{i,il};
-        p2 = synthetic_countries_p2{i,il};
-        ldata = synthetic_countries{i,il};
-        Rs = test_lockdown(p2,ldata,dis2);
-        econRs(i,il) = Rs(1);
-        schoolRs(i,il) = Rs(2);
-        p3s(i,il) = Rs(3);
-     end
-end
-
-[econrows,econcols] = find(econRs>1);
-[schoolrows,schoolcols] = find(schoolRs>1);
-disp(length(schoolrows))
-
 %% set up simulation
-columnnames = {'Econ_LD_R','School_LD_R','VLY','VSY',...
+columnnames = {'VLY','VSY',...
     'BMI','BMI_infection','BMI_hospitalisation','BMI_death',...
     'School_contacts','School_age','Working_age','Elders',...
     'Unemployment_rate','GDP','Labour_share','Work_contacts',...
@@ -135,9 +105,9 @@ columnnames = {'Econ_LD_R','School_LD_R','VLY','VSY',...
     'Mean_HFR','Mean_IFR','Probability_symptomatic','Latent_period',...
     'Asymptomatic_period','Symptomatic_period','Time_to_hospitalisation','Time_to_discharge',...
     'Time_to_death','Agriculture','Food_sector','International_tourism',...
-    'Internet',...
+    'Internet','Start_vaccination','Vaccination_rate','Vaccination_uptake',...
     'Cost','Deaths','School','GDP_loss'};
-inputs    = zeros(nsamples,length(columnnames)-6);
+inputs    = zeros(nsamples,length(columnnames)-4);
 outputs   = zeros(nsamples,4);
 
 %% simulate
@@ -189,7 +159,7 @@ for il = 1:n_income
                 sec(4)      = sum(cost([7:10],:),'all');
             catch
                 disp(strcat('VOI_',string(strategy),'_',string(income_level),'.NA'))
-                disp(i);
+                disp([il ms i]);
         %             dis2
             end
             if any(sec<0)
@@ -212,11 +182,11 @@ for il = 1:n_income
                 mean(dis2.hfr) mean(dis2.ifr) dis2.ps dis2.Tlat ...
                 dis2.Tay dis2.Tsr dis2.Tsh dis2.Threc ...
                 dis2.Thd ldata.obj([1 32])'/gdp ldata.frac_tourism_international ...
-                ldata.remote_quantile];
+                ldata.remote_quantile ldata.t_vax ldata.arate ldata.puptake];
 
         end
 
-        T                          = array2table([econRs(:,il),schoolRs(:,il),inputs,outputs]);
+        T                          = array2table([inputs,outputs]);
         T.Properties.VariableNames = columnnames;
 
         writetable(T,strcat('results/VOI_',string(strategy),'_',string(income_level),'.csv'));
