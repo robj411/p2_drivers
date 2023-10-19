@@ -374,14 +374,15 @@ for(vl in 1:length(vaccination_levels)){
       voilist <- list()
       
       for(i in 1:ncol(resultslist[[1]])){
-        voi <- c()
+        voi <- rep(0,ncol(sourcemat)+length(sourcelist))
         y <- do.call(cbind,lapply(resultslist,'[',i))
         colnames(y) <- paste0(colnames(y),1:ncol(y))
         keeprows <- rowSums(y < -.05)>0
         for(j in 1:ncol(sourcemat)){
           # model outcome as a function of input(s)
           sourcesj <- sourcemat[,j,drop=F]
-          voi[j] <- voi::evppi(y[keeprows,],sourcesj[keeprows,,drop=F],pars=colnames(sourcesj))$evppi
+          if(diff(range(sourcesj))>0)
+            voi[j] <- voi::evppi(y[keeprows,],sourcesj[keeprows,,drop=F],pars=colnames(sourcesj))$evppi
         }
         for(j in 1:length(sourcelist)){
           sourcesj <- sourcelist[[j]]
