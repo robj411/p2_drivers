@@ -39,7 +39,7 @@ cost(6,lx+1) = vsyl_sts;
 
 %Student Demand
 pres         = students-abs;
-presl        = pres.*(1-g(:,1+data.EdInd));%.*(1-(1/3));%numbers of students
+presl        = pres.*(1-g(:,1+data.EdInd)) .* (1 - data.remote_teaching_effectiveness);%.*(1-(1/3));%numbers of students
 preslint     = trapz(t,presl)/365;%= (diff(t)'*presl)/365;
 cost(5,lx+2) = preslint;
 vsyl_std     = preslint*data.vsy;
