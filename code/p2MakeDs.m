@@ -1,69 +1,63 @@
-function [f,data]=p2MakeDs(data,NN,x,hw)
+function f = p2MakeDs(data,NN,x,hw)
+
+
+contacts = data.contacts; 
+
+w             = x;
+w(data.EdInd) = x(data.EdInd);
+
 
 %% COMMUNITY-COMMUNITY MATRIX:
+C4 = contacts.C4;
+contact_props = contacts.contact_props;
 
-C        = data.CM;
-Npop     = data.Npop;
-Npop(16) = sum(Npop(16:end));
-Npop     = Npop(1:16);
+%% add contacts to C4
 
-C        = [C(:,1),sum(C(:,2:4),2),sum(C(:,5:13),2),sum(C(:,14:16),2)];%sum of the columns
-C        = [C(1,:);
-            Npop(2:4)'*C(2:4,:)/sum(Npop(2:4));
-            Npop(5:13)'*C(5:13,:)/sum(Npop(5:13));
-            Npop(14:16)'*C(14:16,:)/sum(Npop(14:16))];%weighted average of the rows
+% start with hospitality
+psub = data.NNs(data.HospInd);
+psub = sum(psub.*x(data.HospInd))/sum(psub);%constant from 0-1, weighted measure of how much sectors are open
+C4 = C4 + psub^2 * contacts.hospitality_frac / (1-contacts.hospitality_frac) * C4;
 
-Cav      = ([Npop(1),sum(Npop(2:4)),sum(Npop(5:13)),sum(Npop(14:16))]/sum(Npop))*sum(C,2);
-C        = data.comm*(C/Cav);
+% school
+C4(1,1) = C4(1,1) + w(data.EdInd).^2 * contacts.schoolA1;
+C4(2,2) = C4(2,2) + w(data.EdInd).^2 * contacts.schoolA2;
+
+% hospitality
+% C4(2,:) = C4(2,:) + psub^2 * contacts.hospA2 * contact_props;
+% C4(3,:) = C4(3,:) + psub^2 * contacts.hospA3 * contact_props;
+% C4(4,:) = C4(4,:) + psub^2 * contacts.hospA4 * contact_props;
 
 %%
 
 adInd    = 3;%Adult index
-CworkRow = C(adInd,:);
+CworkRow = C4(adInd,:);
 lx       = length(x);%Number of sectors
 ln       = length(NN);
 
-NNrep = repmat(NN'/sum(NN),ln,1);%total population proportion matrix
 NNrel = NN([1:lx,lx+adInd])/sum(NN([1:lx,lx+adInd]));%adult population proportion vector
+NNrepvecweighted = zeros(1,ln);
+NNrepvecweighted([1:lx,lx+adInd]) = NNrel*contact_props(3);
+NNrepvecweighted(lx+[1,2,4]) = contact_props([1,2,4]);
+NNrep = repmat(NNrepvecweighted,ln,1);%total population proportion matrix
+% NNrep = repmat(NN'/sum(NN),ln,1);%total population proportion matrix
 NNrea = repmat(NN(1:lx)'/sum(NN(1:lx)),lx,1);%workforce population proportion matrix
 
 %Make A:
 matA                    = zeros(ln,ln);
-matA(lx+1:end,lx+1:end) = C;
+matA(lx+1:end,lx+1:end) = C4;
 matA(1:lx,lx+1:end)     = repmat(CworkRow,lx,1);
 matA(:,[1:lx,lx+adInd]) = repmat(matA(:,lx+adInd),1,lx+1).*repmat(NNrel',ln,1);
 
-%%
-
-w             = x.^(1/data.alp);
-w(data.EdInd) = x(data.EdInd);
-
-if lx==45
-    %Education:
-    matA(lx+1,lx+1)=    matA(lx+1,lx+1)+    w(data.EdInd)^2*  data.schoolA1;%mixing within age groups only
-    matA(lx+2,lx+2)=    matA(lx+2,lx+2)+    w(data.EdInd)^2*  data.schoolA2;
-    
-    %Hospitality:
-    psub=data.NNs(data.HospInd);
-    psub=sum(psub.*x(data.HospInd))/sum(psub);%constant from 0-1, weighted measure of how much sectors are open
-    matA([1:lx,lx+adInd],:)=    matA([1:lx,lx+adInd],:)+    psub^2*   data.hospA3*    NNrep([1:lx,lx+adInd],:);%mixing between all age groups, including pre-school
-    matA(lx+2,:)=               matA(lx+2,:)+               psub^2*   data.hospA2*    NNrep(lx+2,:);
-    matA(ln,:)=                 matA(ln,:)+                 psub^2*   data.hospA4*    NNrep(ln,:);
-
-else
-    error('Unknown economic configuration!');
-    
-end
-
 %Transport:
-matA(1:lx,1:lx)=    matA(1:lx,1:lx)+    repmat(w',lx,1).*   data.travelA3(1).*  NNrea.*  repmat(1-hw,lx,1).*repmat(1-hw',1,lx);%home-working has a compound effect
+matA(1:lx,1:lx)=    matA(1:lx,1:lx)+    repmat(w',lx,1).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,lx,1).*repmat(1-hw',1,lx);%home-working has a compound effect
+mat = repmat(w',lx,1).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,lx,1).*repmat(1-hw',1,lx);
 
 %% WORKER-WORKER AND COMMUNITY-WORKER MATRICES:
 
 %Make B and C:
-valB          = data.B;
+valB          = contacts.B;
 valB          = valB.*(1-hw).*(1-hw);%home-working has a compound effect
-valC          = data.C;
+valC          = contacts.C;
 valC          = valC.*(1-hw);
 valB(lx+1:ln) = 0;
 valC(lx+1:ln) = 0;
@@ -78,13 +72,11 @@ frac_infant = data.NNs(lx+1)/sum(data.NNs(lx+[1:2]));
 matC(data.EdInd,lx+1) = matC(data.EdInd,lx+1) + 0.9*frac_infant * teacher_contacts;
 matC(data.EdInd,lx+2) = matC(data.EdInd,lx+2) + 0.9*(1-frac_infant) * teacher_contacts;
 
-%%
+contacts_between_workers_and_customers = matC .* repmat(NN,1,ln);
+Cback = contacts_between_workers_and_customers' ./ repmat(NN,1,ln);
 
-if ~isfield(data,'wnorm');
-    data.wnorm = dot(sum(matB+matC,2),NN)/sum(NN([1:lx,lx+adInd]));
-end
+D = matA + contacts.workrel*(matB + matC + Cback);
 
-D = matA + (data.workp/data.wnorm)*(matB + matC);
 f = D;
 
 end
