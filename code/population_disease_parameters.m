@@ -51,7 +51,34 @@ dis.h    = dis.ph./dis.Ts;
 dis.mu   = dis.pd./dis.Th;
 dis.nu   = 1/dis.Ti;
 
-%Transmission
+%% vaccination
+
+%Vaccination: Broadly protective sarbecovirus vaccine (BPSV)
+dis.hrv1 = 1/14;                       %time to develop v-acquired immunity
+dis.scv1 = 0.35;                       %infection-blocking efficacy
+heff1 = 0.80;                       %severe-disease-blocking efficacy
+dis.hv1  = 1-((1-heff1)/(1-dis.scv1)); 
+dis.trv1 = 0;%.52;                       %transmission-blocking efficacy
+dis.nuv1 = 1/365/5;                      %duration of v-acquired immunity
+
+dis.Ts_v1 = ((1-(1-dis.hv1)*dis.ph).*dis.Tsr)  +((1-dis.hv1)*dis.ph.*dis.Tsh);
+dis.g2_v1 = (1-(1-dis.hv1)*dis.ph)./dis.Ts_v1;
+dis.h_v1  = (1-dis.hv1)*dis.ph./dis.Ts_v1;
+
+% SARS-X specific
+% dis.hrv2 = 1/14;                       %time to develop v-acquired immunity
+dis.scv2 = 0.55;                       %infection-blocking efficacy
+heff2 = 0.90;                       %severe-disease-blocking efficacy
+dis.hv2  = 1-((1-heff2)/(1-dis.scv2)); 
+dis.trv2 = 0;%.52;                       %transmission-blocking efficacy
+dis.nuv2 = 1/365/5;                      %duration of v-acquired immunity
+
+dis.Ts_v2 = ((1-(1-dis.hv2)*dis.ph).*dis.Tsr)  +((1-dis.hv2)*dis.ph.*dis.Tsh);
+dis.g2_v2 = (1-(1-dis.hv2)*dis.ph)./dis.Ts_v2;
+dis.h_v2  = (1-dis.hv2)*dis.ph./dis.Ts_v2;
+
+%% Transmission
+
 % Deff  = data.basic_contact_matrix .* repmat(dis.rr_infection,1,data.ntot) .* repmat(data.NNs,1,data.ntot)./repmat(data.NNs',data.ntot,1);
 % onesn = ones(data.ntot,1);
 % F     = zeros(3*data.ntot,3*data.ntot);
@@ -68,7 +95,7 @@ dis.nu   = 1/dis.Ti;
 
 zs = zeros(size(data.NNs));
 dis.CI = get_R(data.ntot, dis, dis.h, dis.g2, data.NNs, zs, zs,...
-    data.NNs, data.basic_contact_matrix, 1, 1, 0, 0); %R0a;
+    data.NNs, data.contacts.basic_contact_matrix, 1, 1, 0, 0); %R0a;
 
 
 R0beta = R0betafun(dis);
@@ -76,9 +103,5 @@ dis.R0 = R0beta(1);
 dis.beta = R0beta(2);
 
 dis.Td = get_doubling_time(data,dis);
-
-
-%Vaccination
-dis.heff = 0.87; 
 
 end
