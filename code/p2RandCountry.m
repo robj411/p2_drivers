@@ -1,4 +1,4 @@
-function data = p2RandCountry(data,CD,income_level,dis_ref,R0betafun)
+function data = p2RandCountry(data,CD,income_level)
 
 lx = data.lx;
 

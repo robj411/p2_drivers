@@ -27,8 +27,6 @@ lx = data.lx;
 
 %% disease variables
 
-dis_ref = get_dis_params('Covid Wildtype'); 
-
 rng(0);
 alldissamples = sample_disease_parameters(nsamples);
 
@@ -60,7 +58,7 @@ for i = 1:nsamples
         income_level = income_levels{il};
         
         % country data. defines wnorm and Td_CWT
-        ldata1     = p2RandCountry(data,CD,income_level,dis_ref,R0_to_beta);
+        ldata1     = p2RandCountry(data,CD,income_level);
         synthetic_countries_base{i,il} = ldata1;
         
         % get beta and R0
