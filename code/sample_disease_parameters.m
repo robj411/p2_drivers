@@ -16,19 +16,44 @@ for i = 1:size(disparams,2)
 end
     
 param_struct = struct;
+hyper_param_struct = struct;
 
 for i = 1:size(disparams,2)
     thisparam = disparams.Properties.VariableNames{i};
     samples = sample_struct.(thisparam);
     if strmatch('R0',thisparam)
-        samples = samples(samples<5.5) - 1;
+        samples = samples(samples<5.5) - 1.4;
     end
     pHat = gamfit(samples);
-    newparams = gamrnd(pHat(1),pHat(2),nsamples,1);
+    hyper_param_struct.(thisparam) = pHat;
+end
+
+set1 = {'Tsr','Tsh','R0'};
+set2 = {'Threc','Thd'};
+sets = {set1; set2};
+
+rho = eye(length(disparams.Properties.VariableNames));
+% disparams.R0(disparams.R0>4) = 4;
+for seti = 1:length(sets)
+    pis = cell2mat(cellfun(@(a) strmatch(a, disparams.Properties.VariableNames),...
+        sets{seti},'uniform',false));
+    orig_samples = table2array(disparams(:,pis));
+    correlation = corr(orig_samples);
+    rho(pis,pis) = correlation;
+end
+
+mu  = zeros(1,length(disparams.Properties.VariableNames));   
+Z = mvnrnd(mu, rho, nsamples); %Generate multivariate corralated random number
+U = normcdf(Z,0,1);     %Compute the CDF
+
+for i = 1:size(disparams,2)
+    thisparam = disparams.Properties.VariableNames{i};
+    pHat = hyper_param_struct.(thisparam);
+    newparams = gaminv(U(:,i),pHat(1),pHat(2));
     if strmatch('R0',thisparam)
-        newparams = newparams + 1;
+        newparams = min(newparams + 1.7,3.5);
     end
-    newparams(isnan(newparams)) = mean(samples);
+    newparams(isnan(newparams)) = mean(sample_struct.(thisparam));
     param_struct.(thisparam) = newparams;
 end
 
