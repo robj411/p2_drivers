@@ -1,38 +1,16 @@
-function [data,dis,p2] = p2Params(data,dis,R0betafun)
+function [data,dis,p2] = p2Params(data,dis,R0betafun,vaccine_preparedness)
 
 dis = population_disease_parameters(data,dis,R0betafun);
 
-%Vaccination: Broadly protective sarbecovirus vaccine (BPSV)
-dis.hrv1 = 1/14;                       %time to develop v-acquired immunity
-dis.scv1 = 0.35;                       %infection-blocking efficacy
-heff1 = 0.80;                       %severe-disease-blocking efficacy
-dis.hv1  = 1-((1-heff1)/(1-dis.scv1)); 
-dis.trv1 = 0;%.52;                       %transmission-blocking efficacy
-dis.nuv1 = 1/365/5;                      %duration of v-acquired immunity
-
-dis.Ts_v1 = ((1-(1-dis.hv1)*dis.ph).*dis.Tsr)  +((1-dis.hv1)*dis.ph.*dis.Tsh);
-dis.g2_v1 = (1-(1-dis.hv1)*dis.ph)./dis.Ts_v1;
-dis.h_v1  = (1-dis.hv1)*dis.ph./dis.Ts_v1;
-
-% SARS-X specific
-dis.hrv2 = 1/14;                       %time to develop v-acquired immunity
-dis.scv2 = 0.55;                       %infection-blocking efficacy
-heff2 = 0.90;                       %severe-disease-blocking efficacy
-dis.hv2  = 1-((1-heff2)/(1-dis.scv2)); 
-dis.trv2 = 0;%.52;                       %transmission-blocking efficacy
-dis.nuv2 = 1/365/5;                      %duration of v-acquired immunity
-
-dis.Ts_v2 = ((1-(1-dis.hv2)*dis.ph).*dis.Tsr)  +((1-dis.hv2)*dis.ph.*dis.Tsh);
-dis.g2_v2 = (1-(1-dis.hv2)*dis.ph)./dis.Ts_v2;
-dis.h_v2  = (1-dis.hv2)*dis.ph./dis.Ts_v2;
+rts = get_response_time(data,dis,data.Hres);
 
 %% PREPAREDNESS PARAMETERS:
 
 p2 = struct;
 
 p2.self_isolation_compliance = data.self_isolation_compliance;
-p2.Tres  = data.Tres;                       %Response Time
-p2.t_tit = data.t_tit;                      %Test-Isolate-Trace Time
+% p2.Tres  = data.Tres;                       %Response Time
+% p2.t_tit = data.t_tit;                      %Test-Isolate-Trace Time
 p2.trate = data.trate;                      %Test-Isolate-Trace Rate
 p2.sdl   = data.sdl;                        %Social Distancing Asymptote
 p2.sdb   = data.sdb;                        %Social Distancing Steepness
@@ -42,18 +20,22 @@ arate    = data.arate*sum(data.Npop/10^5);  %Vaccine Administration Rate
 puptake  = data.puptake;                    %Vaccine Uptake
 
 
-p2.Tres = data.tvec(1) + (-data.tvec(1) + p2.Tres)*dis.Td/data.Td_CWT;
+% p2.Tres = data.tvec(1) + (-data.tvec(1) + data.Tres)*dis.Td/data.Td_CWT;
 
 %Test-Isolate-Trace
-p2.t_tit  = data.tvec(1) + (-data.tvec(1) + p2.t_tit)*dis.Td/data.Td_CWT;
+% p2.t_tit  = data.tvec(1) + (-data.tvec(1) + data.t_tit)*dis.Td/data.Td_CWT;
+
+p2.Tres = rts;
+p2.t_tit = rts;
+
 p2.dur    = 1;
-p2.qg1    = 1/(dis.Tay-p2.dur);
-p2.qg2    = (1-dis.ph)./(dis.Ts-p2.dur);
-p2.qg2_v1 = (1-(1-dis.hv1)*dis.ph)./(dis.Ts_v1-p2.dur);
-p2.qg2_v2 = (1-(1-dis.hv2)*dis.ph)./(dis.Ts_v2-p2.dur);
-p2.qh     = dis.ph./(dis.Ts-p2.dur);
-p2.qh_v1  = (1-dis.hv1)*dis.ph./(dis.Ts_v1-p2.dur);
-p2.qh_v2  = (1-dis.hv2)*dis.ph./(dis.Ts_v2-p2.dur);
+% p2.qg1    = 1/(dis.Tay-p2.dur);
+% p2.qg2    = (1-dis.ph)./(dis.Ts-p2.dur);
+% p2.qg2_v1 = (1-(1-dis.hv1)*dis.ph)./(dis.Ts_v1-p2.dur);
+% p2.qg2_v2 = (1-(1-dis.hv2)*dis.ph)./(dis.Ts_v2-p2.dur);
+% p2.qh     = dis.ph./(dis.Ts-p2.dur);
+% p2.qh_v1  = (1-dis.hv1)*dis.ph./(dis.Ts_v1-p2.dur);
+% p2.qh_v2  = (1-dis.hv2)*dis.ph./(dis.Ts_v2-p2.dur);
 
 %Hospital Capacity
 p2.thl   = max(1,0.25*p2.Hmax);%lower threshold can't be less than 1 occupant
@@ -75,12 +57,20 @@ NNage   = [Npop(1),sum(Npop(2:4)),sum(Npop(5:13)),sum(Npop(14:end))];
 % up2fun  = @(u2) u2*NNage(2) + u3*NNage(3) + u4*NNage(4) - puptake*sum(NNage);
 % u2      = fzero(up2fun,[0 1]);
 
-p2.t_vax2 = t_vax; %137;  
+if vaccine_preparedness == 1
+    p2.t_vax2 = t_vax; 
+elseif vaccine_preparedness == 2
+    p2.t_vax2 = p2.Tres + 107;  
+elseif vaccine_preparedness == 3
+    p2.t_vax2 = p2.Tres + 107;  
+    t_vax = p2.Tres;
+end
+
 t_vax2 = p2.t_vax2;
 t_bspv = t_vax2 - t_vax;
-if puptake*sum(NNage(2:4)) < t_bspv*arate
-    arate = sum(puptake.*NNage)/t_bspv;
-end
+% if puptake*sum(NNage(2:4)) < t_bspv*arate
+%     arate = sum(puptake.*NNage)/t_bspv;
+% end
 uptake  = puptake*ones(1,4); %[u1,u2,u3,u4];
 if abs((uptake*NNage'/sum(NNage))-puptake)>1e-10
     error('Vaccine uptake error!');
@@ -89,18 +79,15 @@ end
 %Vaccine Administration Rate
 t_ages     = min((uptake.*NNage)/arate,Inf);%arate may be 0
 
-if t_vax < t_vax2
+if t_vax < t_vax2 & vaccine_preparedness == 3
     % if primer starts before booster, there are t_bspv days of primer.
     % these people must then be boosted.
     if t_bspv < t_ages(4)
-        t_ages = [t_ages(4), t_ages(3), t_ages(2), t_ages(4)-t_bspv];
-        p2.group_order = [4,3,2,4];
-    elseif t_bspv < sum(t_ages(3:4))
-        t_ages = [t_ages(4), t_ages(3), t_ages(2), t_ages(4), t_ages(3) - (t_bspv - t_ages(4))];
-        p2.group_order = [4,3,2,4,3];
-    elseif t_bspv < sum(t_ages(2:4))
-        t_ages = [t_ages(4), t_ages(3), t_ages(2), t_ages(4), t_ages(3), t_ages(2) - (t_bspv - t_ages(4) - t_ages(3))];
-        p2.group_order = [4,3,2,4,3,2];
+        t_ages = [t_ages(4)-t_bspv, t_ages(4), t_ages(3), t_ages(2)];
+        p2.group_order = [4,4,3,2];
+    else
+        t_ages = [t_ages(4), t_bspv-t_ages(4), t_ages(4), t_ages(3), t_ages(2)];
+        p2.group_order = [4,0,4,3,2];
     end
 else
     % if booster starts before primer, just work down the ages
