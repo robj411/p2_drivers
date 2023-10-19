@@ -12,10 +12,10 @@ function response_time = get_response_time(data, dis, hosp_trigger)
     for i = 1:nsamples
         generationsam(i) = branchingProcess(R0, mean_ihr, hosp_trigger);
     end
-    generations = mean(generationsam(generationsam>0));
+    generations = mean(generationsam);
     
     generation_time = log(R0) / (log(2) / dis.Td);
-    response_time = generations * generation_time + dis.Tlat + dis.Tsh;
+    response_time = generations * generation_time;
 
 
 end
@@ -23,15 +23,14 @@ end
 
 function generations = branchingProcess(R0, mean_ihr, hosp_trigger)
     % Initialize variables
-    finalSize = [];
+    n_infections = [];
     hospitalisations = 0;
     generations = 1;
-    finalSize(generations) = 5;
-    while hospitalisations < hosp_trigger & finalSize(generations) > 0
+    n_infections(generations) = 5;
+    while hospitalisations < hosp_trigger & n_infections(generations) > 0
         generations = generations + 1;
         % In subsequent generations, each infected individual generates R0 offspring
-        offspring = poissrnd(R0 * finalSize(generations - 1));
-        finalSize(generations) = offspring;
-        hospitalisations = binornd(finalSize(generations), mean_ihr);
+        n_infections(generations) = poissrnd(R0 * n_infections(generations - 1));
+        hospitalisations = hospitalisations + binornd(n_infections(generations), mean_ihr);
     end
 end
