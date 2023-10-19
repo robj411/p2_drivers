@@ -211,11 +211,26 @@ Finally, we can use mutual information (MI, via the R package **infotheo**) to a
 
 \newpage
 
+| **Variable** | **Levels** | **Description** |
+| ---- | ---- | ---- |
+| **Income level** | HIC  | High-income countries |
+|  | UMIC | Upper-middle--income countries |
+|  | LLMIC | Low- and lower-middle--income countries |
+| **Mitigation strategy** | No closures | Unmitigated pandemic |
+|  | School closures | Schools close reactively |
+|  | Economic closures | Sectors close reactively |
+|  | Elimination |  |
+| **Country type** | Spillover | Where the outbreak begins |
+|  | Secondary |To where cases are exported|
+| **Vaccination** | BAU | Business as usual |
+|  | 100 day | SARS-X vaccine available after 100 days |
+|  | BPSV | Broadly protective sarbecovirus vaccine |
+
 # Results 
 
 ## Distributions over outcomes
 
-Distributions over costs associated with the first year of an outbreak of SARS-CoV-2 (with parameters corresponding to variants arising before alpha) are shown in Figure \@ref(fig:prealpha) for three income levels and four mitigation strategies. Each shape represents the probability density made up of the sampled values for outcomes: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value sampled, after which point the density is 0.
+Distributions over costs associated with the first two years of an outbreak of a new SARS-X virus are shown for three income levels and four mitigation strategies. Each shape represents the probability density made up of the sampled values for outcomes: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value sampled, after which point the density is 0.
 
 These distributions show that vulnerability to a pandemic depends on a country's income level together with its mitigation strategy. For example, the elimination strategy appears to have the lowest distribution for overall cost for HICs among all strategies, whereas it appears no lower for UMICs and perhaps higher for LLMICs. This will be because of the factors that vary systematically across countries of different income levels. Likewise, the heavier tails in the distributions for YLLs for HICs is likely due to the age distributions in HICs being heavier in older ages. These cross-country differences are one of the focuses of the development of the model.
 
@@ -250,7 +265,7 @@ vioplot <- melt(difflist[,colnames(difflist)%in%c('Cost','Deaths','School','GDP_
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
 vioplot$variable <- factor(vioplot$variable,
                            levels=c('Cost','Deaths','School','GDP_loss'),
-                           labels=c('Cost','YLLs','Education','GDP'))
+                           labels=c('Total','YLLs','Education','GDP'))
 
 
 ```
@@ -275,7 +290,7 @@ ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) +
 ```
 
 
-```{r tabresdiff,tab.cap='Expected difference between BAU and 100 days. Mean values and 95% prediction intervals.',echo=F,warning=F,message=F}
+```{r tabresdiff,tab.cap='Value of vaccines: expected difference between BAU and 100 days. Mean values and 95% prediction intervals.',echo=F,warning=F,message=F}
 
 
 meantab <- setDT(difflist)[,.(deaths=mean(Deaths),
@@ -290,7 +305,7 @@ tabres <- setDT(difflist)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(rou
 colnames(tabres) <- c('Country','Vaccination','Income group','Total costs','YLLs','Education','GDP')
 
 write.csv(tabres,'resultsdiff.csv',row.names = F)
-lg <- 'Expected difference between BAU and 100 days, and between 100 days and BPSV. Mean values and 95% prediction intervals. \\label{tab:tabresdiff}'
+lg <- 'Value of vaccines: expected difference between BAU and 100 days, and between 100 days and BPSV. Mean values and 95% prediction intervals. \\label{tab:tabresdiff}'
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(tabres,caption=lg)
 }else{
