@@ -1,8 +1,16 @@
+## start ################################
+
 library(earth)
 library(ggplot2)
 library(infotheo)
 library(data.table)
 library(viridis)
+library(GGally)
+library(splines)
+library(doParallel)
+
+cl <- makeCluster(4)
+registerDoParallel(cl)
 
 if(Sys.info()[['sysname']]=='Linux'){
   setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/code')
@@ -10,13 +18,14 @@ if(Sys.info()[['sysname']]=='Linux'){
   setwd('C:/Users/rj411/OneDrive - Imperial College London/p2_drivers/code')
 }
 
-## voi #####################################
+## functions and variables #####################################
 
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
-income_levels <- c('LLMIC','MIC','HIC')
+income_levels <- c('LLMIC','UMIC','HIC')
+vaccination_levels <- c('BAU','100 days','BPSV')
+countrytype_levels <- c('Spillover','Secondary')
 
 #
-## functions ##########
 
 evppivar_npreg <- function (outputs, inputs, pars, method, verbose, ...) {
   fitted <- voi:::fitted_npreg_fn(method)(y = outputs, inputs = inputs, 
@@ -78,11 +87,7 @@ evppifit <- function (outputs, inputs, pars = NULL, method = NULL, nsim = NULL,
   res
 }
 
-## compute ########################
 
-library(doParallel)
-cl <- makeCluster(4)
-registerDoParallel(cl)
 
 
 multisource <- list('Sectors'=c('Agriculture','Food_sector'),
@@ -106,190 +111,134 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     # 'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR','Mean_IFR','Hospital_capacity'),
                     )
 
-## income levels separately ####################################
 
-klistvoi <- list()
-klistmi <- list()
-listout <- foreach (ks = 1:length(strategies))%dopar%{
-  for (il in 1:length(income_levels)){
-    inp3 <- strategies[ks];
-    income_level <- income_levels[il];
-    results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
-    results <- subset(results,R0>1)
-    print(paste0('results/VOI_',inp3,'_',income_level,'.csv'))
-    sourcelist <- list()
-    for(src in 1:length(multisource)) {
-      sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
-      if(ncol(sourcelist[[src]])<length(multisource[[src]])) print(src)
-    }
-    
-    firstreultcol <- which(colnames(results)=='Cost')
-    
-    colnames(results) <- gsub('_',' ',colnames(results))
-    colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
-    colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
-    colnames(results)[colnames(results)=='Labour share'] <- 'Labour share of GVA'
-    
-    sourcemat <- results[,1:(firstreultcol-1)]
-    
-    outcomes <- results[,firstreultcol:(ncol(results))]
-    for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$GDP
-    # for(i in which(colnames(outcomes)%in%c('Cost','Deaths')))outcomes[,i] <- log(outcomes[,i])
-    
-    voilist <- list()
-    milist <- list()
-    
-    for(i in 1:ncol(outcomes)){
-      voi <- c()
-      mi <- c()
-      y <- outcomes[,i]
-      vary <- var(y) 
-      for(j in 1:ncol(sourcemat)){
-        # model outcome as a function of input(s)
-        sourcesj <- sourcemat[,j]
-        max_degree <- ifelse(is.vector(sourcesj),1,ncol(sourcesj))
-        model <- earth::earth(y ~ sourcesj, degree=min(4,max_degree))
-        # compute evppi as percentage
-        voi[j] <- (vary - mean((y - model$fitted) ^ 2)) / vary * 100
-        mi[j] <- infotheo::mutinformation(infotheo::discretize(sourcesj),infotheo::discretize(y))
+#
+## saving ###############################
+topresults <- list()
+for(ct in 1:length(countrytype_levels)){
+  countrytype <- countrytype_levels[ct]
+  for(v in 1:length(vaccination_levels)){
+    vaccination_level <- vaccination_levels[v]
+    allresults <- data.frame()
+    for (i in 1:length(income_levels)){
+      for (k in 1:length(strategies)){
+        inp3 <- strategies[k];
+        income_level <- income_levels[i];
+        results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'),header=T);
+        results$strategy <- inp3
+        results$igroup <- income_level
+        allresults <- rbind(allresults,results)
       }
-      for(j in 1:length(sourcelist)){
-        sourcesj <- sourcelist[[j]]
-        fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
-        mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
-        # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
-        voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
-      }
-      milist[[i]] <- mi
-      voilist[[i]] <- voi
     }
+    setDT(allresults)
+    evalues <- allresults[,mean(Cost/GDP),by=.(igroup,strategy)]
+    topchoices <- evalues[,strategy[which.min(V1)],by=igroup]
+    print(topchoices)
+    allresults[,keeprow:=strategy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
+    topresults[[v]] <- subset(allresults,keeprow)
     
-    voitab <- do.call(rbind,voilist)
-    colnames(voitab) <- c(colnames(sourcemat),names(multisource))
-    rownames(voitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3)
-    mitab <- do.call(rbind,milist)
-    colnames(mitab) <- c(colnames(sourcemat),names(multisource))
-    rownames(mitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3)
-    
-    klistvoi[[il]] <- voitab
-    klistmi[[il]] <- mitab
+    if(v>1){
+      
+      difftab <- topresults[[v-1]]
+      difftab[,keeprow:=NULL]
+      difftab[,strategy:=NULL]
+      difftab[,Cost:=Cost-topresults[[v]]$Cost]
+      difftab[,Deaths:=Deaths-topresults[[v]]$Deaths]
+      difftab[,School:=School-topresults[[v]]$School]
+      difftab[,GDP_loss:=GDP_loss-topresults[[v]]$GDP_loss]
+      
+      saveRDS(difftab,paste0('results/difftab_',countrytype,'_',vaccination_level,'.Rds'))
+      
+      
+      ilistvoi <- ilistmi <- list()
+      for (il in 1:length(income_levels)){
+        income_level <- income_levels[il]
+        results <- as.data.frame(subset(difftab,igroup==income_level&R0>1))
+        results$igroup <- NULL
+        sourcelist <- list()
+        for(src in 1:length(multisource)) {
+          sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
+          if(ncol(sourcelist[[src]])<length(multisource[[src]])) print(src)
+        }
+        
+        firstreultcol <- which(colnames(results)=='Cost')
+        
+        colnames(results) <- gsub('_',' ',colnames(results))
+        colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
+        colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
+        colnames(results)[colnames(results)=='Labour share'] <- 'Labour share of GVA'
+        
+        sourcemat <- results[,1:(firstreultcol-1)]
+        
+        outcomes <- results[,firstreultcol:(ncol(results))]
+        for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$GDP
+        # for(i in which(colnames(outcomes)%in%c('Cost','Deaths')))outcomes[,i] <- log(outcomes[,i])
+        
+        voilist <- list()
+        milist <- list()
+        
+        for(i in 1:ncol(outcomes)){
+          voi <- c()
+          mi <- c()
+          y <- outcomes[,i]
+          vary <- var(y) 
+          for(j in 1:ncol(sourcemat)){
+            # model outcome as a function of input(s)
+            sourcesj <- sourcemat[,j]
+            max_degree <- ifelse(is.vector(sourcesj),1,ncol(sourcesj))
+            model <- earth::earth(y ~ sourcesj, degree=min(4,max_degree))
+            # compute evppi as percentage
+            voi[j] <- (vary - mean((y - model$fitted) ^ 2)) / vary * 100
+            mi[j] <- infotheo::mutinformation(infotheo::discretize(sourcesj),infotheo::discretize(y))
+          }
+          for(j in 1:length(sourcelist)){
+            sourcesj <- sourcelist[[j]]
+            fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
+            mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
+            # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
+            voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
+          }
+          milist[[i]] <- mi
+          voilist[[i]] <- voi
+        }
+        
+        voitab <- do.call(rbind,voilist)
+        colnames(voitab) <- c(colnames(sourcemat),names(multisource))
+        rownames(voitab) <- paste0(colnames(outcomes),': ',income_level)
+        mitab <- do.call(rbind,milist)
+        colnames(mitab) <- c(colnames(sourcemat),names(multisource))
+        rownames(mitab) <- paste0(colnames(outcomes),': ',income_level)
+        
+        ilistvoi[[il]] <- voitab
+        ilistmi[[il]] <- mitab
+      }
+      
+      
+      voiall <- do.call(rbind,ilistvoi)
+      roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
+                                function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
+      voiall <- voiall[roworder,]
+      miall <- do.call(rbind,ilistmi)
+      miall <- miall[roworder,]
+      
+      saveRDS(voiall,paste0('results/voidiff_',countrytype,'_',vaccination_level,'.Rds'))
+      saveRDS(miall,paste0('results/midiff_',countrytype,'_',vaccination_level,'.Rds'))
+    }
   }
-  # ilistvoi[[ks]] <- do.call(rbind,klistvoi)
-  # ilistmi[[ks]] <- do.call(rbind,klistmi)
-  list(do.call(rbind,klistvoi), do.call(rbind,klistmi))
 }
 
-ilistvoi <- list(listout[[1]][[1]], listout[[2]][[1]], listout[[3]][[1]], listout[[4]][[1]])
-ilistmi <- list(listout[[1]][[2]], listout[[2]][[2]], listout[[3]][[2]], listout[[4]][[2]])
+#
+## income levels separately ####################################
 
-voiall <- do.call(rbind,ilistvoi)
-roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
-                          function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
-voiall <- voiall[roworder,]
-miall <- do.call(rbind,ilistmi)
-miall <- miall[roworder,]
-
-saveRDS(voiall,paste0('results/voi.Rds'))
-saveRDS(miall,paste0('results/mi.Rds'))
-
-library(GGally)
-inp3 <- strategies[1];
-income_level <- income_levels[1];
-results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
-colnames(results)
-results$outcome <- results$Cost/results$GDP
-library(splines)
-
-results$high <- cut(results$outcome,breaks=c(0,1,5,30))
-# x11(); ggpairs(results,columns=c(1:17,41),aes(colour=high))
-# x11(); ggpairs(results,columns=c(18:36,41),aes(colour=high))
-
-
-
-## decision #####################################
-
-listout <- foreach (il = 1:length(income_levels))%dopar%{
-  resultslist <- list()
-  for (ks in 1:length(strategies)){
-    inp3 <- strategies[ks];
-    income_level <- income_levels[il];
-    results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
-    results <- subset(results,R0>1)
-    firstreultcol <- which(colnames(results)=='Cost')
-    resultslist[[ks]] <- results[,firstreultcol:(ncol(results))]
-    for(i in 1:ncol(resultslist[[ks]])) resultslist[[ks]][,i] <- -resultslist[[ks]][,i]/results$GDP
-    print(paste0('results/VOI_',inp3,'_',income_level,'.csv'))
-  }
-  
+get_voi_mi <- function(inp3,income_level,vaccination_level,countrytype){
+  results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'),header=T);
+  results <- subset(results,R0>1)
+  print(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'))
   sourcelist <- list()
   for(src in 1:length(multisource)) {
     sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
     if(ncol(sourcelist[[src]])<length(multisource[[src]])) print(src)
   }
-    
-  colnames(results) <- gsub('_',' ',colnames(results))
-  colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
-  colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
-  colnames(results)[colnames(results)=='Labour share'] <- 'Labour share of GVA'
-  
-  sourcemat <- results[,1:(firstreultcol-1)]
-    
-    
-  voilist <- list()
-  
-  for(i in 1:ncol(resultslist[[1]])){
-    voi <- c()
-    y <- do.call(cbind,lapply(resultslist,'[',i))
-    colnames(y) <- paste0(colnames(y),1:ncol(y))
-    keeprows <- rowSums(y < -.05)>0
-    for(j in 1:ncol(sourcemat)){
-      # model outcome as a function of input(s)
-      sourcesj <- sourcemat[,j,drop=F]
-      voi[j] <- voi::evppi(y[keeprows,],sourcesj[keeprows,,drop=F],pars=colnames(sourcesj))$evppi
-    }
-    for(j in 1:length(sourcelist)){
-      sourcesj <- sourcelist[[j]]
-      voi[j+ncol(sourcemat)] <- voi::evppi(y[keeprows,],sourcesj[keeprows,],pars=colnames(sourcesj),method='gam')$evppi
-    }
-    voilist[[i]] <- voi
-  }
-    
-  voitab <- do.call(rbind,voilist)
-  colnames(voitab) <- c(colnames(sourcemat),names(multisource))
-  rownames(voitab) <- paste0(colnames(results)[firstreultcol:(ncol(results))],': ',income_level)
-  
-  # klistvoi[[il]] <- voitab
-  voitab
-}
-
-voiall <- do.call(rbind,listout)
-roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
-                          function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
-voiall <- voiall[roworder,]
-
-saveRDS(voiall,paste0('results/decisionvoi.Rds'))
-
-
-
-## income levels together ####################################
-
-multisource <- list('mean IHR, beta'=c('Mean_IHR', 'beta'),
-                    'mean IFR, beta'=c('Mean_IFR', 'beta'),
-                    'IHR, IFR, beta'=c('Mean_IHR','Mean_IFR', 'beta'),
-                    'Duration + IHR + IFR + beta'=c('beta','Mean_IHR','Mean_IFR','Time_to_discharge'))
-listout <- foreach (ks = 1:length(strategies))%dopar%{
-  klistvoi <- list()
-  klistmi <- list()
-  resultslist <- list()
-  for (il in 1:length(income_levels)){
-    inp3 <- strategies[ks];
-    income_level <- income_levels[il];
-    resultslist[[il]] <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
-    print(paste0('results/VOI_',inp3,'_',income_level,'.csv'))
-  }
-  results <- do.call(rbind,resultslist)
-  sourcelist <- list()
-  for(src in 1:length(multisource)) sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
   
   firstreultcol <- which(colnames(results)=='Cost')
   
@@ -306,13 +255,12 @@ listout <- foreach (ks = 1:length(strategies))%dopar%{
   
   voilist <- list()
   milist <- list()
-  bestfits <- list()
+  
   for(i in 1:ncol(outcomes)){
     voi <- c()
     mi <- c()
     y <- outcomes[,i]
     vary <- var(y) 
-    save_fits <- list()
     for(j in 1:ncol(sourcemat)){
       # model outcome as a function of input(s)
       sourcesj <- sourcemat[,j]
@@ -321,7 +269,6 @@ listout <- foreach (ks = 1:length(strategies))%dopar%{
       # compute evppi as percentage
       voi[j] <- (vary - mean((y - model$fitted) ^ 2)) / vary * 100
       mi[j] <- infotheo::mutinformation(infotheo::discretize(sourcesj),infotheo::discretize(y))
-      save_fits[[j]] <- model$fitted
     }
     for(j in 1:length(sourcelist)){
       sourcesj <- sourcelist[[j]]
@@ -329,122 +276,138 @@ listout <- foreach (ks = 1:length(strategies))%dopar%{
       mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
       # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
       voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
-      save_fits[[j+ncol(sourcemat)]] <- fittedvalues
-    }
-    milist[[i]] <- mi
-    voilist[[i]] <- voi
-    whichfit <- which.max(voi)
-    bestfits[[i]] <- save_fits[[whichfit]]
-  }
-  
-  bestfits <- do.call(cbind,bestfits)
-  voitab <- do.call(rbind,voilist)
-  colnames(voitab) <- c(colnames(sourcemat),names(multisource))
-  rownames(voitab) <- paste0(colnames(outcomes),', ',inp3)
-  mitab <- do.call(rbind,milist)
-  colnames(mitab) <- c(colnames(sourcemat),names(multisource))
-  rownames(mitab) <- paste0(colnames(outcomes),', ',inp3)
-  
-  colnames(bestfits) <- paste0(colnames(outcomes),'_pred')
-  
-  returnresults <- cbind(sourcemat,outcomes,bestfits)
-  
-  list(voitab, mitab, returnresults)
-}
-
-## rerun ###############################################
-
-multisource <- list('Sectors'=c('Agriculture','Food sector'),
-                    'Tourism'=c('International tourism','Food sector'),
-                    'Education factors'=c('School age','Internet','Labour share of GVA','Unemployment rate'),
-                    'Contacts'=c('Work contacts','School contacts','Community contacts','Hospitality contacts'),
-                    'Age groups'=c('School age','Working age','Elders'),
-                    'Working'=c('Working age','Work contacts'),
-                    'Testing'=c('Test rate','Test start'),
-                    'Health system'=c('Test rate','Test start','Hospital capacity'),
-                    'Social distancing'=c('Social distancing rate','Social distancing max'))
-listout2 <- foreach (ks = 1:length(strategies))%dopar%{
-  klistvoi <- list()
-  klistmi <- list()
-  inp3 <- strategies[ks];
-  
-  results <- listout[[ks]][[3]]
-  sourcelist <- list()
-  for(src in 1:length(multisource)) sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
-  
-  firstreultcol <- which(colnames(results)=='Cost')
-  
-  sourcemat <- results[,1:(firstreultcol-1)]
-  
-  outcomes_raw <- results[,firstreultcol + 0:3]
-  outcome_preds <- results[,(firstreultcol+4):(ncol(results))]
-  outcomes <- outcomes_raw - outcome_preds
-  
-  voilist <- list()
-  milist <- list()
-  for(i in 1:ncol(outcomes)){
-    voi <- c()
-    mi <- c()
-    y <- outcomes[,i]
-    best_pred <- outcome_preds[,i]
-    vary <- var(y) 
-    for(j in 1:ncol(sourcemat)){
-      # model outcome as a function of input(s)
-      sourcesj <- cbind(sourcemat[,j],best_pred)
-      colnames(sourcesj) <- c('v1','v2')
-      fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
-      # compute evppi as percentage
-      voi[j] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
-      mi[j] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
-    }
-    for(j in 1:length(sourcelist)){
-      sourcesj <- cbind(sourcelist[[j]],best_pred)
-      fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
-      mi[j+ncol(sourcemat)] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
-      # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
-      voi[j+ncol(sourcemat)] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
     }
     milist[[i]] <- mi
     voilist[[i]] <- voi
   }
-  
   voitab <- do.call(rbind,voilist)
   colnames(voitab) <- c(colnames(sourcemat),names(multisource))
-  rownames(voitab) <- paste0(colnames(outcomes),', ',inp3)
+  rownames(voitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3,', ',vaccination_level,', ',countrytype)
   mitab <- do.call(rbind,milist)
   colnames(mitab) <- c(colnames(sourcemat),names(multisource))
-  rownames(mitab) <- paste0(colnames(outcomes),', ',inp3)
-  
-  list(voitab, mitab)
+  rownames(mitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3,', ',vaccination_level,', ',countrytype)
+  list(voitab,mitab)
 }
 
-ilistvoi <- list(listout2[[1]][[1]], listout2[[2]][[1]], listout2[[3]][[1]], listout2[[4]][[1]])
-ilistmi <- list(listout2[[1]][[2]], listout2[[2]][[2]], listout2[[3]][[2]], listout2[[4]][[2]])
+voimi <- list()
+for(vl in 1:length(vaccination_levels)){
+  vaccination_level <- vaccination_levels[vl]
+  voimi[[vl]] <- list()
+  for(ct in 1:length(countrytype_levels)){
+    countrytype <- countrytype_levels[ct]
+    voimi[[vl]][[ct]] <- foreach (ks = 1:length(strategies))%dopar%{
+      inp3 <- strategies[ks]
+      vmlist <- list()
+      for (il in 1:length(income_levels)){
+        income_level <- income_levels[il]
+        vmlist[[il]] <- get_voi_mi(inp3,income_level,vaccination_level,countrytype)
+      }
+      vmlist
+    }
+  }
+}
 
-voiall <- do.call(rbind,ilistvoi)
-roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
-                          function(x)which(grepl(paste0(x,','),rownames(voiall)))))
-voiall <- voiall[roworder,]
-miall <- do.call(rbind,ilistmi)
-miall <- miall[roworder,]
+voilist <- milist <- list()
+for(vl in 1:length(vaccination_levels)){
+  vaccination_level <- vaccination_levels[vl]
+  voilist[[vl]] <- milist[[vl]] <- list()
+  for(ct in 1:length(countrytype_levels)){
+    countrytype <- countrytype_levels[ct]
+    voilist[[vl]][[ct]] <- milist[[vl]][[ct]] <- list()
+    for (ks in 1:length(strategies)){
+      voilist[[vl]][[ct]][[ks]] <- milist[[vl]][[ct]][[ks]] <- list()
+      for (il in 1:length(income_levels)){
+        voilist[[vl]][[ct]][[ks]][[il]] <- voimi[[vl]][[ct]][[ks]][[il]][[1]]
+        milist[[vl]][[ct]][[ks]][[il]] <- voimi[[vl]][[ct]][[ks]][[il]][[2]]
+      }
+      voilist[[vl]][[ct]][[ks]] <- do.call(rbind,voilist[[vl]][[ct]][[ks]])
+      milist[[vl]][[ct]][[ks]] <- do.call(rbind,milist[[vl]][[ct]][[ks]])
+    }
+    voilist[[vl]][[ct]] <- do.call(rbind,voilist[[vl]][[ct]])
+    milist[[vl]][[ct]] <- do.call(rbind,milist[[vl]][[ct]])
+    
+    roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
+                              function(x)which(grepl(paste0(x,':'),rownames(voilist[[vl]][[ct]])))))
+    voilist[[vl]][[ct]] <- voilist[[vl]][[ct]][roworder,]
+    milist[[vl]][[ct]] <- milist[[vl]][[ct]][roworder,]
+    
+    saveRDS(voilist[[vl]][[ct]],paste0('results/voi_',vaccination_level,'_',countrytype,'.Rds'))
+    saveRDS(milist[[vl]][[ct]],paste0('results/mi_',vaccination_level,'_',countrytype,'.Rds'))
+  }
+}
 
 
+#
+## decision #####################################
 
-# saveRDS(voiall,paste0('results/voi.Rds'))
-# saveRDS(miall,paste0('results/mi.Rds'))
+for(vl in 1:length(vaccination_levels)){
+  vaccination_level <- vaccination_levels[vl]
+  for(ct in 1:length(countrytype_levels)){
+    countrytype <- countrytype_levels[ct]
+    listout <- foreach (il = 1:length(income_levels))%dopar%{
+      resultslist <- list()
+      for (ks in 1:length(strategies)){
+        inp3 <- strategies[ks];
+        income_level <- income_levels[il];
+        results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'),header=T);
+        results <- subset(results,R0>1)
+        firstreultcol <- which(colnames(results)=='Cost')
+        resultslist[[ks]] <- results[,firstreultcol:(ncol(results))]
+        for(i in 1:ncol(resultslist[[ks]])) resultslist[[ks]][,i] <- -resultslist[[ks]][,i]/results$GDP
+        print(paste0('results/VOI_',inp3,'_',income_level,'.csv'))
+      }
+      
+      sourcelist <- list()
+      for(src in 1:length(multisource)) {
+        sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
+        if(ncol(sourcelist[[src]])<length(multisource[[src]])) print(src)
+      }
+      
+      colnames(results) <- gsub('_',' ',colnames(results))
+      colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
+      colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
+      colnames(results)[colnames(results)=='Labour share'] <- 'Labour share of GVA'
+      
+      sourcemat <- results[,1:(firstreultcol-1)]
+      
+      
+      voilist <- list()
+      
+      for(i in 1:ncol(resultslist[[1]])){
+        voi <- c()
+        y <- do.call(cbind,lapply(resultslist,'[',i))
+        colnames(y) <- paste0(colnames(y),1:ncol(y))
+        keeprows <- rowSums(y < -.05)>0
+        for(j in 1:ncol(sourcemat)){
+          # model outcome as a function of input(s)
+          sourcesj <- sourcemat[,j,drop=F]
+          voi[j] <- voi::evppi(y[keeprows,],sourcesj[keeprows,,drop=F],pars=colnames(sourcesj))$evppi
+        }
+        for(j in 1:length(sourcelist)){
+          sourcesj <- sourcelist[[j]]
+          voi[j+ncol(sourcemat)] <- voi::evppi(y[keeprows,],sourcesj[keeprows,],pars=colnames(sourcesj),method='gam')$evppi
+        }
+        voilist[[i]] <- voi
+      }
+      
+      voitab <- do.call(rbind,voilist)
+      colnames(voitab) <- c(colnames(sourcemat),names(multisource))
+      rownames(voitab) <- paste0(colnames(results)[firstreultcol:(ncol(results))],': ',income_level)
+      
+      # klistvoi[[il]] <- voitab
+      voitab
+    }
+    
+    voiall <- do.call(rbind,listout)
+    roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
+                              function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
+    voiall <- voiall[roworder,]
+    saveRDS(voiall,paste0('results/decisionvoi',vaccination_level,'_',countrytype,'.Rds'))
+  }
+}
 
-## ggpairs ################################
 
-library(GGally)
-inp3 <- strategies[1];
-income_level <- income_levels[1];
-results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
-colnames(results)
-results$outcome <- results$Cost/results$GDP
-results$high <- cut(results$outcome,breaks=c(0,1,5,30))
-x11(); ggpairs(results,columns=c(1:14,38),aes(colour=high))
-x11(); ggpairs(results,columns=c(15:29,38),aes(colour=high))
-
+#
 ## log cost share plot ###################################
 
 library(scales)
@@ -454,7 +417,7 @@ for (il in 1:length(income_levels)){
   for (ks in 1:length(strategies)){
     inp3 <- strategies[ks];
     income_level <- income_levels[il];
-    results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'.csv'),header=T);
+    results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_BAU.csv'),header=T);
     
     firstreultcol <- which(colnames(results)=='Cost')
     outcomes <- results[,firstreultcol:(ncol(results))]
@@ -514,119 +477,3 @@ ggplot(voioutcomes) +
 ggsave(p,filename = paste0('logcostshare.pdf'),width=10,height=10)
 
     
-
-## voi vs mi ####################
-
-set.seed(0)
-
-x1 <- rnorm(1000)
-y1 <- rnorm(1000)
-model <- earth(y1 ~ x1)
-vary <- var(y1) 
-(vary - mean((y1 - model$fitted) ^ 2)) / vary * 100
-# 0.1
-mutinformation(discretize(x1),discretize(y1))
-# 0.03428454
-
-x2 <- c(x1,10)
-y2 <- c(y1,10)
-model <- earth(y2 ~ x2)
-vary <- var(y2) 
-(vary - mean((y2 - model$fitted) ^ 2)) / vary * 100
-# 9.194201
-mutinformation(discretize(x2),discretize(y2))
-# 0.03926193
-
-
-
-x1 <- rnorm(1000)
-y <- list()
-y[[1]] <- x1
-y[[2]] <- rnorm(1000,x1,.1)
-y[[3]] <- rnorm(1000,x1,.5)
-y[[4]] <- rnorm(1000,x1,1)
-y[[5]] <- rnorm(1000,x1,5)
-
-infos <- sapply(y,function(yi){
-  model <- earth::earth(yi ~ x1, degree=min(4,max_degree))
-  # compute evppi as percentage
-  voi <- (var(yi) - mean((yi - model$fitted) ^ 2)) / var(yi) * 100
-  mi <- infotheo::mutinformation(infotheo::discretize(x1),infotheo::discretize(yi))
-  c(voi,mi,cor(x1,yi))
-})
-scatter <- as.data.frame(do.call(rbind,lapply(y,function(yi)cbind(x1,yi))))
-scatter$example <- rep(1:5,each=1000)
-infos <- as.data.frame(t(infos))
-infos$example <- 1:5
-infos$text <- paste0('VOI = ',round(infos$V1),'\n MI = ',round((infos$V2),2),'\n corr = ',round(infos$V3,2))
-ggplot() +
-  geom_point(data=scatter,aes(x=x1,y=yi),colour='gainsboro',alpha=.5) +
-  geom_text(data=infos,aes(x=0,y=0,label=text),colour='navyblue',size=7.5) +
-  facet_grid(~example) +
-  theme_bw(base_size = 15)+ 
-  theme(
-    strip.background = element_blank(),
-    strip.text.x = element_blank()
-  ) +
-  labs(x='Input',y='Output') -> p
-png("../figures/voimicorr.png", height = 200, width = 900)
-print(p)
-dev.off()
-
-
-
-x1[1] <- 100
-for(i in 1:length(y)) y[[i]][1] <- 100
-infos <- sapply(y,function(yi){
-  model <- earth::earth(yi ~ x1, degree=min(4,max_degree))
-  # compute evppi as percentage
-  voi <- (var(yi) - mean((yi - model$fitted) ^ 2)) / var(yi) * 100
-  mi <- infotheo::mutinformation(infotheo::discretize(x1),infotheo::discretize(yi))
-  c(voi,mi,cor(x1,yi))
-})
-scatter <- as.data.frame(do.call(rbind,lapply(y,function(yi)cbind(x1,yi))))
-scatter$example <- rep(1:5,each=1000)
-infos <- as.data.frame(t(infos))
-infos$example <- 1:5
-infos$text <- paste0('VOI = ',round(infos$V1),'\n MI = ',round((infos$V2),2),'\n corr = ',round(infos$V3,2))
-ggplot() +
-  geom_point(data=scatter,aes(x=x1,y=yi),colour='gainsboro',alpha=1) +
-  geom_text(data=infos,aes(x=50,y=50,label=text),colour='navyblue',size=7.5) +
-  facet_grid(~example) +
-  theme_bw(base_size = 15)+ 
-  theme(
-    strip.background = element_blank(),
-    strip.text.x = element_blank()
-  ) +
-  labs(x='Input',y='Output') -> p
-png("../figures/voimicorr100.png", height = 200, width = 900)
-print(p)
-dev.off()
-
-x1[1] <- 100
-for(i in 1:length(y)) y[[i]][1] <- 0
-infos <- sapply(y,function(yi){
-  model <- earth::earth(yi ~ x1, degree=min(4,max_degree))
-  # compute evppi as percentage
-  voi <- (var(yi) - mean((yi - model$fitted) ^ 2)) / var(yi) * 100
-  mi <- infotheo::mutinformation(infotheo::discretize(x1),infotheo::discretize(yi))
-  c(voi,mi,cor(x1,yi))
-})
-scatter <- as.data.frame(do.call(rbind,lapply(y,function(yi)cbind(x1,yi))))
-scatter$example <- rep(1:5,each=1000)
-infos <- as.data.frame(t(infos))
-infos$example <- 1:5
-infos$text <- paste0('VOI = ',round(infos$V1),'\n MI = ',round((infos$V2),2),'\n corr = ',round(infos$V3,2))
-ggplot() +
-  geom_point(data=scatter,aes(x=x1,y=yi),colour='gainsboro',alpha=1) +
-  geom_text(data=infos,aes(x=50,y=0,label=text),colour='navyblue',size=7.5) +
-  facet_grid(~example) +
-  theme_bw(base_size = 15)+ 
-  theme(
-    strip.background = element_blank(),
-    strip.text.x = element_blank()
-  ) +
-  labs(x='Input',y='Output') -> p
-png("../figures/voimicorr0.png", height = 200, width = 900)
-print(p)
-dev.off()
