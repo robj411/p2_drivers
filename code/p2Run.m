@@ -1,4 +1,4 @@
-function [data,f,g] = p2Run(data,dis,inp3,int,Xit,p2)
+function [data,f,g,isequence] = p2Run(data,dis,inp3,int,Xit,p2)
 
     adInd = data.adInd;
     lx    = data.lx;
@@ -35,13 +35,13 @@ function [data,f,g] = p2Run(data,dis,inp3,int,Xit,p2)
     
     S0 = NNvec(:,1);
     
-    [data,f,g] = p2SimVax(rundata,NNvec,Dvec,dis,S0,inp3,WitMat,p2);
+    [data,f,g,isequence] = p2SimVax(rundata,NNvec,Dvec,dis,S0,inp3,WitMat,p2);
 
 end
 
 %%
 
-function [data,f,g] = p2SimVax(data,NNvec,Dvec,dis,S0,inp3,WitMat,p2)               
+function [data,f,g,isequence] = p2SimVax(data,NNvec,Dvec,dis,S0,inp3,WitMat,p2)               
     %% PARAMETERS:
     compindex = data.compindex;
     ntot          = size(data.NNs,1);
@@ -79,6 +79,7 @@ function [data,f,g] = p2SimVax(data,NNvec,Dvec,dis,S0,inp3,WitMat,p2)
     %% LOOP:
 
     i = 1;
+    isequence = [];
 
     tend = data.tvec(end);
 
@@ -96,8 +97,11 @@ function [data,f,g] = p2SimVax(data,NNvec,Dvec,dis,S0,inp3,WitMat,p2)
         NNnext(end)         = 1;
         p2.NNnext = NNnext;
 
+        isequence = [isequence; [t0 i]];
+        
         [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0,inext]=...
          integr8(data,NNfeed,D,i,t0,tend,dis,y0,inp3,p2);
+     
 
         Tout       = [Tout;tout(2:end)];  
         Iout       = [Iout;Iclass(2:end,:)];
@@ -633,7 +637,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     
     R1flag3 = -1;
     R1flag4 = -1;
-    minttvec3 = min(t-(data.tvec(end-1)+0.1),0);%%!! used to be +7. why?
+    minttvec3 = min(t-(data.tvec(end-1)+0.01),0);%%!! used to be +7. why?
     minttvec4 = min(t-(data.tvec(end-1)+0.1),0);
     if ((i==2 && minttvec3==0) || (i==3  && minttvec4==0))
         Rt1 = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
