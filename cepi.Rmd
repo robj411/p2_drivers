@@ -426,7 +426,7 @@ for(vl in 1:length(vaccination_levels)){
                             ),by=.(strategy,igroup)]
     colnames(tabres) <- c('Strategy','Income group','Total costs','YLLs','Education','GDP')
 
-    write.csv(tabres,paste0('results_',vaccination_level,'_',countrytype,'.csv'),row.names = F)
+    # write.csv(tabres,paste0('results_',vaccination_level,'_',countrytype,'.csv'),row.names = F)
     lg <- paste0('Results for the ',vaccination_level,' scenario in a ',countrytype,' country. Mean values and 95% prediction intervals. \\label{tab:tabres100}')
     if (!knitr::is_html_output(excludes = "markdown")) { 
       cat(pander(tabres,caption=lg))
