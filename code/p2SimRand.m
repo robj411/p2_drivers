@@ -146,9 +146,9 @@ for il = 1:n_income
                     try
 %                         disp([il ms vl ct i]);
                         [~,f,g] = p2Run(rdata,dis2,strategy,int,xoptim,p2);
-                        if any(f(:,3) > ldata.Hres)
+                        %if any(f(:,3) > ldata.Hres)
                             ht(i) = f(find(f(:,1) > 20,1),3);
-                        end
+                        %end
                         [cost,~]    = p2Cost(ldata,dis2,p2,g);
                         sec(1)      = sum(cost([3,6,7:10],:),'all');
                         sec(2)      = sum(cost([3],:),'all');
