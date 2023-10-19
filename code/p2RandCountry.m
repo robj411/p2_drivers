@@ -2,14 +2,21 @@ function data = p2RandCountry(data,CD,income_level,dis_ref,R0betafun)
 
 lx = data.lx;
 
+contacts = data.contacts;
+
 remote_quantile = unifrnd(0,1);
 labsh_quantile = unifrnd(0,1);
 bmi_quantile = unifrnd(0,1);
 international_tourism_quant = unifrnd(0,1);
 remaining_tourism_quant = unifrnd(0,1);
 Hmax_quantile = unifrnd(0,1);
+pt_quantile = unifrnd(0,1);
+school1_contact_quantile = unifrnd(0,1,1,1);
+school2_contact_quantile = unifrnd(0,1,1,1);
+contacts.hospitality_frac = betarnd(10,40,1,1);
 
 data.remote_quantile = remote_quantile;
+data.response_time_quantile = unifrnd(0,1);
 
 %%!! hard coded
 if strcmp(income_level,'LLMIC')
@@ -18,24 +25,36 @@ if strcmp(income_level,'LLMIC')
     labsh = betainv(labsh_quantile,5.09,4.52);
     bmi = norminv(bmi_quantile,24.29,2.28);
     Hmax = gaminv(Hmax_quantile, 1.296265366, 1/0.049499412 );
-elseif strcmp(income_level,'MIC')
-    country_indices = strcmp(CD.igroup,'UMIC') | strcmp(CD.igroup,'LMIC');
-    internet_coverage = betainv(remote_quantile,3.77,2.91);    
-    labsh = betainv(labsh_quantile,6.29,6.54);
-    bmi = norminv(bmi_quantile,25.96,2.22);
-    Hmax = gaminv(Hmax_quantile, 1.360805416, 1/0.027592345);
+    contacts.pt = betainv(pt_quantile, 4.88, 3.65 );
+    contacts.schoolA1_frac = betainv(school1_contact_quantile, 1.35, 1.56 );
+    contacts.schoolA2_frac = betainv(school2_contact_quantile, 3.87, 2.22 );
+elseif strcmp(income_level,'UMIC')
+    country_indices = strcmp(CD.igroup,'UMIC');
+    internet_coverage = betainv(remote_quantile,14.32,6.44);    
+    labsh = betainv(labsh_quantile,7.06,8.18);
+    bmi = norminv(bmi_quantile,26.95,1.64);
+    Hmax = gaminv(Hmax_quantile, 1.73, 1/0.02);
+    contacts.pt = betainv(pt_quantile, 2.06, 2.59 );
+    contacts.schoolA1_frac = betainv(school1_contact_quantile, 1.51, 1.21 );
+    contacts.schoolA2_frac = betainv(school2_contact_quantile, 8.23, 5.77 );
 elseif strcmp(income_level,'HIC')
     country_indices = strcmp(CD.igroup,'HIC');
     internet_coverage = betainv(remote_quantile,9.57,1.39);
     labsh = betainv(labsh_quantile,7.97,6.87);
     bmi = norminv(bmi_quantile,26.81,1.52);
     Hmax = gaminv(Hmax_quantile, 2.045582620,   1/0.021471378);
+    contacts.pt = betainv(pt_quantile, 3.23, 11.65 );
+    contacts.schoolA1_frac = betainv(school1_contact_quantile, 4.31, 2.82 );
+    contacts.schoolA2_frac = betainv(school2_contact_quantile, 7.63, 3.75 );
 else
     country_indices = strcmp(CD.igroup,'LIC') | strcmp(CD.igroup,'LMIC') |...
         strcmp(CD.igroup,'UMIC') | strcmp(CD.igroup,'HIC');
     internet_coverage = 0;
     labsh = 0;
     Hmax = logninv(Hmax_quantile, 2.83235908, 0.87983858);
+    contacts.pt = betainv(pt_quantile, 4.88, 3.65 );
+    contacts.schoolA1_frac = betainv(school1_contact_quantile, 4.31, 2.82 );
+    contacts.schoolA2_frac = betainv(school2_contact_quantile, 7.63, 3.75 );
 end
 
 % bmi
@@ -53,26 +72,32 @@ data.bmi = bmi;
 data.bmi_rr_quantile = bmi_rr_quantile(1,:);
 
 % self isolation compliance
-data.self_isolation_compliance = unifrnd(0,1,1,1);
+data.self_isolation_compliance = unifrnd(0.5,1,1,1);
 
 % contacts
-data.B = unifrnd(max(data.B/2-1,0),data.B*2+1);
-data.C = unifrnd(max(data.C/2-1,0),data.C*2+1);
-data.hospitality_contact_quantile = unifrnd(0,1);
-data.hospA2 = logninv(data.hospitality_contact_quantile,log(0.5),0.5);
-data.hospA3 = logninv(data.hospitality_contact_quantile,log(1),0.5);
-data.hospA4 = logninv(data.hospitality_contact_quantile,log(1.5),0.5);
+contacts.B = unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
+contacts.C = unifrnd(max(contacts.C/2-1,0),contacts.C*2+1);
+% contacts.hospitality_contact_quantile = unifrnd(0,1);
+% contacts.hospA2 = logninv(contacts.hospitality_contact_quantile,log(0.5),0.5);
+% contacts.hospA3 = logninv(contacts.hospitality_contact_quantile,log(1),0.5);
+% contacts.hospA4 = logninv(contacts.hospitality_contact_quantile,log(1.5),0.5);
 
 %Npop
-nonempind = find(~isnan(CD.Npop1) & country_indices);
-randindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(randindex,4:24));
+nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
+[~,idx] = sort(CD.average_contacts(nonempind));
+nonempind = nonempind(idx);
+weights = unifrnd(0,1,1,1) + cumsum(CD.popsum(nonempind)/sum(CD.popsum(nonempind)));
+demoindex = find(weights>1,1) ; %randsample(nonempind,1,true,weights);
+% demoindex = nonempind(randi(numel(nonempind)));
+randvalue = table2array(CD(demoindex,4:24));
 defivalue = 50*10^6*randvalue'/sum(randvalue);
 data.Npop = defivalue;
 
 %NNs
 nonempind = find(~isnan(CD.NNs1) & country_indices);
-randindex = nonempind(randi(numel(nonempind)));
+% randindex = nonempind(randi(numel(nonempind)));
+weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
+randindex = randsample(nonempind,1,true,weights);
 randvalue = table2array(CD(randindex,25:69));%number of workers by sector in real country
 defivalue = randvalue/sum(table2array(CD(randindex,3+[5:13])));%proportion of adult population by sector in real country
 defivalue = sum(data.Npop(5:13))*defivalue;%number of workers by sector in artificial country
@@ -81,33 +106,34 @@ data.NNs  = defivalue;
 data.NNs(data.NNs==0) = 1;
 data.ntot     = size(data.NNs,1);
 
-%CM
-nonempind = find(~isnan(CD.CMaa) & country_indices);
-randindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(randindex,70:325));
+%CM -- match to pop for now
+% nonempind = find(~isnan(CD.CMaa) & country_indices);
+% randindex = nonempind(randi(numel(nonempind)));
+randvalue = table2array(CD(demoindex,70:325));
 defivalue = reshape(randvalue,16,16);
-data.CM   = defivalue;
+contacts.CM   = defivalue;
 
 %comm
 nonempind = find(~isnan(CD.comm) & country_indices);
 mincomm = min(CD.comm(nonempind));
 maxcomm = max(CD.comm(nonempind));
-data.comm = unifrnd(mincomm,maxcomm,1,1);
+contacts.comm = unifrnd(mincomm,maxcomm,1,1);
 
 %travelA3
 nonempind     = find(~isnan(CD.travelA3) & country_indices);
 mina3 = min(CD.travelA3(nonempind));
 maxa3 = max(CD.travelA3(nonempind));
-data.travelA3 =  unifrnd(mina3,maxa3,1,1);
+% normalise France values: 18% travel is pt, and pt has 2.5% of contacts,
+% which is 0.555
+% contacts.travelA3 =  pt/0.18*0.555 ; %unifrnd(mina3,maxa3,1,1);
 
 %schoolA1&schoolA2
-school_contact_quantile = unifrnd(0,1,1,1);
-mina1 = min(CD.schoolA1);
-maxa1 = max(CD.schoolA1);
-mina2 = min(CD.schoolA2);
-maxa2 = max(CD.schoolA2);
-data.schoolA1 = unifinv(school_contact_quantile,mina1,maxa1) ; 
-data.schoolA2 = unifinv(school_contact_quantile,mina2,maxa2);
+% mina1 = min(CD.schoolA1);
+% maxa1 = max(CD.schoolA1);
+% mina2 = min(CD.schoolA2);
+% maxa2 = max(CD.schoolA2);
+% contacts.schoolA1 = unifinv(school_contact_quantile,mina1,maxa1) ; 
+% contacts.schoolA2 = unifinv(school_contact_quantile,mina2,maxa2);
 
 % sample_uniform({'schoolA1','schoolA2'},CD,country_indices)
 
@@ -115,7 +141,7 @@ data.schoolA2 = unifinv(school_contact_quantile,mina2,maxa2);
 nonempind  = find(~isnan(CD.workp) & country_indices);
 minwp = min(CD.workp(nonempind));
 maxwp = max(CD.workp(nonempind));
-data.workp = unifrnd(minwp,maxwp,1,1);
+contacts.workp = unifrnd(minwp,maxwp,1,1);
 
 
 %%
@@ -126,17 +152,21 @@ maxs = max(table2array(CD(nonempind,421:465)));
 newprop = unifinv(remote_quantile,mins,maxs);
 data.wfh  = [newprop; newprop];
 
+% date of importation
+data.t_import = unifrnd(10,30,1,1);
+
 %Tres
-nonempind = find(~isnan(CD.Tres) & country_indices & CD.Tres<365);
-mint = min(CD.Tres(nonempind));
-maxt = max(CD.Tres(nonempind));
-data.Tres = unifrnd(mint,maxt,1,1);
+% nonempind = find(~isnan(CD.Tres) & country_indices & CD.Tres<365);
+% mint = 30; %min(CD.Tres(nonempind));
+% maxt = 90; %max(CD.Tres(nonempind));
+% data.Tres = unifinv(data.response_time_quantile, mint,maxt);
+data.Hres = unifinv(data.response_time_quantile, 1,20);
 
 %t_tit
-nonempind  = find(~isnan(CD.t_tit) & country_indices & CD.t_tit<365);
-mint = min(CD.t_tit(nonempind));
-maxt = max(CD.t_tit(nonempind));
-data.t_tit = unifrnd(mint,maxt,1,1);
+% nonempind  = find(~isnan(CD.t_tit) & country_indices & CD.t_tit<365);
+% mint = min(CD.t_tit(nonempind));
+% maxt = max(CD.t_tit(nonempind));
+% data.t_tit = data.Tres; %unifrnd(mint,maxt,1,1);
 
 %trate
 nonempind  = find(~isnan(CD.trate) & country_indices);
@@ -162,23 +192,26 @@ data.Hmax = Hmax;
 nonempind  = find(~isnan(CD.t_vax) & country_indices);
 mint = min(CD.t_vax(nonempind));
 maxt = max(CD.t_vax(nonempind));
-data.t_vax = unifrnd(mint,maxt,1,1);
+data.t_vax = unifinv(data.response_time_quantile, mint,maxt);
 
 %arate
 nonempind  = find(~isnan(CD.arate) & country_indices);
 mint = min(CD.arate(nonempind));
 maxt = max(CD.arate(nonempind));
-data.arate = unifrnd(mint,maxt,1,1);
+data.arate = max(CD.arate); %unifrnd(mint,maxt,1,1);
 
 %puptake
 nonempind    = find(~isnan(CD.puptake) & country_indices);
 mint = min(CD.puptake(nonempind));
 maxt = max(CD.puptake(nonempind));
 data.puptake = unifrnd(mint,maxt,1,1);
+data.puptake = 0.80;
 
 %la
 nonempind = find(~isnan(CD.la1) & country_indices);
-randindex = nonempind(randi(numel(nonempind)));
+% randindex = nonempind(randi(numel(nonempind)));
+weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
+randindex = randsample(nonempind,1,true,weights);
 randvalue = table2array(CD(randindex,476:493));
 defivalue = randvalue;
 data.la   = defivalue;
@@ -235,7 +268,9 @@ data.NNs(resample_sectors) = workingagepop2 .* vals;
 
 %obj: income per worker
 nonempind                   = find(~isnan(CD.obj1)&~isnan(CD.NNs1) & country_indices);
-randindex                   = nonempind(randi(numel(nonempind)));
+% randindex                   = nonempind(randi(numel(nonempind)));
+weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
+randindex = randsample(nonempind,1,true,weights);
 randvalue                   = table2array(CD(randindex,331:375));%gva by sector in real country
 defivalue                   = randvalue./table2array(CD(randindex,25:69));%gva per worker by sector in real country
 defivalue(isnan(defivalue)) = 0;
@@ -254,8 +289,8 @@ lg        = [dot(la(1),na(1))/sum(na(1)),...
              dot(la(2:4),na(2:4))/sum(na(2:4)),...
              dot(la(5:13),na(5:13))/sum(na(5:13)),...
              dot(la(14:end),na(14:end))/sum(na(14:end))];
-for k = 1:length(lg); 
-    lgh(k) = sum(1./((1+0.03).^[1:lg(k)]));
+for k = 1:length(lg)
+    lgh(k) = sum(1./((1+0.03).^(1:lg(k))));
 end 
 vsl       = 160*gdp/sum(na);
 defivalue = vsl/(dot(lgh,[na(1);sum(na(2:4));sum(na(5:13));sum(na(14:end))])/sum(na));
@@ -264,20 +299,23 @@ data.gdp = gdp;
 data.gdppc = gdp/sum(data.Npop);
 
 %vsy
+agefracs = data.Npop(2:4)/sum(data.Npop(2:4));
+midages = [7 12 17];
+workstarts = 20 - midages;
 working_years = 45;
+workends = working_years + workstarts;
 discount_rate = 0.03;
 rate_of_return_one_year = 0.08;
-PV = (1-(1+discount_rate)^(-working_years))/discount_rate;
+PV = ((1-(1+discount_rate).^(-workends))/discount_rate - (1-(1+discount_rate).^(-workstarts))/discount_rate)*agefracs;
 
-remote_teaching_effectiveness = betarnd(5,5,1,1);
-students_affected = 1 - remote_teaching_effectiveness;
+data.remote_teaching_effectiveness = betarnd(5,5,1,1);
 mean_annual_income = labsh*gdp/workingagepop;
 data.labsh = labsh;
 
 educationloss_all_students = ...
-    PV*mean_annual_income*rate_of_return_one_year*students_affected*sum(data.Npop(2:4));
+    PV*mean_annual_income*rate_of_return_one_year*sum(data.Npop(2:4));
 educationloss_per_student = ...
-    PV*mean_annual_income*rate_of_return_one_year*students_affected;
+    PV*mean_annual_income*rate_of_return_one_year;
 
 
 
@@ -312,17 +350,20 @@ data.x_schc(FAAind,:) = min(FAAmax,data.x_schc(FAAind,:));
 
 
 
-%% population disease parameters
+%% contacts
 
 %Contact Matrix
-[basic_contact_matrix,data] = p2MakeDs(data,data.NNs,ones(data.lx,1),zeros(1,data.lx));
-data.basic_contact_matrix = basic_contact_matrix;
+data.contacts = contacts;
+data = get_basic_contacts(data);
+basic_contact_matrix = p2MakeDs(data,data.NNs,ones(data.lx,1),zeros(1,data.lx));
+data.contacts.basic_contact_matrix = basic_contact_matrix;
 
 % get covid wt doubling time
 
-dis = population_disease_parameters(data,dis_ref,R0betafun);
+% dis = population_disease_parameters(data,dis_ref,R0betafun);
 
-data.Td_CWT = dis.Td;
+% data.Td_CWT = dis.Td;
+
 
 
 
