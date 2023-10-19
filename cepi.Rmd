@@ -261,14 +261,14 @@ ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) +
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(CountryVaccine~variable, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 18)  +
+    theme_bw(base_size = 10)  +
     xlab("") +
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),
         panel.spacing = unit(0.5, "lines"),
         legend.position = 'bottom',
-        legend.margin=margin(t=-40))-> p
+        legend.margin=margin(t=-20))-> p
   # ggsave(p,filename = 'figures/resultsdiff.pdf',width=12,height=10)
   p
 
@@ -382,14 +382,14 @@ for(vl in 1:length(vaccination_levels)){
       geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
       facet_grid(variable~strategy, scales="free") + 
         scale_fill_viridis(discrete=T, name="") +
-        theme_bw(base_size = 18)  +
+        theme_bw(base_size = 12)  +
         xlab("") +
         ylab("Percent of GDP") +
       scale_x_discrete(labels=c('','',''))+ 
       theme(axis.ticks.x=element_blank(),
             panel.spacing = unit(0.5, "lines"),
             legend.position = 'bottom',
-            legend.margin=margin(t=-40))
+            legend.margin=margin(t=-30))
 
 
     
@@ -445,6 +445,24 @@ p[[2]][[2]]
 ggplot(subset(allallresults,countrytype=='Secondary'&vaccination_level=='100 days'),aes(x=R0,y=log(Cost),colour=Importation_time>Response_time)) +
   geom_point(alpha=.5) +
   facet_grid(strategy~igroup)
+```
+
+```{r iseq,fig.cap='Closures for HICs under the elimination strategy.',echo=F,warning=F,message=F,fig.height=5,fig.width=7}
+## iseq ########################
+
+iseq <- setDT(read.csv('code/results/iseq.csv'))
+colnames(iseq) <- c('Time','Level','Importation','Country type','Sample')
+iseq$Level[iseq$Level==5] <- 1
+iseq[,firsttime:=min(Time),by=.(`Country type`,Sample)]
+iseq[,earlyclose:=firsttime<Importation-0.101]
+
+ggplot(iseq) +
+  geom_line(aes(x=Time,y=Sample,colour=factor(Level,levels=c(1,3,2),labels=c('Open','Closed','Very closed')),group=Sample),linewidth=3) +
+  facet_wrap(~factor(`Country type`,levels=1:2,labels=countrytype_levels)) +
+  scale_colour_manual(values=c(Open='darkolivegreen3',`Very closed`='firebrick2',Closed='darkgoldenrod1')) +
+  geom_point(aes(x=Importation,y=Sample,shape=earlyclose),size=3,show.legend=F) +
+  scale_shape_manual(values=c(`TRUE`=16,`FALSE`=1)) +
+  theme_bw(base_size = 15) + labs(colour='') + theme(legend.position = 'top')
 ```
 
 
