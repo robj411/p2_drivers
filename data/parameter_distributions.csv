@@ -1,0 +1,22 @@
+parameter name	igroup	distribution	Parameter 1	Parameter 2
+internet_coverage	LLMIC	betainv	1.78	3.11
+labsh	LLMIC	betainv	5.09	4.52
+bmi	LLMIC	norminv	24.29	2.28
+Hmax	LLMIC	gaminv	1.3	20.4081632653061
+pt	LLMIC	betainv	4.88	3.65
+schoolA1_frac	LLMIC	betainv	1.35	1.56
+schoolA2_frac	LLMIC	betainv	3.87	2.22
+internet_coverage	UMIC	betainv	14.32	6.44
+labsh	UMIC	betainv	7.06	8.18
+bmi	UMIC	norminv	26.95	1.64
+Hmax	UMIC	gaminv	1.73	50
+pt	UMIC	betainv	2.06	2.59
+schoolA1_frac	UMIC	betainv	1.51	1.21
+schoolA2_frac	UMIC	betainv	8.23	5.77
+internet_coverage	HIC	betainv	9.57	1.39
+labsh	HIC	betainv	7.97	6.87
+bmi	HIC	norminv	26.81	1.52
+Hmax	HIC	gaminv	2.05	50
+pt	HIC	betainv	3.23	11.65
+schoolA1_frac	HIC	betainv	4.31	2.82
+schoolA2_frac	HIC	betainv	7.63	3.75
