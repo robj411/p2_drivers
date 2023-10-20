@@ -4,9 +4,9 @@
 income_levels = {'LLMIC','UMIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
 vaccination_levels = {'BAU','100 days','BPSV'};
-countrytype_levels = {'Spillover','Secondary'};
+countrytype_levels = {'Origin','Secondary'};
 
-nsamples  = 512;
+nsamples  = 100;
 n_income = numel(income_levels);
 
 synthetic_countries_base = cell(nsamples,length(income_levels));
@@ -54,55 +54,21 @@ for i = 1:nsamples
         rng(i);
         income_level = income_levels{il};
         
-        % country data. defines wnorm and Td_CWT
+        % country data. random samples
         ldata1     = p2RandCountry(data,CD,income_level);
         synthetic_countries_base{i,il} = ldata1;
         
-        % get beta and R0
-        dis2 = population_disease_parameters(ldata1,dis,R0_to_beta);
-        betas(i,il) = dis2.beta;
-        R0s(i,il) = dis2.R0;
-    end
-end
-
-%% generate new R0 using beta
-
-% 4: get relationship between R0 and beta.
-% Resample R0.
-% use covid doubling time
-
-beta_to_R0 = @(dis) [dis.beta.*dis.CI, dis.beta];
-
-betameans = prod(betas').^(1/length(income_levels));
-
-betas2 = zeros(nsamples,n_income);
-R0s2 = zeros(nsamples,n_income);
-rts = zeros(nsamples,n_income);
-for i = 1:nsamples
-    dis = synthetic_countries_dis_basis{i};
-    dis.beta = betameans(i);
-    for il = 1:n_income
-        ldata0 = synthetic_countries_base{i,il};
         for vl = 1:length(vaccination_levels)
-            [ldata,dis2,p2] = p2Params(ldata0,dis,beta_to_R0,vl);
+            [ldata,dis2,p2] = p2Params(ldata1,dis,R0_to_beta,vl);
             synthetic_countries_p2{i,il,vl} = p2;
         end
         synthetic_countries_dis{i,il} = dis2;
         synthetic_countries{i,il}     = ldata;
-        rts(i,il) = get_response_time(ldata,dis2,20);
-        betas2(i,il) = dis2.beta;
-        R0s2(i,il) = dis2.R0;
-        if dis2.Td==Inf
-            disp([i il]);
-            break;
-        end
     end
 end
-scatter(R0s(:),R0s2(:))
 
 %% set up simulation
 columnnames = {'VLY','VSY',...
-    'BMI','BMI_infection','BMI_hospitalisation','BMI_death',...
     'School_contacts','School_age','Working_age','Elders',...
     'Unemployment_rate','GDP','Labour_share','Work_contacts',...
     'Hospitality_contacts','Community_contacts','Hospital_capacity','Test_rate',...
@@ -169,7 +135,7 @@ for il = 1:n_income
                     working_age = popsize - sum(ldata.NNs([46,47,49]));
                     unemployment_rate = ldata.NNs(48)/working_age;
                     contacts = ldata.contacts;
-                    inputs(i,:)  = [ldata.vly ldata.vsy ldata.bmi ldata.bmi_rr_quantile...
+                    inputs(i,:)  = [ldata.vly ldata.vsy ...
                         contacts.schoolA2 ldata.NNs(47)/popsize working_age/popsize ldata.NNs(49)/popsize...
                         unemployment_rate ldata.gdp ldata.labsh contacts.workrel ...
                         contacts.hospitality_frac contacts.comm ldata.Hmax ldata.trate  ...

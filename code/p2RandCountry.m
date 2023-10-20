@@ -86,18 +86,18 @@ contacts.C = unifrnd(max(contacts.C/2-1,0),contacts.C*2+1);
 nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
 [~,idx] = sort(CD.average_contacts(nonempind));
 nonempind = nonempind(idx);
-weights = unifrnd(0,1,1,1) + cumsum(CD.popsum(nonempind)/sum(CD.popsum(nonempind)));
-demoindex = find(weights>1,1) ; %randsample(nonempind,1,true,weights);
-% demoindex = nonempind(randi(numel(nonempind)));
+%weights = unifrnd(0,1,1,1) + cumsum(CD.popsum(nonempind)/sum(CD.popsum(nonempind)));
+%demoindex = find(weights>1,1) ; %randsample(nonempind,1,true,weights);
+demoindex = nonempind(randi(numel(nonempind)));
 randvalue = table2array(CD(demoindex,4:24));
 defivalue = 50*10^6*randvalue'/sum(randvalue);
 data.Npop = defivalue;
 
 %NNs
 nonempind = find(~isnan(CD.NNs1) & country_indices);
-% randindex = nonempind(randi(numel(nonempind)));
-weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
-randindex = randsample(nonempind,1,true,weights);
+randindex = nonempind(randi(numel(nonempind)));
+%weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
+%randindex = randsample(nonempind,1,true,weights);
 randvalue = table2array(CD(randindex,25:69));%number of workers by sector in real country
 defivalue = randvalue/sum(table2array(CD(randindex,3+[5:13])));%proportion of adult population by sector in real country
 defivalue = sum(data.Npop(5:13))*defivalue;%number of workers by sector in artificial country
@@ -153,7 +153,7 @@ newprop = unifinv(remote_quantile,mins,maxs);
 data.wfh  = [newprop; newprop];
 
 % date of importation
-data.t_import = unifrnd(10,30,1,1);
+data.t_import = unifrnd(10,20,1,1);
 
 %Tres
 % nonempind = find(~isnan(CD.Tres) & country_indices & CD.Tres<365);
@@ -198,7 +198,7 @@ data.t_vax = unifinv(data.response_time_quantile, mint,maxt);
 nonempind  = find(~isnan(CD.arate) & country_indices);
 mint = min(CD.arate(nonempind));
 maxt = max(CD.arate(nonempind));
-data.arate = max(CD.arate); %unifrnd(mint,maxt,1,1);
+data.arate = 10^5 * 0.005; %unifrnd(mint,maxt,1,1);
 
 %puptake
 nonempind    = find(~isnan(CD.puptake) & country_indices);
@@ -209,9 +209,9 @@ data.puptake = 0.80;
 
 %la
 nonempind = find(~isnan(CD.la1) & country_indices);
-% randindex = nonempind(randi(numel(nonempind)));
-weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
-randindex = randsample(nonempind,1,true,weights);
+randindex = nonempind(randi(numel(nonempind)));
+%weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
+%randindex = randsample(nonempind,1,true,weights);
 randvalue = table2array(CD(randindex,476:493));
 defivalue = randvalue;
 data.la   = defivalue;

@@ -23,7 +23,7 @@ if(Sys.info()[['sysname']]=='Linux'){
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','UMIC','HIC')
 vaccination_levels <- c('BAU','100 days','BPSV')
-countrytype_levels <- c('Spillover','Secondary')
+countrytype_levels <- c('Origin','Secondary')
 
 #
 

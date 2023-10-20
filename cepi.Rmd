@@ -220,7 +220,7 @@ Value of information is a decision-theoretic quantity. We estimate it using the 
 |  | School closures | Schools close reactively |
 |  | Economic closures | Sectors close reactively |
 |  | Elimination | Contain by testing |
-| **Country type** | Spillover | Where the outbreak begins |
+| **Country type** | Origin | Where the outbreak begins |
 |  | Secondary |To where cases are exported|
 | **Vaccination** | BAU | Business as usual |
 |  | 100 day | SARS-X vaccine available after 100 days |
@@ -240,7 +240,7 @@ These distributions show that vulnerability to a pandemic depends on a country's
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','UMIC','HIC')
 vaccination_levels <- c('BAU','100 days','BPSV')
-countrytype_levels <- c('Spillover','Secondary')
+countrytype_levels <- c('Origin','Secondary')
 
 difflist <- c()
 for(vl in 2:length(vaccination_levels)){
@@ -328,7 +328,7 @@ for (i in 1:length(income_levels)){
     for (k in 1:length(strategies)){
         inp3 <- strategies[k];
         income_level <- income_levels[i];
-        results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_BAU_Spillover.csv'),header=T);
+        results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_BAU_Origin.csv'),header=T);
         results$strategy <- inp3
         results$igroup <- income_level
         allresults <- rbind(allresults,results)
@@ -440,7 +440,7 @@ for(vl in 1:length(vaccination_levels)){
 ```
 
 
-```{r BAUviolinspill,fig.cap='Model results for the BAU scenario in spillover countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r BAUviolinspill,fig.cap='Model results for the BAU scenario in Origin countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[1]][[1]]
 ```
 
@@ -448,7 +448,7 @@ p[[1]][[1]]
 p[[1]][[2]]
 ```
 
-```{r violin100spill,fig.cap='Model results for the 100-day scenario in spillover countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violin100spill,fig.cap='Model results for the 100-day scenario in Origin countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[2]][[1]]
 ```
 
@@ -488,7 +488,7 @@ ggplot(iseq) +
 
 \newpage
 
-```{r barBAUSpillover,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=7.5,fig.width=6}
+```{r barBAUOrigin,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=7.5,fig.width=6}
 
 meltmeantab$scencountry <- factor((meltmeantab$scencountry), levels=unique(meltmeantab$scencountry))
 ggplot(meltmeantab) + 
@@ -527,7 +527,7 @@ These relationships are identified in the value-of-information analyses: the las
 
 ```{r voi,fig.cap='\\footnotesize Value of information for BAU.',echo=F,warning=F,message=F,fig.height=10}
 
-voiall <- readRDS('code/results/voi_BAU_Spillover.Rds')
+voiall <- readRDS('code/results/voi_BAU_Origin.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
@@ -574,7 +574,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 
 ```{r dvoiBAU,fig.cap='Decision VOI for BAU. Which parameters would enable the decision maker to choose a strategy that minimises expected losses for BAU vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12}
 
-voiall <- readRDS('code/results/decisionvoiBAU_Spillover.Rds')*100
+voiall <- readRDS('code/results/decisionvoiBAU_Origin.Rds')*100
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
@@ -612,7 +612,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
 
 ```{r dvoi100,fig.cap='Decision VOI for 100 days. Which parameters would enable the decision maker to choose a strategy that minimises expected losses for 100-day vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12}
 
-voiall <- readRDS('code/results/decisionvoi100 days_Spillover.Rds')*100
+voiall <- readRDS('code/results/decisionvoi100 days_Origin.Rds')*100
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 

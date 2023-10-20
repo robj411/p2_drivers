@@ -60,7 +60,7 @@ contacts_between_workers_and_customers = matC .* repmat(NN,1,ln);
 contacts_from_customers_to_workers = contacts_between_workers_and_customers' ./ repmat(NN,1,ln);
 
 wnorm = dot(sum(matB+matC+contacts_from_customers_to_workers,2),NN)/sum(NN([1:lx,lx+adInd]));
-contacts.workrel = contacts.workp / wnorm;
+contacts.workrel = 1;%contacts.workp / wnorm;
 
 matB = contacts.workrel * matB;
 av_worker_contacts = dot(sum(matB,2),NN)/sum(NN([1:lx,lx+adInd]));

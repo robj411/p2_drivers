@@ -47,11 +47,6 @@ end
 
 %% countries by disease
 
-% 2: get all countries
-% get covid doubling time
-% 3: get beta and R0, where beta depends on R0
-betas = zeros(nsamples,n_income);
-R0s = zeros(nsamples,n_income);
 for i = 1:nsamples
     dis = synthetic_countries_dis_basis{i};
         rng(i);
@@ -63,28 +58,8 @@ for i = 1:nsamples
         
         % get beta and R0
         dis2 = population_disease_parameters(ldata1,dis,R0_to_beta);
-        betas(i,il) = dis2.beta;
-        R0s(i,il) = dis2.R0;
-end
-
-%% generate new R0 using beta
-
-% 4: get relationship between R0 and beta.
-% Resample R0.
-% use covid doubling time
-
-beta_to_R0 = @(dis) [dis.beta.*dis.CI, dis.beta];
-
-betameans = betas(:,il);%prod(betas').^(1/length(income_levels));
-
-betas2 = zeros(nsamples,n_income);
-R0s2 = zeros(nsamples,n_income);
-rts = zeros(nsamples,n_income);
-for i = 1:nsamples
-    dis = synthetic_countries_dis_basis{i};
-    dis.beta = betameans(i);
-        ldata0 = synthetic_countries_base{i,il};
-            [ldata,dis2,p2] = p2Params(ldata0,dis,beta_to_R0,vl);
+        
+            [ldata,dis2,p2] = p2Params(ldata1,dis2,R0_to_beta,vl);
             synthetic_countries_p2{i,il,vl} = p2;
         synthetic_countries_dis{i,il} = dis2;
         synthetic_countries{i,il}     = ldata;

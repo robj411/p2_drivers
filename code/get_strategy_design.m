@@ -26,7 +26,7 @@ function [ldata, xoptim] = get_strategy_design(ldata,strategy,countrytype,p2)
     end
     
     
-    if strcmp(countrytype,'Spillover')
+    if strcmp(countrytype,'Origin')
         ldata.t_import = 0;
         ldata.tvec = [-0.1 ldata.tvec(end)];
     elseif strcmp(countrytype,'Secondary')

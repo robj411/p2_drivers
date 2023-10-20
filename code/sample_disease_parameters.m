@@ -51,7 +51,7 @@ for i = 1:size(disparams,2)
     pHat = hyper_param_struct.(thisparam);
     newparams = gaminv(U(:,i),pHat(1),pHat(2));
     if strmatch('R0',thisparam)
-        newparams = min(newparams + 1.7,3.5);
+        newparams = min(newparams + 1.4,4);
     end
     newparams(isnan(newparams)) = mean(sample_struct.(thisparam));
     param_struct.(thisparam) = newparams;
