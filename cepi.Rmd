@@ -7,15 +7,15 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
-  bookdown::html_document2: 
-    toc: true
-    toc_float: true
-    keep_md: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -198,15 +198,15 @@ We use value-of-information methods to quantify relationships between inputs and
 
 Value of information is a decision-theoretic quantity. We estimate it using the R package **voi**. Intuitively, EVPPI functions in a similar way to correlation. In the case of a linear relationship between one input and one output, the computation of EVPPI is essentially the same as that of a correlation. EVPPI extends a simple correlation analysis in two ways relevant to the results presented: 1) nonlinear relationships are also captured, and 2) we can assess the EVPPI of a set of parameters. EVPPI allows us to identify influential parameters. Once identified, relationships between the influential parameter (sets) and outcomes need to be examined independently in order to understand the nature of the relationship.
 
-Finally, we can use mutual information (MI, via the R package **infotheo**) to assess mutual information between inputs and outputs. What MI offers beyond EVPPI is that it takes into account also how *likely* it is that the input parameter occupies a space where it is influential.
+<!-- Finally, we can use mutual information (MI, via the R package **infotheo**) to assess mutual information between inputs and outputs. What MI offers beyond EVPPI is that it takes into account also how *likely* it is that the input parameter occupies a space where it is influential. -->
 
-### Value of information, mutual information, or correlation?
+<!-- ### Value of information, mutual information, or correlation? -->
 
-![(\#fig:voimicorr) Value of information (VOI), mutual information (MI), and correlation (corr) for a standard normal input with outputs of varying covariance with the input.](figures/voimicorr.png){ width=80% }
+<!-- ![(\#fig:voimicorr) Value of information (VOI), mutual information (MI), and correlation (corr) for a standard normal input with outputs of varying covariance with the input.](figures/voimicorr.png){ width=80% } -->
 
-![(\#fig:voimicorr100) Value of information (VOI), mutual information (MI), and correlation (corr) for a standard normal input with outputs of varying covariance with the input (as in  Figure \@ref(fig:voimicorr)), with a single outlier with input and output values both equal to 100.](figures/voimicorr100.png){ width=80% }
+<!-- ![(\#fig:voimicorr100) Value of information (VOI), mutual information (MI), and correlation (corr) for a standard normal input with outputs of varying covariance with the input (as in  Figure \@ref(fig:voimicorr)), with a single outlier with input and output values both equal to 100.](figures/voimicorr100.png){ width=80% } -->
 
-![(\#fig:voimicorr0) Value of information (VOI), mutual information (MI), and correlation (corr) for a standard normal input with outputs of varying covariance with the input (as in  Figure \@ref(fig:voimicorr)), with a single outlier with input equal to 100 and output equal to 0.](figures/voimicorr0.png){ width=80% }
+<!-- ![(\#fig:voimicorr0) Value of information (VOI), mutual information (MI), and correlation (corr) for a standard normal input with outputs of varying covariance with the input (as in  Figure \@ref(fig:voimicorr)), with a single outlier with input equal to 100 and output equal to 0.](figures/voimicorr0.png){ width=80% } -->
 
 
 \newpage
@@ -219,7 +219,7 @@ Finally, we can use mutual information (MI, via the R package **infotheo**) to a
 | **Mitigation strategy** | No closures | Unmitigated pandemic |
 |  | School closures | Schools close reactively |
 |  | Economic closures | Sectors close reactively |
-|  | Elimination |  |
+|  | Elimination | Contain by testing |
 | **Country type** | Spillover | Where the outbreak begins |
 |  | Secondary |To where cases are exported|
 | **Vaccination** | BAU | Business as usual |
@@ -457,9 +457,14 @@ p[[2]][[2]]
 ```
 
 ```{r importtime,fig.cap='Model results for the 100-day scenario in secondary countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
-ggplot(subset(allallresults,countrytype=='Secondary'&vaccination_level=='100 days'),aes(x=R0,y=log(Cost),colour=Importation_time>Response_time)) +
-  geom_point(alpha=.5) +
-  facet_grid(strategy~igroup)
+ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
+# geom_histogram(colour='white',fill='white') +
+geom_density(aes(colour=factor(igroup,levels=c('LLMIC','UMIC','HIC'))),linewidth=2, alpha=0.5) +
+facet_wrap(~factor(countrytype,levels=countrytype_levels),scales='free') +
+theme_bw(base_size = 15) +
+labs(x='Hospital occupancy at response time',y='',colour='') +
+        scale_colour_viridis(discrete=T, name="") +
+theme(legend.position = 'top')
 ```
 
 ```{r iseq,fig.cap='Closures for HICs under the elimination strategy.',echo=F,warning=F,message=F,fig.height=5,fig.width=7}
@@ -1035,7 +1040,7 @@ $$p_2u + p_3 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
   
 Here, $p_1$ controls the variance of the distribution and $p_2$ and $p_3$ the linear relationship between $u$ and $y$. Using an optimisation routine in R we find $p_1=5.93$, $p_2=3.66$ and $p_3=0.099$. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
 
- ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=60% }
+ <!-- ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=60% } -->
 
 \newpage
 
@@ -1185,44 +1190,6 @@ We model these values with gamma distributions. For LLMICs, we have parameters `
 
 \newpage
 
-
-# Pathogen profiles
-
-## Parameters from Pandemic Potential, plus seven P2 profiles
-
-![Profiles from the game Pandemic Potential](figures/pandemicprofiles.png)
-
-![Profiles made using distribution from game](figures/pathogenprofilessynth.png)
-
-
-![Intensity and frequency of extreme novel epidemics, Marani et al., PNAS, 2021](figures/marani2021.png)
-
-\newpage
-
-## Infection-hospitalisation rate (IHR)
-
-![IHR by age for seven P2 pathogen profiles](figures/trainingihr.png)
-
-![Posterior samples for seven P2 pathogen IHR profiles](figures/pathogenplot.png)
-
-![Posterior distributions for IHR smooths](figures/pairsplot.png)
-
-![New IHR samples for synthetic pathogens](figures/samplelogplot.png)
-
-\newpage
-
-
-## Hospital-fatality rate (HFR)
-
-![HFR by age for seven P2 pathogen profiles](figures/traininghfr.png)
-
-![Posterior samples for seven P2 pathogen HFR profiles](figures/pathogenplothfr.png)
-
-![Posterior distributions for HFR smooths](figures/pairsplothfr.png)
-
-![New HFR samples for synthetic pathogens](figures/samplelogplothfr.png)
-
-\newpage
 
 # Population health
 
