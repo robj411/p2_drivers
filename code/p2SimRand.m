@@ -55,7 +55,7 @@ for i = 1:nsamples
         income_level = income_levels{il};
         
         % country data. random samples
-        ldata1     = p2RandCountry(data,CD,income_level);
+        ldata1     = p2RandCountry(data,CD,income_level,country_parameter_distributions);
         synthetic_countries_base{i,il} = ldata1;
         
         for vl = 1:length(vaccination_levels)
@@ -71,7 +71,7 @@ end
 columnnames = {'VLY','VSY',...
     'School_contacts','School_age','Working_age','Elders',...
     'Unemployment_rate','GDP','Labour_share','Work_contacts',...
-    'Hospitality_contacts','Community_contacts','Hospital_capacity','Test_rate',...
+    'Hospitality_contacts','Hospital_capacity','Test_rate',...
     'Hospital_response','Response_time',...
     'Social_distancing_max','Social_distancing_rate','Self_isolation_compliance','Candidate_infectees',...
     'R0','beta','Mean_IHR',...
@@ -92,13 +92,11 @@ for il = 1:n_income
     income_level = income_levels{il};
     for ms = 1:length(strategies)
         strategy = strategies{ms};
-        
         for vl = 1:length(vaccination_levels)
             for ct = 1:length(countrytype_levels)
                 ht = 730*ones(1,nsamples);
                 countrytype = countrytype_levels(ct);
                 parfor i = 1:nsamples
-                    
                     dis2 = synthetic_countries_dis{i,il};
                     p2 = synthetic_countries_p2{i,il,vl};
                     ldata= synthetic_countries{i,il};
@@ -110,9 +108,7 @@ for il = 1:n_income
                     try
 %                         disp([il ms vl ct i]);
                         [~,f,g] = p2Run(rdata,dis2,strategy,int,xoptim,p2);
-                        %if any(f(:,3) > ldata.Hres)
-                            ht(i) = f(find(f(:,1) > p2.Tres,1),3);
-                        %end
+                        ht(i) = f(find(f(:,1) > p2.Tres,1),3);
                         [cost,~]    = p2Cost(ldata,dis2,p2,g);
                         sec(1)      = sum(cost([3,6,7:10],:),'all');
                         sec(2)      = sum(cost([3],:),'all');
@@ -120,8 +116,7 @@ for il = 1:n_income
                         sec(4)      = sum(cost([7:10],:),'all');
                     catch
                         disp(strcat('VOI_',string(strategy),'_',string(income_level),'_',string(vaccination_levels(vl)),'.NA'))
-                        disp([il ms vl i]);
-                %             dis2
+                        disp([il ms vl ct i]);
                     end
                     if any(sec<0)
                         disp(strcat('VOI_',string(strategy),'_',string(income_level),'_',string(vaccination_levels(vl)),'.0'))
@@ -138,7 +133,7 @@ for il = 1:n_income
                     inputs(i,:)  = [ldata.vly ldata.vsy ...
                         contacts.schoolA2 ldata.NNs(47)/popsize working_age/popsize ldata.NNs(49)/popsize...
                         unemployment_rate ldata.gdp ldata.labsh contacts.workrel ...
-                        contacts.hospitality_frac contacts.comm ldata.Hmax ldata.trate  ...
+                        contacts.hospitality_frac ldata.Hmax ldata.trate  ...
                         ldata.Hres p2.Tres ldata.sdl ldata.sdb ldata.self_isolation_compliance dis2.CI ...
                         dis2.R0 dis2.beta mean(dis2.ihr) ...
                         mean(dis2.hfr) mean(dis2.ifr) dis2.ps dis2.Tlat ...

@@ -1,62 +1,54 @@
-function data = p2RandCountry(data,CD,income_level)
+function data = p2RandCountry(data,CD,income_level,country_parameter_distributions)
 
+%% start
 lx = data.lx;
 
 contacts = data.contacts;
 
-remote_quantile = unifrnd(0,1);
+%% generate quantiles
+internet_coverage_quantile = unifrnd(0,1);
 labsh_quantile = unifrnd(0,1);
 bmi_quantile = unifrnd(0,1);
-international_tourism_quant = unifrnd(0,1);
-remaining_tourism_quant = unifrnd(0,1);
 Hmax_quantile = unifrnd(0,1);
 pt_quantile = unifrnd(0,1);
-school1_contact_quantile = unifrnd(0,1,1,1);
-school2_contact_quantile = unifrnd(0,1,1,1);
+schoolA1_frac_quantile = unifrnd(0,1,1,1);
+schoolA2_frac_quantile = unifrnd(0,1,1,1);
+remaining_international_tourism_quantile = unifrnd(0,1);
+
+international_tourism_quant = unifrnd(0,1);
 contacts.hospitality_frac = betarnd(10,40,1,1);
 
-data.remote_quantile = remote_quantile;
+data.remote_quantile = internet_coverage_quantile;
 data.response_time_quantile = unifrnd(0,1);
 
-%%!! hard coded
-if strcmp(income_level,'LLMIC')
-    country_indices = strcmp(CD.igroup,'LIC') | strcmp(CD.igroup,'LMIC');
-    internet_coverage = betainv(remote_quantile,1.78,3.11);
-    labsh = betainv(labsh_quantile,5.09,4.52);
-    bmi = norminv(bmi_quantile,24.29,2.28);
-    Hmax = gaminv(Hmax_quantile, 1.296265366, 1/0.049499412 );
-    contacts.pt = betainv(pt_quantile, 4.88, 3.65 );
-    contacts.schoolA1_frac = betainv(school1_contact_quantile, 1.35, 1.56 );
-    contacts.schoolA2_frac = betainv(school2_contact_quantile, 3.87, 2.22 );
-elseif strcmp(income_level,'UMIC')
-    country_indices = strcmp(CD.igroup,'UMIC');
-    internet_coverage = betainv(remote_quantile,14.32,6.44);    
-    labsh = betainv(labsh_quantile,7.06,8.18);
-    bmi = norminv(bmi_quantile,26.95,1.64);
-    Hmax = gaminv(Hmax_quantile, 1.73, 1/0.02);
-    contacts.pt = betainv(pt_quantile, 2.06, 2.59 );
-    contacts.schoolA1_frac = betainv(school1_contact_quantile, 1.51, 1.21 );
-    contacts.schoolA2_frac = betainv(school2_contact_quantile, 8.23, 5.77 );
-elseif strcmp(income_level,'HIC')
-    country_indices = strcmp(CD.igroup,'HIC');
-    internet_coverage = betainv(remote_quantile,9.57,1.39);
-    labsh = betainv(labsh_quantile,7.97,6.87);
-    bmi = norminv(bmi_quantile,26.81,1.52);
-    Hmax = gaminv(Hmax_quantile, 2.045582620,   1/0.021471378);
-    contacts.pt = betainv(pt_quantile, 3.23, 11.65 );
-    contacts.schoolA1_frac = betainv(school1_contact_quantile, 4.31, 2.82 );
-    contacts.schoolA2_frac = betainv(school2_contact_quantile, 7.63, 3.75 );
-else
-    country_indices = strcmp(CD.igroup,'LIC') | strcmp(CD.igroup,'LMIC') |...
-        strcmp(CD.igroup,'UMIC') | strcmp(CD.igroup,'HIC');
-    internet_coverage = 0;
-    labsh = 0;
-    Hmax = logninv(Hmax_quantile, 2.83235908, 0.87983858);
-    contacts.pt = betainv(pt_quantile, 4.88, 3.65 );
-    contacts.schoolA1_frac = betainv(school1_contact_quantile, 4.31, 2.82 );
-    contacts.schoolA2_frac = betainv(school2_contact_quantile, 7.63, 3.75 );
+%% values from distributions
+pindices = find(strcmp(country_parameter_distributions.igroup,income_level) | ...
+    strcmp(country_parameter_distributions.igroup,'all') & ...
+    ~strcmp(country_parameter_distributions.distribution,'NA'));
+cpd = country_parameter_distributions(pindices,:);
+for i = 1:size(cpd,1)
+    varname = cpd.parameter_name{i};
+    expression = strcat('=',cpd.distribution{i},'(',...
+        cpd.parameter_name{i},'_quantile,',...
+        num2str(cpd.Parameter_1(i)),',',...
+        num2str(cpd.Parameter_2(i)),');');
+    eval([varname, expression]);
 end
 
+contacts.pt = pt;
+contacts.schoolA1_frac = schoolA1_frac;
+contacts.schoolA2_frac = schoolA2_frac;
+data.Hmax = Hmax; 
+
+if strcmp(income_level,'LLMIC')
+    country_indices = strcmp(CD.igroup,'LIC') | strcmp(CD.igroup,'LMIC');
+elseif strcmp(income_level,'UMIC')
+    country_indices = strcmp(CD.igroup,'UMIC');
+elseif strcmp(income_level,'HIC')
+    country_indices = strcmp(CD.igroup,'HIC');
+end
+
+%% map to parameters
 % bmi
 bmi = min(max(25.9,bmi), 29.9);
 % three outcomes (infection, hospitalisation, death)
@@ -77,10 +69,6 @@ data.self_isolation_compliance = unifrnd(0.5,1,1,1);
 % contacts
 contacts.B = unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
 contacts.C = unifrnd(max(contacts.C/2-1,0),contacts.C*2+1);
-% contacts.hospitality_contact_quantile = unifrnd(0,1);
-% contacts.hospA2 = logninv(contacts.hospitality_contact_quantile,log(0.5),0.5);
-% contacts.hospA3 = logninv(contacts.hospitality_contact_quantile,log(1),0.5);
-% contacts.hospA4 = logninv(contacts.hospitality_contact_quantile,log(1.5),0.5);
 
 %Npop
 nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
@@ -114,15 +102,15 @@ defivalue = reshape(randvalue,16,16);
 contacts.CM   = defivalue;
 
 %comm
-nonempind = find(~isnan(CD.comm) & country_indices);
-mincomm = min(CD.comm(nonempind));
-maxcomm = max(CD.comm(nonempind));
-contacts.comm = unifrnd(mincomm,maxcomm,1,1);
+% nonempind = find(~isnan(CD.comm) & country_indices);
+% mincomm = min(CD.comm(nonempind));
+% maxcomm = max(CD.comm(nonempind));
+% contacts.comm = unifrnd(mincomm,maxcomm,1,1);
 
 %travelA3
-nonempind     = find(~isnan(CD.travelA3) & country_indices);
-mina3 = min(CD.travelA3(nonempind));
-maxa3 = max(CD.travelA3(nonempind));
+% nonempind     = find(~isnan(CD.travelA3) & country_indices);
+% mina3 = min(CD.travelA3(nonempind));
+% maxa3 = max(CD.travelA3(nonempind));
 % normalise France values: 18% travel is pt, and pt has 2.5% of contacts,
 % which is 0.555
 % contacts.travelA3 =  pt/0.18*0.555 ; %unifrnd(mina3,maxa3,1,1);
@@ -149,7 +137,7 @@ contacts.workp = unifrnd(minwp,maxwp,1,1);
 nonempind = find(~isnan(CD.wfhl1) & country_indices);
 mins = min(table2array(CD(nonempind,376:420)));
 maxs = max(table2array(CD(nonempind,421:465)));
-newprop = unifinv(remote_quantile,mins,maxs);
+newprop = unifinv(internet_coverage_quantile,mins,maxs);
 data.wfh  = [newprop; newprop];
 
 % date of importation
@@ -186,8 +174,6 @@ mins = min(CD.sdb(nonempind));
 maxs = max(CD.sdb(nonempind));
 data.sdb  = unifrnd(mins,maxs,1,1);
 
-data.Hmax = Hmax; 
-
 %t_vax
 nonempind  = find(~isnan(CD.t_vax) & country_indices);
 mint = min(CD.t_vax(nonempind));
@@ -195,16 +181,16 @@ maxt = max(CD.t_vax(nonempind));
 data.t_vax = unifinv(data.response_time_quantile, mint,maxt);
 
 %arate
-nonempind  = find(~isnan(CD.arate) & country_indices);
-mint = min(CD.arate(nonempind));
-maxt = max(CD.arate(nonempind));
+% nonempind  = find(~isnan(CD.arate) & country_indices);
+% mint = min(CD.arate(nonempind));
+% maxt = max(CD.arate(nonempind));
 data.arate = 10^5 * 0.005; %unifrnd(mint,maxt,1,1);
 
 %puptake
-nonempind    = find(~isnan(CD.puptake) & country_indices);
-mint = min(CD.puptake(nonempind));
-maxt = max(CD.puptake(nonempind));
-data.puptake = unifrnd(mint,maxt,1,1);
+% nonempind    = find(~isnan(CD.puptake) & country_indices);
+% mint = min(CD.puptake(nonempind));
+% maxt = max(CD.puptake(nonempind));
+% data.puptake = unifrnd(mint,maxt,1,1);
 data.puptake = 0.80;
 
 %la
@@ -328,11 +314,13 @@ data.educationloss_all_students  = educationloss_all_students;
 
 %% international tourism 
 
-pointiness = 5.93; % for beta distribution
-sec_to_international = 3.66; % scales fraction to fraction
-international_const = 0.0959; % constant
+pindex = find(strcmp(country_parameter_distributions.parameter_name,'tourism_pointiness'));
+pindex2 = find(strcmp(country_parameter_distributions.parameter_name,'sec_to_international'));
 
-remaining_international_tourism = logninv(remaining_tourism_quant,-1.39,0.39);
+pointiness = country_parameter_distributions.Parameter_1(pindex); % for beta distribution
+sec_to_international = country_parameter_distributions.Parameter_1(pindex2); % scales fraction to fraction
+international_const = country_parameter_distributions.Parameter_2(pindex2); % constant
+
 GDP = sum(data.obj);
 FAAfrac = data.obj(FAAind)/GDP;
 alpha = pointiness * min(sec_to_international * FAAfrac + international_const,1);
