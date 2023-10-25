@@ -25,12 +25,11 @@ function [ldata, xoptim] = get_strategy_design(ldata,strategy,countrytype,p2)
         error('Unknown Mitigation Strategy!');
     end
     
-    
+    ldata.tvec = [-0.1 ldata.tvec(end)];
     if strcmp(countrytype,'Origin')
         ldata.t_import = 0;
-        ldata.tvec = [-0.1 ldata.tvec(end)];
     elseif strcmp(countrytype,'Secondary')
-        ldata.tvec = [min(ldata.t_import,p2.Tres)-0.1 ldata.tvec(end)];
+        ldata.tvec = ldata.tvec + min(ldata.t_import,p2.Tres);
     end
 
 end
