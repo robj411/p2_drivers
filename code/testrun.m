@@ -8,7 +8,7 @@ il=3;ms=4;vl=1;
 income_levels = {'LLMIC','UMIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
 vaccination_levels = {'BAU','100 days'};
-countrytype_levels = {'Spillover','Secondary'};
+countrytype_levels = {'Origin','Secondary'};
 
 nsamples  = 20;
 n_income = numel(income_levels);
@@ -113,7 +113,7 @@ hts = zeros(nsamples,n_income);
                 int = 5;
                 try
                     [~,f,g,isequence] = p2Run(rdata,dis2,strategy,int,xoptim,p2);
-                    iseqtab = [iseqtab; [isequence [rdata.t_import ct i].*ones(size(isequence,1),3)]];
+                    iseqtab = [iseqtab; [[isequence; [rdata.tvec(end) 1]] [rdata.t_import ct i].*ones(size(isequence,1)+1,3)]];
                     if any(f(:,3) > ldata.Hres)
                         ht(i) = f(find(f(:,3) > ldata.Hres,1),1);
                     end
