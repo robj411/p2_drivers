@@ -456,16 +456,18 @@ p[[2]][[1]]
 p[[2]][[2]]
 ```
 
-```{r importtime,fig.cap='Model results for the 100-day scenario in secondary countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r importtime,fig.cap='Hospital occupancy at time of response.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
-# geom_histogram(colour='white',fill='white') +
-geom_density(aes(colour=factor(igroup,levels=c('LLMIC','UMIC','HIC'))),linewidth=2, alpha=0.5) +
-facet_wrap(~factor(countrytype,levels=countrytype_levels),scales='free') +
-theme_bw(base_size = 15) +
-labs(x='Hospital occupancy at response time',y='',colour='') +
-        scale_colour_viridis(discrete=T, name="") +
-theme(legend.position = 'top')
+  # geom_histogram(colour='white',fill='white') +
+  geom_density(aes(colour=factor(igroup,levels=c('LLMIC','UMIC','HIC'))),linewidth=2, alpha=0.5) +
+  facet_wrap(~factor(countrytype,levels=countrytype_levels),scales='free') +
+  theme_bw(base_size = 15) +
+  labs(x='Hospital occupancy at response time',y='',colour='') +
+          scale_colour_viridis(discrete=T, name="") +
+  theme(legend.position = 'top')
 ```
+
+
 
 ```{r iseq,fig.cap='Closures for HICs under the elimination strategy.',echo=F,warning=F,message=F,fig.height=5,fig.width=7}
 ## iseq ########################
@@ -483,6 +485,21 @@ ggplot(iseq) +
   geom_point(aes(x=Importation,y=Sample,shape=earlyclose),size=3,show.legend=F) +
   scale_shape_manual(values=c(`TRUE`=16,`FALSE`=1)) +
   theme_bw(base_size = 15) + labs(colour='') + theme(legend.position = 'top')
+```
+
+
+```{r responsetime,fig.cap='Secondary countries: importation time vs. response time. Where importation time is before response time, the epidemic unfolds as in the Origin country, but with an earlier response time.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'&countrytype=='Secondary'),aes(x=Importation_time,y=Response_time)) +
+  # geom_histogram(colour='white',fill='white') +
+  geom_point(aes(shape=Importation_time>Response_time),size=3,show.legend=F) +
+  # facet_wrap(~factor(countrytype,levels=countrytype_levels),scales='free') +
+  theme_bw(base_size = 15) +
+  labs(x='Importation time',y='Response time',shape='') +
+  scale_shape_manual(values=c(`TRUE`=16,`FALSE`=1)) +
+          # scale_colour_viridis(discrete=T, name="") +
+  # scale_x_continuous(limits=c(5,30)) +
+  scale_y_continuous(limits=c(NA,50)) +
+  theme(legend.position = 'top')
 ```
 
 
@@ -1185,7 +1202,7 @@ llmic <- fitdistr(subset(hmaxi,!is.na(Hmax)&igroup%in%c('LMIC','LIC'))$Hmax,"gam
 
 ```
 
-We model these values with gamma distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape'],2)` and  `r round(llmic$estimate['rate'],2)`. For UMICs, we have parameters `r round(mic$estimate['shape'],2)` and  `r round(mic$estimate['rate'],2)`. For HICs, we have parameters `r round(hic$estimate['shape'],2)` and  `r round(hic$estimate['rate'],2)`.
+We model these values with gamma distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape'],2)` and  `r round(llmic$estimate['rate'],2)`. For UMICs, we have parameters `r round(mic$estimate['shape'],2)` and  `r round(mic$estimate['rate'],2)`. For HICs, we have parameters `r round(hic$estimate['shape'],2)` and  `r round(hic$estimate['rate'],2)`. (Data sources: World Bank (beds); OECD, WHO euro (bed occupancy rates).)
 
 
 \newpage
