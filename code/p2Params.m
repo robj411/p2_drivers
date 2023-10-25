@@ -45,6 +45,7 @@ p2.SHmax = 2*p2.Hmax;
 %Vaccine Uptake
 Npop    = data.Npop;
 NNage   = [Npop(1),sum(Npop(2:4)),sum(Npop(5:13)),sum(Npop(14:end))];
+over14frac = Npop(4)/sum(Npop(2:4));
 % puptake = min(0.99*(1-NNage(1)/sum(NNage)),puptake); %population uptake cannot be greater than full coverage in non-pre-school age groups
 % up3fun  = @(u3) puptake*sum(NNage) - u3*(NNage(2)/2 + NNage(3)) - min(1.5*u3,1)*NNage(4);
 % if up3fun(0)*up3fun(1)<=0
@@ -71,10 +72,10 @@ t_bspv = t_vax2 - t_vax;
 % if puptake*sum(NNage(2:4)) < t_bspv*arate
 %     arate = sum(puptake.*NNage)/t_bspv;
 % end
-uptake  = puptake*ones(1,4); %[u1,u2,u3,u4];
-if abs((uptake*NNage'/sum(NNage))-puptake)>1e-10
-    error('Vaccine uptake error!');
-end
+uptake  = puptake*[0 over14frac 1 1]; %[u1,u2,u3,u4];
+% if abs((uptake*NNage'/sum(NNage))-puptake)>1e-10
+%     error('Vaccine uptake error!');
+% end
 
 %Vaccine Administration Rate
 t_ages     = min((uptake.*NNage)/arate,Inf);%arate may be 0
