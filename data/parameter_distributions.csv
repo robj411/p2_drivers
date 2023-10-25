@@ -1,22 +1,25 @@
-parameter name	igroup	distribution	Parameter 1	Parameter 2
-internet_coverage	LLMIC	betainv	1.78	3.11
-labsh	LLMIC	betainv	5.09	4.52
-bmi	LLMIC	norminv	24.29	2.28
-Hmax	LLMIC	gaminv	1.3	20.4081632653061
-pt	LLMIC	betainv	4.88	3.65
-schoolA1_frac	LLMIC	betainv	1.35	1.56
-schoolA2_frac	LLMIC	betainv	3.87	2.22
-internet_coverage	UMIC	betainv	14.32	6.44
-labsh	UMIC	betainv	7.06	8.18
-bmi	UMIC	norminv	26.95	1.64
-Hmax	UMIC	gaminv	1.73	50
-pt	UMIC	betainv	2.06	2.59
-schoolA1_frac	UMIC	betainv	1.51	1.21
-schoolA2_frac	UMIC	betainv	8.23	5.77
-internet_coverage	HIC	betainv	9.57	1.39
-labsh	HIC	betainv	7.97	6.87
-bmi	HIC	norminv	26.81	1.52
-Hmax	HIC	gaminv	2.05	50
-pt	HIC	betainv	3.23	11.65
-schoolA1_frac	HIC	betainv	4.31	2.82
-schoolA2_frac	HIC	betainv	7.63	3.75
+"parameter_name","igroup","distribution","Parameter.1","Parameter.2"
+"internet_coverage","LLMIC","betainv",1.77889206734692,3.11000995619324
+"internet_coverage","UMIC","betainv",14.3170604014149,6.4393930184838
+"internet_coverage","HIC","betainv",9.57443732708034,1.39499342351214
+"remaining_international_tourism","all","logninv",-1.38819972390007,0.391443994140677
+"labsh","LLMIC","betainv",5.09395580565311,4.50821722093485
+"labsh","UMIC","betainv",7.06212508626447,8.17709248342567
+"labsh","HIC","betainv",7.97474353832625,6.87323235388323
+"Hmax","LLMIC","gaminv",1.29626536576579,20.2022602134547
+"Hmax","UMIC","gaminv",1.7281448848146,40.7336495346673
+"Hmax","HIC","gaminv",2.04558262026383,46.573628708639
+"bmi","LLMIC","norminv",24.2873417721519,2.27714939991229
+"bmi","UMIC","norminv",26.9519230769231,1.64462883170728
+"bmi","HIC","norminv",26.8071428571429,1.52149563903149
+"pt","LLMIC","betainv",4.87908914498185,3.64974187668787
+"pt","UMIC","betainv",2.06395662691575,2.59450981605703
+"pt","HIC","betainv",3.2336813831791,11.6514892721282
+"schoolA1_frac","LLMIC","betainv",1.34677510753885,1.55665827392563
+"schoolA1_frac","UMIC","betainv",1.51255236235748,1.21244375051
+"schoolA1_frac","HIC","betainv",4.31325894915066,2.82456596965309
+"schoolA2_frac","LLMIC","betainv",3.86898030719305,2.21726583388579
+"schoolA2_frac","UMIC","betainv",8.22605733163886,5.7679377766092
+"schoolA2_frac","HIC","betainv",7.6296295286561,3.74744307198394
+"tourism_pointiness","all",NA,6.7296536717428,NA
+"sec_to_international","all",NA,4.13870647550852,0.0534419911205692
