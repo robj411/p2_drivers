@@ -35,18 +35,19 @@ function [data,f,g,isequence] = p2Run(data,dis,inp3,int,Xit,p2)
     
     S0 = NNvec(:,1);
     
-    [data,f,g,isequence] = p2SimVax(rundata,NNvec,Dvec,dis,S0,inp3,WitMat,p2);
+    [data,f,g,isequence] = p2SimVax(rundata,Dvec,dis,S0,inp3,WitMat,p2);
 
 end
 
 %%
 
-function [data,f,g,isequence] = p2SimVax(data,NNvec,Dvec,dis,S0,inp3,WitMat,p2)               
+function [data,f,g,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p2)               
     %% PARAMETERS:
     compindex = data.compindex;
     ntot          = size(data.NNs,1);
     adInd         = 3;
     lx            = ntot-4;
+    NNvec = data.NNvec;
     NNbar         = NNvec(:,1);
     sumWorkingAge = sum(NNbar([1:lx,lx+3]));
 
@@ -207,25 +208,26 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     % end
 
     y0new     = yout(end,:)'; 
+    y_mat    = reshape(y0new,ntot,[]);
     compindex = data.compindex;
-%     disp(ie)
+%     disp([t0 i ie])
     if tout(end)<tend
         if ie <= length(data.inext)
             inext = data.inext(ie(end));
         else
             inext = i;
-            y_mat    = reshape(y0new,ntot,[]);
             current_S = y_mat(:,compindex.S_index(1));
             imported = 5/sum(current_S)*current_S;
-            new_I = y_mat(:,compindex.I_index(1)) + imported;
+            new_E = y_mat(:,compindex.E_index(1)) + imported;
             new_s = current_S - imported;
             y_mat(:,compindex.S_index(1)) = new_s;
-            y_mat(:,compindex.I_index(1)) = new_I;
+            y_mat(:,compindex.E_index(1)) = new_E;
             y0new = reshape(y_mat,[],1);
         end
     else
         inext = NaN;
     end
+    
 
     %% OUTPUT VARIABLES:
 
@@ -259,7 +261,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     pd  = min(th0.*dis.pd',1);
     Th  = ((1-pd).*dis.Threc)+(pd.*dis.Thd);
     mu  = pd./Th;
-    ddk = 10^5*sum(mu.*Hclass,2)/sum(NN0);
+    ddk = 10^5*sum(mu.*Hclass,2)/sumNN0;
 
     sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
 
@@ -271,7 +273,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
         betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
     end
     
-    Ip    = 10^5*sum(Iclass,2)/sum(NN0);
+    Ip    = 10^5*sum(Iclass,2)/sumNN0;
     if i~=5
         p4 = get_case_ID_rate(p2, Ip);
         pout = p4.*(tout>p2.t_tit).*(tout<max(p2.tpoints)); 
@@ -282,6 +284,67 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     Isaclass = pout .* (Ia + Iav1 + Iav2); 
     Issclass = pout .* (Is + Isv1 + Isv2); 
     Insclass = (1-pout) .* (Is + Isv1 + Isv2); 
+    
+    %% compute Rt at end of period
+    
+    S    = y_mat(:,compindex.S_index(1));
+    Sn    = y_mat(:,compindex.S_index(2));
+    Shv1   = y_mat(:,compindex.S_index(3));
+    Sv1   = y_mat(:,compindex.S_index(4));
+    Sv2   = y_mat(:,compindex.S_index(5));
+    Hv1    = y_mat(:,compindex.H_index(2));
+    Hv2    = y_mat(:,compindex.H_index(3));
+    
+    Iav1   = y_mat(:,compindex.I_index(3));
+    Isv1   = y_mat(:,compindex.I_index(4));
+    Iav2   = y_mat(:,compindex.I_index(5));
+    Isv2   = y_mat(:,compindex.I_index(6));
+    
+    Ev1    = y_mat(:,compindex.E_index(2));
+    Ev2    = y_mat(:,compindex.E_index(3));
+    Rv1    = y_mat(:,compindex.R_index(2));
+    Rv2    = y_mat(:,compindex.R_index(3));
+    V =    y_mat(:,compindex.V_index(1));
+    B =    y_mat(:,compindex.V_index(2));
+    
+    vaccinated_people = Sv1 + Ev1 + Iav1 + Isv1 + Hv1 + Rv1 + 1e-16;
+    boosted_people = Sv2 + Ev2 + Iav2 + Isv2 + Hv2 + Rv2 + 1e-16;
+    vaccine_pp = V./vaccinated_people;
+    booster_pp = B./boosted_people;
+    
+    dis2 = dis;
+    ph = dis.ph;
+    Tsr = dis.Tsr;
+    Tsh = dis.Tsh;
+    amp   = (Sn+(1-dis.hv2).*(S-Sn))./S;
+    naive_adjusted_ph    = amp.*ph;
+    Ts    = ((1-naive_adjusted_ph).*dis.Tsr) + (naive_adjusted_ph.*dis.Tsh);
+    g2    = (1-naive_adjusted_ph)./Ts;
+    h     = naive_adjusted_ph./Ts;
+    dis2.trv1 = dis.trv1 .* vaccine_pp;
+    dis2.trv2 = dis.trv2 .* booster_pp;
+    dis2.scv1 = dis.scv1 .* vaccine_pp;
+    dis2.scv2 = dis.scv2 .* booster_pp;
+    hv1 = dis.hv1 .* vaccine_pp;
+    hv2 = dis.hv2 .* booster_pp;
+    Ts_v1 = ((1-(1-hv1).*ph).*Tsr)  +((1-hv1).*ph.*Tsh);
+    Ts_v2 = ((1-(1-hv2).*ph).*Tsr)  +((1-hv2).*ph.*Tsh);
+    dis2.g2_v1 = (1-(1-hv1).*ph)./Ts_v1;
+    dis2.g2_v2 = (1-(1-hv2).*ph)./Ts_v2;
+    dis2.h_v1  = (1-hv1).*ph./Ts_v1;
+    dis2.h_v2 = (1-hv2).*ph./Ts_v2;
+    
+    NNvec = data.NNvec;
+    lx = size(data.hw,2);
+    Stest = change_configuration(NNvec,lx,i,3,S+Shv1);
+    Stest1 = change_configuration(NNvec,lx,i,3,Sv1);
+    Stest2 = change_configuration(NNvec,lx,i,3,Sv2);
+    
+    betam = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
+    
+%     Rtret = get_R(ntot,dis2,h,g2,Stest,Stest1,Stest2,...
+%             NNvec(:,3),data.Dvec(:,:,3),dis.beta,betam(end),pout(end),pout(end));
+%         disp([2 sum(Iclass(end,:))/10^5 Ip(end) pout(end) Rtret])
 
 end
 
@@ -301,10 +364,6 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     E =      y_mat(:,compindex.E_index(1));
     Ia =    y_mat(:,compindex.I_index(1));
     Is =    y_mat(:,compindex.I_index(2));
-%     Ina =    y_mat(:,compindex.I_index(1));
-%     Isa =    y_mat(:,compindex.I_index(2));
-%     Ins =    y_mat(:,compindex.I_index(3));
-%     Iss =    y_mat(:,compindex.I_index(4));
     H =      y_mat(:,compindex.H_index(1));
     R =      y_mat(:,compindex.R_index(1));
     Sn =     y_mat(:,compindex.S_index(2));
@@ -314,19 +373,11 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     Ev1 =    y_mat(:,compindex.E_index(2));
     Iav1 =    y_mat(:,compindex.I_index(3));
     Isv1 =    y_mat(:,compindex.I_index(4));
-%     Inav1 =  y_mat(:,compindex.I_index(5));
-%     Isav1 =  y_mat(:,compindex.I_index(6));
-%     Insv1 =  y_mat(:,compindex.I_index(7));
-%     Issv1 =  y_mat(:,compindex.I_index(8));
     Hv1 =    y_mat(:,compindex.H_index(2));
     Rv1 =    y_mat(:,compindex.R_index(2));
     Ev2 =    y_mat(:,compindex.E_index(3));
     Iav2 =    y_mat(:,compindex.I_index(5));
     Isv2 =    y_mat(:,compindex.I_index(6));
-%     Inav2 =  y_mat(:,compindex.I_index(9));
-%     Isav2 =  y_mat(:,compindex.I_index(10));
-%     Insv2 =  y_mat(:,compindex.I_index(11));
-%     Issv2 =  y_mat(:,compindex.I_index(12));
     Hv2 =    y_mat(:,compindex.H_index(3));
     Rv2 =    y_mat(:,compindex.R_index(3));
     V =    y_mat(:,compindex.V_index(1));
@@ -376,9 +427,6 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     red  = dis.red;
     beta = dis.beta;
 
-    %Preparedness
-%     dur    = p2.dur;
-
     %% SELF-ISOLATION:
 
     if t<max(p2.tpoints) && i~=5 && t>=p2.t_tit 
@@ -418,9 +466,6 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     
     I       = red*Ina+Ins +(1-trv1).*(red*Inav1+Insv1) + (1-trv2).*(red*Inav2+Insv2) ;    %Only non-self-isolating compartments
     foi     = phi.*beta.*betamod.*(D*(I./NN0));
-
-%     seedvec = 10^-15*sum(data.Npop)*ones(ntot,1);
-%     seed    = phi.*beta.*betamod.*(D*(seedvec./NN0));
 
     %% VACCINATION:
 
@@ -487,12 +532,25 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     scv2 = dis.scv2 .* booster_pp;
     hv1 = dis.hv1 .* vaccine_pp;
     hv2 = dis.hv2 .* booster_pp;
-    Ts_v1 = ((1-(1-hv1).*ph).*Tsr)  +((1-hv1).*ph.*Tsh);
-    Ts_v2 = ((1-(1-hv2).*ph).*Tsr)  +((1-hv2).*ph.*Tsh);
+    Ts_v1 = (1-(1-hv1).*ph).*Tsr  + (1-hv1).*ph.*Tsh;
+    Ts_v2 = (1-(1-hv2).*ph).*Tsr  + (1-hv2).*ph.*Tsh;
     g2_v1 = (1-(1-hv1).*ph)./Ts_v1;
     g2_v2 = (1-(1-hv2).*ph)./Ts_v2;
     h_v1  = (1-hv1).*ph./Ts_v1;
     h_v2 = (1-hv2).*ph./Ts_v2;
+    
+%     dis2 = dis;
+%     dis2.g2_v1 = g2_v1;
+%     dis2.g2_v2 = g2_v2;
+%     dis2.h_v1  = h_v1;
+%     dis2.h_v2 = h_v2;
+%     dis2.trv1 = trv1;
+%     dis2.trv2 = trv2;
+%     if i == 3
+%         Rt = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
+%             data.NNvec(:,i),D,beta,betamod,p3,p4);
+%         disp([1 sum(Ia+Is + Iav1+Isv1 + Iav2+Isv2)/10^5 Ip p4 Rt])
+%     end
 
     %% EQUATIONS:
 
@@ -505,12 +563,12 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     Ev1dot=                                  Sv1.*(1-scv1).*foi  -(sig1+sig2).*Ev1;
     Ev2dot=                                  Sv2.*(1-scv2).*foi  -(sig1+sig2).*Ev2;
 
-    Iadot=     sig1.*E     -g1.*Ina;
-    Isdot=     sig2.*E     -(g2+h).*Ins;
-    Iav1dot=   sig1.*Ev1   -g1.*Inav1;
-    Isv1dot=   sig2.*Ev1   -(g2_v1+h_v1).*Insv1;
-    Iav2dot=   sig1.*Ev2   -g1.*Inav2;
-    Isv2dot=   sig2.*Ev2   -(g2_v2+h_v2).*Insv2;
+    Iadot=     sig1.*E     -g1.*Ia;
+    Isdot=     sig2.*E     -(g2+h).*Is;
+    Iav1dot=   sig1.*Ev1   -g1.*Iav1;
+    Isv1dot=   sig2.*Ev1   -(g2_v1+h_v1).*Isv1;
+    Iav2dot=   sig1.*Ev2   -g1.*Iav2;
+    Isv2dot=   sig2.*Ev2   -(g2_v2+h_v2).*Isv2;
 
     Hdot=       h.*Is         -(g3+mu).*H;
     Hv1dot=     h_v1.*Isv1    -(g3+mu).*Hv1;
@@ -561,6 +619,29 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
 end
 
 %%
+
+function new_config = change_configuration(NNvec,lx,i,inext,old_config)
+    Xh2w                   = NNvec(1:lx,inext) - NNvec(1:lx,i); %Addition to each wp next intervention step
+    Xw2h                   = -Xh2w; 
+    Xw2h(Xw2h<0)           = 0;
+    Xw2h                   = Xw2h./NNvec(1:lx,i);
+    Xw2h(NNvec(1:lx,i)==0) = 0;
+
+    Xh2w(Xh2w<0) = 0;
+    Xh2w         = Xh2w/NNvec(lx+3,i);
+    
+
+    %Move all infection statuses:
+    y0w2h = old_config(1:lx).* Xw2h; % IC%number of people to be put at home (+)
+    y0w2h = [-y0w2h; sum(y0w2h,1)];
+
+    y0h2w = old_config(lx+3);
+    y0h2w = kron(y0h2w,Xh2w);
+    y0h2w = [y0h2w;-sum(y0h2w,1)];
+    
+    new_config = old_config;
+    new_config([1:lx,lx+3]) = old_config([1:lx,lx+3]) + y0w2h + y0h2w;
+end
 
 function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     
@@ -637,12 +718,25 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     
     R1flag3 = -1;
     R1flag4 = -1;
-    minttvec3 = min(t-(data.tvec(end-1)+0.01),0);%%!! used to be +7. why?
+    minttvec3 = min(t-(data.tvec(end-1)+7),0);%%!! used to be +7. why?
     minttvec4 = min(t-(data.tvec(end-1)+0.1),0);
     if ((i==2 && minttvec3==0) || (i==3  && minttvec4==0))
-        Rt1 = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
-            data.NNvec(:,3),data.Dvec(:,:,3),dis.beta,1,p3,p4);
-        R1flag3 = min(1.00-Rt1,0);
+        Stest = S+Shv1;
+        Stest1 = Sv1;
+        Stest2 = Sv2;
+        NNvec = data.NNvec;
+        lx = size(data.hw,2);
+        ddk    = 10^5*sum(dis.mu.*(H + Hv1 + Hv2))/sumN;
+        sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
+        betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
+        if i==2
+            Stest = change_configuration(NNvec,lx,i,3,Stest);
+            Stest1 = change_configuration(NNvec,lx,i,3,Stest1);
+            Stest2 = change_configuration(NNvec,lx,i,3,Stest2);
+        end
+        Rt1 = get_R(ntot,dis2,h,g2,Stest,Stest1,Stest2,...
+            NNvec(:,3),data.Dvec(:,:,3),dis.beta,betamod,p3,p4);
+        R1flag3 = min(0.95-Rt1,0);
         R1flag4 = min(Rt1-1.2000,0);
     end
     
@@ -673,11 +767,11 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     
     %% Event 5: End
     % i is in 1:4: ival = 0
-    ival = i>=5;
+    ival = -abs((i-1)*(i-2)*(i-3)*(i-4));
     % t is greater than the penultimate timepoint: tval = 0
     tval = min(t-(data.tvec(end-1)+0.1),0);
     % t is greater than the end of the vaccine rollout: otherval = 0
-    otherval = min(t-max(p2.tpoints),0);
+    otherval = -1;%min(t-max(p2.tpoints),0);
     R2flag = otherval + ival + tval;
     if ival==0 && tval==0
         if otherval~=0
