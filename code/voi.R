@@ -93,22 +93,23 @@ evppifit <- function (outputs, inputs, pars = NULL, method = NULL, nsim = NULL,
 multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Tourism'=c('International_tourism','Food_sector'),
                     'Education factors'=c('School_age','Labour_share'),
-                    #'Age groups'=c('School_age','Working_age','Elders'),
+                    'Age groups'=c('School_age','Working_age','Elders'),
                     'Working'=c('Working_age','Work_contacts'),
-                    #'Contacts'=c('Work_contacts','Hospitality_contacts','Community_contacts','School_contacts'),
-                    #'Testing'=c('Test_rate','Test_start','Self_isolation_compliance'),
+                    'Contacts'=c('Work_contacts','Hospitality_contacts','School_contacts'),
+                    'Testing'=c('Test_rate','Self_isolation_compliance'),
+                    'Testing + R0'=c('R0','Test_rate','Self_isolation_compliance'),
                     'Social distancing'=c('Social_distancing_rate','Social_distancing_max'),
                     #'BMI RR' = c('BMI','BMI_hospitalisation','BMI_infection','BMI_death'),
                     'IHR + R0'=c('Mean_IHR', 'R0'),
                     'HFR + R0'=c('Mean_HFR', 'R0'),
-                    'IFR + R0'=c('Mean_IFR', 'R0')
-                    #'IHR + IFR + R0'=c('Mean_IHR','Mean_IFR', 'R0'),
-                    #'Duration + IHR + R0'=c('R0','Mean_IHR','Time_to_discharge'),
-                    #'Hosp + Duration + R0'=c('R0','Hospital_capacity','Time_to_discharge'),
-                    #'Hosp + IHR + R0'=c('R0','Mean_IHR','Hospital_capacity'),
-                    #'SD rate + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR'),
-                    #'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Hospital_capacity')
-                    # 'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','Work_contacts','R0','Mean_IHR','Mean_IFR','Hospital_capacity'),
+                    'IFR + R0'=c('Mean_IFR', 'R0'),
+                    'IHR + IFR + R0'=c('Mean_IHR','Mean_IFR', 'R0'),
+                    'Duration + IHR + R0'=c('R0','Mean_IHR','Time_to_discharge'),
+                    'Hosp + Duration + R0'=c('R0','Hospital_capacity','Time_to_discharge'),
+                    'Hosp + IHR + R0'=c('R0','Mean_IHR','Hospital_capacity'),
+                    'SD rate + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR'),
+                    'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Hospital_capacity')
+                    #'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Mean_IFR','Hospital_capacity')
                     )
 
 

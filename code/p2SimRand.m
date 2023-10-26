@@ -6,7 +6,7 @@ strategies = {'No Closures','School Closures','Economic Closures','Elimination'}
 vaccination_levels = {'BAU','100 days','BPSV'};
 countrytype_levels = {'Origin','Secondary'};
 
-nsamples  = 100;
+nsamples  = 2048;
 n_income = numel(income_levels);
 
 synthetic_countries_base = cell(nsamples,length(income_levels));
@@ -79,7 +79,7 @@ columnnames = {'VLY','VSY',...
     'Asymptomatic_period','Symptomatic_period','Time_to_hospitalisation','Time_to_discharge',...
     'Time_to_death','Agriculture','Food_sector','International_tourism',...
     'Remote_teaching_effectiveness','Importation_time','Hospital_occupancy_at_response',...
-    'Internet','Start_vaccination','Vaccination_rate','Vaccine_uptake',...
+    'Internet','Start_vaccination',... %,'Vaccine_uptake','Vaccination_rate'
     'Cost','Deaths','School','GDP_loss'};
 inputs    = zeros(nsamples,length(columnnames)-4);
 outputs   = zeros(nsamples,4);
@@ -140,7 +140,7 @@ for il = 1:n_income
                         dis2.Tay dis2.Tsr dis2.Tsh dis2.Threc ...
                         dis2.Thd ldata.obj([1 32])'/gdp ldata.frac_tourism_international ...
                         ldata.remote_teaching_effectiveness ldata.t_import ht(i)...
-                        ldata.remote_quantile ldata.t_vax ldata.arate ldata.puptake];
+                        ldata.remote_quantile ldata.t_vax]; % ldata.arate ldata.puptake
                 end
                 
                 if vl==1 & ms==1 & ct==1

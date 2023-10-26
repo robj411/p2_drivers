@@ -53,7 +53,7 @@ for i = 1:nsamples
         income_level = income_levels{il};
         
         % country data. defines wnorm and Td_CWT
-        ldata1     = p2RandCountry(data,CD,income_level);
+        ldata1     = p2RandCountry(data,CD,income_level,country_parameter_distributions);
         synthetic_countries_base{i,il} = ldata1;
         
         % get beta and R0

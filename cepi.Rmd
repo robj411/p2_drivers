@@ -491,7 +491,7 @@ ggplot(iseq) +
 ```{r responsetime,fig.cap='Secondary countries: importation time vs. response time. Where importation time is before response time, the epidemic unfolds as in the Origin country, but with an earlier response time.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'&countrytype=='Secondary'),aes(x=Importation_time,y=Response_time)) +
   # geom_histogram(colour='white',fill='white') +
-  geom_point(aes(shape=Importation_time>Response_time),size=3,show.legend=F) +
+  geom_point(aes(shape=Importation_time>Response_time),size=3,show.legend=F,alpha=.5,colour='navyblue') +
   # facet_wrap(~factor(countrytype,levels=countrytype_levels),scales='free') +
   theme_bw(base_size = 15) +
   labs(x='Importation time',y='Response time',shape='') +

@@ -771,7 +771,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     % t is greater than the penultimate timepoint: tval = 0
     tval = min(t-(data.tvec(end-1)+0.1),0);
     % t is greater than the end of the vaccine rollout: otherval = 0
-    otherval = -1;%min(t-max(p2.tpoints),0);
+    otherval = min(t-max(p2.tpoints),0);
     R2flag = otherval + ival + tval;
     if ival==0 && tval==0
         if otherval~=0
