@@ -211,6 +211,8 @@ Value of information is a decision-theoretic quantity. We estimate it using the 
 
 \newpage
 
+## Scenario levels
+
 | **Variable** | **Levels** | **Description** |
 | ---- | ---- | ---- |
 | **Income level** | HIC  | High-income countries |
@@ -225,6 +227,15 @@ Value of information is a decision-theoretic quantity. We estimate it using the 
 | **Vaccination** | BAU | Business as usual |
 |  | 100 day | SARS-X vaccine available after 100 days |
 |  | BPSV | Broadly protective sarbecovirus vaccine |
+
+
+## Fixed parameters 
+
+| Parameter | Value | 
+| ---- | ---- | 
+| Maximum R$_0$ | 4 | 
+| Vaccines given per day | 0.5% of population | 
+| Final vaccine coverage | 80% of population | 
 
 # Results 
 
