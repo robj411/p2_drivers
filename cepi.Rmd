@@ -508,8 +508,14 @@ ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'&cou
 ```{r barBAUOrigin,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=7.5,fig.width=6}
 
 meltmeantab$scencountry <- factor((meltmeantab$scencountry), levels=unique(meltmeantab$scencountry))
+setDT(meltmeantab)
+meltmeantab[,cost:=sum(value),by=.(igroup,scencountry,strategy)]
+meltmeantab[,mincost:=cost==min(cost),by=.(igroup,scencountry)]
 ggplot(meltmeantab) + 
-      geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP'))),stat='identity') + facet_grid(scencountry~factor(igroup,levels=c('LLMIC','UMIC','HIC'))) + 
+      geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
+                   y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP')),
+                   alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
+  facet_grid(scencountry~factor(igroup,levels=c('LLMIC','UMIC','HIC'))) + 
       theme_bw(base_size=9) +
         scale_fill_viridis(discrete=T, name="",option='inferno') +
       labs(x='',y='Cost, % of GDP',fill='Cost type') +
