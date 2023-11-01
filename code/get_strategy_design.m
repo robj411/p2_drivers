@@ -17,7 +17,7 @@ function [ldata, xoptim] = get_strategy_design(ldata,strategy,countrytype,p2)
         ldata.imand = [3];
         ldata.inext = [2,3,3,4,5];
     elseif strcmp(strategy,'No Closures')
-        xoptim      = [ones(1*lx,1); repmat(ldata.unmit,4,1)];
+        xoptim      = [ones(1*lx,1); repmat(ldata.unmit,3,1); ones(1*lx,1)];
         ldata.hw    = [zeros(5,lx)];
         ldata.imand = [10];
         ldata.inext = [2,2,5];
