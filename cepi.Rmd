@@ -39,13 +39,13 @@ bibliography:
 }
 \pagestyle{plain}
   
-\AddToShipoutPictureFG{
-  \AtPageCenter{% or \AtTextCenter
-    \makebox[0pt]{\rotatebox[origin=c]{45}{%
-      \scalebox{7}{\texttransparent{0.3}{PRELIMINARY DRAFT}}%
-    }}
-  }
-}
+<!-- \AddToShipoutPictureFG{ -->
+<!--   \AtPageCenter{% or \AtTextCenter -->
+<!--     \makebox[0pt]{\rotatebox[origin=c]{45}{% -->
+<!--       \scalebox{7}{\texttransparent{0.3}{PRELIMINARY DRAFT}}% -->
+<!--     }} -->
+<!--   } -->
+<!-- } -->
 
 ```{r setup, include=FALSE}
 library(ggplot2)  
@@ -235,7 +235,7 @@ Value of information is a decision-theoretic quantity. We estimate it using the 
 | ---- | ---- | 
 | Maximum R$_0$ | 4 | 
 | Vaccines given per day | 0.5% of population | 
-| Final vaccine coverage | 80% of population | 
+| Final vaccine coverage | 80% of people aged 15+ | 
 
 # Results 
 
@@ -313,10 +313,10 @@ tabres <- setDT(difflist)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(rou
                         education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
                         gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
                         ),by=.(Country,Vaccine,igroup)]
-colnames(tabres) <- c('Country','Vaccination','Income group','Total costs','YLLs','Education','GDP')
+colnames(tabres) <- c('Country','Vaccination','Income group','Total value','YLLs','Education','GDP')
 
 write.csv(tabres,'resultsdiff.csv',row.names = F)
-lg <- 'Value of vaccines: expected difference between BAU and 100 days, and between 100 days and BPSV. Mean values and 95% prediction intervals. \\label{tab:tabresdiff}'
+lg <- 'Value of vaccines as a percent of GDP: expected difference between BAU and 100 days, and between 100 days and BPSV. Mean values and 95% prediction intervals. \\label{tab:tabresdiff}'
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(tabres,caption=lg)
 }else{
@@ -480,12 +480,13 @@ ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'),ae
 
 
 
-```{r iseq,fig.cap='Closures for HICs under the elimination strategy.',echo=F,warning=F,message=F,fig.height=5,fig.width=7}
+```{r iseq,fig.cap='Closures for HICs under the Economic Closures strategy.',echo=F,warning=F,message=F,fig.height=5,fig.width=7}
 ## iseq ########################
 
 iseq <- setDT(read.csv('code/results/iseq.csv'))
 colnames(iseq) <- c('Time','Level','Importation','Country type','Sample')
 iseq$Level[iseq$Level==5] <- 1
+iseq$Level[iseq$Level==4] <- 2
 iseq[,firsttime:=min(Time),by=.(`Country type`,Sample)]
 iseq[,earlyclose:=firsttime<Importation-0.101]
 

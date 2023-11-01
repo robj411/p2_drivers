@@ -1,4 +1,4 @@
-il=3;ms=4;vl=1;
+il=3;ms=3;vl=1;
 
 [il ms vl]
 
@@ -114,6 +114,7 @@ hts = zeros(nsamples,n_income);
                 try
                     [~,f,g,isequence] = p2Run(rdata,dis2,strategy,int,xoptim,p2);
                     iseqtab = [iseqtab; [[isequence; [rdata.tvec(end) 1]] [rdata.t_import ct i].*ones(size(isequence,1)+1,3)]];
+%                     figure('Position', [100 100 400 300]); plot(f(:,1),f(:,2))
                     if any(f(:,3) > ldata.Hres)
                         ht(i) = f(find(f(:,3) > ldata.Hres,1),1);
                     end

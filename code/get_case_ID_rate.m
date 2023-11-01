@@ -6,13 +6,13 @@ function p3 = get_case_ID_rate(p2, Ip)
     b1    = 0.1838;
     b2    = -1.024;
     
-    coef = 1./(1+exp(b0+b1*Ip+b2*log10(trate)));
+    frac_cases_found = 1./(1+exp(b0+b1*Ip+b2*log10(trate)));
     
-    coef(Ip >= trate) = min(coef(Ip >= trate),trate/10^5);
+    frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5);
     
-    coef = max(coef, trate/10^5 );
+    frac_cases_found = max(frac_cases_found, trate/10^5 );
     
-    p3 = p2.self_isolation_compliance .* coef / p2.dur;
+    p3 = p2.self_isolation_compliance .* frac_cases_found / p2.dur;
     
 end
     

@@ -64,7 +64,7 @@ data.bmi = bmi;
 data.bmi_rr_quantile = bmi_rr_quantile(1,:);
 
 % self isolation compliance
-data.self_isolation_compliance = unifrnd(0.5,1,1,1);
+data.self_isolation_compliance = unifrnd(0,1,1,1);
 
 % contacts
 contacts.B = unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
@@ -294,7 +294,7 @@ discount_rate = 0.03;
 rate_of_return_one_year = 0.08;
 PV = ((1-(1+discount_rate).^(-workends))/discount_rate - (1-(1+discount_rate).^(-workstarts))/discount_rate)*agefracs;
 
-data.remote_teaching_effectiveness = betarnd(5,5,1,1);
+data.remote_teaching_effectiveness = unifrnd(0,1,1,1);
 mean_annual_income = labsh*gdp/workingagepop;
 data.labsh = labsh;
 

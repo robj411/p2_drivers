@@ -210,7 +210,9 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     y0new     = yout(end,:)'; 
     y_mat    = reshape(y0new,ntot,[]);
     compindex = data.compindex;
-%     disp([t0 i ie])
+% ie is the index ("value") returned
+% inext is the value it maps to (from get_strategy_design)
+% disp([max(tout) i ie])
     if tout(end)<tend
         if ie <= length(data.inext)
             inext = data.inext(ie(end));
@@ -1029,9 +1031,11 @@ function [value,isterminal,direction] = unmitigated(t,y,data,ntot,dis,i,p2)
     isterminal(3) = 1;
     
     %% Event 6: importation
+    
     value(4)      =  min(t-data.t_import,0);
     direction(4)  = 1;
     isterminal(4) = 1;
+    
     
 end
 
