@@ -1,4 +1,4 @@
-il=3;ms=3;vl=1;
+il=3;ms=4;vl=1;
 
 [il ms vl]
 
@@ -139,4 +139,4 @@ hts = zeros(nsamples,n_income);
                 hts(:,il) = ht;
             end
         end
-writematrix(iseqtab,strcat('results/iseq.csv'));
+writematrix(iseqtab,strcat('results/iseq_',strategy,'.csv'));
