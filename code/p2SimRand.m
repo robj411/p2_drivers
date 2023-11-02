@@ -108,6 +108,7 @@ for il = 1:n_income
                     try
 %                         disp([il ms vl ct i]);
                         [~,f,g] = p2Run(rdata,dis2,strategy,int,xoptim,p2);
+%                         figure('Position', [100 100 400 300]); plot(f(:,1),f(:,7:10))
                         ht(i) = f(find(f(:,1) > p2.Tres,1),3);
                         [cost,~]    = p2Cost(ldata,dis2,p2,g);
                         sec(1)      = sum(cost([3,6,7:10],:),'all');

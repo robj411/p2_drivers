@@ -452,7 +452,7 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
 
     phi = 1 .* dis.rr_infection;  %+data.amp*cos((t-32-data.phi)/(365/2*pi));
 
-    ddk    = 10^5*sum(mu.*(H + Hv1 + Hv2))/sum(NN0);
+    ddk    = 10^5*sum((mu).*(H + Hv1 + Hv2))/sum(NN0);
     sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
 
     if i==1
