@@ -7,15 +7,15 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
-  bookdown::html_document2: 
-    toc: true
-    toc_float: true
-    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -252,10 +252,15 @@ Value of information is a decision-theoretic quantity. We estimate it using the 
 
 # Results 
 
+We first present results on the outcomes or costs of pandemics for the analysed scenarios, in total and separately by the three types of outcomes. We then present the estimated values of the vaccine scenarios that arise by computing the reduction in costs associated with vaccination.
 
 ## Distributions over outcomes
 
-Distributions over costs associated with the first two years of an outbreak of a new SARS-X virus are shown for three income levels and four mitigation strategies. Each shape represents the probability density made up of the sampled values for outcomes: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value sampled, after which point the density is 0.
+In this section we present the costs of pandemics, by country category, mitigation strategy, vaccination scenario, and for the three costs separately and summed up. For illustration, results for the BAU Origin countries are shown in Figure \@ref(fig:BAUviolinspill); the figures for the other scenarios are in the Appendix (Figures \@ref(fig:BAUviolinsecond) to  \@ref(fig:violin100second)). Because we are varying key characteristics across countries within a category (LLMIC, MIC, or HIC), there is a distribution over costs, which we present with violin plots (e.g. Figure \@ref(fig:BAUviolinspill)). They show the outcomes of 2,048 modelling runs of the same scenario where each run has a different set of randomly drawn parameters. The top row shows projections for total costs across three outcomes, while the 2nd, 3rd and 4th rows show the different types of costs (YLLS, education and GDP losses). Each shape represents a probability distribution: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value projected by any modelling run, after which point the density is 0. The base of the violin is given by the lowest value projected. Plots for all virus profiles are shown in Figures \@ref(fig:BAUviolinspill) to \@ref(fig:violin100second), and mean values and 95\% prediction intervals are given in Table \@ref(tab:tabres).
+
+There is high variation in projected costs across modelling runs, for all country types. For some favourable combinations of the randomly drawn parameters (bottom of the violin), costs are just above zero. On the other hand, for a few unfavourable parameter combinations (top of the violin), costs approach 500\% of annual pre-pandemic GDP in Figure \@ref(fig:BAUviolinspill). This area represents extreme adverse outcomes. Our aim in Section \@ref(value-of-information) is to identify which parameters lead to these high-cost outcomes.
+
+<!-- Distributions over costs associated with the first two years of an outbreak of a new SARS-X virus are shown for three income levels and four mitigation strategies. Each shape represents the probability density made up of the sampled values for outcomes: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value sampled, after which point the density is 0. -->
 
 <!-- These distributions show that vulnerability to a pandemic depends on a country's income level together with its mitigation strategy. For example, the elimination strategy appears to have the lowest distribution for overall cost for HICs among all strategies, whereas it appears no lower for UMICs and perhaps higher for LLMICs. This will be because of the factors that vary systematically across countries of different income levels. Likewise, the heavier tails in the distributions for YLLs for HICs is likely due to the age distributions in HICs being heavier in older ages. These cross-country differences are one of the focuses of the development of the model. -->
 
@@ -384,6 +389,11 @@ for(vl in 1:length(vaccination_levels)){
 
 ```{r BAUviolinspill,fig.cap='Model results for the BAU scenario in Origin countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[1]][[1]]
+
+ggsave(p[[1]][[1]] + theme_bw(base_size=15),filename='BAUviolinspill.png',width=9,height=6.5)
+
+p[[1]][[1]]
+
 ```
 
 ```{r BAUviolinsecond,fig.cap='Model results for the BAU scenario in secondary countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
@@ -398,7 +408,7 @@ p[[2]][[1]]
 p[[2]][[2]]
 ```
 
-```{r barBAUOrigin,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=7.5,fig.width=6}
+```{r expectedvaluesbar,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=7.5,fig.width=6}
 
 meltmeantab$igroupcountry <- factor((meltmeantab$igroupcountry), 
                                     levels=c('LLMIC, Origin','LLMIC, Secondary',
@@ -420,6 +430,20 @@ ggplot(meltmeantab) +
     # ggsave(p,filename='figures/expectedcosts.pdf',height=10)
 
 
+ggplot(subset(meltmeantab,grepl('Secondary',igroupcountry))) + 
+      geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
+                   y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP')),
+                   alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
+  facet_grid(factor(igroupcountry,labels=c('LLMIC','UMIC','HIC'))~factor(scen,levels=c('BAU','100 days','BPSV'))) + 
+      theme_bw(base_size=15) +
+        scale_fill_viridis(discrete=T, name="",option='inferno') +
+      labs(x='',y='Cost, % of GDP',fill='Cost type') +
+        theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+              legend.position = 'right') -> p
+
+ggsave(p,filename = 'expectedvaluesbar.png',height=6,width=8)
+
+
 ```
 
 
@@ -427,7 +451,11 @@ ggplot(meltmeantab) +
 
 ## Value of vaccination scenarios
 
-Selecting the mitigation strategy that minimised the expected cost for each country type and income level and vaccination scenario, we estimate the value of the vaccines as the difference in costs.
+Selecting the mitigation strategy that minimises the expected cost for each country type and income level and vaccination scenario, we estimate the value of the vaccines as the difference in costs. These are shown graphically in Figure \@ref(fig:diffviolin) and tabulated in Table \@ref(tab:tabresdiff). The expected value of the 100-day vaccine ranges from  in  countries to  in  countries. The expected value of the BPSV ranges from  in  countries to  in  countries. 
+
+In some cases, the same mitigation strategy is chosen across scenarios, e.g. Economic Closures are chosen by the HIC for all scenarioss (see Figure \@ref(fig:expectedvaluesbar)). Where the choice is the same in the two vaccination scenarios compared, there are expected benefits across all costs. In other cases, the chosen mitigation strategy changes, e.g. an Origin UmIC chooses Economic Closures with the 100-day vaccine and Unmitigated with BAU. Here, there is a greater gain in expected deaths averted offset by expected losses in education and GDP.
+
+Finally, note that there are samples with a negative value. These come from unlikely large exit waves that arise when all NPIs are suspended following completion of the vaccine rollout.  
 
 ```{r resultsdiff,echo=F,warning=F,message=F}
 
@@ -475,6 +503,22 @@ ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) +
         legend.margin=margin(t=-20))-> p
   # ggsave(p,filename = 'figures/resultsdiff.pdf',width=12,height=10)
   p
+  
+  ggplot(subset(vioplot,grepl('Secondary',CountryVaccine)),aes(fill=igroup, y=value, x=igroup)) + 
+    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
+  facet_grid(factor(CountryVaccine,labels=c('100-day vaccine','BPSV'))~variable, scales="free") + 
+    scale_fill_viridis(discrete=T, name="") +
+    theme_bw(base_size = 15)  +
+    xlab("") +
+    ylab("Percent of GDP") +
+  scale_x_discrete(labels=c('','',''))+ 
+  theme(axis.ticks.x=element_blank(),
+        panel.spacing = unit(0.5, "lines"),
+        legend.position = 'bottom',
+        legend.margin=margin(t=-20))-> p
+
+  ggsave(p,filename='diffviolin.png',width=9,height=6.5)
+
 
 ```
 
@@ -501,6 +545,15 @@ colnames(tabres) <- c('Country','Vaccination','Income group','Total value','YLLs
 
 write.csv(tabres,'resultsdiff.csv',row.names = F)
 lg <- 'Value of vaccines as a percent of GDP: expected difference between BAU and 100 days, and between 100 days and BPSV. Mean values and 95% prediction intervals. \\label{tab:tabresdiff}'
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(tabres,caption=lg)
+}else{
+    x <- knitr::kable(tabres,escape=F, "html",caption=lg)
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+}
+
+tabres <- subset(tabres,Country=='Secondary')
+tabres$Country <- NULL
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(tabres,caption=lg)
 }else{
@@ -566,7 +619,7 @@ ggplot(iseq) +
 ```
 
 
-```{r responsetime,fig.cap='Secondary countries: importation time vs. response time. Where importation time is before response time, the epidemic unfolds as in the Origin country, but with an earlier response time.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r responsetime,fig.cap='Secondary countries: importation time vs. response time. Where importation time is before response time, the epidemic unfolds as in the Origin country, but with an earlier response time. *Future development: there is not a qualitative difference between Origin and Secondary countries. We could therefore remove this label and vary the importation time from 0 to 20, to include the Origin feature. This would also allow for the possibility that a Secondary country with early importation detects, reports and responds earlier than the Origin country.*',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'&countrytype=='Secondary'),aes(x=Importation_time,y=Response_time)) +
   # geom_histogram(colour='white',fill='white') +
   geom_point(aes(shape=Importation_time>Response_time),size=3,show.legend=F,alpha=.5,colour='navyblue') +
