@@ -92,10 +92,13 @@ evppifit <- function (outputs, inputs, pars = NULL, method = NULL, nsim = NULL,
 
 multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Tourism'=c('International_tourism','Food_sector'),
-                    'Education factors'=c('School_age','Labour_share'),
+                    'Valuations'=c('VLY','VSY'),
+                    'Education factors'=c('School_age','VSY'),
                     'Age groups'=c('School_age','Working_age','Elders'),
-                    'Working'=c('Working_age','Work_contacts'),
+                    'Working'=c('Working_age','Work_contacts'),#,'Remote_quantile'),
                     'Contacts'=c('Work_contacts','Hospitality_contacts','School_contacts'),
+                    'Timing'=c('Response_time','Importation_time'),
+                    'Timing + R0'=c('R0','Response_time','Importation_time'),
                     'Testing'=c('Test_rate','Self_isolation_compliance'),
                     'Testing + R0'=c('R0','Test_rate','Self_isolation_compliance'),
                     'Social distancing'=c('Social_distancing_rate','Social_distancing_max'),
@@ -410,6 +413,21 @@ for(vl in 1:length(vaccination_levels)){
 
 
 #
+
+for(vaccination_level in vaccination_levels[-1]){
+  for(coutrytype in countrytype_levels){
+    print()
+    print(paste0('results/difftab_',countrytype,'_',vaccination_level,'.Rds'))
+    difftab <- readRDS(paste0('results/difftab_',countrytype,'_',vaccination_level,'.Rds'))
+    for(income_level in income_levels){
+      subtab <- subset(difftab,igroup==income_level)
+      subtab$sample <- 1:nrow(subtab)
+      print(income_level)
+      print(subset(subtab,Cost< -10)[,40:45])
+    }
+  }
+}
+
 ## log cost share plot ###################################
 
 library(scales)
