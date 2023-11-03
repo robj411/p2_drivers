@@ -7,15 +7,15 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
-  bookdown::html_document2: 
-    toc: true
-    toc_float: true
-    keep_md: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -465,7 +465,7 @@ for(vl in 2:length(vaccination_levels)){
     vaccination_level <- vaccination_levels[vl]
     countrytype <- countrytype_levels[ct]
     difftab <- as.data.frame(readRDS(paste0('code/results/difftab_',countrytype,'_',vaccination_level,'.Rds')))
-    nvar <- ncol(difftab) - 1
+    nvar <- which(colnames(difftab)=='GDP_loss')
     for(i in (nvar-3):nvar){
       difftab[,i] = difftab[,i]/difftab$GDP*100;
     }
@@ -514,10 +514,10 @@ ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) +
   scale_x_discrete(labels=c('','',''))+ 
   theme(axis.ticks.x=element_blank(),
         panel.spacing = unit(0.5, "lines"),
-        legend.position = 'bottom',
+        legend.position = 'right',
         legend.margin=margin(t=-20))-> p
 
-  ggsave(p,filename='diffviolin.png',width=9,height=6.5)
+  ggsave(p,filename='diffviolin.png',width=9,height=4.5)
 
 
 ```

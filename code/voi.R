@@ -131,19 +131,28 @@ for(ct in 1:length(countrytype_levels)){
         results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'),header=T);
         results$strategy <- inp3
         results$igroup <- income_level
+        results$sample <- 1:nrow(results)
         allresults <- rbind(allresults,results)
       }
     }
     setDT(allresults)
+    allresults[,mincost:=Cost==min(Cost),by=.(igroup,sample)]
+    allresults[,sum(mincost),by=.(igroup,strategy)]
+    allresults[mincost==T,mean(Cost/GDP),by=.(igroup)]
+    
     evalues <- allresults[,mean(Cost/GDP),by=.(igroup,strategy)]
     topchoices <- evalues[,strategy[which.min(V1)],by=igroup]
     print(topchoices)
     allresults[,keeprow:=strategy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
+    
+    ##!! decision under uncertainty, or decision under certainty?
     topresults[[v]] <- subset(allresults,keeprow)
+    # topresults[[v]] <- subset(allresults,mincost)
+    # setorder(topresults[[v]],igroup,sample)
     
     if(v>1){
       
-      difftab <- topresults[[v-1]]
+      difftab <- copy(topresults[[v-1]])
       difftab[,keeprow:=NULL]
       difftab[,strategy:=NULL]
       difftab[,Cost:=Cost-topresults[[v]]$Cost]
@@ -153,6 +162,18 @@ for(ct in 1:length(countrytype_levels)){
       
       saveRDS(difftab,paste0('results/difftab_',countrytype,'_',vaccination_level,'.Rds'))
       
+      pctab <- copy(topresults[[v-1]])
+      pctab[,keeprow:=NULL]
+      pctab[,strategy:=NULL]
+      pctab[,Cost:=(Cost-topresults[[v]]$Cost)/Cost]
+      pctab[,Deaths:=NULL]
+      pctab[,School:=NULL]
+      pctab[,GDP_loss:=NULL]
+      
+      saveRDS(pctab,paste0('results/pctab_',countrytype,'_',vaccination_level,'.Rds'))
+#     }
+#   }
+# }
       
       ilistvoi <- ilistmi <- list()
       for (il in 1:length(income_levels)){
@@ -415,8 +436,7 @@ for(vl in 1:length(vaccination_levels)){
 #
 
 for(vaccination_level in vaccination_levels[-1]){
-  for(coutrytype in countrytype_levels){
-    print()
+  for(countrytype in countrytype_levels[-2]){
     print(paste0('results/difftab_',countrytype,'_',vaccination_level,'.Rds'))
     difftab <- readRDS(paste0('results/difftab_',countrytype,'_',vaccination_level,'.Rds'))
     for(income_level in income_levels){
