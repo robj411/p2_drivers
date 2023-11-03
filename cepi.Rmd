@@ -129,6 +129,10 @@ We will simulate hypothetical pandemics caused by a SARS virus with a disease pr
 We will estimate the value of the programme to each country group as the difference in total societal costs between scenarios with and without accelerated availability of both a SARS-X--specific vaccine and a BPSV. 
 <!-- Table \ref{tab:scenarios} gives an overview over 12 estimated scenarios.  -->
 
+
+![(\#fig:schematic) Schematic view of the timeline of a pandemic. At time 0 a new SARS pathogen emerges. At time $t_R$ the pathogen is identified following a number of hospitalisations. A pandemic is declared. Genomic sequencing begins. Governments may implement non-pharmaceutical interventions. A broadly protective Sarbecovirus vaccine (BPSV) is rolled out in all places to people aged 65 and over.  At time $t_R+7$ the pathogen is sequenced. Vaccine R&D begins. At time $t_R+107$ a vaccine specific to the new pathogen is rolled out in all places to people aged 15 and over. At time $t_R+267$ vaccine rollout completes. All non-pharmaceutical interventions cease. At time $t_i$ the pathogen is imported into country $i$.](figures/Slide2.jpg){ width=90% }
+ 
+ 
 # Modelling framework
 
 We will use an extensive modelling framework for COVID-19 that has been developed by our team over the last 3 years, the integrated economic--epidemiological model DAEDALUS [@Haw2020]. It is described briefly below and in more detail in the cited publications. The model has been developed in an open-access framework with all code available on Github. The model has been continuously updated throughout the pandemic as our understanding of SARS-CoV-2 transmission and the impact of vaccination has evolved, and is being further updated currently to model other hypothetical respiratory pandemics to answer questions on pandemic preparedness.
@@ -390,9 +394,9 @@ for(vl in 1:length(vaccination_levels)){
 ```{r BAUviolinspill,fig.cap='Model results for the BAU scenario in Origin countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[1]][[1]]
 
-ggsave(p[[1]][[1]] + theme_bw(base_size=15),filename='BAUviolinspill.png',width=9,height=6.5)
-
-p[[1]][[1]]
+# ggsave(p[[1]][[1]] + theme_bw(base_size=15),filename='BAUviolinspill.png',width=9,height=6.5)
+# 
+# p[[1]][[1]]
 
 ```
 
@@ -430,18 +434,18 @@ ggplot(meltmeantab) +
     # ggsave(p,filename='figures/expectedcosts.pdf',height=10)
 
 
-ggplot(subset(meltmeantab,grepl('Secondary',igroupcountry))) + 
-      geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
-                   y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP')),
-                   alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
-  facet_grid(factor(igroupcountry,labels=c('LLMIC','UMIC','HIC'))~factor(scen,levels=c('BAU','100 days','BPSV'))) + 
-      theme_bw(base_size=15) +
-        scale_fill_viridis(discrete=T, name="",option='inferno') +
-      labs(x='',y='Cost, % of GDP',fill='Cost type') +
-        theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
-              legend.position = 'right') -> p
-
-ggsave(p,filename = 'expectedvaluesbar.png',height=6,width=8)
+# ggplot(subset(meltmeantab,grepl('Secondary',igroupcountry))) + 
+#       geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
+#                    y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP')),
+#                    alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
+#   facet_grid(factor(igroupcountry,labels=c('LLMIC','UMIC','HIC'))~factor(scen,levels=c('BAU','100 days','BPSV'))) + 
+#       theme_bw(base_size=15) +
+#         scale_fill_viridis(discrete=T, name="",option='inferno') +
+#       labs(x='',y='Cost, % of GDP',fill='Cost type') +
+#         theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+#               legend.position = 'right') -> p
+# 
+# ggsave(p,filename = 'expectedvaluesbar.png',height=6,width=8)
 
 
 ```
@@ -552,14 +556,14 @@ if (!knitr::is_html_output(excludes = "markdown")) {
   kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
 }
 
-tabres <- subset(tabres,Country=='Secondary')
-tabres$Country <- NULL
-if (!knitr::is_html_output(excludes = "markdown")) { 
-  pander(tabres,caption=lg)
-}else{
-    x <- knitr::kable(tabres,escape=F, "html",caption=lg)
-  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
-}
+# tabres <- subset(tabres,Country=='Secondary')
+# tabres$Country <- NULL
+# if (!knitr::is_html_output(excludes = "markdown")) { 
+#   pander(tabres,caption=lg)
+# }else{
+#     x <- knitr::kable(tabres,escape=F, "html",caption=lg)
+#   kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+# }
 
 ```
 
