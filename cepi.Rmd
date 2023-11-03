@@ -7,15 +7,15 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
-  bookdown::html_document2: 
-    toc: true
-    toc_float: true
-    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -130,7 +130,7 @@ We will estimate the value of the programme to each country group as the differe
 <!-- Table \ref{tab:scenarios} gives an overview over 12 estimated scenarios.  -->
 
 
-![(\#fig:schematic) Schematic view of the timeline of a pandemic. At time 0 a new SARS pathogen emerges. At time $t_R$ the pathogen is identified following a number of hospitalisations. A pandemic is declared. Genomic sequencing begins. Governments may implement non-pharmaceutical interventions. A broadly protective Sarbecovirus vaccine (BPSV) is rolled out in all places to people aged 65 and over.  At time $t_R+7$ the pathogen is sequenced. Vaccine R&D begins. At time $t_R+107$ a vaccine specific to the new pathogen is rolled out in all places to people aged 15 and over. At time $t_R+267$ vaccine rollout completes. All non-pharmaceutical interventions cease. At time $t_i$ the pathogen is imported into country $i$.](figures/Slide2.jpg){ width=90% }
+![(\#fig:schematic) Schematic view of the timeline of a pandemic. At time 0 a new SARS pathogen emerges. At time $t_R$ the pathogen is identified following a number of hospitalisations. A pandemic is declared. Genomic sequencing begins. Governments may implement non-pharmaceutical interventions. A broadly protective Sarbecovirus vaccine (BPSV) is rolled out in all places to people aged 65 and over.  At time $t_R+7$ the pathogen is sequenced. Vaccine R&D begins. At time $t_R+7+t_V$ a vaccine specific to the new pathogen is rolled out in all places to people aged 15 and over. $t_V$ is 365 in the BAU scenario and 100 in the 100-day vaccine scenario. At time $t_R+7+t_V+t_E$ vaccine rollout completes. All non-pharmaceutical interventions cease. $t_E$ is 160 times the fraction of the population who are aged 15 and over. At time $t_i$ the pathogen is imported into country $i$. $t_i=0$ for a country in which a spillover event occurs.](figures/Slide2.jpg){ width=90% }
  
  
 # Modelling framework
@@ -168,6 +168,10 @@ We will generate a distribution over outcomes through sampling inputs. This dist
 ## Vaccination scenarios
 
 Vaccination scenarios will be encoded via the parameters for vaccine effects, the time that vaccination begins, the rate of vaccine administration, and uptake among the population. The baseline scenario will mimic vaccination as observed in the COVID-19 pandemic, with all parameters taken from observations in 2020 and 2021. The 100-day vaccine scenario will assume a vaccine-effect profile similar to those of mRNA COVID-19 vaccines, and that vaccination begins 100 days after SARS-X is sequenced, with alternative administration rate and uptake explored in sensitivity analyses. The BPSV scenario will assume that the 100-day vaccine events will occur, and that, prior to that, the BPSV will be available, with effect parameters more similar to those of an influenza vaccine, with vaccination beginning at the time of identification of the SARS-X virus, and with alternative administration rate and uptake explored in sensitivity analyses.
+
+**TO DO: baseline scenario will be the same as the 100-day scenario, except it will be 365 days. This is approximately when the first COVID-19 vaccines were administered. The scenarios will be aligned on assumptions but the baseline scenario will not be aligned with reality: we will be underestimating the benefits to lower-income countries who were later in obtaining vaccines.**
+ 
+**TO DO: create a new scenario with the BPSV and the 365-day vaccine. Compare all three vaccine scenarios to the BAU scenario.** 
 
 
 
