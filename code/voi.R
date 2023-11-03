@@ -131,12 +131,13 @@ for(ct in 1:length(countrytype_levels)){
         results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'),header=T);
         results$strategy <- inp3
         results$igroup <- income_level
-        results$sample <- 1:nrow(results)
+        results$samplei <- 1:nrow(results)
         allresults <- rbind(allresults,results)
       }
     }
     setDT(allresults)
-    allresults[,mincost:=Cost==min(Cost),by=.(igroup,sample)]
+    allresults[,Costrnd:=Cost*(1+runif(nrow(allresults))*1e-8)]
+    allresults[,mincost:=Costrnd==min(Costrnd),by=.(igroup,samplei)]
     allresults[,sum(mincost),by=.(igroup,strategy)]
     allresults[mincost==T,mean(Cost/GDP),by=.(igroup)]
     
@@ -148,7 +149,7 @@ for(ct in 1:length(countrytype_levels)){
     ##!! decision under uncertainty, or decision under certainty?
     topresults[[v]] <- subset(allresults,keeprow)
     # topresults[[v]] <- subset(allresults,mincost)
-    # setorder(topresults[[v]],igroup,sample)
+    # setorder(topresults[[v]],igroup,samplei)
     
     if(v>1){
       
@@ -166,14 +167,14 @@ for(ct in 1:length(countrytype_levels)){
       pctab[,keeprow:=NULL]
       pctab[,strategy:=NULL]
       pctab[,Cost:=(Cost-topresults[[v]]$Cost)/Cost]
-      pctab[,Deaths:=NULL]
-      pctab[,School:=NULL]
-      pctab[,GDP_loss:=NULL]
+      pctab[,Deaths:=(Deaths-topresults[[v]]$Deaths)/Deaths]
+      pctab[,School:=(School-topresults[[v]]$School)/School]
+      pctab[,GDP_loss:=(GDP_loss-topresults[[v]]$GDP_loss)/GDP_loss]
       
       saveRDS(pctab,paste0('results/pctab_',countrytype,'_',vaccination_level,'.Rds'))
-#     }
-#   }
-# }
+    }
+  }
+}
       
       ilistvoi <- ilistmi <- list()
       for (il in 1:length(income_levels)){

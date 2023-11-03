@@ -7,15 +7,15 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
-  bookdown::html_document2: 
-    toc: true
-    toc_float: true
-    keep_md: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -234,6 +234,8 @@ Value of information is a decision-theoretic quantity. We estimate it using the 
 
 ## Scenario levels
 
+Table: Previously:
+
 | **Variable** | **Levels** | **Description** |
 | ---- | ---- | ---- |
 | **Income level** | HIC  | High-income countries |
@@ -248,6 +250,24 @@ Value of information is a decision-theoretic quantity. We estimate it using the 
 | **Vaccination** | BAU | Business as usual |
 |  | 100 day | SARS-X vaccine available after 100 days |
 |  | BPSV | Broadly protective sarbecovirus vaccine |
+
+
+
+Table: Proposed:
+
+| **Variable** | **Levels** | **Description** |
+|:-----|:---|:----------|
+| **Income level** | HIC  | High-income countries |
+|  | UMIC | Upper-middle--income countries |
+|  | LLMIC | Low- and lower-middle--income countries |
+| **Mitigation strategy** | No closures | Unmitigated pandemic |
+|  | School closures | Schools close reactively |
+|  | Economic closures | Sectors close reactively |
+|  | Elimination | Contain by testing |
+| **BPSV** | No | There is no BPSV stockpile |
+|  | Yes | Stockpiled BPSV rolled out to 65+ |
+| **SARS-X--specific vaccine** | 365 | SARS-X vaccine available 365 days after sequencing |
+|  | 100 | SARS-X vaccine available 100 days after sequencing |
 
 
 ## Fixed parameters 
@@ -308,10 +328,10 @@ vioplot$variable <- factor(vioplot$variable,
 
 
 
-```{r results100,echo=F,warning=F,message=F,results='asis'}
+```{r tabres,echo=F,warning=F,message=F,results='asis'}
 
 meltmeantab <- c()
-allallresults <- data.frame()
+allallresults <- tabresall <- data.frame()
 p <- list()
 for(vl in 1:length(vaccination_levels)){
   vaccination_level <- vaccination_levels[vl]
@@ -380,16 +400,27 @@ for(vl in 1:length(vaccination_levels)){
                             gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
                             ),by=.(strategy,igroup)]
     colnames(tabres) <- c('Strategy','Income group','Total costs','YLLs','Education','GDP')
+    tabres$`Vaccination level` <- vaccination_level
+    tabres$`Country type` <- countrytype
+    tabresall <- rbind(tabresall,tabres)
 
     # write.csv(tabres,paste0('results_',vaccination_level,'_',countrytype,'.csv'),row.names = F)
-    lg <- paste0('Results for the ',vaccination_level,' scenario in a ',countrytype,' country. Mean values and 95% prediction intervals. \\label{tab:tabres100}')
-    if (!knitr::is_html_output(excludes = "markdown")) { 
-      cat(pander(tabres,caption=lg))
-    }else{
-      x <- knitr::kable(tabres,escape=F, "html",caption=lg)
-      (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
-    }
+    # lg <- paste0('Results for the ',vaccination_level,' scenario in a ',countrytype,' country. Mean values and 95% prediction intervals. \\label{tab:tabres100}')
+    # if (!knitr::is_html_output(excludes = "markdown")) { 
+    #   cat(pander(tabres,caption=lg))
+    # }else{
+    #   x <- knitr::kable(tabres,escape=F, "html",caption=lg)
+    #   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+    # }
   }
+}
+tabresall <- cbind(tabresall[,c(7:8)],tabresall[,-c(7:8)])
+lg <- paste0('Results for all vaccination levels, scenarios and country types. Mean values and 95% prediction intervals. \\label{tab:tabres}')
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(tabresall,caption=lg))
+}else{
+  x <- knitr::kable(tabresall,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
 }
 
 ```
@@ -484,7 +515,10 @@ for(vl in 2:length(vaccination_levels)){
   }
 }
 
+```
 
+
+```{r diffviolin,fig.cap='Model results for costs saved by 100-day and BPS vaccines.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
 vioplot <- melt(difflist[,colnames(difflist)%in%c('Cost','Deaths','School','GDP_loss','igroup','CountryVaccine')],id.vars=c('igroup','CountryVaccine'))
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
@@ -492,11 +526,6 @@ vioplot$variable <- factor(vioplot$variable,
                            levels=c('Cost','Deaths','School','GDP_loss'),
                            labels=c('Total','YLLs','Education','GDP'))
 
-
-```
-
-
-```{r diffviolin,fig.cap='Model results for costs saved by 100-day and BPS vaccines.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
   facet_grid(CountryVaccine~variable, scales="free") + 
@@ -511,21 +540,6 @@ ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) +
         legend.margin=margin(t=-20))-> p
   # ggsave(p,filename = 'figures/resultsdiff.pdf',width=12,height=10)
   p
-  
-  ggplot(subset(vioplot,grepl('Secondary',CountryVaccine)),aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(factor(CountryVaccine,labels=c('100-day vaccine','BPSV'))~variable, scales="free") + 
-    scale_fill_viridis(discrete=T, name="") +
-    theme_bw(base_size = 15)  +
-    xlab("") +
-    ylab("Percent of GDP") +
-  scale_x_discrete(labels=c('','',''))+ 
-  theme(axis.ticks.x=element_blank(),
-        panel.spacing = unit(0.5, "lines"),
-        legend.position = 'right',
-        legend.margin=margin(t=-20))-> p
-
-  ggsave(p,filename='diffviolin.png',width=9,height=4.5)
 
 
 ```
@@ -574,6 +588,24 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 
 ## Other visualisations
+
+```{r choicestab,fig.cap='Frequency of mitigation strategy choices.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+
+choicestab <- readRDS(paste0('code/results/choicestab.Rds'))
+
+ggplot(choicestab) +  
+  geom_bar(aes(x=countrytype,
+               y=N/20.48,
+               fill=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))),stat='identity') + 
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~factor(vaccination_level,levels=c('BAU','100 days','BPSV'))) + 
+  theme_bw(base_size=15) +
+  scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
+  labs(x='',y='Chosen strategy, % of samples',fill='') +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+        legend.position = 'right') 
+
+```
+
 
 ```{r importtime,fig.cap='Hospital occupancy at time of response.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
