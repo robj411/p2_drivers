@@ -7,6 +7,9 @@ ircolumns = cell2mat(cellfun(@(a) strmatch(a, sevenpathogens.Properties.Variable
     {'ihr','ifr'},'uniform',false));
 
 disparams = sevenpathogens(:,setdiff(1:size(sevenpathogens,2),ircolumns));
+
+disparams.Ti = repmat(365000000,size(disparams,1),1);
+
 sample_struct = struct;
 % replicate non covid
 for i = 1:size(disparams,2)
@@ -21,10 +24,12 @@ hyper_param_struct = struct;
 for i = 1:size(disparams,2)
     thisparam = disparams.Properties.VariableNames{i};
     samples = sample_struct.(thisparam);
-    if strmatch('R0',thisparam)
-        samples = samples(samples<5.5) - 1.5;
-    end
     pHat = gamfit(samples);
+    if strmatch('R0',thisparam)
+%         samples = samples(samples<5.5) - 1.5;
+        [p1 p2] = normfit(samples);
+        pHat = [p1 p2];
+    end
     hyper_param_struct.(thisparam) = pHat;
 end
 
@@ -40,6 +45,8 @@ for seti = 1:length(sets)
     orig_samples = table2array(disparams(:,pis));
     correlation = corr(orig_samples);
     rho(pis,pis) = correlation;
+    disp(sets{seti})
+    disp(correlation)
 end
 
 mu  = zeros(1,length(disparams.Properties.VariableNames));   
@@ -51,18 +58,25 @@ for i = 1:size(disparams,2)
     pHat = hyper_param_struct.(thisparam);
     newparams = gaminv(U(:,i),pHat(1),pHat(2));
     if strmatch('R0',thisparam)
-        newparams = min(newparams + 1.5,4);
+%         newparams = min(newparams + 1.5,4);
+        pd = makedist('Normal',pHat(1),pHat(2));
+        t = truncate(pd,1.5,4);
+        newparams = icdf(t,U(:,i));
     end
     newparams(isnan(newparams)) = mean(sample_struct.(thisparam));
     param_struct.(thisparam) = newparams;
 end
 
+% figure('Position', [100 100 400 300]); hist(param_struct.R0)
+
 % use beta for ps
 thisparam = 'ps';
 samples = disparams.(thisparam);
 pHat = betafit(samples);
+hyper_param_struct.(thisparam) = pHat;
 newparams = betarnd(pHat(1),pHat(2),nsamples,1);
 param_struct.(thisparam) = newparams;
+disp(hyper_param_struct)
 
 %% ihr and hfr 
 
