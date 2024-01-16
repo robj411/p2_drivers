@@ -106,8 +106,8 @@ llmic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Low income
 
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','UMIC','HIC')
-vaccination_levels <- c('BAU','100 days','BPSV')
-countrytype_levels <- c('Origin','Secondary')
+vaccination_levels <- c(365,100)
+bpsv_levels <- c(0,1)
 
 ```
 
@@ -302,7 +302,7 @@ for (i in 1:length(income_levels)){
     for (k in 1:length(strategies)){
         inp3 <- strategies[k];
         income_level <- income_levels[i];
-        results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_BAU_Origin.csv'),header=T);
+        results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_365_0.csv'),header=T);
         results$strategy <- inp3
         results$igroup <- income_level
         allresults <- rbind(allresults,results)
@@ -336,8 +336,8 @@ p <- list()
 for(vl in 1:length(vaccination_levels)){
   vaccination_level <- vaccination_levels[vl]
   p[[vl]] <- list()
-  for(ct in 1:length(countrytype_levels)){
-    countrytype <- countrytype_levels[ct]
+  for(bl in 1:length(bpsv_levels)){
+    bpsv <- bpsv_levels[bl]
 
     allresults <- data.frame()
     
@@ -345,13 +345,14 @@ for(vl in 1:length(vaccination_levels)){
         for (k in 1:length(strategies)){
             inp3 <- strategies[k];
             income_level <- income_levels[i];
-            results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'),header=T);
+            results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
             results$strategy <- inp3
             results$igroup <- income_level
+            results$samplei <- 1:nrow(results)
             allresults <- rbind(allresults,results)
         }
     }
-    nvar <- ncol(results) - 2
+    nvar <- which(colnames(results)=='GDP_loss')
     for(i in 1:nvar){
       allresults[,i] = as.numeric(allresults[,i]);
     }
@@ -360,14 +361,14 @@ for(vl in 1:length(vaccination_levels)){
       # allresults[,i] = log(allresults[,i]);
     }
     
-    vioplot <- melt(allresults[,(nvar-3):ncol(allresults)],id.vars=c('strategy','igroup'))
+    vioplot <- melt(allresults[,(nvar-3):(ncol(allresults)-1)],id.vars=c('strategy','igroup'))
     vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
     vioplot$strategy <- factor(vioplot$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
     vioplot$variable <- factor(vioplot$variable,
                                levels=c('Cost','Deaths','School','GDP_loss'),
                                labels=c('Cost','YLLs','Education','GDP'))
     
-    p[[vl]][[ct]] <- ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) + 
+    p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) + 
       geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
       facet_grid(variable~strategy, scales="free") + 
         scale_fill_viridis(discrete=T, name="") +
@@ -383,15 +384,15 @@ for(vl in 1:length(vaccination_levels)){
 
     
     allresults$vaccination_level <- vaccination_level
-    allresults$countrytype <- countrytype
+    allresults$BPSV <- c('No','Yes')[bpsv+1]
+    
     allallresults <- rbind(allallresults,allresults)
     
     meantab <- setDT(allresults)[,.(deaths=mean(Deaths),
                             education=mean(School),
                             gdp=mean(GDP_loss)),by=.(strategy,igroup)]
     meltmean <- reshape2::melt(meantab)
-    meltmean$igroupcountry <- paste0(meltmean$igroup,', ',countrytype)
-    meltmean$scen <- vaccination_level
+    meltmean$scen <- paste0(vaccination_level,', ',c('No BPSV','BPSV')[bpsv+1])
     meltmeantab <- rbind(meltmeantab,meltmean)
     
     tabres <- setDT(allresults)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
@@ -400,12 +401,12 @@ for(vl in 1:length(vaccination_levels)){
                             gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
                             ),by=.(strategy,igroup)]
     colnames(tabres) <- c('Strategy','Income group','Total costs','YLLs','Education','GDP')
-    tabres$`Vaccination level` <- vaccination_level
-    tabres$`Country type` <- countrytype
+    tabres$`SARS-X vaccine` <- vaccination_level
+    tabres$BPSV <- c('No','Yes')[bpsv+1]
     tabresall <- rbind(tabresall,tabres)
 
-    # write.csv(tabres,paste0('results_',vaccination_level,'_',countrytype,'.csv'),row.names = F)
-    # lg <- paste0('Results for the ',vaccination_level,' scenario in a ',countrytype,' country. Mean values and 95% prediction intervals. \\label{tab:tabres100}')
+    # write.csv(tabres,paste0('results_',vaccination_level,'_',bpsv,'.csv'),row.names = F)
+    # lg <- paste0('Results for the ',vaccination_level,' scenario in a ',bpsv,' country. Mean values and 95% prediction intervals. \\label{tab:tabres100}')
     # if (!knitr::is_html_output(excludes = "markdown")) { 
     #   cat(pander(tabres,caption=lg))
     # }else{
@@ -426,7 +427,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 ```
 
 
-```{r BAUviolinspill,fig.cap='Model results for the BAU scenario in Origin countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinBAU,fig.cap='Model results for the 365-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[1]][[1]]
 
 # ggsave(p[[1]][[1]] + theme_bw(base_size=15),filename='BAUviolinspill.png',width=9,height=6.5)
@@ -435,32 +436,31 @@ p[[1]][[1]]
 
 ```
 
-```{r BAUviolinsecond,fig.cap='Model results for the BAU scenario in secondary countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
-p[[1]][[2]]
-```
-
-```{r violin100spill,fig.cap='Model results for the 100-day scenario in Origin countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinSARSX,fig.cap='Model results for the 100-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[2]][[1]]
 ```
 
-```{r violin100second,fig.cap='Model results for the 100-day scenario in secondary countries.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinBPSV,fig.cap='Model results for the 365-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+p[[1]][[2]]
+```
+
+```{r violinBPSVSARSX,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[2]][[2]]
 ```
 
-```{r expectedvaluesbar,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=7.5,fig.width=6}
+```{r expectedvaluesbar,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=6,fig.width=6}
 
-meltmeantab$igroupcountry <- factor((meltmeantab$igroupcountry), 
-                                    levels=c('LLMIC, Origin','LLMIC, Secondary',
-                                             'UMIC, Origin','UMIC, Secondary',
-                                             'HIC, Origin','HIC, Secondary'))
+meltmeantab$scen <- factor((meltmeantab$scen), 
+                                    levels=c('365, No BPSV','365, BPSV',
+                                             '100, No BPSV','100, BPSV'))
 setDT(meltmeantab)
-meltmeantab[,cost:=sum(value),by=.(scen,igroupcountry,strategy)]
-meltmeantab[,mincost:=cost==min(cost),by=.(scen,igroupcountry)]
+meltmeantab[,cost:=sum(value),by=.(scen,igroup,strategy)]
+meltmeantab[,mincost:=cost==min(cost),by=.(scen,igroup)]
 ggplot(meltmeantab) + 
       geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
                    y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP')),
                    alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
-  facet_grid(igroupcountry~factor(scen,levels=c('BAU','100 days','BPSV'))) + 
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scen) + 
       theme_bw(base_size=9) +
         scale_fill_viridis(discrete=T, name="",option='inferno') +
       labs(x='',y='Cost, % of GDP',fill='Cost type') +
@@ -499,19 +499,21 @@ Finally, note that there are samples with a negative value. These come from unli
 ```{r resultsdiff,echo=F,warning=F,message=F}
 
 difflist <- c()
-for(vl in 2:length(vaccination_levels)){
-  for(ct in 1:length(countrytype_levels)){
-    vaccination_level <- vaccination_levels[vl]
-    countrytype <- countrytype_levels[ct]
-    difftab <- as.data.frame(readRDS(paste0('code/results/difftab_',countrytype,'_',vaccination_level,'.Rds')))
-    nvar <- which(colnames(difftab)=='GDP_loss')
-    for(i in (nvar-3):nvar){
-      difftab[,i] = difftab[,i]/difftab$GDP*100;
+for(vl in 1:length(vaccination_levels)){
+  for(bl in 1:length(bpsv_levels)){
+    if(vl>1|bl>1){
+      vaccination_level <- vaccination_levels[vl]
+      bpsv <- bpsv_levels[bl]
+      difftab <- as.data.frame(readRDS(paste0('code/results/difftab_',bpsv,'_',vaccination_level,'.Rds')))
+      nvar <- which(colnames(difftab)=='GDP_loss')
+      for(i in (nvar-3):nvar){
+        difftab[,i] = difftab[,i]/difftab$GDP*100;
+      }
+      difftab$BPSV <- c('No','Yes')[bpsv+1]
+      difftab$Vaccine <- vaccination_level
+      difftab$scen <- paste0(c('No BPSV','BPSV')[bpsv+1],', ',vaccination_level, ' days')
+      difflist <- rbind(difflist,difftab)
     }
-    difftab$Country <- countrytype
-    difftab$Vaccine <- vaccination_level
-    difftab$CountryVaccine <- paste0(countrytype,', ',vaccination_level)
-    difflist <- rbind(difflist,difftab)
   }
 }
 
@@ -520,7 +522,7 @@ for(vl in 2:length(vaccination_levels)){
 
 ```{r diffviolin,fig.cap='Model results for costs saved by 100-day and BPS vaccines.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
-vioplot <- melt(difflist[,colnames(difflist)%in%c('Cost','Deaths','School','GDP_loss','igroup','CountryVaccine')],id.vars=c('igroup','CountryVaccine'))
+vioplot <- melt(difflist[,colnames(difflist)%in%c('Cost','Deaths','School','GDP_loss','igroup','scen')],id.vars=c('igroup','scen'))
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
 vioplot$variable <- factor(vioplot$variable,
                            levels=c('Cost','Deaths','School','GDP_loss'),
@@ -528,7 +530,7 @@ vioplot$variable <- factor(vioplot$variable,
 
 ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) + 
     geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(CountryVaccine~variable, scales="free") + 
+  facet_grid(scen~variable, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
     theme_bw(base_size = 10)  +
     xlab("") +
@@ -550,19 +552,19 @@ ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) +
 
 meantab <- setDT(difflist)[,.(deaths=mean(Deaths),
                         education=mean(School),
-                        gdp=mean(GDP_loss)),by=.(igroup,Country,Vaccine)]
+                        gdp=mean(GDP_loss)),by=.(igroup,BPSV,Vaccine)]
 
 tabres <- setDT(difflist)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
                         deaths=paste0(round(mean(Deaths),1),' (',paste0(round(quantile(Deaths,c(0.025,0.975)),1),collapse=', '),')'),
                         education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
                         gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
-                        ),by=.(Country,Vaccine,igroup)]
+                        ),by=.(BPSV,Vaccine,igroup)]
 
 tabres[,igroup:=factor(igroup,levels=c('LLMIC','UMIC','HIC'))]
 
 setorder(tabres,Vaccine,igroup)
 
-colnames(tabres) <- c('Country','Vaccination','Income group','Total value','YLLs','Education','GDP')
+colnames(tabres) <- c('BPSV','Vaccine','Income group','Total value','YLLs','Education','GDP')
 
 
 write.csv(tabres,'resultsdiff.csv',row.names = F)
@@ -589,15 +591,15 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ## Other visualisations
 
-```{r choicestab,fig.cap='Frequency of mitigation strategy choices.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r choicestab,fig.cap='Frequency of mitigation strategy choices.',echo=F,warning=F,message=F,fig.height=4,fig.width=6}
 
 choicestab <- readRDS(paste0('code/results/choicestab.Rds'))
-
+choicestab[,scen:=paste0(c('No BPSV','BPSV')[bpsv+1],', ',vaccination_level,' days')]
 ggplot(choicestab) +  
-  geom_bar(aes(x=countrytype,
+  geom_bar(aes(x=factor(scen,levels=c('No BPSV, 365 days','BPSV, 365 days','No BPSV, 100 days','BPSV, 100 days')),
                y=N/20.48,
                fill=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))),stat='identity') + 
-  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~factor(vaccination_level,levels=c('BAU','100 days','BPSV'))) + 
+  facet_wrap(~factor(igroup,levels=c('LLMIC','UMIC','HIC'))) + 
   theme_bw(base_size=15) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
   labs(x='',y='Chosen strategy, % of samples',fill='') +
@@ -608,10 +610,10 @@ ggplot(choicestab) +
 
 
 ```{r importtime,fig.cap='Hospital occupancy at time of response.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
-ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
+
+ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
   # geom_histogram(colour='white',fill='white') +
   geom_density(aes(colour=factor(igroup,levels=c('LLMIC','UMIC','HIC'))),linewidth=2, alpha=0.5) +
-  facet_wrap(~factor(countrytype,levels=countrytype_levels),scales='free') +
   theme_bw(base_size = 15) +
   labs(x='Hospital occupancy at response time',y='',colour='') +
           scale_colour_viridis(discrete=T, name="") +
@@ -632,8 +634,8 @@ iseq[,earlyclose:=firsttime<Importation-0.101]
 
 ggplot(iseq) +
   geom_line(aes(x=Time,y=Sample,colour=factor(Level,levels=c(1,3,2),labels=c('Open','Closed','Very closed')),group=Sample),linewidth=3) +
-  facet_wrap(~factor(`Country type`,levels=1:2,labels=countrytype_levels)) +
   scale_colour_manual(values=c(Open='darkolivegreen3',`Very closed`='firebrick2',Closed='darkgoldenrod1')) +
+  facet_wrap(~factor(`Country type`,labels=c('Origin','Secondary'))) +
   geom_point(aes(x=Importation,y=Sample,shape=earlyclose),size=3,show.legend=F) +
   scale_shape_manual(values=c(`TRUE`=16,`FALSE`=1)) +
   theme_bw(base_size = 15) + labs(colour='') + theme(legend.position = 'top')
@@ -651,8 +653,8 @@ iseq[,earlyclose:=firsttime<Importation-0.101]
 
 ggplot(iseq) +
   geom_line(aes(x=Time,y=Sample,colour=factor(Level,levels=c(1,3,2),labels=c('Open','Closed','Very closed')),group=Sample),linewidth=3) +
-  facet_wrap(~factor(`Country type`,levels=1:2,labels=countrytype_levels)) +
   scale_colour_manual(values=c(Open='darkolivegreen3',`Very closed`='firebrick2',Closed='darkgoldenrod1')) +
+  facet_wrap(~factor(`Country type`,labels=c('Origin','Secondary'))) +
   geom_point(aes(x=Importation,y=Sample,shape=earlyclose),size=3,show.legend=F) +
   scale_shape_manual(values=c(`TRUE`=16,`FALSE`=1)) +
   theme_bw(base_size = 15) + labs(colour='') + theme(legend.position = 'top')
@@ -660,10 +662,11 @@ ggplot(iseq) +
 
 
 ```{r responsetime,fig.cap='Secondary countries: importation time vs. response time. Where importation time is before response time, the epidemic unfolds as in the Origin country, but with an earlier response time. *Future development: there is not a qualitative difference between Origin and Secondary countries. We could therefore remove this label and vary the importation time from 0 to 20, to include the Origin feature. This would also allow for the possibility that a Secondary country with early importation detects, reports and responds earlier than the Origin country.*',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
-ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'&countrytype=='Secondary'),aes(x=Importation_time,y=Response_time)) +
+
+ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=Importation_time,y=Response_time)) +
   # geom_histogram(colour='white',fill='white') +
   geom_point(aes(shape=Importation_time>Response_time),size=3,show.legend=F,alpha=.5,colour='navyblue') +
-  # facet_wrap(~factor(countrytype,levels=countrytype_levels),scales='free') +
+  # facet_wrap(~factor(bpsv,levels=bpsv_levels),scales='free') +
   theme_bw(base_size = 15) +
   labs(x='Importation time',y='Response time',shape='') +
   scale_shape_manual(values=c(`TRUE`=16,`FALSE`=1)) +
@@ -671,6 +674,87 @@ ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level=='BAU'&cou
   # scale_x_continuous(limits=c(5,30)) +
   scale_y_continuous(limits=c(NA,50)) +
   theme(legend.position = 'top')
+
+```
+
+```{r vsy,fig.cap='The relationship between strategy choice and value of a school year.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+
+setDT(allallresults)
+allallresults[,mincost:=min(Cost),by=.(igroup,vaccination_level,BPSV,samplei)]
+allallresults[,keeprow:=Cost==mincost]
+allallresults[,vax:=paste0(c('No BPSV, ','BPSV, ')[as.numeric(BPSV=='Yes')+1],vaccination_level,' days')]
+allallresults$strategy <- factor(allallresults$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
+
+# ggplot(subset(allallresults,keeprow==T)) + 
+#   geom_density(aes(x=VSY/GDP,colour=strategy,group=strategy),position='identity',alpha=.5,linewidth=1.25) +
+#   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+#   theme_bw(base_size = 13) +
+#   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+#         legend.position = 'top') + labs(colour='',x='Value of a school year',y='Density')
+
+keptresults <- subset(allallresults,keeprow==T)
+keptresults[,qVSY:=rank(VSY/GDP)/.N,by=.(igroup,vax)]
+
+ggplot(keptresults) + 
+  geom_histogram(aes(x=qVSY,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  theme_bw(base_size = 13) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+        legend.position = 'top') + labs(fill='',x='Value of a school year (quantile)',y='Proportion')
+
+```
+
+```{r vsyeffectiveness,fig.cap='The relationship between strategy choice and the effectiveness of remote teaching.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+
+# ggplot(subset(allallresults,keeprow==T)) + 
+#   geom_density(aes(x=Remote_teaching_effectiveness,colour=strategy,group=strategy),position='identity',alpha=.5,linewidth=1.25) +
+#   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+#   theme_bw(base_size = 13) +
+#   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+#         legend.position = 'top') + labs(colour='',x='Effectiveness of remote teaching',y='Density')
+
+
+ggplot(subset(allallresults,keeprow==T)) + 
+  geom_histogram(aes(x=Remote_teaching_effectiveness,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  theme_bw(base_size = 13) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+        legend.position = 'top') + labs(fill='',x='Effectiveness of remote teaching',y='Proportion')
+
+```
+
+
+```{r importtoresponse,fig.cap='The relationship between strategy choice and the duration between import time and response time.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+
+
+# ggplot(subset(allallresults,keeprow==T)) + 
+#   geom_vline(aes(xintercept=0),colour='grey',linewidth=1.2) +
+#   geom_density(aes(x=Response_time-Importation_time,colour=strategy,group=strategy),position='identity',alpha=.5,linewidth=1.25) +
+#   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+#   theme_bw(base_size = 13) +
+#   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+#         legend.position = 'top') + labs(colour='',x='Response time minus importation time',y='Density')
+
+keptresults[,qtime:=rank(Response_time-Importation_time)/.N,by=.(igroup,vax)]
+keptresults[,qtime0:=qtime[which.min(abs(Response_time-Importation_time))],by=.(igroup,vax)]
+
+ggplot(keptresults) + 
+  geom_histogram(aes(x=qtime,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
+  geom_vline(aes(xintercept=qtime0),colour='grey',linewidth=1.2) +
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  theme_bw(base_size = 13) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+        legend.position = 'top') + labs(fill='',x='Response time minus importation time (quantile)',y='Proportion')
+
 ```
 
 
@@ -696,11 +780,11 @@ Some distributions in Figure \@ref(fig:prealpha) are bimodal. For example, GDP l
 These relationships are identified in the value-of-information analyses: the last two columns show value of information for R$_0$, fraction of population aged 65 and over and hospital capacity combined, and R$_0$, testing parameters and social-distancing parameters combined. These variables together explain much of the variance in GDP loss for the Economic Closures and Elimination strategies, respectively.
 
 
-```{r voi100,fig.cap='\\footnotesize Value of information for 100-day vaccine value, Origin country.',echo=F,warning=F,message=F,fig.height=10}
+```{r voi100,fig.cap='\\footnotesize Value of information for 100-day vaccine value.',echo=F,warning=F,message=F,fig.height=10}
 
-param_cutoff <- 'Start vaccination'
+param_cutoff <- c('Remote quantile','Time to death')
 
-voiall <- readRDS('code/results/voidiff_Origin_100 days.Rds')
+voiall <- readRDS('code/results/voidiff_0_100.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 rownames(voiall) <- gsub('Cost:','Value:',rownames(voiall))
@@ -715,8 +799,8 @@ voibrks <- c(-1,10,30,50,70,101)
 discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
                  nrow=nscen,ncol=nparam)
 xvals <- 1:nparam
-shiftx <- which(colnames(voiall)==param_cutoff)
-xvals[xvals>shiftx] <- xvals[xvals>shiftx] + .1
+shiftx <- which(colnames(voiall)%in%param_cutoff)
+for(i in 1:length(shiftx)) xvals[xvals>xvals[shiftx[i]]] <- xvals[xvals>xvals[shiftx[i]]] + .1
 yvals <- 1:nscen
 boundary <- 3
 yvals[yvals>boundary] <- yvals[yvals>boundary] + .1*(ceiling(yvals[yvals>boundary]/boundary)-1)
@@ -747,7 +831,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 
 ```{r voi,fig.cap='\\footnotesize Value of information for BAU, Origin country.',echo=F,warning=F,message=F,fig.height=10}
 
-voiall <- readRDS('code/results/voi_BAU_Origin.Rds')
+voiall <- readRDS('code/results/voi_365_0.Rds')
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
@@ -760,9 +844,9 @@ nparam <- ncol(voiall)
 voibrks <- c(-1,10,30,50,70,101)
 discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
                  nrow=nscen,ncol=nparam)
-xvals <- 1:nparam
-shiftx <- which(colnames(voiall)==param_cutoff)
-xvals[xvals>shiftx] <- xvals[xvals>shiftx] + .1
+# xvals <- 1:nparam
+# shiftx <- which(colnames(voiall)==param_cutoff)
+# xvals[xvals>shiftx] <- xvals[xvals>shiftx] + .1
 yvals <- 1:nscen
 boundary <- 24
 yvals[yvals>boundary] <- yvals[yvals>boundary] + .1*(ceiling(yvals[yvals>boundary]/boundary)-1)
@@ -792,11 +876,20 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```
 
 
-```{r dvoiBAU,fig.cap='Decision VOI for BAU. Which parameters would enable the decision maker to choose a strategy that minimises expected losses for BAU vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12}
+```{r dvoiBAU,fig.cap='Decision VOI for BAU. Which parameters would enable the decision maker to choose a strategy that minimises expected losses for BAU vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
+voiall <- c()
+for(i in c(365,100)){
+  for(j in 0:1){
+    voitab <- readRDS(paste0('code/results/decisionvoi',i,'_',j,'.Rds'))*100
+    newtab <- voitab[grepl('Cost',rownames(voitab)),]
+    rownames(newtab) <- gsub('Cost',paste0(i,' days, ',c('no BPSV','BPSV')[j+1]),rownames(newtab))
+    voiall <- rbind(voiall,newtab)
+  }
+}
+# voiall <- readRDS('code/results/decisionvoi365_0.Rds')*100
 
-voiall <- readRDS('code/results/decisionvoiBAU_Origin.Rds')*100
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
+fullnames <- rownames(voiall)
+splitnames <- do.call(rbind,sapply(fullnames,strsplit,': '))
 
 nscen <- nrow(voiall)
 nparam <- ncol(voiall)
@@ -815,7 +908,8 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
   theme_bw(base_size=12) +                                   # Minimal theme
   labs(title = "") +
   scale_x_continuous(name='',breaks=xvals,labels=colnames(voiall),expand=c(0,0))+
-  theme(axis.text.x.bottom = element_text(angle = 90,  hjust=1,vjust=0.5)) +
+  theme(axis.text.x.bottom = element_text(angle = 90,  hjust=1,vjust=0.5),
+        axis.text.x.top = element_text(angle = 15,  hjust=0,vjust=0)) +
   theme(
     plot.title = element_text(hjust = 1),        
     legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
@@ -830,9 +924,9 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
   coord_flip()
 ```
 
-```{r dvoi100,fig.cap='Decision VOI for 100 days. Which parameters would enable the decision maker to choose a strategy that minimises expected losses for 100-day vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F}
+```{r dvoi100,fig.cap='Decision VOI for 100 days. Which parameters would enable the decision maker to choose a strategy that minimises expected losses for 100-day vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
 
-voiall <- readRDS('code/results/decisionvoi100 days_Origin.Rds')*100
+voiall <- readRDS('code/results/decisionvoi100_0.Rds')*100
 rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
@@ -913,7 +1007,7 @@ To understand the relationship between a parameter and an outcome, e.g. whether 
 
 ```{r interneted,fig.cap='Relationship between R$_0$ and total costs for Origin UMICs with the "School Closures" strategy.',echo=F,warning=F,message=F}
 
-ggplot(subset(allallresults,igroup=='UMIC'&strategy=='School Closures'&countrytype=='Origin'&vaccination_level=='BAU'),aes(x=R0,y=Cost)) +
+ggplot(subset(allallresults,igroup=='UMIC'&strategy=='School Closures'&BPSV=='No'&vaccination_level==365),aes(x=R0,y=Cost)) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
   labs(x=bquote(R[0]),y='Total socio-economic cost, % of GDP')
@@ -923,18 +1017,20 @@ ggplot(subset(allallresults,igroup=='UMIC'&strategy=='School Closures'&countryty
 ```
 
 ```{r tourismsecgdp,fig.cap='Relationship between the "tourism sector" size and GDP loss for Origin LLMICs with the "No Closures" strategy.',echo=F,warning=F,message=F}
-ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&countrytype=='Origin'&vaccination_level=='BAU'),
-       aes(y=GDP_loss,x=Food_sector*100)) +
+ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&vaccination_level==365),
+       aes(y=GDP_loss,x=rank(Food_sector*100))) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
   labs(x='Food and accommodation services GVA as % of GDP',y='GDP loss, %')
 
+# with(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&vaccination_level==365),plot(Food_sector,rank(Food_sector)))
+
 ```
 
 ```{r tourismgdp,fig.cap='Relationship between tourism parameters and GDP loss for LLMICs with the "No Closures" strategy.',echo=F,warning=F,message=F}
 
-ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&countrytype=='Origin'&vaccination_level=='BAU')) +
+ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&vaccination_level==365)) +
   geom_point(aes(y=International_tourism*100,x=Food_sector*100,colour=GDP_loss)) +
   theme_bw(base_size=15) +
   labs(x='Food and accommodation services GVA as % of GDP',y='Percent of tourism that is international',colour='GDP loss, %')
@@ -990,7 +1086,6 @@ ggplot(subset(gdpdata2,!is.na(IncomeGroup)&IncomeGroup!='')) +
 ```
 
 
-(confirm with Patrick) GVA for a sector is reduced as a consequence of illness and death of workers, but not due to a reduction in demand (e.g. private/final consumption).
 
 \newpage
 
@@ -1389,7 +1484,7 @@ ggplot(subset(tvradio,!is.na(mobile))) +
 
 ## Hospital capacity
 
-```{r hmax,fig.cap='Fraction of GVA that goes to labour (PWT, 2011).',echo=F,warning=F,message=F}
+```{r hmax,fig.cap='Hospital capacity: available beds minus usual occupancy.',echo=F,warning=F,message=F}
 
 
 hmaxi <- setDT(read.csv('data/country_data.csv'))
@@ -1410,6 +1505,38 @@ We model these values with gamma distributions. For LLMICs, we have parameters `
 
 
 \newpage
+
+```{r paramdist,tab.cap='Parameter distributions.',echo=F,warning=F,message=F}
+
+paramdist <- read.csv('data/parameter_distributions.csv')
+colnames(paramdist) <- c('Parameter','Income group','Distribution','Parameter 1','Parameter 2')
+paramdist <- subset(paramdist,Parameter!='bmi')
+rownames(paramdist) <- NULL
+paramdist$Parameter <- gsub('_',' ',paramdist$Parameter)
+paramdist$Parameter <- gsub('pointiness','P1+P2',paramdist$Parameter)
+paramdist$Parameter <- gsub('labsh','Labour share of GVA',paramdist$Parameter)
+paramdist$Parameter <- gsub('Hmax','Hospital capacity',paramdist$Parameter)
+paramdist$Parameter <- gsub('pt','Public transport frac',paramdist$Parameter)
+paramdist$Parameter <- gsub('sec','Tourism',paramdist$Parameter)
+paramdist$Parameter <- gsub('frac','fraction',paramdist$Parameter)
+paramdist$Parameter <- gsub('schoolA1','Nursery contacts',paramdist$Parameter)
+paramdist$Parameter <- gsub('schoolA2','School contacts',paramdist$Parameter)
+paramdist$Distribution <- gsub('betainv','Beta',paramdist$Distribution)
+paramdist$Distribution <- gsub('logninv','Log normal',paramdist$Distribution)
+paramdist$Distribution <- gsub('gaminv','Gamma',paramdist$Distribution)
+paramdist$`Parameter 1` <- round(paramdist$`Parameter 1`,2)
+paramdist$`Parameter 2` <- round(paramdist$`Parameter 2`,2)
+
+lg <- 'Parameter distributions. \\label{tab:paramdist}'
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(paramdist,caption=lg)
+}else{
+    x <- knitr::kable(paramdist,escape=F, "html",caption=lg)
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+}
+
+```
+
 
 
 <!-- # Population health -->
