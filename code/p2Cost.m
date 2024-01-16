@@ -31,22 +31,24 @@ isorec       = g(:,1+2*lx+1*ln+Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.du
 nissym       = g(:,1+2*lx+2*ln+Stu);
 hospts       = g(:,1+2*lx+3*ln+Stu);
 deaths       = g(:,1+2*lx+4*ln+Stu);
-abs          = isoasy + isosym + isorec + nissym + hospts + deaths;%numbers of students
+abs          = isoasy + isosym + isorec + nissym + hospts;% + deaths;%numbers of students
 absint       = trapz(t,abs)/365;
 cost(5,lx+1) = absint;
 vsyl_sts     = absint*data.vsy;
 cost(6,lx+1) = vsyl_sts;
 
 %Student Demand
-pres         = students-abs;
-presl        = pres.*(1-g(:,1+data.EdInd)) .* (1 - data.remote_teaching_effectiveness);%.*(1-(1/3));%numbers of students
-preslint     = trapz(t,presl)/365;%= (diff(t)'*presl)/365;
+not_sick         = students-abs;
+not_sick_at_home        = not_sick.*(1-g(:,1+data.EdInd)) .* (1 - data.remote_teaching_effectiveness);%.*(1-(1/3));%numbers of students
+preslint     = trapz(t,not_sick_at_home)/365;%= (diff(t)'*presl)/365;
 cost(5,lx+2) = preslint;
 vsyl_std     = preslint*data.vsy;
 cost(6,lx+2) = vsyl_std;
+% disp([cost(6,lx+2),sum(not_sick),sum(1-g(:,1+data.EdInd))*1e7,sum(not_sick_at_home)])
+% figure('Position', [100 100 400 300]);plot(g(:,1),g(:,1+data.EdInd)')
 
 ccost_t(:,ln+lx+1) = cumtrapz(t,abs,1)./365.*data.vsy;
-ccost_t(:,ln+lx+2) = cumtrapz(t,presl,1)./365.*data.vsy;
+ccost_t(:,ln+lx+2) = cumtrapz(t,not_sick_at_home,1)./365.*data.vsy;
 
 %% SGDPL
 
