@@ -59,7 +59,7 @@ dis.scv1 = 0.35;                       %infection-blocking efficacy
 heff1 = 0.80;                       %severe-disease-blocking efficacy
 dis.hv1  = 1-((1-heff1)/(1-dis.scv1)); 
 dis.trv1 = 0;%.52;                       %transmission-blocking efficacy
-dis.nuv1 = 1/365/5;                      %duration of v-acquired immunity
+dis.nuv1 = 1/365000000; %365/5;                      %duration of v-acquired immunity
 
 dis.Ts_v1 = ((1-(1-dis.hv1)*dis.ph).*dis.Tsr)  +((1-dis.hv1)*dis.ph.*dis.Tsh);
 dis.g2_v1 = (1-(1-dis.hv1)*dis.ph)./dis.Ts_v1;
@@ -71,7 +71,7 @@ dis.scv2 = 0.55;                       %infection-blocking efficacy
 heff2 = 0.90;                       %severe-disease-blocking efficacy
 dis.hv2  = 1-((1-heff2)/(1-dis.scv2)); 
 dis.trv2 = 0;%.52;                       %transmission-blocking efficacy
-dis.nuv2 = 1/365/5;                      %duration of v-acquired immunity
+dis.nuv2 = 1/365000000; %/365/5;                      %duration of v-acquired immunity
 
 dis.Ts_v2 = ((1-(1-dis.hv2)*dis.ph).*dis.Tsr)  +((1-dis.hv2)*dis.ph.*dis.Tsh);
 dis.g2_v2 = (1-(1-dis.hv2)*dis.ph)./dis.Ts_v2;
@@ -103,5 +103,7 @@ dis.R0 = R0beta(1);
 dis.beta = R0beta(2);
 
 dis.Td = get_doubling_time(data,dis);
+
+dis.generation_time = log(dis.R0) / (log(2) / dis.Td);
 
 end
