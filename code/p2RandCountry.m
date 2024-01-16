@@ -141,7 +141,7 @@ newprop = unifinv(internet_coverage_quantile,mins,maxs);
 data.wfh  = [newprop; newprop];
 
 % date of importation
-data.t_import = unifrnd(10,20,1,1);
+data.t_import = unifrnd(0,20,1,1);
 
 %Tres
 % nonempind = find(~isnan(CD.Tres) & country_indices & CD.Tres<365);
@@ -178,7 +178,7 @@ data.sdb  = unifrnd(mins,maxs,1,1);
 nonempind  = find(~isnan(CD.t_vax) & country_indices);
 mint = min(CD.t_vax(nonempind));
 maxt = max(CD.t_vax(nonempind));
-data.t_vax = unifinv(data.response_time_quantile, mint,maxt);
+data.t_vax = 1000; %unifinv(data.response_time_quantile, mint,maxt);
 
 %arate
 % nonempind  = find(~isnan(CD.arate) & country_indices);
