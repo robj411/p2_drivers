@@ -1,8 +1,4 @@
-function [data,dis,p2] = p2Params(data,dis,R0betafun,vaccine_preparedness)
-
-dis = population_disease_parameters(data,dis,R0betafun);
-
-rts = get_response_time(data,dis,data.Hres);
+function [data,dis,p2] = p2Params(data,dis,vaccine_day,bpsv)
 
 %% PREPAREDNESS PARAMETERS:
 
@@ -25,8 +21,8 @@ puptake  = data.puptake;                    %Vaccine Uptake
 %Test-Isolate-Trace
 % p2.t_tit  = data.tvec(1) + (-data.tvec(1) + data.t_tit)*dis.Td/data.Td_CWT;
 
-p2.Tres = rts;
-p2.t_tit = rts;
+p2.Tres = data.rts;
+p2.t_tit = data.rts;
 
 p2.dur    = 1;
 % p2.qg1    = 1/(dis.Tay-p2.dur);
@@ -58,12 +54,10 @@ over14frac = Npop(4)/sum(Npop(2:4));
 % up2fun  = @(u2) u2*NNage(2) + u3*NNage(3) + u4*NNage(4) - puptake*sum(NNage);
 % u2      = fzero(up2fun,[0 1]);
 
-if vaccine_preparedness == 1
-    p2.t_vax2 = t_vax; 
-elseif vaccine_preparedness == 2
-    p2.t_vax2 = p2.Tres + 107;  
-elseif vaccine_preparedness == 3
-    p2.t_vax2 = p2.Tres + 107;  
+
+p2.t_vax2 = p2.Tres + 7 + vaccine_day;  
+
+if bpsv == 1
     t_vax = p2.Tres;
 end
 
@@ -80,7 +74,7 @@ uptake  = puptake*[0 over14frac 1 1]; %[u1,u2,u3,u4];
 %Vaccine Administration Rate
 t_ages     = min((uptake.*NNage)/arate,Inf);%arate may be 0
 
-if t_vax < t_vax2 & vaccine_preparedness == 3
+if bpsv==1
     % if primer starts before booster, there are t_bspv days of primer.
     % these people must then be boosted.
     if t_bspv < t_ages(4)
