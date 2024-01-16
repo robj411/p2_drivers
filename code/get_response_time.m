@@ -17,8 +17,7 @@ function response_time = get_response_time(data, dis, hosp_trigger)
     end
     generations = mean(generationsam(hospsam>=hosp_trigger));
     
-    generation_time = log(R0) / (log(2) / dis.Td);
-    response_time = generations * generation_time;
+    response_time = generations * dis.generation_time;
 
 
 end
