@@ -13,12 +13,25 @@ function [data,f,g,isequence] = p2Run(data,dis,inp3,int,Xit,p2)
     NNvec(lx+1:ln,:)     = repmat(NNbar(lx+1:ln),1,int);
     NNvec(lx+adInd,:)    = sum(NNbar([1:lx,lx+adInd]))-NNworkSum;
     data.NNvec           = NNvec;
-
+    zs = zeros(size(data.NNs));
+    
+    xmin = data.x_econ(:,2)/10;
+    NNmin = NNbar;
+    NNmin(1:lx) = NNmin(1:lx) .* xmin;
+    NNmin(lx+adInd) =  sum(NNbar([1:lx,lx+adInd])) - sum(NNmin(1:lx));
+    Dmin = p2MakeDs(data,NNmin,xmin,data.wfh(2,:));
+    CImin = get_R(data.ntot, dis, dis.h, dis.g2, NNmin, zs, zs, NNmin, Dmin, 1, 1, 0, 0);
+    
     Dvec = zeros(ln,ln,int);
+    CIs = zeros(int,1);
     for i = 1:int
         Dtemp   = p2MakeDs(data,NNvec(:,i),XitMat(:,i),data.hw(i,:));
         Dvec(:,:,i) = Dtemp;
+        
+        CIs(i) = get_R(data.ntot, dis, dis.h, dis.g2, NNvec(:,i), zs, zs,...
+            NNvec(:,i), Dtemp, 1, 1, 0, 0);
     end
+    CImax = CIs(1);
     
     rundata = struct;
     
@@ -32,6 +45,7 @@ function [data,f,g,isequence] = p2Run(data,dis,inp3,int,Xit,p2)
     rundata.imand = data.imand; 
     rundata.Npop = data.Npop; 
     rundata.NNvec = data.NNvec; 
+    rundata.rel_mobility = (CImax - CIs)./(CImax-CImin);
     
     S0 = NNvec(:,1);
     
@@ -74,7 +88,7 @@ function [data,f,g,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p2)
     hwout      = [];
     poutout    = 0;
     betamodout = 1;
-%     Vout       = zn';
+    Sout       = sum(S0);
     rout       = 0;
 
     %% LOOP:
@@ -100,10 +114,12 @@ function [data,f,g,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p2)
 
         isequence = [isequence; [t0 i]];
         
-        [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0,inext]=...
+        [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0,inext,still_susc]=...
          integr8(data,NNfeed,D,i,t0,tend,dis,y0,inp3,p2);
-     
-
+        if inext==0
+            tend = tout(end);
+        end
+        
         Tout       = [Tout;tout(2:end)];  
         Iout       = [Iout;Iclass(2:end,:)];
         Isaout     = [Isaout;Isaclass(2:end,:)];
@@ -117,8 +133,8 @@ function [data,f,g,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p2)
         hwout      = [hwout;hw(1:end-1,:)];
         poutout    = [poutout;pout(2:end)];
         betamodout = [betamodout;betamod(2:end)];
-%         Vout       = [Vout;Vclass(2:end,:)];
-
+        Sout       = [Sout;still_susc(2:end,:)];
+        
         if Tout(end)<tend
 
             data.tvec = [data.tvec(1:end-1),Tout(end),tend];
@@ -173,13 +189,14 @@ function [data,f,g,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p2)
              sum(Dout(:,lx+1),2),...
              sum(Dout(:,lx+2),2),...
              sum(Dout(:,[1:lx,lx+3]),2),...
-             sum(Dout(:,lx+4),2)];
+             sum(Dout(:,lx+4),2),...
+             sum(Sout,2)];
   
 end
 
 %%
 
-function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0new,inext]=...
+function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0new,inext,still_susc]=...
           integr8(data,NN0,D,i,t0,tend,dis,y0,inp3,p2)
     %% CALL:
 
@@ -212,11 +229,11 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     compindex = data.compindex;
 % ie is the index ("value") returned
 % inext is the value it maps to (from get_strategy_design)
-% disp([max(tout) i ie])
+% disp([max(tout) i ie' ie'])
     if tout(end)<tend
         if ie <= length(data.inext)
             inext = data.inext(ie(end));
-        else
+        elseif ie == length(data.inext)+1 % importation event
             inext = i;
             current_S = y_mat(:,compindex.S_index(1));
             imported = 5/sum(current_S)*current_S;
@@ -225,6 +242,8 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
             y_mat(:,compindex.S_index(1)) = new_s;
             y_mat(:,compindex.E_index(1)) = new_E;
             y0new = reshape(y_mat,[],1);
+        else %end
+            inext = 0;
         end
     else
         inext = NaN;
@@ -246,6 +265,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     Hv2     = yout(:,(compindex.H_index(3)-1)*ntot + indices);
     D     = yout(:,(compindex.D_index(1)-1)*ntot + indices);
 %     V     = yout(:,(compindex.V_index(1)-1)*ntot + indices);
+    still_susc = sum(yout(:,(repelem(compindex.S_index([1,3:end]),1,length(indices))-1)*ntot + repmat(indices,1,length(compindex.S_index)-1)),2);
 
 
     Iclass   = Ia + Is + Iav1 + Isv1 + Iav2 + Isv2; 
@@ -264,17 +284,14 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     Th  = ((1-pd).*dis.Threc)+(pd.*dis.Thd);
     mu  = pd./Th;
     ddk = 10^5*sum(mu.*Hclass,2)/sumNN0;
-
-    sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
-
     if i==1
         betamod = ones(size(occ));
     elseif any(i==data.imand)
-        betamod = min(max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk)), max(p2.sdl,sd_fun(p2.sdl,p2.sdb,2)));
+        betamod = min(social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i)), social_distancing(p2.sdl,p2.sdb,2,data.rel_mobility(i)));
     else
-        betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
+        betamod = social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i));
     end
-    
+%     disp(betamod(end))
     Ip    = 10^5*sum(Iclass,2)/sumNN0;
     if i~=5
         p4 = get_case_ID_rate(p2, Ip);
@@ -294,6 +311,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     Shv1   = y_mat(:,compindex.S_index(3));
     Sv1   = y_mat(:,compindex.S_index(4));
     Sv2   = y_mat(:,compindex.S_index(5));
+    
     Hv1    = y_mat(:,compindex.H_index(2));
     Hv2    = y_mat(:,compindex.H_index(3));
     
@@ -342,7 +360,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     Stest1 = change_configuration(NNvec,lx,i,3,Sv1);
     Stest2 = change_configuration(NNvec,lx,i,3,Sv2);
     
-    betam = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
+    betam = social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i));
     
 %     Rtret = get_R(ntot,dis2,h,g2,Stest,Stest1,Stest2,...
 %             NNvec(:,3),data.Dvec(:,:,3),dis.beta,betam(end),pout(end),pout(end));
@@ -453,15 +471,27 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     phi = 1 .* dis.rr_infection;  %+data.amp*cos((t-32-data.phi)/(365/2*pi));
 
     ddk    = 10^5*sum((mu).*(H + Hv1 + Hv2))/sum(NN0);
-    sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
 
     if i==1
         betamod = 1;
     elseif any(i==data.imand)
-        betamod = min(max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk)), max(p2.sdl,sd_fun(p2.sdl,p2.sdb,2)));
+        betamod = min(social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i)), social_distancing(p2.sdl,p2.sdb,2,data.rel_mobility(i)));
     else
-        betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
+        betamod = social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i));
     end
+%     if(betamod<0.9)
+%     disp([t betamod])
+%     end
+    
+%     sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
+
+%     if i==1;
+%         betamod = ones(size(occ));
+%     elseif any(i==data.imand);
+%         betamod = min(max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk)), max(p2.sdl,sd_fun(p2.sdl,p2.sdb,2)));
+%     else
+%         betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
+%     end
     
     trv1 = vaccine_pp * dis.trv1;
     trv2 = booster_pp * dis.trv2;
@@ -541,17 +571,17 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     h_v1  = (1-hv1).*ph./Ts_v1;
     h_v2 = (1-hv2).*ph./Ts_v2;
     
-%     dis2 = dis;
-%     dis2.g2_v1 = g2_v1;
-%     dis2.g2_v2 = g2_v2;
-%     dis2.h_v1  = h_v1;
-%     dis2.h_v2 = h_v2;
-%     dis2.trv1 = trv1;
-%     dis2.trv2 = trv2;
-%     if i == 3
+    dis2 = dis;
+    dis2.g2_v1 = g2_v1;
+    dis2.g2_v2 = g2_v2;
+    dis2.h_v1  = h_v1;
+    dis2.h_v2 = h_v2;
+    dis2.trv1 = trv1;
+    dis2.trv2 = trv2;
+%     if i==5 & t < 600
 %         Rt = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
 %             data.NNvec(:,i),D,beta,betamod,p3,p4);
-%         disp([1 sum(Ia+Is + Iav1+Isv1 + Iav2+Isv2)/10^5 Ip p4 Rt])
+%         disp([t/100 Rt])
 %     end
 
     %% EQUATIONS:
@@ -613,8 +643,9 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     f_mat(:,compindex.V_index(2)) = Bdot;
     
     f = reshape(f_mat,[],1);
-    
-    f(y<eps) = max(0,f(y<eps)); 
+%     disp([t sum(sum(f_mat<0 &y_mat<eps/1000))])
+    eps10 = eps*100000000;
+    f(y<eps10) = max(0,f(y<eps10)); %%! exit wave was lost
 
 %     g = h.*Ins + qh.*Iss + h_v1.*Insv1 + qh_v1.*Issv1 + h_v2.*Insv2 + qh_v2.*Issv2;
 
@@ -720,7 +751,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     
     R1flag3 = -1;
     R1flag4 = -1;
-    minttvec3 = min(t-(data.tvec(end-1)+7),0);%%!! used to be +7. why?
+    minttvec3 = min(t-(data.tvec(end-1)+7),0);
     minttvec4 = min(t-(data.tvec(end-1)+0.1),0);
     if ((i==2 && minttvec3==0) || (i==3  && minttvec4==0))
         Stest = S+Shv1;
@@ -729,8 +760,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
         NNvec = data.NNvec;
         lx = size(data.hw,2);
         ddk    = 10^5*sum(dis.mu.*(H + Hv1 + Hv2))/sumN;
-        sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
-        betamod = max(p2.sdl,sd_fun(p2.sdl,p2.sdb,ddk));
+        betamod = social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i));
         if i==2
             Stest = change_configuration(NNvec,lx,i,3,Stest);
             Stest1 = change_configuration(NNvec,lx,i,3,Stest1);
@@ -738,6 +768,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
         end
         Rt1 = get_R(ntot,dis2,h,g2,Stest,Stest1,Stest2,...
             NNvec(:,3),data.Dvec(:,:,3),dis.beta,betamod,p3,p4);
+%         disp([t Rt1])
         R1flag3 = min(0.95-Rt1,0);
         R1flag4 = min(Rt1-1.2000,0);
     end
@@ -792,6 +823,25 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     value(6)      =  min(t-data.t_import,0);
     direction(6)  = 1;
     isterminal(6) = 1;
+    
+    %% Event 7: end simulation
+    % i is 5
+    ival = -abs((i-5));
+    % t is greater than the end of the vaccine rollout: otherval = 0
+    tval = min(t-(max(p2.tpoints)+7),0);
+    % hval: no patients
+    hval = min(100-sum(H + Hv1 + Hv2),0);
+    R3flag = ival + tval + hval;
+    if ival==0 && tval==0 && hval==0
+        Rt3 = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
+            data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
+        Rthresh = exp(dis.generation_time*log(2) / 30); % R value for which doubling time is 30 days
+        R3flag = min(Rthresh - Rt3,0);
+%         disp([t/100 Rt3])
+    end
+    value(7)      =  R3flag;
+    direction(7)  = 1;
+    isterminal(7) = 1;
     
 end 
 
@@ -874,7 +924,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,ntot,dis,i,p2
     occdot = sum(Hdot+Hv1dot+Hv2dot);
     r      = occdot/occ;
     Tcap   = t + log(p2.Hmax/occ)/r;
-    Tcap   = Tcap-4;
+    Tcap   = Tcap-7;
     
     
     %% Event 1: Response Time
@@ -886,6 +936,9 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,ntot,dis,i,p2
     %% Event 2: Early Lockdown
     
     value(2)     = - abs((i-2)*(i-4)) + min(t-(data.tvec(end-1)+0.1),0) + min(t-Tcap,0);
+    if value(2)==0
+%         disp([t r])
+    end
     direction(2) = 1;
     if r>0.025
         isterminal(2) = 1;
@@ -933,6 +986,30 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,ntot,dis,i,p2
     value(6)      =  min(t-data.t_import,0);
     direction(6)  = 1;
     isterminal(6) = 1;
+    
+    %% Event 7: end
+    % t is greater than the end of the vaccine rollout: otherval = 0
+    tval = min(t-(max(p2.tpoints)+7),0);
+    % hval: no patients
+    hval = min(100-sum(H + Hv1 + Hv2),0);
+    R3flag = tval + hval;
+    if tval==0 && hval==0
+        Rt3 = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
+            data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
+%         doubling_time = dis.generation_time*log(2) /  log(Rt3);
+        Rthresh = exp(dis.generation_time*log(2) / 30); % R value for which doubling time is 30 days
+        R3flag = min(Rthresh - Rt3,0);
+%         if t<600 
+%             disp([t/100 hval tval r Rt3 Rthresh ])
+%         end
+    end
+    value(7)      =  R3flag;
+    direction(7)  = 1;
+    if i==5
+        isterminal(7) = 1;
+    else
+        isterminal(7) = 0;
+    end
     
 end
 
@@ -1035,6 +1112,24 @@ function [value,isterminal,direction] = unmitigated(t,y,data,ntot,dis,i,p2)
     value(4)      =  min(t-data.t_import,0);
     direction(4)  = 1;
     isterminal(4) = 1;
+    
+    %% Event 7: end
+    % i is 5
+    ival = -abs((i-5));
+    % t is greater than the end of the vaccine rollout: otherval = 0
+    tval = min(t-(max(p2.tpoints)+7),0);
+    % hval: no patients
+    hval = min(100-sum(H + Hv1 + Hv2),0);
+    R3flag = ival + tval + hval;
+    if ival==0 && tval==0 && hval==0
+        Rt3 = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
+            data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
+        Rthresh = exp(dis.generation_time*log(2) / 30); % R value for which doubling time is 30 days
+        R3flag = min(Rthresh - Rt3,0);
+    end
+    value(5)      =  R3flag;
+    direction(5)  = 1;
+    isterminal(5) = 1;
     
     
 end
