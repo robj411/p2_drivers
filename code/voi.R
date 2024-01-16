@@ -22,8 +22,8 @@ if(Sys.info()[['sysname']]=='Linux'){
 
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','UMIC','HIC')
-vaccination_levels <- c('BAU','100 days','BPSV')
-countrytype_levels <- c('Origin','Secondary')
+vaccination_levels <- c(365,100)
+bpsv_levels <- c(0,1)
 
 #
 
@@ -117,10 +117,14 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
 
 
 #
-## saving ###############################
+## saving 1 ###############################
+
 topresults <- list()
-for(ct in 1:length(countrytype_levels)){
-  countrytype <- countrytype_levels[ct]
+choicestab <- c()
+# income_levels <- 'HIC'
+for(bl in 1:length(bpsv_levels)){
+  topresults[[bl]] <- list()
+  bpsv <- bpsv_levels[bl]
   for(v in 1:length(vaccination_levels)){
     vaccination_level <- vaccination_levels[v]
     allresults <- data.frame()
@@ -128,7 +132,7 @@ for(ct in 1:length(countrytype_levels)){
       for (k in 1:length(strategies)){
         inp3 <- strategies[k];
         income_level <- income_levels[i];
-        results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'),header=T);
+        results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
         results$strategy <- inp3
         results$igroup <- income_level
         results$samplei <- 1:nrow(results)
@@ -138,7 +142,10 @@ for(ct in 1:length(countrytype_levels)){
     setDT(allresults)
     allresults[,Costrnd:=Cost*(1+runif(nrow(allresults))*1e-8)]
     allresults[,mincost:=Costrnd==min(Costrnd),by=.(igroup,samplei)]
-    allresults[,sum(mincost),by=.(igroup,strategy)]
+    choices <- allresults[,.(N=sum(mincost)),by=.(igroup,strategy)]
+    choices$vaccination_level <- vaccination_level
+    choices$bpsv <- bpsv
+    choicestab <- rbind(choicestab,choices)
     allresults[mincost==T,mean(Cost/GDP),by=.(igroup)]
     
     evalues <- allresults[,mean(Cost/GDP),by=.(igroup,strategy)]
@@ -147,34 +154,116 @@ for(ct in 1:length(countrytype_levels)){
     allresults[,keeprow:=strategy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
     
     ##!! decision under uncertainty, or decision under certainty?
-    topresults[[v]] <- subset(allresults,keeprow)
-    # topresults[[v]] <- subset(allresults,mincost)
-    # setorder(topresults[[v]],igroup,samplei)
+    # topresults[[bl]][[v]] <- subset(allresults,keeprow)
+    topresults[[bl]][[v]] <- subset(allresults,mincost)
+    setorder(topresults[[bl]][[v]],igroup,samplei)
     
-    if(v>1){
+    if(v>1|bl>1){
       
-      difftab <- copy(topresults[[v-1]])
+      difftab <- copy(topresults[[1]][[1]])
       difftab[,keeprow:=NULL]
-      difftab[,strategy:=NULL]
-      difftab[,Cost:=Cost-topresults[[v]]$Cost]
-      difftab[,Deaths:=Deaths-topresults[[v]]$Deaths]
-      difftab[,School:=School-topresults[[v]]$School]
-      difftab[,GDP_loss:=GDP_loss-topresults[[v]]$GDP_loss]
+      # difftab[,strategy:=NULL]
+      difftab[,Cost:=Cost-topresults[[bl]][[v]]$Cost]
+      difftab[,Deaths:=Deaths-topresults[[bl]][[v]]$Deaths]
+      difftab[,School:=School-topresults[[bl]][[v]]$School]
+      difftab[,GDP_loss:=GDP_loss-topresults[[bl]][[v]]$GDP_loss]
+      difftab[,scen_Exit_wave:=topresults[[bl]][[v]]$Exit_wave]
       
-      saveRDS(difftab,paste0('results/difftab_',countrytype,'_',vaccination_level,'.Rds'))
+      saveRDS(difftab,paste0('results/difftab_',bpsv,'_',vaccination_level,'.Rds'))
       
-      pctab <- copy(topresults[[v-1]])
+      pctab <- copy(topresults[[1]][[1]])
       pctab[,keeprow:=NULL]
       pctab[,strategy:=NULL]
-      pctab[,Cost:=(Cost-topresults[[v]]$Cost)/Cost]
-      pctab[,Deaths:=(Deaths-topresults[[v]]$Deaths)/Deaths]
-      pctab[,School:=(School-topresults[[v]]$School)/School]
-      pctab[,GDP_loss:=(GDP_loss-topresults[[v]]$GDP_loss)/GDP_loss]
+      pctab[,Cost:=(Cost-topresults[[bl]][[v]]$Cost)/Cost]
+      pctab[,Deaths:=(Deaths-topresults[[bl]][[v]]$Deaths)/Deaths]
+      pctab[,School:=(School-topresults[[bl]][[v]]$School)/School]
+      pctab[,GDP_loss:=(GDP_loss-topresults[[bl]][[v]]$GDP_loss)/GDP_loss]
       
-      saveRDS(pctab,paste0('results/pctab_',countrytype,'_',vaccination_level,'.Rds'))
+      saveRDS(pctab,paste0('results/pctab_',bpsv,'_',vaccination_level,'.Rds'))
     }
   }
 }
+     
+## negatives ###########################
+
+nneg <- 0
+for(vaccination_level in vaccination_levels){
+  for(bpsv in bpsv_levels){
+    if(vaccination_level==100|bpsv==1){
+      print(paste0('results/difftab_',bpsv,'_',vaccination_level,'.Rds'))
+      difftab <- readRDS(paste0('results/difftab_',bpsv,'_',vaccination_level,'.Rds'))
+      for(income_level in income_levels){
+        subtab <- subset(difftab,igroup==income_level)
+        subtab$sample <- 1:nrow(subtab)
+        print(income_level)
+        print(subset(subtab,Cost< 0 & !(scen_Exit_wave>(1-1e-2)) )[,c(43:49,28,52)])
+        nneg <- nneg + nrow(subset(subtab,Cost< 0 ))
+      }
+    }
+  }
+} 
+      
+## saving 2 ###############################
+
+topresults <- list()
+choicestab <- c()
+for(bl in 1:length(bpsv_levels)){
+  topresults[[bl]] <- list()
+  bpsv <- bpsv_levels[bl]
+  for(v in 1:length(vaccination_levels)){
+    vaccination_level <- vaccination_levels[v]
+    allresults <- data.frame()
+    for (i in 1:length(income_levels)){
+      for (k in 1:length(strategies)){
+        inp3 <- strategies[k];
+        income_level <- income_levels[i];
+        results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
+        results$strategy <- inp3
+        results$igroup <- income_level
+        results$samplei <- 1:nrow(results)
+        allresults <- rbind(allresults,results)
+      }
+    }
+    setDT(allresults)
+    allresults[,Costrnd:=Cost*(1+runif(nrow(allresults))*1e-8)]
+    allresults[,mincost:=Costrnd==min(Costrnd),by=.(igroup,samplei)]
+    choices <- allresults[,.(N=sum(mincost)),by=.(igroup,strategy)]
+    choices$vaccination_level <- vaccination_level
+    choices$bpsv <- bpsv
+    choicestab <- rbind(choicestab,choices)
+    allresults[mincost==T,mean(Cost/GDP),by=.(igroup)]
+    
+    evalues <- allresults[,mean(Cost/GDP),by=.(igroup,strategy)]
+    topchoices <- evalues[,strategy[which.min(V1)],by=igroup]
+    print(topchoices)
+    allresults[,keeprow:=strategy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
+    
+    ##!! decision under uncertainty, or decision under certainty?
+    # topresults[[bl]][[v]] <- subset(allresults,keeprow)
+    topresults[[bl]][[v]] <- subset(allresults,mincost)
+    setorder(topresults[[bl]][[v]],igroup,samplei)
+    
+    if(v>1|bl>1){
+      
+      difftab <- copy(topresults[[1]][[1]])
+      difftab[,keeprow:=NULL]
+      difftab[,strategy:=NULL]
+      difftab[,Cost:=Cost-topresults[[bl]][[v]]$Cost]
+      difftab[,Deaths:=Deaths-topresults[[bl]][[v]]$Deaths]
+      difftab[,School:=School-topresults[[bl]][[v]]$School]
+      difftab[,GDP_loss:=GDP_loss-topresults[[bl]][[v]]$GDP_loss]
+      
+      saveRDS(difftab,paste0('results/difftab_',bpsv,'_',vaccination_level,'.Rds'))
+      
+      pctab <- copy(topresults[[1]][[1]])
+      pctab[,keeprow:=NULL]
+      pctab[,strategy:=NULL]
+      pctab[,Cost:=(Cost-topresults[[bl]][[v]]$Cost)/Cost]
+      pctab[,Deaths:=(Deaths-topresults[[bl]][[v]]$Deaths)/Deaths]
+      pctab[,School:=(School-topresults[[bl]][[v]]$School)/School]
+      pctab[,GDP_loss:=(GDP_loss-topresults[[bl]][[v]]$GDP_loss)/GDP_loss]
+      
+      saveRDS(pctab,paste0('results/pctab_',bpsv,'_',vaccination_level,'.Rds'))
       
       ilistvoi <- ilistmi <- list()
       for (il in 1:length(income_levels)){
@@ -247,19 +336,21 @@ for(ct in 1:length(countrytype_levels)){
       miall <- do.call(rbind,ilistmi)
       miall <- miall[roworder,]
       
-      saveRDS(voiall,paste0('results/voidiff_',countrytype,'_',vaccination_level,'.Rds'))
-      saveRDS(miall,paste0('results/midiff_',countrytype,'_',vaccination_level,'.Rds'))
+      saveRDS(voiall,paste0('results/voidiff_',bpsv,'_',vaccination_level,'.Rds'))
+      saveRDS(miall,paste0('results/midiff_',bpsv,'_',vaccination_level,'.Rds'))
     }
   }
 }
 
+saveRDS(choicestab,paste0('results/choicestab.Rds'))
+
 #
 ## income levels separately ####################################
 
-get_voi_mi <- function(inp3,income_level,vaccination_level,countrytype){
-  results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'),header=T);
+get_voi_mi <- function(inp3,income_level,vaccination_level,bpsv){
+  results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
   results <- subset(results,R0>1)
-  print(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'))
+  print(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'))
   sourcelist <- list()
   for(src in 1:length(multisource)) {
     sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]]]
@@ -308,10 +399,10 @@ get_voi_mi <- function(inp3,income_level,vaccination_level,countrytype){
   }
   voitab <- do.call(rbind,voilist)
   colnames(voitab) <- c(colnames(sourcemat),names(multisource))
-  rownames(voitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3,', ',vaccination_level,', ',countrytype)
+  rownames(voitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3,', ',vaccination_level,', ',bpsv)
   mitab <- do.call(rbind,milist)
   colnames(mitab) <- c(colnames(sourcemat),names(multisource))
-  rownames(mitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3,', ',vaccination_level,', ',countrytype)
+  rownames(mitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3,', ',vaccination_level,', ',bpsv)
   list(voitab,mitab)
 }
 
@@ -319,14 +410,14 @@ voimi <- list()
 for(vl in 1:length(vaccination_levels)){
   vaccination_level <- vaccination_levels[vl]
   voimi[[vl]] <- list()
-  for(ct in 1:length(countrytype_levels)){
-    countrytype <- countrytype_levels[ct]
-    voimi[[vl]][[ct]] <- foreach (ks = 1:length(strategies))%dopar%{
+  for(bl in 1:length(bpsv_levels)){
+    bpsv <- bpsv_levels[bl]
+    voimi[[vl]][[bl]] <- foreach (ks = 1:length(strategies))%dopar%{
       inp3 <- strategies[ks]
       vmlist <- list()
       for (il in 1:length(income_levels)){
         income_level <- income_levels[il]
-        vmlist[[il]] <- get_voi_mi(inp3,income_level,vaccination_level,countrytype)
+        vmlist[[il]] <- get_voi_mi(inp3,income_level,vaccination_level,bpsv)
       }
       vmlist
     }
@@ -337,28 +428,28 @@ voilist <- milist <- list()
 for(vl in 1:length(vaccination_levels)){
   vaccination_level <- vaccination_levels[vl]
   voilist[[vl]] <- milist[[vl]] <- list()
-  for(ct in 1:length(countrytype_levels)){
-    countrytype <- countrytype_levels[ct]
-    voilist[[vl]][[ct]] <- milist[[vl]][[ct]] <- list()
+  for(bl in 1:length(bpsv_levels)){
+    bpsv <- bpsv_levels[bl]
+    voilist[[vl]][[bl]] <- milist[[vl]][[bl]] <- list()
     for (ks in 1:length(strategies)){
-      voilist[[vl]][[ct]][[ks]] <- milist[[vl]][[ct]][[ks]] <- list()
+      voilist[[vl]][[bl]][[ks]] <- milist[[vl]][[bl]][[ks]] <- list()
       for (il in 1:length(income_levels)){
-        voilist[[vl]][[ct]][[ks]][[il]] <- voimi[[vl]][[ct]][[ks]][[il]][[1]]
-        milist[[vl]][[ct]][[ks]][[il]] <- voimi[[vl]][[ct]][[ks]][[il]][[2]]
+        voilist[[vl]][[bl]][[ks]][[il]] <- voimi[[vl]][[bl]][[ks]][[il]][[1]]
+        milist[[vl]][[bl]][[ks]][[il]] <- voimi[[vl]][[bl]][[ks]][[il]][[2]]
       }
-      voilist[[vl]][[ct]][[ks]] <- do.call(rbind,voilist[[vl]][[ct]][[ks]])
-      milist[[vl]][[ct]][[ks]] <- do.call(rbind,milist[[vl]][[ct]][[ks]])
+      voilist[[vl]][[bl]][[ks]] <- do.call(rbind,voilist[[vl]][[bl]][[ks]])
+      milist[[vl]][[bl]][[ks]] <- do.call(rbind,milist[[vl]][[bl]][[ks]])
     }
-    voilist[[vl]][[ct]] <- do.call(rbind,voilist[[vl]][[ct]])
-    milist[[vl]][[ct]] <- do.call(rbind,milist[[vl]][[ct]])
+    voilist[[vl]][[bl]] <- do.call(rbind,voilist[[vl]][[bl]])
+    milist[[vl]][[bl]] <- do.call(rbind,milist[[vl]][[bl]])
     
     roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
-                              function(x)which(grepl(paste0(x,':'),rownames(voilist[[vl]][[ct]])))))
-    voilist[[vl]][[ct]] <- voilist[[vl]][[ct]][roworder,]
-    milist[[vl]][[ct]] <- milist[[vl]][[ct]][roworder,]
+                              function(x)which(grepl(paste0(x,':'),rownames(voilist[[vl]][[bl]])))))
+    voilist[[vl]][[bl]] <- voilist[[vl]][[bl]][roworder,]
+    milist[[vl]][[bl]] <- milist[[vl]][[bl]][roworder,]
     
-    saveRDS(voilist[[vl]][[ct]],paste0('results/voi_',vaccination_level,'_',countrytype,'.Rds'))
-    saveRDS(milist[[vl]][[ct]],paste0('results/mi_',vaccination_level,'_',countrytype,'.Rds'))
+    saveRDS(voilist[[vl]][[bl]],paste0('results/voi_',vaccination_level,'_',bpsv,'.Rds'))
+    saveRDS(milist[[vl]][[bl]],paste0('results/mi_',vaccination_level,'_',bpsv,'.Rds'))
   }
 }
 
@@ -366,16 +457,17 @@ for(vl in 1:length(vaccination_levels)){
 #
 ## decision #####################################
 
+if(F){
 for(vl in 1:length(vaccination_levels)){
   vaccination_level <- vaccination_levels[vl]
-  for(ct in 1:length(countrytype_levels)){
-    countrytype <- countrytype_levels[ct]
+  for(bl in 1:length(bpsv_levels)){
+    bpsv <- bpsv_levels[bl]
     listout <- foreach (il = 1:length(income_levels))%dopar%{
       resultslist <- list()
       for (ks in 1:length(strategies)){
         inp3 <- strategies[ks];
         income_level <- income_levels[il];
-        results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',countrytype,'.csv'),header=T);
+        results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
         results <- subset(results,R0>1)
         firstreultcol <- which(colnames(results)=='Cost')
         resultslist[[ks]] <- results[,firstreultcol:(ncol(results))]
@@ -429,25 +521,12 @@ for(vl in 1:length(vaccination_levels)){
     roworder <- unlist(lapply(c("Cost","Deaths","School","GDP loss"),
                               function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
     voiall <- voiall[roworder,]
-    saveRDS(voiall,paste0('results/decisionvoi',vaccination_level,'_',countrytype,'.Rds'))
+    saveRDS(voiall,paste0('results/decisionvoi',vaccination_level,'_',bpsv,'.Rds'))
   }
+}
 }
 
 
-#
-
-for(vaccination_level in vaccination_levels[-1]){
-  for(countrytype in countrytype_levels[-2]){
-    print(paste0('results/difftab_',countrytype,'_',vaccination_level,'.Rds'))
-    difftab <- readRDS(paste0('results/difftab_',countrytype,'_',vaccination_level,'.Rds'))
-    for(income_level in income_levels){
-      subtab <- subset(difftab,igroup==income_level)
-      subtab$sample <- 1:nrow(subtab)
-      print(income_level)
-      print(subset(subtab,Cost< -10)[,40:45])
-    }
-  }
-}
 
 ## log cost share plot ###################################
 
