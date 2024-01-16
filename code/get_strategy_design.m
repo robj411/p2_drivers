@@ -1,4 +1,4 @@
-function [ldata, xoptim] = get_strategy_design(ldata,strategy,countrytype,p2)
+function [ldata, xoptim] = get_strategy_design(ldata,strategy,p2)
     lx = ldata.lx;
     xoptim = 0;
     if strcmp(strategy,'Elimination')
@@ -26,11 +26,11 @@ function [ldata, xoptim] = get_strategy_design(ldata,strategy,countrytype,p2)
     end
     
     ldata.tvec = [-0.1 ldata.tvec(end)];
-    if strcmp(countrytype,'Origin')
-        ldata.t_import = 0;
-    elseif strcmp(countrytype,'Secondary')
+%     if strcmp(countrytype,'Origin')
+%         ldata.t_import = 0;
+%     elseif strcmp(countrytype,'Secondary')
         ldata.tvec = ldata.tvec + min(ldata.t_import,p2.Tres);
-    end
+%     end
 
 end
                 
