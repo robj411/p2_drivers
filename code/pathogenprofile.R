@@ -1,5 +1,6 @@
-
-
+fn <- function(){}
+folder <- utils::getSrcDirectory(fn)
+setwd(ifelse(folder=='','.',folder))
 
 rnms <- c(paste0('ihr',1:17),paste0('ifr',1:17),
           'ps','Tlat','Tay','Tsr','Tsh','Threc','Thd','Ti','red','R0')
@@ -72,90 +73,13 @@ pairs(tpp[,-c(1:34,42:43)])
 write.csv(tpp,'../data/sevenpathogens.csv',row.names = F)
 
 
-cards <- subset(data.frame(
-  pp=c(        1,  4,  3,  1,  4,  3,    1, 10,      3,  5, 7, 1, 4,  3,  1, 10,  2, 2,     10,    3),
-  ifr=c(     5.7,  2,0.1,0.1, 70,0.5, 0.01,0.5,     95,0.3, 2,35,60,  3,100,0.5,  0,30,     50,0.001),
-  r0=log(c(    3,2.6,  3,  2,1.7,2.5,  2.5,  2,     11,100,15, 1, 6,2.9,1.2,  3,2.2, 5,      3,    2)),
-  rr=1/c(730,  2,  5, 60, 10, 60,5*365,  7,1.5*365, 14, 8, 4, 8,  5,  7, 14, 60,21,1.5*365,    5)),
-  rr>1/365)
-
-cards <- rbind(cards,
-cbind(pp=10,ifr=tpp$ifr*100,r0=log(tpp$R0),rr=1/tpp$Threc)
-)
-colnames(cards) <- c('Pandemic potential','IFR','log(R0)','Recovery/death rate')
-png('../figures/pandemicprofiles.png', height = 700, width = 700)
-pairs(cards,main='Top Trumps',cex.axis=1.5,pch=16)
-dev.off()
-
-# f.dens = density(cards$ifr)
-# cdf.estimate = cumsum(f.dens$y) / cumsum(f.dens$y)[length(f.dens$y)] 
-# # Here I make sure that the last value in CDF is 1.
-# 
-# plot(cdf.estimate, type = 'l', main='Cumulative Distribution')
-# N.draw = 1000
-# gen.sample = replicate(N.draw, f.dens$x[findInterval(runif(1), cdf.estimate)+1])
-# 
-# plot(f.dens)
-# lines(density(gen.sample),col='red')
-# legend('topleft',legend=c('Density Function estimate', 
-#                           'Generated sample density'), 
-#        col=c("black", "red"), 
-#        lty=c(1,1), 
-#        cex=1.5)
-# 
-# 
-# cards
-
-meancards <- colMeans(cards)
-sdcards <- apply(cards,2,sd)
-transcards <- cards
-for(i in 1:ncol(transcards))
-  transcards[,i] <- (transcards[,i] - meancards[i])/sdcards[i]
-
-
-distances <- sapply(1:nrow(transcards),function(y) 
-  sapply(1:nrow(transcards),function(x) sum(abs(transcards[x,] - transcards[y,]))))
-
-totaldistance <- rowSums(distances)
-
-weights <- 1/distances
-
-nsamples <- 4096
-draws <- c()
-for(i in 1:nsamples){
-  particle <- sample(1:nrow(transcards),size=1,replace=T)
-  startingpoints <- transcards[particle,]
-  covweights <- weights[-particle,particle]
-  covar <- matrix(0,nrow=4,ncol=4)
-  for(j in 2:4)
-    for(k in 1:(j-1))
-      covar[j,k] <- covar[k,j] <- sum(covweights*(transcards[-particle,j]-mean(transcards[-particle,j]))*(transcards[-particle,k]-mean(transcards[-particle,k])) )/33
-  for(j in 1:4) covar[j,j] <- sum(covweights*(transcards[-particle,j]-mean(transcards[-particle,j]))*(transcards[-particle,j]-mean(transcards[-particle,j])) )/33
-  newpoint <- mvrnorm(1,as.numeric(startingpoints),covar)
-  draws <- rbind(draws,newpoint)
-}
-  
-for(i in 1:ncol(draws))
-  draws[,i] <- sdcards[i]*draws[,i] + meancards[i]
-
-colnames(draws) <- colnames(cards)
-draws[draws[,1]<min(cards$`Pandemic potential`),1] <- min(cards$`Pandemic potential`)
-draws[draws[,1]>10,1] <- 10
-draws[draws[,2]<=0,2] <- min(cards$IFR)
-draws[draws[,2]>100,2] <- 100
-draws[draws[,3]<0,3] <- 0
-draws[draws[,4]<min(cards$`Recovery/death rate`),4] <- min(cards$`Recovery/death rate`)
-png('../figures/pathogenprofilessynth.png', height = 700, width = 700)
-pairs(draws,main='Synthetic pathogens',cex.axis=1.5,pch=16)
-dev.off()
-
-
-
 ## ihr #######################################
 library(brms)
 library(pracma)
 library(GGally)
 library(gtools)
+library(reshape2)
+library(MASS)
 
 hfr <- tpp[,1:17+17]/tpp[,1:17]
 
@@ -222,6 +146,7 @@ x11(); matplot(t(allsampleslong),typ='l',
 covmat <- cov(castps[,3:7])
 parametertoihr <- function(x) c(0,x[1] + cov_model_matrix*x[2] + spline_model %*% (x[3:4]))
 
+nsamples <- 4096
 newpoints <- samples <- c()
 for(i in 1:nsamples){
   newpoint <- mvrnorm(1,colMeans(castps[,3:7]),covmat)
@@ -318,7 +243,7 @@ for(i in 1:nsamples){
   newpoints <- rbind(newpoints,funeval)
 }
 x11(); matplot(t(newpoints),typ='l')
-write.csv(samples,'hfrrr.csv',row.names = F)
+write.csv(newpoints,'hfrrr.csv',row.names = F)
 
 
 meltnew <- melt(newpoints[1:100,])
