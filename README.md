@@ -57,13 +57,15 @@ with
 
 $$\begin{equation}
  I^{(eff)}=\epsilon (1-p_3)I_{A,0}+(1-p_4)I_{S,0}+\sum_{v=1}^2f_T(\eta_{T,v},t)(\epsilon (1-p_3)I_{A,v}+(1-p_4)I_{S,v}). 
-\end{equation}$$ Here, $f_A$ is the reduction in acquisition of
-infection among the vaccinated, and $\eta_{A,v}$ is the vaccine effect
-size; $\rho(t)$ is the time-dependent modifier of the rate of infection,
-$\beta$; $D$ is the contact matrix between groups; $\epsilon$ is the
-reduction in infectiousness from asymptomatic relative to symptomatic
-individuals; $p_3$ and $p_4$ are the proportions of asymptomatic and
-symptomatic infectious days, respectively, spent self isolating, and
+\end{equation}$$
+
+Here, $f_A$ is the reduction in acquisition of infection among the
+vaccinated, and $\eta_{A,v}$ is the vaccine effect size; $\rho(t)$ is
+the time-dependent modifier of the rate of infection, $\beta$; $D$ is
+the contact matrix between groups; $\epsilon$ is the reduction in
+infectiousness from asymptomatic relative to symptomatic individuals;
+$p_3$ and $p_4$ are the proportions of asymptomatic and symptomatic
+infectious days, respectively, spent self isolating, and
 $I_{\cdot,\cdot}$ is the vector of number of infectious asymptomatic
 ($I_{A,\cdot}$) and symptomatic ($I_{S,\cdot}$) people who are
 unvaccinated ($I_{\cdot,0}$), vaccinated with the BPSV ($I_{\cdot,1}$),
@@ -71,40 +73,54 @@ or vaccinated with the specific vaccine ($I_{\cdot,2}$).
 
 $$\begin{equation}
  k_2 = (1-p_S)/\sigma 
-\end{equation}$$ is the rate to asymptomatic infectiousness, where $p_S$
-is the probability to become symptomatic, and $\sigma$ is the expected
-duration of the latent period before the onset of infectiousness;
+\end{equation}$$
+
+is the rate to asymptomatic infectiousness, where $p_S$ is the
+probability to become symptomatic, and $\sigma$ is the expected duration
+of the latent period before the onset of infectiousness;
 
 $$\begin{equation}
  k_3 = 1/\gamma_A  
-\end{equation}$$ is the rate of recovery from asymptomatic infection;
+\end{equation}$$
+
+is the rate of recovery from asymptomatic infection;
 
 $$\begin{equation}
  k_4 = p_S/ \sigma; 
-\end{equation}$$ is the rate of symptom onset;
+\end{equation}$$
+
+is the rate of symptom onset;
 
 $$\begin{equation}
 k_5 =  (1-p_H) / \gamma_I 
-\end{equation}$$ is the rate of recovery from symptomatic infection,
-where $p_H$ is the probability to be hospitalised, and
+\end{equation}$$
+
+is the rate of recovery from symptomatic infection, where $p_H$ is the
+probability to be hospitalised, and
 $\gamma_I = p_H\gamma_H + (1-p_H)\gamma_R$ is the expected time to be in
 compartment $I_S$: $\gamma_H$ is the expected duration before
 hospitalisation and $\gamma_R$ is the expected duration before recovery.
+
 $$\begin{equation}
 p_H=f_H(\eta_{H,v},t)\hat{p}_H
-\end{equation}$$ is the baseline probability to be hospitalised
-($`\hat{p}_H`$) adjusted by the vaccine effect protecting against
-hospitalisation ($`f_H(\eta_{H,v},t)`$). Then
+\end{equation}$$
+
+is the baseline probability to be hospitalised ($`\hat{p}_H`$) adjusted
+by the vaccine effect protecting against hospitalisation
+($`f_H(\eta_{H,v},t)`$). Then
 
 $$\begin{equation}
 k_6 = p_H/\gamma_I
-\end{equation}$$ is the rate of hospitalisation following symptomatic
-infection.
+\end{equation}$$
+
+is the rate of hospitalisation following symptomatic infection.
 
 $$\begin{equation}
 k_7 = (1-p_D) / \lambda_H
-\end{equation}$$ is the rate of recovery of hospitalised patients, where
-$p_D$ is the probability to die given hospitalisation, and
+\end{equation}$$
+
+is the rate of recovery of hospitalised patients, where $p_D$ is the
+probability to die given hospitalisation, and
 $\lambda_H = p_D\lambda_D + (1-p_D)\lambda_R$ is the expected time to be
 in compartment $H$: $\lambda_D$ is the expected duration before death
 and $\lambda_R$ is the expected duration before recovery. $p_D$ is the
@@ -112,7 +128,9 @@ probability to die given hospitalisation. Finally,
 
 $$\begin{equation}
 k_8 = p_D/\lambda_H
-\end{equation}$$ is the rate of death following hospitalisation.
+\end{equation}$$
+
+is the rate of death following hospitalisation.
 
 # 2 Vaccination state transitions
 
@@ -173,7 +191,9 @@ D_{gg'}^{(4)} = \frac{\sum_{a\in g}\hat{P}_{a}\sum_{a'\in g'}D^{(16)}_{a,a'}}{\s
 \end{equation}$$
 
 Using $P_g$ to represent the population sizes of the DAEDALUS age
-groups, $$\begin{equation}
+groups,
+
+$$\begin{equation}
 P_g=\sum_{a\in g}\hat{P}_a,
 \end{equation}$$
 
@@ -181,14 +201,18 @@ We get to the matrix $D(\textbf{1})$ by broadcasting the four-by-four
 matrix to the 49-by-49 one. Contacts from all groups $i$ to working
 groups $j$ depend on the age group of the group ($`g(i)`$), and the
 fraction of the age-population represented in group $j$, where $w_{j}$
-is the number of people in group $j$: $$\begin{equation}
+is the number of people in group $j$:
+
+$$\begin{equation}
 D_{ij}(\textbf{1}) = D^{(4)}_{g(i),g(j)}\frac{w_{j}}{P_{g(j)}}
-\end{equation}$$ for $i$ and $j$ including all groups (working and
-non-working). Each group $i$ contains people that belong to only one age
-group $g$. We refer to the age group of the people in group $i$ as
-$g(i)$. Then $P_{g(j)}$ is the number of people in the age group of
-group $j$, so $P_{g(j)}=w_{j}$ for age groups 0 to 4, 5 to 19 and 65+,
-and $P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}$ for ages 20 to 64.
+\end{equation}$$
+
+for $i$ and $j$ including all groups (working and non-working). Each
+group $i$ contains people that belong to only one age group $g$. We
+refer to the age group of the people in group $i$ as $g(i)$. Then
+$P_{g(j)}$ is the number of people in the age group of group $j$, so
+$P_{g(j)}=w_{j}$ for age groups 0 to 4, 5 to 19 and 65+, and
+$P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}$ for ages 20 to 64.
 
 ## 3.1 Matrix $A$: community contacts
 
@@ -223,21 +247,29 @@ School contacts are estimated separately in two age groups (pre-school
 age: 0 – 4; school age: 5 – 19). Diagonal matrix $A^{(S)}$ counts the
 contacts in schools. It has entries of zero for groups $g$ not in
 school, and sampled values for $g$=0 to 4 years old and $g$=5 to 19 year
-olds. Then $$\begin{equation}
+olds. Then
+
+$$\begin{equation}
 A_{ii}^{(S)}=x_{S}^2s_{g(i)}.
 \qquad(3.1)
-\end{equation}$$ The value $x_{S}$ is the extent to which schools are
-open, so that the number of contacts per person scales superlinearly
-according to closure. Values for $A_{ii}$ are taken as random variables
-ranging from 0 to $D_{ii}$.
+\end{equation}$$
+
+The value $x_{S}$ is the extent to which schools are open, so that the
+number of contacts per person scales superlinearly according to closure.
+Values for $A_{ii}$ are taken as random variables ranging from 0 to
+$D_{ii}$.
 
 Matrix $A^{(T)}$ counts contacts between working people, representing
 travel. We assume that transport contacts only add to the infection risk
 if the sector is open and the workers travel to and from their
-workplace. $$\begin{equation}
+workplace.
+
+$$\begin{equation}
 A_{ij}^{(T)} = x_{j\tau}(1-p_{i\tau})(1-p_{j\tau})\frac{2.5w_{j}}{\sum_gP_g}
 \qquad(3.2)
-\end{equation}$$ for $i=1,...,N$. $A_{ij}^{(T)}=0$ for $i>N$.
+\end{equation}$$
+
+for $i=1,...,N$. $A_{ij}^{(T)}=0$ for $i>N$.
 
 $p_{i\tau}$ is the proportion of workers from sector $i$ working from
 home during period $\tau$, and $(1-p_{i\tau})(1-p_{j\tau})$ scales
@@ -256,18 +288,25 @@ superlinear scaling.
 Matrix $A^{(H)}$ gives the contacts made in the hospitality sector. Each
 age group makes an average of 0, 0.5, 1 and 1.5 total contacts for age
 groups 0-4, 5-19, 20-64, and 65+, respectively . These contacts are made
-in proportion to population, so we can write $$\begin{equation}
+in proportion to population, so we can write
+
+$$\begin{equation}
 A_{ij}^{(H)} = x_{H,\tau}\frac{A_{g(i)}^{(H0)}w_{j}}{\sum_{j'}w_{j'}}
 \qquad(3.3)
-\end{equation}$$ with $A^{(H0)} = \{0,0.5,1,1.5\}$, and $A_{ij}^{(H)}=0$
-for $g(i)\neq g(j)$ (Supplementary Table 2).
+\end{equation}$$
+
+with $A^{(H0)} = \{0,0.5,1,1.5\}$, and $A_{ij}^{(H)}=0$ for
+$g(i)\neq g(j)$.
 
 The value $x_{H,\tau}$ is the workforce-weighted average extent to which
 the hospitality sectors are open in the period $\tau$, so that the
 number of contacts per person scales linearly according to closure:
+
 $$\begin{equation}
 x_{H,\tau} = \frac{\sum_ix_{i\tau}w_i}{\sum_iw_i}
-\end{equation}$$ where we sum over only the hospitality sectors.
+\end{equation}$$
+
+where we sum over only the hospitality sectors.
 
 Finally, $A^{(L)} = A - (A^{(S)} + A^{(H)} + A^{(T)}.)$
 
@@ -291,17 +330,21 @@ contacts at low frequency are classified as worker-consumer contacts.
 %At-home working ($p_{i\tau}$) is considered, and community contact
 rates apply for contacts between working household members.
 
-Then $$\begin{equation}
+Then
+
+$$\begin{equation}
 B_{ii} = x_{i\tau}(1-p_{i\tau})^2b_i,
 \qquad(3.4)
-\end{equation}$$ for the $i=1,...,N$ working groups, with the number of
-contacts adjusted according to at-home working ($p_{i\tau}$) and sector
-openness ($x_{i\tau}$). Note that $B_{ii}=0$ for $i>N$. As before, there
-is superlinear scaling of contacts with respect to working from home.
-There is linear scaling with respect to sector closure: that is, there
-are fewer contacts per person, but we do not approximate there being
-fewer people having them. This is because the latter is accounted for in
-the movement of people out of the group upon its closure.
+\end{equation}$$
+
+for the $i=1,...,N$ working groups, with the number of contacts adjusted
+according to at-home working ($p_{i\tau}$) and sector openness
+($x_{i\tau}$). Note that $B_{ii}=0$ for $i>N$. As before, there is
+superlinear scaling of contacts with respect to working from home. There
+is linear scaling with respect to sector closure: that is, there are
+fewer contacts per person, but we do not approximate there being fewer
+people having them. This is because the latter is accounted for in the
+movement of people out of the group upon its closure.
 
 ## 3.3 Matrix $C$: Consumers-to-worker contacts
 
@@ -329,10 +372,14 @@ times a month, a few times a year or less often, or for the first time).
 %For a technical description as to how the contact matrices are
 constructed, please see the Supplementary Material.
 
-Then $$\begin{equation}
+Then
+
+$$\begin{equation}
 C_{ij} = x_{i\tau}(1-p_{i\tau})\frac{c_{i}w_{j}}{\sum_{j'}^{N+4}w_{j'}},
 \qquad(3.5)
-\end{equation}$$ for $j=1,...,N+4$. $C_{ij}=0$ for $i>N$.
+\end{equation}$$
+
+for $j=1,...,N+4$. $C_{ij}=0$ for $i>N$.
 
 Here, there is linear scaling of $C_{ij}$ with respect to working from
 home, and linear scaling with respect to sector closure, which becomes
