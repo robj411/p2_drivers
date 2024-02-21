@@ -42,52 +42,71 @@ of time $t$, vaccination status $v$, and group identity $g$ (where the
 groups are the 45 sectors and the four age groups).
 
 The rate of infection of susceptible individuals, $k_1(v,t)$, is defined
-as
-
-$$\begin{equation}
+as $$\begin{equation}
+k_0(t) = \rho(t)\beta\left(D\cdot I^{(eff)}\right), 
+\end{equation}$$ $$\begin{equation}
 k_1(v,t) = f_A(\eta_{A,v},t)k_0(t)
 \qquad(1.1)
 \end{equation}$$
 
-with Here, $f_A$ is the reduction in acquisition of infection among the
-vaccinated, and $\eta_{A,v}$ is the vaccine effect size; $\rho(t)$ is
-the time-dependent modifier of the rate of infection, $\beta$; $D$ is
-the contact matrix between groups; $\epsilon$ is the reduction in
-infectiousness from asymptomatic relative to symptomatic individuals;
-$p_3$ and $p_4$ are the proportions of asymptomatic and symptomatic
-infectious days, respectively, spent self isolating, and
+with $$\begin{equation}
+ I^{(eff)}=\epsilon (1-p_3)I_{A,0}+(1-p_4)I_{S,0}+\sum_{v=1}^2f_T(\eta_{T,v},t)(\epsilon (1-p_3)I_{A,v}+(1-p_4)I_{S,v}). 
+\end{equation}$$ Here, $f_A$ is the reduction in acquisition of
+infection among the vaccinated, and $\eta_{A,v}$ is the vaccine effect
+size; $\rho(t)$ is the time-dependent modifier of the rate of infection,
+$\beta$; $D$ is the contact matrix between groups; $\epsilon$ is the
+reduction in infectiousness from asymptomatic relative to symptomatic
+individuals; $p_3$ and $p_4$ are the proportions of asymptomatic and
+symptomatic infectious days, respectively, spent self isolating, and
 $I_{\cdot,\cdot}$ is the vector of number of infectious asymptomatic
 ($I_{A,\cdot}$) and symptomatic ($I_{S,\cdot}$) people who are
 unvaccinated ($I_{\cdot,0}$), vaccinated with the BPSV ($I_{\cdot,1}$),
 or vaccinated with the specific vaccine ($I_{\cdot,2}$).
 
-is the rate to asymptomatic infectiousness, where $p_S$ is the
-probability to become symptomatic, and $\sigma$ is the expected duration
-of the latent period before the onset of infectiousness;
+$$\begin{equation}
+ k_2 = (1-p_S)/\sigma 
+\end{equation}$$ is the rate to asymptomatic infectiousness, where $p_S$
+is the probability to become symptomatic, and $\sigma$ is the expected
+duration of the latent period before the onset of infectiousness;
 
-is the rate of recovery from asymptomatic infection;
+$$\begin{equation}
+ k_3 = 1/\gamma_A  
+\end{equation}$$ is the rate of recovery from asymptomatic infection;
 
-is the rate of symptom onset;
+$$\begin{equation}
+ k_4 = p_S/ \sigma; 
+\end{equation}$$ is the rate of symptom onset;
 
-is the rate of recovery from symptomatic infection, where $p_H$ is the
-probability to be hospitalised, and
+$$\begin{equation}
+k_5 =  (1-p_H) / \gamma_I 
+\end{equation}$$ is the rate of recovery from symptomatic infection,
+where $p_H$ is the probability to be hospitalised, and
 $\gamma_I = p_H\gamma_H + (1-p_H)\gamma_R$ is the expected time to be in
 compartment $I_S$: $\gamma_H$ is the expected duration before
 hospitalisation and $\gamma_R$ is the expected duration before recovery.
-is the baseline probability to be hospitalised ($`\hat{p}_H`$) adjusted
-by the vaccine effect protecting against hospitalisation
-($`f_H(\eta_{H,v},t)`$). Then
+$$\begin{equation}
+p_H=f_H(\eta_{H,v},t)\hat{p}_H
+\end{equation}$$ is the baseline probability to be hospitalised
+($`\hat{p}_H`$) adjusted by the vaccine effect protecting against
+hospitalisation ($`f_H(\eta_{H,v},t)`$). Then
 
-is the rate of hospitalisation following symptomatic infection.
+$$\begin{equation}
+k_6 = p_H/\gamma_I
+\end{equation}$$ is the rate of hospitalisation following symptomatic
+infection.
 
-is the rate of recovery of hospitalised patients, where $p_D$ is the
-probability to die given hospitalisation, and
+$$\begin{equation}
+k_7 = (1-p_D) / \lambda_H
+\end{equation}$$ is the rate of recovery of hospitalised patients, where
+$p_D$ is the probability to die given hospitalisation, and
 $\lambda_H = p_D\lambda_D + (1-p_D)\lambda_R$ is the expected time to be
 in compartment $H$: $\lambda_D$ is the expected duration before death
 and $\lambda_R$ is the expected duration before recovery. $p_D$ is the
 probability to die given hospitalisation. Finally,
 
-is the rate of death following hospitalisation.
+$$\begin{equation}
+k_8 = p_D/\lambda_H
+\end{equation}$$ is the rate of death following hospitalisation.
 
 # 2 Vaccination state transitions
 
@@ -143,20 +162,27 @@ five-year age bands $a$ up to age group 75+. We map it to a four-by-four
 matrix $D^{(4)}$ corresponding to the four age groups $g$ used in the
 DAEDALUS model, using population sizes, $\hat{P}_a$:
 
+$$\begin{equation}
+D_{gg'}^{(4)} = \frac{\sum_{a\in g}\hat{P}_{a}\sum_{a'\in g'}D^{(16)}_{a,a'}}{\sum_{a\in g}\hat{P}_{a}}.
+\end{equation}$$
+
 Using $P_g$ to represent the population sizes of the DAEDALUS age
-groups,
+groups, $$\begin{equation}
+P_g=\sum_{a\in g}\hat{P}_a,
+\end{equation}$$
 
 We get to the matrix $D(\textbf{1})$ by broadcasting the four-by-four
 matrix to the 49-by-49 one. Contacts from all groups $i$ to working
 groups $j$ depend on the age group of the group ($`g(i)`$), and the
 fraction of the age-population represented in group $j$, where $w_{j}$
-is the number of people in group $j$: for $i$ and $j$ including all
-groups (working and non-working). Each group $i$ contains people that
-belong to only one age group $g$. We refer to the age group of the
-people in group $i$ as $g(i)$. Then $P_{g(j)}$ is the number of people
-in the age group of group $j$, so $P_{g(j)}=w_{j}$ for age groups 0 to
-4, 5 to 19 and 65+, and $P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}$ for
-ages 20 to 64.
+is the number of people in group $j$: $$\begin{equation}
+D_{ij}(\textbf{1}) = D^{(4)}_{g(i),g(j)}\frac{w_{j}}{P_{g(j)}}
+\end{equation}$$ for $i$ and $j$ including all groups (working and
+non-working). Each group $i$ contains people that belong to only one age
+group $g$. We refer to the age group of the people in group $i$ as
+$g(i)$. Then $P_{g(j)}$ is the number of people in the age group of
+group $j$, so $P_{g(j)}=w_{j}$ for age groups 0 to 4, 5 to 19 and 65+,
+and $P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}$ for ages 20 to 64.
 
 ## 3.1 Matrix $A$: community contacts
 
@@ -182,6 +208,10 @@ roughly 40% of total contact when all sectors are open.
 We decompose Matrix $A$ into its constituent parts, representing intra-
 and inter-household interactions ($L$), school interactions ($S$),
 hospitality interactions ($H$) and travel interactions ($T$):
+
+$$\begin{equation}
+A=A^{(L)} + A^{(S)} + A^{(H)} + A^{(T)}
+\end{equation}$$
 
 School contacts are estimated separately in two age groups (pre-school
 age: 0 – 4; school age: 5 – 19). Diagonal matrix $A^{(S)}$ counts the
@@ -229,7 +259,9 @@ for $g(i)\neq g(j)$ (Supplementary Table 2).
 The value $x_{H,\tau}$ is the workforce-weighted average extent to which
 the hospitality sectors are open in the period $\tau$, so that the
 number of contacts per person scales linearly according to closure:
-where we sum over only the hospitality sectors.
+$$\begin{equation}
+x_{H,\tau} = \frac{\sum_ix_{i\tau}w_i}{\sum_iw_i}
+\end{equation}$$ where we sum over only the hospitality sectors.
 
 Finally, $A^{(L)} = A - (A^{(S)} + A^{(H)} + A^{(T)}.)$
 
@@ -291,7 +323,10 @@ times a month, a few times a year or less often, or for the first time).
 %For a technical description as to how the contact matrices are
 constructed, please see the Supplementary Material.
 
-Then \$\$ for $j=1,...,N+4$. $C_{ij}=0$ for $i>N$.
+Then $$\begin{equation}
+C_{ij} = x_{i\tau}(1-p_{i\tau})\frac{c_{i}w_{j}}{\sum_{j'}^{N+4}w_{j'}},
+\qquad(3.5)
+\end{equation}$$ for $j=1,...,N+4$. $C_{ij}=0$ for $i>N$.
 
 Here, there is linear scaling of $C_{ij}$ with respect to working from
 home, and linear scaling with respect to sector closure, which becomes
