@@ -156,15 +156,15 @@ groups, $$P_g=\sum_{a\in g}\hat{P}_a,$$
 We get to the matrix $D(\textbf{1})$ by broadcasting the four-by-four
 matrix to the 49-by-49 one. Contacts from all groups $i$ to working
 groups $j$ depend on the age group of the group ($g(i)$), and the
-fraction of the age-population represented in group $j$, where $w_{j}^*$
+fraction of the age-population represented in group $j$, where $w_{j}$
 is the number of people in group $j$:
-$$D_{ij}(\textbf{1}) = D^{(4)}_{g(i),g(j)}\frac{w_{j}^*}{P_{g(j)}}$$ for
+$$D_{ij}(\textbf{1}) = D^{(4)}_{g(i),g(j)}\frac{w_{j}}{P_{g(j)}}$$ for
 $i$ and $j$ including all groups (working and non-working). Each group
 $i$ contains people that belong to only one age group $g$. We refer to
 the age group of the people in group $i$ as $g(i)$. Then $P_{g(j)}$ is
-the number of people in the age group of group $j$, so
-$P_{g(j)}=w_{j}^*$ for age groups 0 to 4, 5 to 19 and 65+, and
-$P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}^*$ for ages 20 to 64.
+the number of people in the age group of group $j$, so $P_{g(j)}=w_{j}$
+for age groups 0 to 4, 5 to 19 and 65+, and
+$P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}$ for ages 20 to 64.
 
 ## 3.1 Matrix $A$: community contacts
 
@@ -209,7 +209,7 @@ Matrix $A^{(T)}$ counts contacts between working people, representing
 travel. We assume that transport contacts only add to the infection risk
 if the sector is open and the workers travel to and from their
 workplace. $$\begin{equation}
-A_{ij}^{(T)} = x_{j\tau}(1-p_{i\tau})(1-p_{j\tau})\frac{2.5w_{j}^*}{\sum_gP_g}
+A_{ij}^{(T)} = x_{j\tau}(1-p_{i\tau})(1-p_{j\tau})\frac{2.5w_{j}}{\sum_gP_g}
 \qquad(3.2)
 \end{equation}$$ for $i=1,...,N$. $A_{ij}^{(T)}=0$ for $i>N$.
 
@@ -231,7 +231,7 @@ Matrix $A^{(H)}$ gives the contacts made in the hospitality sector. Each
 age group makes an average of 0, 0.5, 1 and 1.5 total contacts for age
 groups 0-4, 5-19, 20-64, and 65+, respectively . These contacts are made
 in proportion to population, so we can write $$\begin{equation}
-A_{ij}^{(H)} = x_{H,\tau}\frac{A_{g(i)}^{(H0)}w_{j}^*}{\sum_{j'}w_{j'}^*}
+A_{ij}^{(H)} = x_{H,\tau}\frac{A_{g(i)}^{(H0)}w_{j}}{\sum_{j'}w_{j'}}
 \qquad(3.3)
 \end{equation}$$ with $A^{(H0)} = \{0,0.5,1,1.5\}$, and $A_{ij}^{(H)}=0$
 for $g(i)\neq g(j)$ (Supplementary Table 2).
@@ -239,8 +239,8 @@ for $g(i)\neq g(j)$ (Supplementary Table 2).
 The value $x_{H,\tau}$ is the workforce-weighted average extent to which
 the hospitality sectors are open in the period $\tau$, so that the
 number of contacts per person scales linearly according to closure:
-$$x_{H,\tau} = \frac{\sum_ix_{i\tau}w_i^*}{\sum_iw_i^*}$$ where we sum
-over only the hospitality sectors.
+$$x_{H,\tau} = \frac{\sum_ix_{i\tau}w_i}{\sum_iw_i}$$ where we sum over
+only the hospitality sectors.
 
 Finally, $A^{(L)} = A - (A^{(S)} + A^{(H)} + A^{(T)}.)$
 
