@@ -42,16 +42,14 @@ of time $t$, vaccination status $v$, and group identity $g$ (where the
 groups are the 45 sectors and the four age groups).
 
 The rate of infection of susceptible individuals, $k_1(v,t)$, is defined
-as $$k_0(t) = \rho(t)\beta\left(D\cdot I^{(eff)}\right),$$
+as
 
 $$\begin{equation}
 k_1(v,t) = f_A(\eta_{A,v},t)k_0(t)
 \qquad(1.1)
 \end{equation}$$
 
-with
-$$I^{(eff)}=\epsilon (1-p_3)I_{A,0}+(1-p_4)I_{S,0}+\sum_{v=1}^2f_T(\eta_{T,v},t)(\epsilon (1-p_3)I_{A,v}+(1-p_4)I_{S,v}).$$
-Here, $f_A$ is the reduction in acquisition of infection among the
+with Here, $f_A$ is the reduction in acquisition of infection among the
 vaccinated, and $\eta_{A,v}$ is the vaccine effect size; $\rho(t)$ is
 the time-dependent modifier of the rate of infection, $\beta$; $D$ is
 the contact matrix between groups; $\epsilon$ is the reduction in
@@ -63,18 +61,16 @@ $I_{\cdot,\cdot}$ is the vector of number of infectious asymptomatic
 unvaccinated ($I_{\cdot,0}$), vaccinated with the BPSV ($I_{\cdot,1}$),
 or vaccinated with the specific vaccine ($I_{\cdot,2}$).
 
-$$k_2 = (1-p_S)/\sigma$$ is the rate to asymptomatic infectiousness,
-where $p_S$ is the probability to become symptomatic, and $\sigma$ is
-the expected duration of the latent period before the onset of
-infectiousness;
+is the rate to asymptomatic infectiousness, where $p_S$ is the
+probability to become symptomatic, and $\sigma$ is the expected duration
+of the latent period before the onset of infectiousness;
 
-$$k_3 = 1/\gamma_A $$ is the rate of recovery from asymptomatic
-infection;
+is the rate of recovery from asymptomatic infection;
 
-$$k_4 = p_S/ \sigma;$$ is the rate of symptom onset;
+is the rate of symptom onset;
 
-$$k_5 =  (1-p_H) / \gamma_I$$ is the rate of recovery from symptomatic
-infection, where $p_H$ is the probability to be hospitalised, and
+is the rate of recovery from symptomatic infection, where $p_H$ is the
+probability to be hospitalised, and
 $\gamma_I = p_H\gamma_H + (1-p_H)\gamma_R$ is the expected time to be in
 compartment $I_S$: $\gamma_H$ is the expected duration before
 hospitalisation and $\gamma_R$ is the expected duration before recovery.
@@ -147,14 +143,12 @@ five-year age bands $a$ up to age group 75+. We map it to a four-by-four
 matrix $D^{(4)}$ corresponding to the four age groups $g$ used in the
 DAEDALUS model, using population sizes, $\hat{P}_a$:
 
-$$D_{gg'}^{(4)} = \frac{\sum_{a\in g}\hat{P}_{a}\sum_{a'\in g'}D^{(16)}_{a,a'}}{\sum_{a\in g}\hat{P}_{a}}.$$
-
 Using $P_g$ to represent the population sizes of the DAEDALUS age
 groups,
 
 We get to the matrix $D(\textbf{1})$ by broadcasting the four-by-four
 matrix to the 49-by-49 one. Contacts from all groups $i$ to working
-groups $j$ depend on the age group of the group ($g(i)$), and the
+groups $j$ depend on the age group of the group ($`g(i)`$), and the
 fraction of the age-population represented in group $j$, where $w_{j}$
 is the number of people in group $j$: for $i$ and $j$ including all
 groups (working and non-working). Each group $i$ contains people that
@@ -397,27 +391,14 @@ for the model age groups $g$ as a population-weighted average, taking
 into account the size of each age group, $N_a$. For the expected number
 of life years lost per death, we take into account also the probability
 to die given infection, $P(D|I,a)$ (Table ):
-$$l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_al_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)};$$
-$$l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_al_a}{\sum_{a\in g}N_a};$$
 
 Expected life years remaining with discounting taken into account can be
-written
-
-``` math
-\begin{align}
+written $$\begin{align}
 \hat{l}_g&=\sum_{y=1}^{l_g}\frac{1}{(1+r)^{y}}%\\
-%&=\sum_{y=1}^{l_g}(1+r)^{-y}\\
-%&=\frac{(1+r)^{-1}-(1+r)^{-n-1}}{1-(1+r)^{-1}}\\
-%&=\frac{1-(1+r)^{-l_g}}{r}\\
-%&=\frac{1-(1+r)^{-l_g}}{r}
-\end{align}
-```
-
-for discount rate $r>0$. The discounted number of years lost given $D_g$
-deaths due to COVID-19 for each age group is %We use this notation to
-define the cost as a simple product of the VLY and the discounted number
-of years for input into Equation . %Then the value of lives lost is
-%\\begin{align} %\*Y=&*gD\_g*{y=0}^{l\_g}\\ %=&\_gD\_g, %\\end{align}
+\end{align}$$ for discount rate $r>0$. The discounted number of years
+lost given $D_g$ deaths due to COVID-19 for each age group is %We use
+this notation to define the cost as a simple product of the VLY and the
+discounted number of years for input into Equation .
 
 The VLY used by policy makers should reflect the value that members of
 the society place on reductions of their own mortality. %We do not take
@@ -430,9 +411,9 @@ the number of expected life years remaining, and where each discounted
 year has the same value:
 
 Finally, we define the value of lives lost as In the applications, we
-report the total YLLs, $$\text{YLL}=\sum_gD_gl_g^{\text{(death)}},$$ in
-their natural units of years, and, separately, the monetized life years
-lost, $f_{\text{lives}}(D,l^{\text{(death)}},\text{VLY},r)$, in \$.
+report the total YLLs, in their natural units of years, and, separately,
+the monetized life years lost,
+$f_{\text{lives}}(D,l^{\text{(death)}},\text{VLY},r)$, in \$.
 
 We identify three estimates for the VSL in Indonesia. For the example in
 Section , we use the value of \$950,000 for a life of a working-age
