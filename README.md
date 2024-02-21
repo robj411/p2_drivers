@@ -78,21 +78,20 @@ infection, where $p_H$ is the probability to be hospitalised, and
 $\gamma_I = p_H\gamma_H + (1-p_H)\gamma_R$ is the expected time to be in
 compartment $I_S$: $\gamma_H$ is the expected duration before
 hospitalisation and $\gamma_R$ is the expected duration before recovery.
-$$p_H=f_H(\eta_{H,v},t)\hat{p}_H$$ is the baseline probability to be
-hospitalised ($\hat{p}_H$) adjusted by the vaccine effect protecting
-against hospitalisation ($f_H(\eta_{H,v},t)$). Then
+is the baseline probability to be hospitalised ($`\hat{p}_H`$) adjusted
+by the vaccine effect protecting against hospitalisation
+($`f_H(\eta_{H,v},t)`$). Then
 
-$$k_6 = p_H/\gamma_I$$ is the rate of hospitalisation following
-symptomatic infection.
+is the rate of hospitalisation following symptomatic infection.
 
-$$k_7 = (1-p_D) / \lambda_H$$ is the rate of recovery of hospitalised
-patients, where $p_D$ is the probability to die given hospitalisation,
-and $\lambda_H = p_D\lambda_D + (1-p_D)\lambda_R$ is the expected time
-to be in compartment $H$: $\lambda_D$ is the expected duration before
-death and $\lambda_R$ is the expected duration before recovery. $p_D$ is
-the probability to die given hospitalisation. Finally,
+is the rate of recovery of hospitalised patients, where $p_D$ is the
+probability to die given hospitalisation, and
+$\lambda_H = p_D\lambda_D + (1-p_D)\lambda_R$ is the expected time to be
+in compartment $H$: $\lambda_D$ is the expected duration before death
+and $\lambda_R$ is the expected duration before recovery. $p_D$ is the
+probability to die given hospitalisation. Finally,
 
-$$k_8 = p_D/\lambda_H$$ is the rate of death following hospitalisation.
+is the rate of death following hospitalisation.
 
 # 2 Vaccination state transitions
 
@@ -151,20 +150,19 @@ DAEDALUS model, using population sizes, $\hat{P}_a$:
 $$D_{gg'}^{(4)} = \frac{\sum_{a\in g}\hat{P}_{a}\sum_{a'\in g'}D^{(16)}_{a,a'}}{\sum_{a\in g}\hat{P}_{a}}.$$
 
 Using $P_g$ to represent the population sizes of the DAEDALUS age
-groups, $$P_g=\sum_{a\in g}\hat{P}_a,$$
+groups,
 
 We get to the matrix $D(\textbf{1})$ by broadcasting the four-by-four
 matrix to the 49-by-49 one. Contacts from all groups $i$ to working
 groups $j$ depend on the age group of the group ($g(i)$), and the
 fraction of the age-population represented in group $j$, where $w_{j}$
-is the number of people in group $j$:
-$$D_{ij}(\textbf{1}) = D^{(4)}_{g(i),g(j)}\frac{w_{j}}{P_{g(j)}}$$ for
-$i$ and $j$ including all groups (working and non-working). Each group
-$i$ contains people that belong to only one age group $g$. We refer to
-the age group of the people in group $i$ as $g(i)$. Then $P_{g(j)}$ is
-the number of people in the age group of group $j$, so $P_{g(j)}=w_{j}$
-for age groups 0 to 4, 5 to 19 and 65+, and
-$P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}$ for ages 20 to 64.
+is the number of people in group $j$: for $i$ and $j$ including all
+groups (working and non-working). Each group $i$ contains people that
+belong to only one age group $g$. We refer to the age group of the
+people in group $i$ as $g(i)$. Then $P_{g(j)}$ is the number of people
+in the age group of group $j$, so $P_{g(j)}=w_{j}$ for age groups 0 to
+4, 5 to 19 and 65+, and $P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}$ for
+ages 20 to 64.
 
 ## 3.1 Matrix $A$: community contacts
 
@@ -190,8 +188,6 @@ roughly 40% of total contact when all sectors are open.
 We decompose Matrix $A$ into its constituent parts, representing intra-
 and inter-household interactions ($L$), school interactions ($S$),
 hospitality interactions ($H$) and travel interactions ($T$):
-
-$$A=A^{(L)} + A^{(S)} + A^{(H)} + A^{(T)}$$
 
 School contacts are estimated separately in two age groups (pre-school
 age: 0 – 4; school age: 5 – 19). Diagonal matrix $A^{(S)}$ counts the
@@ -239,8 +235,7 @@ for $g(i)\neq g(j)$ (Supplementary Table 2).
 The value $x_{H,\tau}$ is the workforce-weighted average extent to which
 the hospitality sectors are open in the period $\tau$, so that the
 number of contacts per person scales linearly according to closure:
-$$x_{H,\tau} = \frac{\sum_ix_{i\tau}w_i}{\sum_iw_i}$$ where we sum over
-only the hospitality sectors.
+where we sum over only the hospitality sectors.
 
 Finally, $A^{(L)} = A - (A^{(S)} + A^{(H)} + A^{(T)}.)$
 
