@@ -42,14 +42,20 @@ of time $t$, vaccination status $v$, and group identity $g$ (where the
 groups are the 45 sectors and the four age groups).
 
 The rate of infection of susceptible individuals, $k_1(v,t)$, is defined
-as $$\begin{equation}
+as
+
+$$\begin{equation}
 k_0(t) = \rho(t)\beta\left(D\cdot I^{(eff)}\right), 
-\end{equation}$$ $$\begin{equation}
+\end{equation}$$
+
+$$\begin{equation}
 k_1(v,t) = f_A(\eta_{A,v},t)k_0(t)
 \qquad(1.1)
 \end{equation}$$
 
-with $$\begin{equation}
+with
+
+$$\begin{equation}
  I^{(eff)}=\epsilon (1-p_3)I_{A,0}+(1-p_4)I_{S,0}+\sum_{v=1}^2f_T(\eta_{T,v},t)(\epsilon (1-p_3)I_{A,v}+(1-p_4)I_{S,v}). 
 \end{equation}$$ Here, $f_A$ is the reduction in acquisition of
 infection among the vaccinated, and $\eta_{A,v}$ is the vaccine effect
