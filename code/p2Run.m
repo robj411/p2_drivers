@@ -830,7 +830,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     % t is greater than the end of the vaccine rollout: otherval = 0
     tval = min(t-(max(p2.tpoints)+7),0);
     % hval: no patients
-    hval = min(100-sum(H + Hv1 + Hv2),0);
+    hval = min(1000-sum(H + Hv1 + Hv2),0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
         Rt3 = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
@@ -991,7 +991,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,ntot,dis,i,p2
     % t is greater than the end of the vaccine rollout: otherval = 0
     tval = min(t-(max(p2.tpoints)+7),0);
     % hval: no patients
-    hval = min(100-sum(H + Hv1 + Hv2),0);
+    hval = min(1000-sum(H + Hv1 + Hv2),0);
     R3flag = tval + hval;
     if tval==0 && hval==0
         Rt3 = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
@@ -1119,7 +1119,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,ntot,dis,i,p2)
     % t is greater than the end of the vaccine rollout: otherval = 0
     tval = min(t-(max(p2.tpoints)+7),0);
     % hval: no patients
-    hval = min(100-sum(H + Hv1 + Hv2),0);
+    hval = min(1000-sum(H + Hv1 + Hv2),0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
         Rt3 = get_R(ntot,dis2,h,g2,S+Shv1,Sv1,Sv2,...
