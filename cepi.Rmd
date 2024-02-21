@@ -295,6 +295,7 @@ There is high variation in projected costs across modelling runs, for all countr
 ```{r resultsBAU,echo=F,warning=F,message=F}
 
 
+result_cols <- c('Cost','dYLLs','School','GDP_loss')
 
 allresults <- data.frame()
 
@@ -305,6 +306,7 @@ for (i in 1:length(income_levels)){
         results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_365_0.csv'),header=T);
         results$strategy <- inp3
         results$igroup <- income_level
+        results$Deaths <- NULL
         allresults <- rbind(allresults,results)
     }
 }
@@ -320,8 +322,8 @@ vioplot <- melt(allresults[,(nvar-3):ncol(allresults)],id.vars=c('strategy','igr
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
 vioplot$strategy <- factor(vioplot$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
 vioplot$variable <- factor(vioplot$variable,
-                           levels=c('Cost','Deaths','School','GDP_loss'),
-                           labels=c('Cost','YLLs','Education','GDP'))
+                           levels=c('Cost','dYLLs','School','GDP_loss'),
+                           labels=c('Cost','dYLLs','Education','GDP'))
 
 
 ```
@@ -346,6 +348,7 @@ for(vl in 1:length(vaccination_levels)){
             inp3 <- strategies[k];
             income_level <- income_levels[i];
             results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
+            results$Deaths <- NULL
             results$strategy <- inp3
             results$igroup <- income_level
             results$samplei <- 1:nrow(results)
@@ -365,8 +368,8 @@ for(vl in 1:length(vaccination_levels)){
     vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
     vioplot$strategy <- factor(vioplot$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
     vioplot$variable <- factor(vioplot$variable,
-                               levels=c('Cost','Deaths','School','GDP_loss'),
-                               labels=c('Cost','YLLs','Education','GDP'))
+                               levels=c('Cost','dYLLs','School','GDP_loss'),
+                               labels=c('Cost','dYLLs','Education','GDP'))
     
     p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) + 
       geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
@@ -388,15 +391,19 @@ for(vl in 1:length(vaccination_levels)){
     
     allallresults <- rbind(allallresults,allresults)
     
-    meantab <- setDT(allresults)[,.(deaths=mean(Deaths),
+    setDT(allresults)
+    allresults[,mincost:=as.numeric(Cost==min(Cost)),by=.(samplei,igroup)]
+    
+    meantab <- allresults[,.(deaths=mean(dYLLs),
                             education=mean(School),
-                            gdp=mean(GDP_loss)),by=.(strategy,igroup)]
-    meltmean <- reshape2::melt(meantab)
+                            gdp=mean(GDP_loss),
+                            nmin=sum(mincost)),by=.(strategy,igroup)]
+    meltmean <- reshape2::melt(meantab,id.vars=c('strategy','igroup','nmin'))
     meltmean$scen <- paste0(vaccination_level,', ',c('No BPSV','BPSV')[bpsv+1])
     meltmeantab <- rbind(meltmeantab,meltmean)
     
     tabres <- setDT(allresults)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
-                            deaths=paste0(round(mean(Deaths),1),' (',paste0(round(quantile(Deaths,c(0.025,0.975)),1),collapse=', '),')'),
+                            deaths=paste0(round(mean(dYLLs),1),' (',paste0(round(quantile(dYLLs,c(0.025,0.975)),1),collapse=', '),')'),
                             education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
                             gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
                             ),by=.(strategy,igroup)]
@@ -454,8 +461,9 @@ meltmeantab$scen <- factor((meltmeantab$scen),
                                     levels=c('365, No BPSV','365, BPSV',
                                              '100, No BPSV','100, BPSV'))
 setDT(meltmeantab)
-meltmeantab[,cost:=sum(value),by=.(scen,igroup,strategy)]
-meltmeantab[,mincost:=cost==min(cost),by=.(scen,igroup)]
+# meltmeantab[,cost:=sum(value),by=.(scen,igroup,strategy)]
+# meltmeantab[,mincost:=cost==min(cost),by=.(scen,igroup)]
+meltmeantab[,mincost:=nmin==max(nmin),by=.(scen,igroup)]
 ggplot(meltmeantab) + 
       geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
                    y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP')),
@@ -467,7 +475,7 @@ ggplot(meltmeantab) +
         theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
               legend.position = 'top') 
     # ggsave(p,filename='figures/expectedcosts.pdf',height=10)
-
+# subset(meltmeantab,igroup=='HIC'&scen=='100, BPSV')
 
 # ggplot(subset(meltmeantab,grepl('Secondary',igroupcountry))) + 
 #       geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
@@ -522,10 +530,10 @@ for(vl in 1:length(vaccination_levels)){
 
 ```{r diffviolin,fig.cap='Model results for costs saved by 100-day and BPS vaccines.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
-vioplot <- melt(difflist[,colnames(difflist)%in%c('Cost','Deaths','School','GDP_loss','igroup','scen')],id.vars=c('igroup','scen'))
+vioplot <- melt(difflist[,colnames(difflist)%in%c('Cost','dYLLs','School','GDP_loss','igroup','scen')],id.vars=c('igroup','scen'))
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
 vioplot$variable <- factor(vioplot$variable,
-                           levels=c('Cost','Deaths','School','GDP_loss'),
+                           levels=c('Cost','dYLLs','School','GDP_loss'),
                            labels=c('Total','YLLs','Education','GDP'))
 
 ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) + 
@@ -550,12 +558,12 @@ ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) +
 ```{r tabresdiff,tab.cap='Value of vaccines: expected difference between BAU and 100 days. Mean values and 95% prediction intervals.',echo=F,warning=F,message=F}
 
 
-meantab <- setDT(difflist)[,.(deaths=mean(Deaths),
+meantab <- setDT(difflist)[,.(deaths=mean(dYLLs),
                         education=mean(School),
                         gdp=mean(GDP_loss)),by=.(igroup,BPSV,Vaccine)]
 
 tabres <- setDT(difflist)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
-                        deaths=paste0(round(mean(Deaths),1),' (',paste0(round(quantile(Deaths,c(0.025,0.975)),1),collapse=', '),')'),
+                        deaths=paste0(round(mean(dYLLs),1),' (',paste0(round(quantile(dYLLs,c(0.025,0.975)),1),collapse=', '),')'),
                         education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
                         gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
                         ),by=.(BPSV,Vaccine,igroup)]
@@ -785,7 +793,7 @@ These relationships are identified in the value-of-information analyses: the las
 param_cutoff <- c('Remote quantile','Time to death')
 
 voiall <- readRDS('code/results/voidiff_0_100.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
+rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 rownames(voiall) <- gsub('Cost:','Value:',rownames(voiall))
 
@@ -832,7 +840,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```{r voi,fig.cap='\\footnotesize Value of information for BAU, Origin country.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('code/results/voi_365_0.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
+rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
 fullnames <- rownames(voiall)
@@ -927,7 +935,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
 ```{r dvoi100,fig.cap='Decision VOI for 100 days. Which parameters would enable the decision maker to choose a strategy that minimises expected losses for 100-day vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
 
 voiall <- readRDS('code/results/decisionvoi100_0.Rds')*100
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
+rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
 nscen <- nrow(voiall)
@@ -966,7 +974,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
 ```{r mi,fig.cap='Mutual information (MI) for BAU.',eval=T,echo=F,warning=F,message=F,fig.height=12,eval=F}
 
 voiall <- readRDS('code/results/mi.Rds')
-rownames(voiall) <- gsub('Deaths:','YLLs:',rownames(voiall))
+rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
 nscen <- nrow(voiall)
@@ -1180,6 +1188,8 @@ ggplot(subset(gdpdata2,!is.na(IncomeGroup)&IncomeGroup!='')) +
 
 eccon <- readxl::read_xlsx('data/6.economic_closures.xlsx',sheet='configurations')
 for(i in 2:ncol(eccon)) eccon[,i] <- round(eccon[,i]*100)
+colorder <- c(2,1,2,3,4,5)
+eccon <- eccon[,c(0,colorder)+1]
 
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. Elimination values are taken from Australia. Lockdown and Economic Closures values are taken from the UK. School Closures values are taken from Indonesia. \\label{tab:eccon}')

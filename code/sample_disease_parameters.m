@@ -80,12 +80,13 @@ disp(hyper_param_struct)
 
 %% ihr and hfr 
 
-ihrs = table2array(sevenpathogens(:,ircolumns(:,1)));
-ifrs = table2array(sevenpathogens(:,ircolumns(:,2)));
+ihrs = table2array(sevenpathogens(:,ircolumns(1:17,1)));
+ifrs = table2array(sevenpathogens(:,ircolumns(1:17,2)));
 hfrs = ifrs./ihrs;
 
-maxihrs = mean(ihrs');
-maxhfrs = mean(hfrs');
+maxihrs = max(ihrs');
+%%!! is the last val
+maxhfrs = hfrs(:,end); %max(hfrs(hfrs<1)');
 
 pHat = betafit(maxihrs);
 maxihr = betarnd(pHat(1),pHat(2),nsamples,1);
@@ -110,34 +111,47 @@ maxhfrrr = max(hfrrr');
 
 param_struct.ihr = zeros(nsamples, size(ihrrr,2));
 param_struct.ifr = zeros(nsamples, size(ihrrr,2));
+hfr = zeros(nsamples, size(ihrrr,2));
 
 for i = 1:nsamples
     param_struct.ihr(i,:) = ihrrr(i,:) ./ maxihrrr(i) .* maxihr(i);
-    hfr = hfrrr(i,:) ./ maxhfrrr(i) .* maxhfr(i);
-    param_struct.ifr(i,:) = param_struct.ihr(i,:) .* hfr;
+    hfr(i,:) = hfrrr(i,:) ./ maxhfrrr(i) .* maxhfr(i);
+    param_struct.ifr(i,:) = param_struct.ihr(i,:) .* hfr(i,:);
 end
+
+plotfun = @(x) log(x'./repmat(x(:,1),1,size(x,2))');
+plotfun = @(x) log(x');
+h = figure('Position', [100 100 900 300]); 
+subplot(1,3,1); plot(plotfun(param_struct.ihr),'color',[.5 .5 .5 .05]); hold on
+subplot(1,3,1); plot(plotfun(ihrs)); title('IHR')
+subplot(1,3,2); plot(plotfun(hfr),'color',[.5 .5 .5 .05]); hold on
+subplot(1,3,2); plot(plotfun(hfrs)); title('HFR')
+subplot(1,3,3); plot(plotfun(param_struct.ifr),'color',[.5 .5 .5 .05]); hold on
+subplot(1,3,3); plot(plotfun(ifrs)); title('IFR')
+saveas(h,'../figures/ratesbyage','jpg');
+close gcf
 
 %% CEPI ifr
 
-newifr = readtable('../data/IFR Distributions.xlsx','ReadRowNames',true).IFR(1:17);
-% ps > ihr > ifr
-% hfr > ifr
-upperbound = sevenpathogens.ps;
-vals = mean(ihrs')';
-lowerbound = mean(ifrs')';
-
-transformedvals = (vals-lowerbound)./(upperbound-lowerbound);
-
-pHat = betafit(transformedvals);
-relvals = betarnd(pHat(1),pHat(2),nsamples,1);
-
-
-p1=7; newparams = gamrnd(p1,1/p1,nsamples,1);
-
-for i = 1:nsamples
-    param_struct.ifr(i,:) = newifr'*newparams(i);
-    param_struct.ihr(i,:) = relvals(i) * (param_struct.ps(i) - param_struct.ifr(i,:)) + param_struct.ifr(i,:); 
-end
+% newifr = readtable('../data/IFR Distributions.xlsx','ReadRowNames',true).IFR(1:17);
+% % ps > ihr > ifr
+% % hfr > ifr
+% upperbound = sevenpathogens.ps;
+% vals = mean(ihrs')';
+% lowerbound = mean(ifrs')';
+% 
+% transformedvals = (vals-lowerbound)./(upperbound-lowerbound);
+% 
+% pHat = betafit(transformedvals);
+% relvals = betarnd(pHat(1),pHat(2),nsamples,1);
+% 
+% 
+% p1=7; newparams = gamrnd(p1,1/p1,nsamples,1);
+% 
+% for i = 1:nsamples
+%     param_struct.ifr(i,:) = newifr'*newparams(i);
+%     param_struct.ihr(i,:) = relvals(i) * (param_struct.ps(i) - param_struct.ifr(i,:)) + param_struct.ifr(i,:); 
+% end
 
 
 end
