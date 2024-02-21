@@ -103,7 +103,24 @@ dis.R0 = R0beta(1);
 dis.beta = R0beta(2);
 
 dis.Td = get_doubling_time(data,dis);
+% dis.time_to_5 = log2(5) * dis.Td;
 
 dis.generation_time = log(dis.R0) / (log(2) / dis.Td);
+
+% get upper Rs in different configurations
+configurations = [data.x_elim, data.x_schc, data.x_econ];
+NNbar                = data.NNs;
+NNvec                = repmat(NNbar(1:lx),1,size(configurations,2)).*configurations;
+NNworkSum            = sum(NNvec,1);
+NNvec(lx+1:length(NNbar),:)     = repmat(NNbar(lx+1:length(NNbar)),1,size(configurations,2));
+NNvec(lx+adInd,:)    = sum(NNbar([1:lx,lx+adInd]))-NNworkSum;
+R0s = [];
+zs = zeros(size(data.NNs));
+for i=1:size(configurations,2)
+    Dtemp   = p2MakeDs(data,NNvec(:,i),configurations(:,i),data.wfh(1,:));
+    R0s(i) = get_R(data.ntot, dis, dis.h, dis.g2, NNvec(:,i), zs, zs,...
+            NNvec(:,i), Dtemp, dis.beta, 1, 0, 0);
+end
+dis.R0s = R0s;
 
 end
