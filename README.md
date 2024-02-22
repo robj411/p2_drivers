@@ -10,11 +10,6 @@
         contacts](#32-matrix-b-worker-to-worker-contacts)
     -   [3.3 Matrix $C$: Consumers-to-worker
         contacts](#33-matrix-c-consumers-to-worker-contacts)
-    -   [3.4 Reduced contact rates as a function of economic
-        closures](#34-reduced-contact-rates-as-a-function-of-economic-closures)
-        -   [3.4.1 Method 1](#341-method-1)
-        -   [3.4.2 Method 2](#342-method-2)
-        -   [3.4.3 Method 3](#343-method-3)
 -   [4 Definitions of socio-economic
     costs](#4-definitions-of-socio-economic-costs)
     -   [4.0.1 Valuing lost lives](#401-valuing-lost-lives)
@@ -168,9 +163,14 @@ Figure 2.1: Vaccine state transitions
 # 3 Contact rates
 
 The configuration $x_{i}$ and the proportion of workers working from
-home $p_i$ determine the scaling of contacts between workers, between
-consumers and workers, between school students, and between consumers in
-commercial settings.
+home $p_i$ determine the scaling of exposure to infection between
+different groups for different reasons:
+
+-   Worker absence due to sector closure
+-   Worker absence due to working from home
+-   Student absence due to school closure
+-   Customer absence due to sector closure: impact on workers
+-   Customer absence due to sector closure: impact on customers
 
 We construct contact matrix $D(x)$ as the sum of four matrices: $A(x)$
 (community contacts), $B(x)$ (worker-to-worker contacts), $C(x)$
@@ -220,8 +220,18 @@ In setting up a country, we sample values for $D^{(16)}$ (from which we
 get $`D(\textbf{1})`$). At the same time, we sample the proportion of
 contacts that come from workplaces, and workplace-related contacts. From
 these, we get $B(\textbf{1})$ and $C(\textbf{1})$, constructing the
-matrices and normalising. With $D(\textbf{1})$, $C(\textbf{1})$,
-$B(\textbf{1})$ and $\hat{C}(\textbf{1})$, we learn $A(\textbf{1})$.
+matrices and normalising.
+
+Matrix B is diagonal owing to lack of data regarding between-sector
+contacts (Haw et al. 2022). Note that $B_{ii}(\textbf{1})=0$ for $i>N$.
+Consumer-to-worker contacts (matrix $C$) describe contacts experienced
+by workers from consumers per sector. Note that $C_{ij}(\textbf{1})=0$
+for $i>N$. Matrix $\hat{C}(\textbf{1})$ is the complement of matrix
+$C(\textbf{1})$, computed by multiplying through by population,
+transposing, and dividing again by population.
+
+With $D(\textbf{1})$, $C(\textbf{1})$, $B(\textbf{1})$ and
+$\hat{C}(\textbf{1})$, we learn $A(\textbf{1})$.
 
 $A$ is decomposed into its constituent parts, representing intra- and
 inter-household interactions ($L$), school interactions ($S$),
@@ -298,13 +308,13 @@ scaling.
 Matrix $A^{(H)}(x)$ gives the contacts made in the hospitality sector:
 
 $$\begin{equation}
-A^{(H)}(x) = x_{H}A^{(H)}(\textbf{1})
+A^{(H)}(x) = x_{H}^2A^{(H)}(\textbf{1})
 \qquad(3.3)
 \end{equation}$$
 
 The value $x_{H}$ is the workforce-weighted average extent to which the
 hospitality sectors are open, so that the number of contacts per person
-scales linearly according to closure:
+scales superlinearly according to closure:
 
 ``` math
 x_{H} = \frac{\sum_ix_{i}w_i}{\sum_iw_i}
@@ -322,33 +332,18 @@ Finally, $A^{(L)} = A - (A^{(S)} + A^{(H)} + A^{(T)}.)$
 -   Individuals who stated that they are in employment
 -   Individuals who are of working age (20 – 64)
 
-Worker-to-worker contacts (matrix B) describe the at-work contacts in
-sectors, i.e. the number of contacts per day reported by an individual
-actively working in the same sector, which we denote $b_i$ (values given
-per sector in Supplementary Table 1). Here “actively working” refers to
-one period, i.e. two months in our application. Matrix B is diagonal
-owing to lack of data regarding between-sector contacts. Worker-worker
-contacts are defined by those contacts recorded to have happened at work
-and frequently (reported as a contact made almost every day). At work
-contacts at low frequency are classified as worker-consumer contacts.
-%At-home working ($p_{i\tau}$) is considered, and community contact
-rates apply for contacts between working household members.
-
-Then
-
 ``` math
-B_{ii} = x_{i\tau}(1-p_{i\tau})^2b_i,
+B_{ii}(x) = x_{i}(1-p_{i})^2B_{ii}(\textbf{1}),
 (\#eq:worker)
 ```
 
 for the $i=1,...,N$ working groups, with the number of contacts adjusted
-according to at-home working ($p_{i\tau}$) and sector openness
-($x_{i\tau}$). Note that $B_{ii}=0$ for $i>N$. As before, there is
-superlinear scaling of contacts with respect to working from home. There
-is linear scaling with respect to sector closure: that is, there are
-fewer contacts per person, but we do not approximate there being fewer
-people having them. This is because the latter is accounted for in the
-movement of people out of the group upon its closure.
+according to at-home working ($p_{i}$) and sector openness ($x_{i}$). As
+before, there is superlinear scaling of contacts with respect to working
+from home. There is linear scaling with respect to sector closure: that
+is, there are fewer contacts per person, but we do not approximate there
+being fewer people having them. This is because the latter is accounted
+for in the movement of people out of the group upon its closure.
 
 ## 3.3 Matrix $C$: Consumers-to-worker contacts
 
@@ -362,89 +357,18 @@ movement of people out of the group upon its closure.
     respondent could state the total number of contacts made instead of
     listing all individual contacts. If this was the case, this number
     was used instead of the sum of individual contacts made
--   Matrix $\hat{C}$ is the complement of matrix $C$, computed by
-    multiplying through by population, transposing, and dividing again
-    by population.
 
-Consumer-to-worker contacts (matrix $C$) describe contacts experienced
-by workers from consumers per sector, denoted $c_i$. As for $B$, the
-columns are weighted by sector population, though the row sums are
-sector specific. Contacts experienced by workers from consumers are
-defined by those contacts recorded to have happened at work less
-frequently than every day (i.e. recorded as a few times a week, a few
-times a month, a few times a year or less often, or for the first time).
-%For a technical description as to how the contact matrices are
-constructed, please see the Supplementary Material.
+$$\begin{equation}
+C_{ij}(x) = x_{i}(1-p_{i})C(\textbf{1}),
+\qquad(3.4)
+\end{equation}$$
 
-Then
+for $j=1,...,N+3$.
 
-``` math
-C_{ij} = x_{i\tau}(1-p_{i\tau})\frac{c_{i}w_{j}}{\sum_{j'}^{N+4}w_{j'}},
-(\#eq:ctow)
-```
-
-for $j=1,...,N+4$. $C_{ij}=0$ for $i>N$.
-
-Here, there is linear scaling of $C_{ij}$ with respect to working from
-home, and linear scaling with respect to sector closure, which becomes
-superlinear scaling for sectors as individuals are moved out of the
-compartment, as with matrix $B$.
-
-## 3.4 Reduced contact rates as a function of economic closures
-
-There are three methods we use to model reduction in transmission due to
-sector closures:
-
-1.  Moving individuals into a different compartment, and scaling the
-    number of contacts linearly
-2.  Scaling contacts superlinearly only
-3.  Scaling contacts linearly only
-
-and there are five scenarios where transmission is reduced:
-
--   Worker absence due to sector closure (uses method 1)
--   Worker absence due to working from home (uses method 2)
--   Student absence due to school closure (uses method 3)
--   Customer absence due to sector closure: impact on workers (uses
-    method 1)
--   Customer absence due to sector closure: impact on customers (uses
-    method 3)
-
-### 3.4.1 Method 1
-
-Recall that the number of infections is proportional to susceptible
-times contact rate times proportion of population infectious
-($S_iD_{ij}I_j/P_j$). When the number of people is reduced, the number
-of infections is reduced via both the number of people at risk ($S_i$)
-and the number of contacts per person ($D_{ij}$). This is precisely how
-we model worker absence due to sector closure: we reduce the number of
-contacts per person by scaling the contact rates according to the
-fraction who remain in the workplace, and the number of people who are
-susceptible is reduced by moving workers out of their sector compartment
-following to the closure schedule. The result is superlinear scaling
-with respect to closure. The same method applies for worker contacts
-made with the general population.
-
-### 3.4.2 Method 2
-
-For the other type of worker absence, working from home, we do not move
-any people from their compartmental group, so we compensate by reducing
-the number of contacts further by the amount the compartment would have
-reduced to, i.e. by the proportion of workers who remain,
-$(1-p_{i\tau})$, if $p_{i\tau}$ is the fraction of workers from sector
-$i$ who work from home in time period $\tau$. The same method applies
-for worker contacts while travelling.
-
-### 3.4.3 Method 3
-
-When workers work from home, each member of the population should
-interact with fewer workers each, which we approximate by scaling the
-number of contacts made between workers and consumers down by
-($1-p_{i\tau}$). This scaling is linear, reflecting that only the number
-of contacts per person changes, not the number of people making
-contacts. Likewise, the linear scalings reflect fewer contacts per
-person in schools and hospitality settings, but we retain the same
-numbers of people who make contacts at all.
+Here, there is linear scaling of $C_{ij}(\textbf{1})$ with respect to
+working from home, and linear scaling with respect to sector closure,
+which becomes superlinear scaling for sectors as individuals are moved
+out of the compartment, as with matrix $B(x)$.
 
 # 4 Definitions of socio-economic costs
 
@@ -574,6 +498,16 @@ authors estimate only the cost to lifetime wages without considering
 consequent changes to demand, consumption or growth.
 
 <div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-Haw2020" class="csl-entry">
+
+Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo
+Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. “<span
+class="nocase">Optimizing social and economic activity while containing
+SARS-CoV-2 transmission using DAEDALUS</span>.” *Nature Computational
+Science* 2: 223–33. <https://doi.org/10.25561/83928>.
+
+</div>
 
 <div id="ref-Walker2020" class="csl-entry">
 
