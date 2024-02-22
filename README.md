@@ -238,7 +238,7 @@ inter-household interactions ($L$), school interactions ($S$),
 hospitality interactions ($H$) and travel interactions ($T$):
 
 ``` math
-A(\textbf{1})=A^{(L)}(\textbf{1}) + A^{(S)}(\textbf{1}) + A^{(H)}(\textbf{1}) + A^{(T)}(\textbf{1})
+A(\textbf{1})=A^{(L)} + A^{(S)}(\textbf{1}) + A^{(H)}(\textbf{1}) + A^{(T)}(\textbf{1})
 ```
 
 Values for $A^{(S)}(\textbf{1})$ come from sampled values representing
@@ -253,7 +253,7 @@ $A_{ij}^{(T)}(\textbf{1})=0$ for $i>N$.
 
 Finally, $A^{(H)}(\textbf{1})$ is sampled as a fraction of
 $A(\textbf{1})- A^{(S)}(\textbf{1}) - A^{(T)}(\textbf{1})$, which leaves
-$A^{(L)}(\textbf{1})$.
+$A^{(L)}$.
 
 ## 3.1 Matrix $A$: community contacts
 
@@ -270,7 +270,7 @@ inter-household interactions ($L$), school interactions ($S$),
 hospitality interactions ($H$) and travel interactions ($T$):
 
 ``` math
-A(x)=A^{(L)}(x) + A^{(S)}(x) + A^{(H)}(x) + A^{(T)}(x).
+A(x)=A^{(L)} + A^{(S)}(x) + A^{(H)}(x) + A^{(T)}(x).
 ```
 
 School contacts under $x$ are simply the scaled values. $x_{S}$ is the
@@ -321,8 +321,6 @@ x_{H} = \frac{\sum_ix_{i}w_i}{\sum_iw_i}
 ```
 
 where we sum over only the hospitality sectors.
-
-Finally, $A^{(L)} = A - (A^{(S)} + A^{(H)} + A^{(T)}.)$
 
 ## 3.2 Matrix $B$: Worker-to-worker contacts
 
