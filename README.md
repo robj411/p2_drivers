@@ -247,10 +247,10 @@ contacts in schools. It has entries of zero for groups $g$ not in
 school, and sampled values for $g$=0 to 4 years old and $g$=5 to 19 year
 olds. Then
 
-``` math
+$$\begin{equation}
 A_{ii}^{(S)}=x_{S}^2s_{g(i)}.
-(\#eq:school)
-```
+\qquad(3.1)
+\end{equation}$$
 
 The value $x_{S}$ is the extent to which schools are open, so that the
 number of contacts per person scales superlinearly according to closure.
@@ -262,10 +262,10 @@ travel. We assume that transport contacts only add to the infection risk
 if the sector is open and the workers travel to and from their
 workplace.
 
-``` math
+$$\begin{equation}
 A_{ij}^{(T)} = x_{j\tau}(1-p_{i\tau})(1-p_{j\tau})\frac{2.5w_{j}}{\sum_gP_g}
-(\#eq:travel)
-```
+\qquad(3.2)
+\end{equation}$$
 
 for $i=1,...,N$. $A_{ij}^{(T)}=0$ for $i>N$.
 
@@ -288,10 +288,10 @@ age group makes an average of 0, 0.5, 1 and 1.5 total contacts for age
 groups 0-4, 5-19, 20-64, and 65+, respectively . These contacts are made
 in proportion to population, so we can write
 
-``` math
+$$\begin{equation}
 A_{ij}^{(H)} = x_{H,\tau}\frac{A_{g(i)}^{(H0)}w_{j}}{\sum_{j'}w_{j'}}
-(\#eq:hosp)
-```
+\qquad(3.3)
+\end{equation}$$
 
 with $A^{(H0)} = \{0,0.5,1,1.5\}$, and $A_{ij}^{(H)}=0$ for
 $g(i)\neq g(j)$.
