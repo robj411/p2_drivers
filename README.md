@@ -43,11 +43,11 @@ The rate of infection of susceptible individuals, $k_1(v,t)$, is defined
 as
 
 ``` math
-k_0(t) = \rho(t)\beta\left(D\cdot I^{(eff)}\right), 
+k_0(t) = \rho(t)\beta\left(D(x)\cdot I^{(eff)}\right), 
 ```
 
 $$\begin{equation}
-k_1(v,t) = f_A(\eta_{A,v},t)k_0(t)
+k_1(v,t) = \eta_{A,v}k_0(t)
 \qquad(1.1)
 \end{equation}$$
 
@@ -57,18 +57,19 @@ with
  I^{(eff)}=\sum_{v=0}^2(\epsilon (1-p_3+\delta p_3)I_{A,v}+(1-p_4+\delta p_4)I_{S,v}). 
 ```
 
-Here, $f_A$ is the reduction in acquisition of infection among the
-vaccinated, and $\eta_{A,v}$ is the vaccine effect size; $\rho(t)$ is
-the time-dependent modifier of the rate of infection, $\beta$; $D$ is
-the contact matrix between groups; $\epsilon$ is the reduction in
-infectiousness from asymptomatic relative to symptomatic individuals;
-$p_3$ and $p_4$ are the proportions of asymptomatic and symptomatic
-infectious days, respectively, spent self isolating; $\delta$ is the
-infectiousness remaining given the rate to self isolate; and
-$I_{\cdot,\cdot}$ is the vector of number of infectious asymptomatic
-($I_{A,\cdot}$) and symptomatic ($I_{S,\cdot}$) people who are
-unvaccinated ($I_{\cdot,0}$), vaccinated with the BPSV ($I_{\cdot,1}$),
-or vaccinated with the specific vaccine ($I_{\cdot,2}$).
+Here, $\eta_{A,v}$ is the relative probability to be infected given
+vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate
+of infection, $\beta$, which captures the impact of social distancing;
+$D(x)$ is the contact matrix between groups and depends on the economic
+configuration $x$; $\epsilon$ is the reduction in infectiousness from
+asymptomatic relative to symptomatic individuals; $p_3$ and $p_4$ are
+the proportions of asymptomatic and symptomatic infectious days,
+respectively, spent self isolating; $\delta$ is the infectiousness
+remaining given the rate to self isolate; and $I_{\cdot,\cdot}$ is the
+vector of number of infectious asymptomatic ($I_{A,\cdot}$) and
+symptomatic ($I_{S,\cdot}$) people who are unvaccinated ($I_{\cdot,0}$),
+vaccinated with the BPSV ($I_{\cdot,1}$), or vaccinated with the
+specific vaccine ($I_{\cdot,2}$).
 
 ``` math
  k_2 = (1-p_S)/\sigma 
@@ -101,12 +102,13 @@ compartment $I_S$: $\gamma_H$ is the expected duration before
 hospitalisation and $\gamma_R$ is the expected duration before recovery.
 
 ``` math
-p_H=f_H(\eta_{H,v},t)\hat{p}_H
+p_H=\eta_{H,v}f_H(H)\hat{p}_H
 ```
 
 is the baseline probability to be hospitalised ($`\hat{p}_H`$) adjusted
 by the vaccine effect protecting against hospitalisation
-($`f_H(\eta_{H,v},t)`$). Then
+($`\eta_{H,v}`$) and a function encoding the increase in fatality rate
+as hospital occupancy increases, $`f_H(H)`$. Then
 
 ``` math
 k_6 = p_H/\gamma_I
