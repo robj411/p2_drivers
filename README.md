@@ -54,7 +54,7 @@ k_1(v,t) = f_A(\eta_{A,v},t)k_0(t)
 with
 
 ``` math
- I^{(eff)}=\epsilon (1-p_3)I_{A,0}+(1-p_4)I_{S,0}+\sum_{v=1}^2f_T(\eta_{T,v},t)(\epsilon (1-p_3)I_{A,v}+(1-p_4)I_{S,v}). 
+ I^{(eff)}=\sum_{v=0}^2(\epsilon (1-p_3+\delta p_3)I_{A,v}+(1-p_4+\delta p_4)I_{S,v}). 
 ```
 
 Here, $f_A$ is the reduction in acquisition of infection among the
@@ -63,7 +63,8 @@ the time-dependent modifier of the rate of infection, $\beta$; $D$ is
 the contact matrix between groups; $\epsilon$ is the reduction in
 infectiousness from asymptomatic relative to symptomatic individuals;
 $p_3$ and $p_4$ are the proportions of asymptomatic and symptomatic
-infectious days, respectively, spent self isolating, and
+infectious days, respectively, spent self isolating; $\delta$ is the
+infectiousness remaining given the rate to self isolate; and
 $I_{\cdot,\cdot}$ is the vector of number of infectious asymptomatic
 ($I_{A,\cdot}$) and symptomatic ($I_{S,\cdot}$) people who are
 unvaccinated ($I_{\cdot,0}$), vaccinated with the BPSV ($I_{\cdot,1}$),
@@ -142,10 +143,11 @@ $k_9$ and $k_{15}$ represent the rates of BPSV vaccination of
 unvaccinated susceptible and recovered people, and $k_{16}$ and $k_{17}$
 represent the rates of vaccinating BPSV-vaccinated susceptible and
 recovered people. $k_{13}$ and $k_{14}$ represent the rates of
-vaccinating people directly with the specific vaccine. $k_{10}$ is the
-rate of seroconversion to vaccine-induced immunity, and
-$k_{12}(t)=k_1(0,t)$ is the rate of infection of just-vaccinated people,
-which returns them to the unvaccinated epidemiological pathway.
+vaccinating people directly with the specific vaccine. $k_{10}$ and
+$k_{18}$ are the rates of seroconversion to vaccine-induced immunity,
+and $k_{12}(t)=k_1(0,t)$ and $k_{19}(t)=k_1(1,t)$ are the rates of
+infection of just-vaccinated people, which returns them to the
+epidemiological pathway of the lower vaccination level.
 
 <div class="figure">
 
