@@ -359,7 +359,7 @@ for in the movement of people out of the group upon its closure.
     was used instead of the sum of individual contacts made
 
 $$\begin{equation}
-C_{ij}(x) = x_{i}(1-q_i)C(\textbf{1}),
+C_{ij}(x) = x_{i}(1-q_i)C_{ij}(\textbf{1}),
 \qquad(3.5)
 \end{equation}$$
 
