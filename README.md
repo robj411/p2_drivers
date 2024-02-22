@@ -102,13 +102,12 @@ compartment $I_S$: $\gamma_H$ is the expected duration before
 hospitalisation and $\gamma_R$ is the expected duration before recovery.
 
 ``` math
-p_H=\eta_{H,v}f_H(H)\hat{p}_H
+p_H=\eta_{H,v}\hat{p}_H
 ```
 
 is the baseline probability to be hospitalised ($`\hat{p}_H`$) adjusted
 by the vaccine effect protecting against hospitalisation
-($`\eta_{H,v}`$) and a function encoding the increase in fatality rate
-as hospital occupancy increases, $`f_H(H)`$. Then
+($`\eta_{H,v}`$). Then
 
 ``` math
 k_6 = p_H/\gamma_I
@@ -120,8 +119,11 @@ is the rate of hospitalisation following symptomatic infection.
 k_7 = (1-p_D) / \lambda_H
 ```
 
-is the rate of recovery of hospitalised patients, where $p_D$ is the
-probability to die given hospitalisation, and
+is the rate of recovery of hospitalised patients, where
+$`p_D=\hat{p}_Df_H(H)`$ is the baseline probability to die given
+hospitalisation, adjusted by a factor encoding the increase in fatality
+rate as hospital occupancy increases,
+$`f_H(H)=\max\{1,1+1.87(H-H_{\text{max}})/H_{\text{max}}\}`$.
 $\lambda_H = p_D\lambda_D + (1-p_D)\lambda_R$ is the expected time to be
 in compartment $H$: $\lambda_D$ is the expected duration before death
 and $\lambda_R$ is the expected duration before recovery. $p_D$ is the
