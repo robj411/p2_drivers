@@ -217,10 +217,10 @@ $P_{g(j)}=w_{j}$ for age groups 0 to 4, 5 to 19 and 65+, and
 $P_{g(j)}=\sum_{j\in\{1,...,N,N+3\}}w_{j}$ for ages 20 to 64.
 
 In setting up a country, we sample values for $D^{(16)}$ (from which we
-get $D(\textbf{1})$). At the same time, we sample the proportion of
+get $`D(\textbf{1})`$). At the same time, we sample the proportion of
 contacts that come from workplaces, and workplace-related contacts. From
-these, we construct $B(\textbf{1})$ and $C(\textbf{1})$, constructing
-the matrices and normalising. With $D(\textbf{1})$, $C(\textbf{1})$,
+these, we get $B(\textbf{1})$ and $C(\textbf{1})$, constructing the
+matrices and normalising. With $D(\textbf{1})$, $C(\textbf{1})$,
 $B(\textbf{1})$ and $\hat{C}(\textbf{1})$, we learn $A(\textbf{1})$.
 
 $A$ is decomposed into its constituent parts, representing intra- and
@@ -231,15 +231,17 @@ hospitality interactions ($H$) and travel interactions ($T$):
 A(\textbf{1})=A^{(L)}(\textbf{1}) + A^{(S)}(\textbf{1}) + A^{(H)}(\textbf{1}) + A^{(T)}(\textbf{1})
 ```
 
-We sample values for $A^{(S)}(\textbf{1})$ as the fractions of contacts
-that come from school. School contacts are estimated separately in two
-age groups (pre-school age: 0—4; school age: 5—19). Diagonal matrix
-$A^{(S)}(\textbf{1})$ counts the contacts in schools. It has entries of
-zero for groups $g$ not in school, and sampled values for $g$=0 to 4
-years old and $g$=5 to 19 year olds.
+Values for $A^{(S)}(\textbf{1})$ come from sampled values representing
+the fractions of contacts that come from school. School contacts are
+estimated separately in two age groups (pre-school age: 0—4; school age:
+5—19): $A^{(S)}(\textbf{1})$ has entries of zero for groups $g$ not in
+school, and values for $g$=0 to 4 years old and $g$=5 to 19 year olds.
 
 Likewise, $A^{(T)}(\textbf{1})$ is also sampled as a fraction of total
-contacts. Finally, $A^{(H)}(\textbf{1})$ is sampled as a fraction of
+contacts. $A_{ij}^{(T)}(\textbf{1})\geq 0$ for $i=1,...,N$.
+$A_{ij}^{(T)}(\textbf{1})=0$ for $i>N$.
+
+Finally, $A^{(H)}(\textbf{1})$ is sampled as a fraction of
 $A(\textbf{1})- A^{(S)}(\textbf{1}) - A^{(T)}(\textbf{1})$, which leaves
 $A^{(L)}(\textbf{1})$.
 
@@ -261,59 +263,51 @@ hospitality interactions ($H$) and travel interactions ($T$):
 A(x)=A^{(L)}(x) + A^{(S)}(x) + A^{(H)}(x) + A^{(T)}(x).
 ```
 
+School contacts under $x$ are simply the scaled values. $x_{S}$ is the
+extent to which schools are open, so that the number of contacts per
+person scales superlinearly with school closure.
+
 $$\begin{equation}
 A_{ii}^{(S)}(x)=x_{S}^2A_{ii}^{(S)}(\textbf{1}).
 \qquad(3.1)
 \end{equation}$$
 
-The value $x_{S}$ is the extent to which schools are open, so that the
-number of contacts per person scales superlinearly according to closure.
-
 Matrix $A^{(T)}$ counts contacts between working people, representing
 travel. We assume that transport contacts only add to the infection risk
 if the sector is open and the workers travel to and from their
-workplace.
+workplace. Again, the value for configuration $x$ is the value for
+$\textbf{1}$ scaled accordingly:
 
 $$\begin{equation}
-A_{ij}^{(T)} = x_{j\tau}(1-p_{i\tau})(1-p_{j\tau})\frac{2.5w_{j}}{\sum_gP_g}
+A_{ij}^{(T)}(x) = x_{j}(1-p_{i})(1-p_{j})A_{ij}^{(T)}(\textbf{1}).
 \qquad(3.2)
 \end{equation}$$
 
-for $i=1,...,N$. $A_{ij}^{(T)}=0$ for $i>N$.
+$p_{i}$ is the proportion of workers from sector $i$ working from home,
+and $(1-p_{i})(1-p_{j})$ scales contacts between workers superlinearly
+to approximate the reduced transmission between commuting workers: there
+should be fewer contacts per person on average, and there should be
+fewer people having these contacts.
 
-$p_{i\tau}$ is the proportion of workers from sector $i$ working from
-home during period $\tau$, and $(1-p_{i\tau})(1-p_{j\tau})$ scales
-contacts between workers superlinearly to approximate the reduced
-transmission between commuting workers: there should be fewer contacts
-per person on average, and there should be fewer people having these
-contacts. We reduce the transmission rates within the groups as a proxy
-for moving the individuals out of the group.
+Also in this equation, $x_{j}$ scales the numbers of contacts linearly
+with respect to sector closure. At the same time, the number of people
+in the compartments will be reduced by their sector closure, $x_{i}$.
+This, in combination with the scaled contacts, leads to superlinear
+scaling.
 
-Also in this equation, $x_{j\tau}$ scales the numbers of contacts
-linearly with respect to sector closure. At the same time, the number of
-people in the compartments will be reduced by their sector closure,
-$x_{i\tau}$. This, in combination with the scaled contacts, leads to
-superlinear scaling.
-
-Matrix $A^{(H)}$ gives the contacts made in the hospitality sector. Each
-age group makes an average of 0, 0.5, 1 and 1.5 total contacts for age
-groups 0-4, 5-19, 20-64, and 65+, respectively . These contacts are made
-in proportion to population, so we can write
+Matrix $A^{(H)}(x)$ gives the contacts made in the hospitality sector:
 
 $$\begin{equation}
-A_{ij}^{(H)} = x_{H,\tau}\frac{A_{g(i)}^{(H0)}w_{j}}{\sum_{j'}w_{j'}}
+A^{(H)}(x) = x_{H}A^{(H)}(\textbf{1})
 \qquad(3.3)
 \end{equation}$$
 
-with $A^{(H0)} = \{0,0.5,1,1.5\}$, and $A_{ij}^{(H)}=0$ for
-$g(i)\neq g(j)$.
-
-The value $x_{H,\tau}$ is the workforce-weighted average extent to which
-the hospitality sectors are open in the period $\tau$, so that the
-number of contacts per person scales linearly according to closure:
+The value $x_{H}$ is the workforce-weighted average extent to which the
+hospitality sectors are open, so that the number of contacts per person
+scales linearly according to closure:
 
 ``` math
-x_{H,\tau} = \frac{\sum_ix_{i\tau}w_i}{\sum_iw_i}
+x_{H} = \frac{\sum_ix_{i}w_i}{\sum_iw_i}
 ```
 
 where we sum over only the hospitality sectors.
