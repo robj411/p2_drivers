@@ -48,7 +48,7 @@ k_0(t) = \rho(t)\beta\left(D\cdot I^{(eff)}\right),
 
 ``` math
 k_1(v,t) = f_A(\eta_{A,v},t)k_0(t)
-(\#eq:infection)
+# (\#eq:infection)
 ```
 
 with
