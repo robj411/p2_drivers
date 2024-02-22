@@ -167,14 +167,12 @@ Figure 2.1: Vaccine state transitions
 
 # 3 Contact rates
 
-In the DAEDALUS model (Haw et al. 2022), the economic configuration is
-manifest in the epidemiological model via changes of compartment
-membership, and scaling of contact rates. The configuration $x_{i}$ and
-the proportion of workers working from home $p_i$ determine the scaling
-of contacts between workers, between consumers and workers, between
-school students, and between consumers in commercial settings.
+The configuration $x_{i}$ and the proportion of workers working from
+home $p_i$ determine the scaling of contacts between workers, between
+consumers and workers, between school students, and between consumers in
+commercial settings.
 
-We construct contact matrix $D(x)$ as the sum of three matrices: $A(x)$
+We construct contact matrix $D(x)$ as the sum of four matrices: $A(x)$
 (community contacts), $B(x)$ (worker-to-worker contacts), $C(x)$
 (consumer-to-worker contacts), and $\hat{C}(x)$ (worker-to-consumer
 contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning
@@ -184,11 +182,11 @@ decompose the whole matrix into its component parts. To incorporate
 closures, each matrix is transformed independently, before they are all
 added together again.
 
-Matrix $D(\textbf{1})$ is estimated using as a basis the contact matrix
-from (Walker et al. 2020). This is a 16-by-16 matrix, ($D^{(16)}$), for
-five-year age bands $a$ up to age group 75+. We map it to a four-by-four
-matrix $D^{(4)}$ corresponding to the four age groups $g$ used in the
-DAEDALUS model, using population sizes, $\hat{P}_a$:
+Matrix $D(\textbf{1})$ is estimated using as a basis a contact matrix
+from (Walker et al. 2020). These are 16-by-16 matrices, ($D^{(16)}$),
+for five-year age bands $a$ up to age group 75+. We map the matrix to a
+four-by-four matrix $D^{(4)}$ corresponding to the four age groups $g$
+used in the DAEDALUS model, using population sizes, $\hat{P}_a$:
 
 ``` math
 D_{gg'}^{(4)} = \frac{\sum_{a\in g}\hat{P}_{a}\sum_{a'\in g'}D^{(16)}_{a,a'}}{\sum_{a\in g}\hat{P}_{a}}.
@@ -216,7 +214,34 @@ group $i$ contains people that belong to only one age group $g$. We
 refer to the age group of the people in group $i$ as $g(i)$. Then
 $P_{g(j)}$ is the number of people in the age group of group $j$, so
 $P_{g(j)}=w_{j}$ for age groups 0 to 4, 5 to 19 and 65+, and
-$P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}$ for ages 20 to 64.
+$P_{g(j)}=\sum_{j\in\{1,...,N,N+3\}}w_{j}$ for ages 20 to 64.
+
+In setting up a country, we sample values for $D^{(16)}$ (from which we
+get $D(\textbf{1})$). At the same time, we sample the proportion of
+contacts that come from workplaces, and workplace-related contacts. From
+these, we construct $B(\textbf{1})$ and $C(\textbf{1})$, constructing
+the matrices and normalising. With $D(\textbf{1})$, $C(\textbf{1})$,
+$B(\textbf{1})$ and $\hat{C}(\textbf{1})$, we learn $A(\textbf{1})$.
+
+$A$ is decomposed into its constituent parts, representing intra- and
+inter-household interactions ($L$), school interactions ($S$),
+hospitality interactions ($H$) and travel interactions ($T$):
+
+``` math
+A(\textbf{1})=A^{(L)}(\textbf{1}) + A^{(S)}(\textbf{1}) + A^{(H)}(\textbf{1}) + A^{(T)}(\textbf{1})
+```
+
+We sample values for $A^{(S)}(\textbf{1})$ as the fractions of contacts
+that come from school. School contacts are estimated separately in two
+age groups (pre-school age: 0—4; school age: 5—19). Diagonal matrix
+$A^{(S)}(\textbf{1})$ counts the contacts in schools. It has entries of
+zero for groups $g$ not in school, and sampled values for $g$=0 to 4
+years old and $g$=5 to 19 year olds.
+
+Likewise, $A^{(T)}(\textbf{1})$ is also sampled as a fraction of total
+contacts. Finally, $A^{(H)}(\textbf{1})$ is sampled as a fraction of
+$A(\textbf{1})- A^{(S)}(\textbf{1}) - A^{(T)}(\textbf{1})$, which leaves
+$A^{(L)}(\textbf{1})$.
 
 ## 3.1 Matrix $A$: community contacts
 
@@ -228,40 +253,21 @@ $P_{g(j)}=\sum_{j\in\{1,...,N,N+4\}}w_{j}$ for ages 20 to 64.
 -   Consumer-consumer contacts are added with respect to the proportion
     the hospitality and education sectors are opened
 
-Community contacts (matrix $A$) are any contacts made by people who are
-not at work. This includes contacts in the household, during travel to
-and from the workplace and non-work-related travel, outside spaces,
-leisure activities (e.g. meeting friends), retail outlets
-(e.g. supermarkets), and contacts made in the hospitality or service
-sectors. The columns of the community matrix $A$ are weighted by the
-size of the workforce (measured in headcounts) in each sector. The value
-of row sums depends on the extent to which given sectors are open. If
-all economic sectors were fully closed, the total contact is reduced to
-roughly 40% of total contact when all sectors are open.
-
-We decompose Matrix $A$ into its constituent parts, representing intra-
-and inter-household interactions ($L$), school interactions ($S$),
+We construct $A(x)$ from its constituent parts, representing intra- and
+inter-household interactions ($L$), school interactions ($S$),
 hospitality interactions ($H$) and travel interactions ($T$):
 
 ``` math
-A=A^{(L)} + A^{(S)} + A^{(H)} + A^{(T)}
+A(x)=A^{(L)}(x) + A^{(S)}(x) + A^{(H)}(x) + A^{(T)}(x).
 ```
 
-School contacts are estimated separately in two age groups (pre-school
-age: 0 – 4; school age: 5 – 19). Diagonal matrix $A^{(S)}$ counts the
-contacts in schools. It has entries of zero for groups $g$ not in
-school, and sampled values for $g$=0 to 4 years old and $g$=5 to 19 year
-olds. Then
-
 $$\begin{equation}
-A_{ii}^{(S)}=x_{S}^2s_{g(i)}.
+A_{ii}^{(S)}(x)=x_{S}^2A_{ii}^{(S)}(\textbf{1}).
 \qquad(3.1)
 \end{equation}$$
 
 The value $x_{S}$ is the extent to which schools are open, so that the
 number of contacts per person scales superlinearly according to closure.
-Values for $A_{ii}$ are taken as random variables ranging from 0 to
-$D_{ii}$.
 
 Matrix $A^{(T)}$ counts contacts between working people, representing
 travel. We assume that transport contacts only add to the infection risk
@@ -574,16 +580,6 @@ authors estimate only the cost to lifetime wages without considering
 consequent changes to demand, consumption or growth.
 
 <div id="refs" class="references csl-bib-body hanging-indent">
-
-<div id="ref-Haw2020" class="csl-entry">
-
-Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo
-Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. “<span
-class="nocase">Optimizing social and economic activity while containing
-SARS-CoV-2 transmission using DAEDALUS</span>.” *Nature Computational
-Science* 2: 223–33. <https://doi.org/10.25561/83928>.
-
-</div>
 
 <div id="ref-Walker2020" class="csl-entry">
 
