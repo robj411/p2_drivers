@@ -162,9 +162,9 @@ Figure 2.1: Vaccine state transitions
 
 # 3 Contact rates
 
-The configuration $x_{i}$ and the proportion of workers working from
-home $p_i$ determine the scaling of exposure to infection between
-different groups for different reasons:
+The configuration $x$ and the proportion of workers working from home
+$q$ determine the scaling of exposure to infection between different
+groups for different reasons:
 
 -   Worker absence due to sector closure
 -   Worker absence due to working from home
@@ -289,13 +289,13 @@ workplace. Again, the value for configuration $x$ is the value for
 $\textbf{1}$ scaled accordingly:
 
 $$\begin{equation}
-A_{ij}^{(T)}(x) = x_{j}(1-p_{i})(1-p_{j})A_{ij}^{(T)}(\textbf{1}).
+A_{ij}^{(T)}(x) = x_{j}(1-q_i)(1-q_j)A_{ij}^{(T)}(\textbf{1}).
 \qquad(3.2)
 \end{equation}$$
 
-$p_{i}$ is the proportion of workers from sector $i$ working from home,
-and $(1-p_{i})(1-p_{j})$ scales contacts between workers superlinearly
-to approximate the reduced transmission between commuting workers: there
+$q_i$ is the proportion of workers from sector $i$ working from home,
+and $(1-q_i)(1-q_j)$ scales contacts between workers superlinearly to
+approximate the reduced transmission between commuting workers: there
 should be fewer contacts per person on average, and there should be
 fewer people having these contacts.
 
@@ -332,13 +332,13 @@ Finally, $A^{(L)} = A - (A^{(S)} + A^{(H)} + A^{(T)}.)$
 -   Individuals who stated that they are in employment
 -   Individuals who are of working age (20 – 64)
 
-``` math
-B_{ii}(x) = x_{i}(1-p_{i})^2B_{ii}(\textbf{1}),
-(\#eq:worker)
-```
+$$\begin{equation}
+B_{ii}(x) = x_{i}(1-q_i)^2B_{ii}(\textbf{1}),
+\qquad(3.4)
+\end{equation}$$
 
 for the $i=1,...,N$ working groups, with the number of contacts adjusted
-according to at-home working ($p_{i}$) and sector openness ($x_{i}$). As
+according to at-home working ($q_i$) and sector openness ($x_{i}$). As
 before, there is superlinear scaling of contacts with respect to working
 from home. There is linear scaling with respect to sector closure: that
 is, there are fewer contacts per person, but we do not approximate there
@@ -359,8 +359,8 @@ for in the movement of people out of the group upon its closure.
     was used instead of the sum of individual contacts made
 
 $$\begin{equation}
-C_{ij}(x) = x_{i}(1-p_{i})C(\textbf{1}),
-\qquad(3.4)
+C_{ij}(x) = x_{i}(1-q_i)C(\textbf{1}),
+\qquad(3.5)
 \end{equation}$$
 
 for $j=1,...,N+3$.
