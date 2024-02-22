@@ -203,9 +203,9 @@ groups $j$ depend on the age group of the group ($`g(i)`$), and the
 fraction of the age-population represented in group $j$, where $w_{j}$
 is the number of people in group $j$:
 
-$$\begin{equation}
+``` math
 D_{ij}(\textbf{1}) = D^{(4)}_{g(i),g(j)}\frac{w_{j}}{P_{g(j)}}
-\end{equation}$$
+```
 
 for $i$ and $j$ including all groups (working and non-working). Each
 group $i$ contains people that belong to only one age group $g$. We
