@@ -18,6 +18,20 @@
     -   [3.1 Lost lives](#31-lost-lives)
     -   [3.2 Lost economic output](#32-lost-economic-output)
     -   [3.3 Lost education](#33-lost-education)
+-   [4 Econ model](#4-econ-model)
+    -   [4.1 Configurations](#41-configurations)
+    -   [4.2 Impact of tourism](#42-impact-of-tourism)
+        -   [4.2.1 Food and accommodation services
+            sector](#421-food-and-accommodation-services-sector)
+        -   [4.2.2 Sector shrinkage as a result of the
+            pandemic](#422-sector-shrinkage-as-a-result-of-the-pandemic)
+        -   [4.2.3 Loss of international
+            tourists](#423-loss-of-international-tourists)
+        -   [4.2.4 Dependence on international
+            tourism](#424-dependence-on-international-tourism)
+    -   [4.3 Remote working](#43-remote-working)
+-   [5 Parametric distributions](#5-parametric-distributions)
+    -   [5.1 Hospital capacity](#51-hospital-capacity)
 
 # 1 Simulation rules
 
@@ -623,50 +637,2577 @@ maximum possible monthly GVA, $z_{\text{ed}}$ per month.
 
 ## 3.3 Lost education
 
-Education loss is quantified as the effective number of years of
-schooling lost. In each month $\tau=1,...,T$ of the projection period,
-education is divided into a fraction of in-person teaching
-$(w_{\text{ed},\tau})$ and remote teaching $(1-w_{\text{ed},\tau})$. We
-compute the total amount of education completed as a weighted sum of the
-school opening and its complement, where remote teaching contributes a
-fraction $s$ of the educational value of in-person teaching. The total
-educational loss is the amount of teaching that was remote
-$(1-w_{\text{ed},\tau})$ multiplied by the value lost in remote teaching
-$(1-s)$, multiplied by the number of people of school age and the number
-of years that each period $\tau$ represents:
-`math\label{eq:ed_cost} X=\frac{1}{12}\sum_{\tau=1}^T(1-s)(1-w_{\text{ed},\tau})\sum_{g\in\text{school age}}N_g,`
-where $N_g$ is the number of people in age group $g$. We consider only
-the second age group out of four (5 to 19 years) to be school-age
-students.
+For the value of a year of education, we use the method of
+(Psacharopoulos, Collis, and Patrinos 2021). The loss due to school
+closure is
 
-The VSY is the value one year of education adds to the economy over a
-person’s lifetime. This value can be estimated using existing
-projections that the loss of an entire school year will cost 202% of
-GDP, assuming that growth will be impacted by having a less productive
-workforce for the following 52 years (a cohort of 12 years with careers
-expected to last 40 years) . Finally,
-`mathf_{\text{education}}(X,\text{VSY}) = X*\text{VSY}.`
+$$L =  \text{PV}\cdot Y\cdot \alpha\cdot r\cdot \left(S\cdot \beta + (1-\beta)\cdot \int_tI_S(t)dt\right)$$
 
-For the effectiveness of remote teaching, we use $s=\frac{1}{3}$ , where
-infrastructure coverage, household access and effectiveness of teaching
-were considered. %, based on an estimated 96% of areas having the
-necessary infrastructure, access 86% of students being able to access
-the material, and effectiveness of teaching of 40% . This aligns with an
-analogous estimate for the Philippines of 37% .
+where PV is the present value of lost earnings:
 
-Using the projections that the loss of a year of education for the
-current school cohort is worth 202% of current GDP , we obtain a value
-of \$34,000 for a person–year of schooling in Indonesia. We contrast
-this with a projection of educational losses in the Philippines , for
-whom one year of remote teaching (at 37% the effectiveness of in-person
-teaching) was estimated to have cost the economy 10.7 trillion pesos,
-which equates one full year lost to 89% of the country’s GDP in 2019.
-Applied to Indonesia, the value of a year of education per student would
-be \$15,000. These percentages align well with the estimate that for
-middle-income countries a whole year of lost education costs 73% of GDP,
-if we assume that the closures affect 90% of students. There, the
-authors estimate only the cost to lifetime wages without considering
-consequent changes to demand, consumption or growth.
+$$\text{PV} = \frac{1}{S}\sum_aN_a\left( \frac{1-(1+v)^{-(n+20-a)}}{v} -  \frac{1-(1+v)^{-(20-a)}}{v}\right)$$
+
+for discount rate $v=0.03$, number $N_a$ students currently age $a$, and
+expected number of years of work $n=45$. $Y$ is mean annual earnings,
+$\alpha$ is the extent and amount of time (in years) schools are closed:
+$$\alpha=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$ $r=0.08$ is the
+rate of return for one year, $S$ is the total number of students,
+$\beta$ is the proportion of students affected, and $\int_t I_S(t)dt$
+represents education lost due to student sickness with COVID-19. The
+value $\beta$ represents the ineffectiveness of remote teaching, which
+we sample as a standard uniform random variable. We note that no strong
+predictors of effectiveness of remote teaching have been identified
+(Patrinos 2023). We assume that losses are linear in duration of school
+closure, although there is not consensus even on this (Betthäuser,
+Bach-Mortensen, and Engzell 2023). Important factors to include in
+future work might be those relating to parental circumstances including
+education level, engagement and socio-economic status (Moscoviz and
+Evans 2022). However, these factors might be more pertinent to intra-
+rather than international modelling.
+
+We estimate the average annual income per working-age adult as the total
+GVA multiplied by the fraction of GVA that goes to labour divided by the
+number of working-age adults. For the fraction of GVA that goes to
+labour we use PWT estimates from 2011 (Figure
+<a href="#fig:labsh">3.1</a>).
+
+<!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is 207% of GDP. For a UMIC, the cost of a lost school year is 73% of GDP. For an HIC, the cost of a lost school year is 30% of GDP. -->
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/labsh-1.png" alt="Fraction of GVA that goes to labour (PWT, 2011)."  />
+
+<p class="caption">
+
+Figure 3.1: Fraction of GVA that goes to labour (PWT, 2011).
+
+</p>
+
+</div>
+
+We model these values with Beta distributions. For LLMICs, we have
+parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18.
+For HICs, we have parameters 7.97 and 6.87.
+
+# 4 Econ model
+
+## 4.1 Configurations
+
+<table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+
+Table 4.1: Economic configurations used to implement strategies. Values
+are the openness of the sector expressed as a percentage. Elimination
+values are taken from Australia. Lockdown and Economic Closures values
+are taken from the UK. School Closures values are taken from Indonesia.
+
+</caption>
+<thead>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+Elimination
+
+</div>
+
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+Economic closures
+
+</div>
+
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+School closures
+
+</div>
+
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+
+Sector
+
+</th>
+<th style="text-align:right;">
+
+Lockdown
+
+</th>
+<th style="text-align:right;">
+
+Elimination
+
+</th>
+<th style="text-align:right;">
+
+Lockdown
+
+</th>
+<th style="text-align:right;">
+
+Economic Closures
+
+</th>
+<th style="text-align:right;">
+
+Lockdown (School Closures)
+
+</th>
+<th style="text-align:right;">
+
+School Closures
+
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+
+Agriculture, hunting, forestry
+
+</td>
+<td style="text-align:right;">
+
+86
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+86
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Fishing and aquaculture
+
+</td>
+<td style="text-align:right;">
+
+86
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+86
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Mining and quarrying, energy producing products
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+<td style="text-align:right;">
+
+67
+
+</td>
+<td style="text-align:right;">
+
+79
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Mining and quarrying, non-energy producing products
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Mining support service activities
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Food products, beverages and tobacco
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Textiles, textile products, leather and footwear
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+89
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Wood and products of wood and cork
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+95
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Paper products and printing
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Coke and refined petroleum products
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+87
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Chemical and chemical products
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Pharmaceuticals, medicinal chemical and botanical products
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Rubber and plastics products
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+87
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Other non-metallic mineral products
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+89
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Basic metals
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Fabricated metal products
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Computer, electronic and optical equipment
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Electrical equipment
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Machinery and equipment, nec
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+89
+
+</td>
+<td style="text-align:right;">
+
+95
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Motor vehicles, trailers and semi-trailers
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+66
+
+</td>
+<td style="text-align:right;">
+
+82
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Other transport equipment
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+66
+
+</td>
+<td style="text-align:right;">
+
+82
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Manufacturing nec; repair and installation of machinery and equipment
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Electricity, gas, steam and air conditioning supply
+
+</td>
+<td style="text-align:right;">
+
+89
+
+</td>
+<td style="text-align:right;">
+
+97
+
+</td>
+<td style="text-align:right;">
+
+89
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Water supply; sewerage, waste management and remediation activities
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+97
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Construction
+
+</td>
+<td style="text-align:right;">
+
+56
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+56
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+95
+
+</td>
+<td style="text-align:right;">
+
+95
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Wholesale and retail trade; repair of motor vehicles
+
+</td>
+<td style="text-align:right;">
+
+64
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+64
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+97
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Land transport and transport via pipelines
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+82
+
+</td>
+<td style="text-align:right;">
+
+83
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Water transport
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+82
+
+</td>
+<td style="text-align:right;">
+
+81
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Air transport
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+18
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+82
+
+</td>
+<td style="text-align:right;">
+
+16
+
+</td>
+<td style="text-align:right;">
+
+42
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Warehousing and support activities for transportation
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+82
+
+</td>
+<td style="text-align:right;">
+
+64
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Postal and courier activities
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+82
+
+</td>
+<td style="text-align:right;">
+
+64
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Accommodation and food service activities
+
+</td>
+<td style="text-align:right;">
+
+10
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+10
+
+</td>
+<td style="text-align:right;">
+
+85
+
+</td>
+<td style="text-align:right;">
+
+77
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Publishing, audiovisual and broadcasting activities
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Telecommunications
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IT and other information services
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
+<td style="text-align:right;">
+
+91
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Financial and insurance activities
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+96
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Real estate activities
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Professional, scientific and technical activities
+
+</td>
+<td style="text-align:right;">
+
+85
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+85
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+95
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Administrative and support services
+
+</td>
+<td style="text-align:right;">
+
+66
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+66
+
+</td>
+<td style="text-align:right;">
+
+80
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+95
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Public administration and defence; compulsory social security
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+96
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Education
+
+</td>
+<td style="text-align:right;">
+
+10
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+10
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+10
+
+</td>
+<td style="text-align:right;">
+
+10
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Human health and social work activities
+
+</td>
+<td style="text-align:right;">
+
+75
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+75
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Arts, entertainment and recreation
+
+</td>
+<td style="text-align:right;">
+
+55
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+55
+
+</td>
+<td style="text-align:right;">
+
+71
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+96
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Other service activities
+
+</td>
+<td style="text-align:right;">
+
+54
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+54
+
+</td>
+<td style="text-align:right;">
+
+83
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+96
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Activities of households as employers; undifferentiated goods- and
+services-producing activities of households for own use
+
+</td>
+<td style="text-align:right;">
+
+49
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+49
+
+</td>
+<td style="text-align:right;">
+
+53
+
+</td>
+<td style="text-align:right;">
+
+90
+
+</td>
+<td style="text-align:right;">
+
+96
+
+</td>
+</tr>
+</tbody>
+</table>
+
+## 4.2 Impact of tourism
+
+### 4.2.1 Food and accommodation services sector
+
+As there is no “tourism” sector in the 45-sector classification we are
+using, to model the impact of changes to tourism, we identify the “Food
+and accommodation services” sector with tourism. This is imperfect. The
+correlation of their % contributions to GDP is 0.64 and the order of
+magnitude is similar (1 to 7% vs 2 to 10% of GDP). The other two sectors
+considered (Air transport and Arts, entertainment and recreation) have
+little correlation with tourism in terms of % of GDP. (See Figure
+<a href="#fig:pairs">4.1</a>.)
+
+<div class="figure" style="text-align: center">
+
+<img src="README_files/figure-gfm/pairs-1.png" alt="Correlations between tourism-related data. First: https://www.unwto.org/tourism-statistics/key-tourism-statistics. Second to fourth: https://www.unwto.org/tourism-data/international-tourism-and-covid-19. Fifth to seventh: OECD."  />
+
+<p class="caption">
+
+Figure 4.1: Correlations between tourism-related data. First:
+<https://www.unwto.org/tourism-statistics/key-tourism-statistics>.
+Second to fourth:
+<https://www.unwto.org/tourism-data/international-tourism-and-covid-19>.
+Fifth to seventh: OECD.
+
+</p>
+
+</div>
+
+### 4.2.2 Sector shrinkage as a result of the pandemic
+
+For many countries, tourism was reduced in the COVID-19 pandemic not
+because of domestic mandates but because of reduced international
+travel. Therefore, the fraction of tourism that comes from abroad is a
+factor that can determine the impact of a pandemic on a country’s GDP
+potentially independently of what happens within the country. (A useful
+model extension would be to include some dependence on country factors,
+e.g. case numbers.)
+
+We model mitigation via business closures, which are mandated by sector.
+We represent openness with values $x$ which range from 0 to 1, 1
+representing maximum openness. To capture the impact of reduced
+international travel, we set the maximum openness of the food and
+accommodation services sector to be limited by international tourism as:
+
+``` math
+x = \min\{\hat{x}, 1+ y(z-1)\}
+```
+
+where $`\hat{x}`$ is the openness of the sector according to the
+schedule (i.e. the mitigation strategy), $y$ is the proportion of
+tourism that is international, and $z$ is the fraction international
+tourism reduces to as a consequence of the pandemic. I.e. the tourism
+remaining is the domestic ($1-y$) plus that that comes in from abroad
+($yz$).
+
+Therefore, the contribution of the GVA of the food and accommodation
+services sector is limited either by the pandemic, or by the mitigation
+measures - whichever is lower.
+
+### 4.2.3 Loss of international tourists
+
+We model the distribution of $z$ using data from 2020 (Figure
+<a href="#fig:tourismhist">4.2</a>, bottom-right plot). We fit to it a
+log-normal distribution, and find mean value -1.39 and standard
+deviation 0.39 (Figure <a href="#fig:ytd">4.3</a>). We use these values
+as inputs for all country models.
+
+<div class="figure" style="text-align: center">
+
+<img src="README_files/figure-gfm/tourismhist-1.png" alt="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector."  />
+
+<p class="caption">
+
+Figure 4.2: Distributions of tourism-related data from
+<https://www.unwto.org/tourism-data/international-tourism-and-covid-19>.
+In grey are the subset of countries for which we have GVA data by
+sector.
+
+</p>
+
+</div>
+
+<div class="figure" style="text-align: center">
+
+<img src="README_files/figure-gfm/ytd-1.png" alt="Fit of log-normal distribution to loss-of-tourism data."  />
+
+<p class="caption">
+
+Figure 4.3: Fit of log-normal distribution to loss-of-tourism data.
+
+</p>
+
+</div>
+
+### 4.2.4 Dependence on international tourism
+
+We model $y$ as a function of the share of GDP that comes from the
+sector. Note that the data we have for this are biased towards
+high-income countries.
+
+We write
+
+$$y\sim\text{Beta}(\alpha(u),\beta(u))$$
+
+where $u$ is the fraction of GDP coming from the Food and accommodation
+sector. We learn three parameters $p_1$, $p_2$ and $p_3$ to best fit the
+relationship between $u$ and $y$ in countries we have observations for:
+
+$$p_1 = \alpha(u)+\beta(u)$$
+
+$$p_2u + p_3 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
+
+Here, $p_1$ controls the variance of the distribution and $p_2$ and
+$p_3$ the linear relationship between $u$ and $y$. Using an optimisation
+routine in R we find $p_1=5.93$, $p_2=3.66$ and $p_3=0.099$. Results are
+shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
+values as inputs for all country models.
+
+<figure>
+<img src="figures/sectortourism.png" style="width:60.0%" alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure 4.2)." /><figcaption aria-hidden="true">Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
+</figure>
+
+## 4.3 Remote working
+
+For each sector in each country, we have the 90% interval for the
+proportion of people who can work from home from (Gottlieb et al. 2021).
+We assume that the value we sample within the range is related to
+internet infrastructure, so that a low value in one sector implies low
+values in all sectors. We:
+
+-   take the subset of countries in the income group (LLMIC / UMIC /
+    HIC);
+-   take the minimum of the lower bounds by sector (5%);
+-   take the maximum of the upper bounds by sector (95%);
+-   sample from a uniform distribution between these bounds, taking the
+    same quantile for each sector.
+
+<!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 5.09 and  4.51. For UMICs, we have parameters 7.06 and  8.18. For HICs, we have parameters 7.97 and  6.87. -->
+
+# 5 Parametric distributions
+
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+
+Table 5.1: Parameter distributions.
+
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+
+Parameter
+
+</th>
+<th style="text-align:left;">
+
+Income group
+
+</th>
+<th style="text-align:left;">
+
+Distribution
+
+</th>
+<th style="text-align:right;">
+
+Parameter 1
+
+</th>
+<th style="text-align:right;">
+
+Parameter 2
+
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+
+internet coverage
+
+</td>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+1.78
+
+</td>
+<td style="text-align:right;">
+
+3.11
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+internet coverage
+
+</td>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+14.32
+
+</td>
+<td style="text-align:right;">
+
+6.44
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+internet coverage
+
+</td>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+9.57
+
+</td>
+<td style="text-align:right;">
+
+1.39
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+remaining international tourism
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+Log normal
+
+</td>
+<td style="text-align:right;">
+
+-1.39
+
+</td>
+<td style="text-align:right;">
+
+0.39
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Labour share of GVA
+
+</td>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+5.09
+
+</td>
+<td style="text-align:right;">
+
+4.51
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Labour share of GVA
+
+</td>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+7.06
+
+</td>
+<td style="text-align:right;">
+
+8.18
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Labour share of GVA
+
+</td>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+7.97
+
+</td>
+<td style="text-align:right;">
+
+6.87
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Hospital capacity
+
+</td>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+Gamma
+
+</td>
+<td style="text-align:right;">
+
+1.30
+
+</td>
+<td style="text-align:right;">
+
+20.20
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Hospital capacity
+
+</td>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+Gamma
+
+</td>
+<td style="text-align:right;">
+
+1.73
+
+</td>
+<td style="text-align:right;">
+
+40.73
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Hospital capacity
+
+</td>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+Gamma
+
+</td>
+<td style="text-align:right;">
+
+2.05
+
+</td>
+<td style="text-align:right;">
+
+46.57
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Public transport fraction
+
+</td>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+4.88
+
+</td>
+<td style="text-align:right;">
+
+3.65
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Public transport fraction
+
+</td>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+2.06
+
+</td>
+<td style="text-align:right;">
+
+2.59
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Public transport fraction
+
+</td>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+3.23
+
+</td>
+<td style="text-align:right;">
+
+11.65
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Nursery contacts fraction
+
+</td>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+1.35
+
+</td>
+<td style="text-align:right;">
+
+1.56
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Nursery contacts fraction
+
+</td>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+1.51
+
+</td>
+<td style="text-align:right;">
+
+1.21
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Nursery contacts fraction
+
+</td>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+4.31
+
+</td>
+<td style="text-align:right;">
+
+2.82
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+School contacts fraction
+
+</td>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+3.87
+
+</td>
+<td style="text-align:right;">
+
+2.22
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+School contacts fraction
+
+</td>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+8.23
+
+</td>
+<td style="text-align:right;">
+
+5.77
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+School contacts fraction
+
+</td>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+7.63
+
+</td>
+<td style="text-align:right;">
+
+3.75
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+tourism P1+P2
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+NA
+
+</td>
+<td style="text-align:right;">
+
+6.73
+
+</td>
+<td style="text-align:right;">
+
+NA
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Tourism to international
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+NA
+
+</td>
+<td style="text-align:right;">
+
+4.14
+
+</td>
+<td style="text-align:right;">
+
+0.05
+
+</td>
+</tr>
+</tbody>
+</table>
+
+## 5.1 Hospital capacity
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/hmax-1.png" alt="Hospital capacity: available beds minus usual occupancy."  />
+
+<p class="caption">
+
+Figure 5.1: Hospital capacity: available beds minus usual occupancy.
+
+</p>
+
+</div>
+
+We model these values with gamma distributions. For LLMICs, we have
+parameters 1.3 and 0.05. For UMICs, we have parameters 1.73 and 0.02.
+For HICs, we have parameters 2.05 and 0.02. (Data sources: World Bank
+(beds); OECD, WHO euro (bed occupancy rates).)
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
@@ -677,6 +3218,15 @@ Ananthapavan, Jaithri, Marj Moodie, Andrew J. Milat, and Rob Carter.
 statistical life’ estimates for Australia</span>.” *International
 Journal of Environmental Research and Public Health* 18 (11).
 <https://doi.org/10.3390/ijerph18116168>.
+
+</div>
+
+<div id="ref-Betthauser2023" class="csl-entry">
+
+Betthäuser, Bastian A, Anders M Bach-Mortensen, and Per Engzell. 2023.
+“<span class="nocase">A systematic review and meta-analysis of the
+evidence on learning during the COVID-19 pandemic</span>.” *Nature Human
+Behaviour* 7 (March). <https://doi.org/10.1038/s41562-022-01506-4>.
 
 </div>
 
@@ -698,6 +3248,15 @@ Health Metrics; Evaluation (IHME).
 
 </div>
 
+<div id="ref-Gottlieb2021" class="csl-entry">
+
+Gottlieb, Charles, Jan Grobovšek, Markus Poschke, and Fernando Saltiel.
+2021. “<span class="nocase">Working from home in developing
+countries</span>.” *European Economic Review* 133: 103679.
+<https://doi.org/10.1016/j.euroecorev.2021.103679>.
+
+</div>
+
 <div id="ref-Haw2020" class="csl-entry">
 
 Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo
@@ -705,6 +3264,31 @@ Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. “<span
 class="nocase">Optimizing social and economic activity while containing
 SARS-CoV-2 transmission using DAEDALUS</span>.” *Nature Computational
 Science* 2: 223–33. <https://doi.org/10.25561/83928>.
+
+</div>
+
+<div id="ref-Moscoviz2022" class="csl-entry">
+
+Moscoviz, Laura, and David K Evans. 2022. “<span class="nocase">Learning
+loss and student dropouts during the COVID-19 pandemic: A review of the
+evidence two years after schools shut down</span>.” Washington, DC:
+Center for Global Development.
+
+</div>
+
+<div id="ref-Patrinos2023" class="csl-entry">
+
+Patrinos, Harry Anthony. 2023. “<span class="nocase">The longer students
+were out of school, the less they learned</span>.” *Journal of School
+Choice* 17 (2): 161–75. <https://doi.org/10.1080/15582159.2023.2210941>.
+
+</div>
+
+<div id="ref-Psacharopoulos2021a" class="csl-entry">
+
+Psacharopoulos, George, Victoria; Collis, and Patrinos. 2021. “<span
+class="nocase">The COVID-19 Cost of School Closures in Earnings and
+Income across the World</span>.” *Comparative Education Review* 65 (2).
 
 </div>
 
