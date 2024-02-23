@@ -395,9 +395,9 @@ for in the movement of people out of the group upon its closure.
 
 $$B_{ii}(x) = x_{i}^2(1-q_i)^2B_{ii}(\textbf{1})$$
 
-$$\begin{equation}
+``` math
 B_{ii}(x) = \hat{x}_i^2B_{ii}(\textbf{1}), \quad \hat{x}_i=\max(x_{i}-q_i,0)
-\end{equation}$$
+```
 
 ### 2.3.3 Matrix $C$: Consumer-to-worker contacts
 
