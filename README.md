@@ -1,26 +1,73 @@
 100-day mission: Model description
 ================
 
--   [1 Epi model](#1-epi-model)
-    -   [1.1 Disease state transitions](#11-disease-state-transitions)
-    -   [1.2 Vaccination state
-        transitions](#12-vaccination-state-transitions)
-    -   [1.3 Contact rates](#13-contact-rates)
-        -   [1.3.1 Matrix $A$: community
-            contacts](#131-matrix-a-community-contacts)
-        -   [1.3.2 Matrix $B$: Worker-to-worker
-            contacts](#132-matrix-b-worker-to-worker-contacts)
-        -   [1.3.3 Matrix $C$: Consumers-to-worker
-            contacts](#133-matrix-c-consumers-to-worker-contacts)
-    -   [1.4 Social distancing](#14-social-distancing)
--   [2 Socio-economic costs](#2-socio-economic-costs)
-    -   [2.1 Lost lives](#21-lost-lives)
-    -   [2.2 Lost economic output](#22-lost-economic-output)
-    -   [2.3 Lost education](#23-lost-education)
+-   [1 Simulation rules](#1-simulation-rules)
+-   [2 Epi model](#2-epi-model)
+    -   [2.1 Disease state transitions](#21-disease-state-transitions)
+    -   [2.2 Vaccination state
+        transitions](#22-vaccination-state-transitions)
+    -   [2.3 Contact rates](#23-contact-rates)
+        -   [2.3.1 Matrix $A$: community
+            contacts](#231-matrix-a-community-contacts)
+        -   [2.3.2 Matrix $B$: Worker-to-worker
+            contacts](#232-matrix-b-worker-to-worker-contacts)
+        -   [2.3.3 Matrix $C$: Consumers-to-worker
+            contacts](#233-matrix-c-consumers-to-worker-contacts)
+    -   [2.4 Social distancing](#24-social-distancing)
+-   [3 Socio-economic costs](#3-socio-economic-costs)
+    -   [3.1 Lost lives](#31-lost-lives)
+    -   [3.2 Lost economic output](#32-lost-economic-output)
+    -   [3.3 Lost education](#33-lost-education)
 
-# 1 Epi model
+# 1 Simulation rules
 
-## 1.1 Disease state transitions
+-   Countries are instantiated with two random variables: the response
+    time, and their importation time
+-   The response time is the time at which the reporting country reports
+    having seen X hospital cases, where X is a random number between 1
+    and 20
+-   The importation time is a random number between 0 and 20 days, where
+    0 days would be equivalent to the spillover, or origin, country
+-   The simulation starts at the minimum between the response time and
+    the importation time
+-   At the response time, the BPSV, if present, is given to people aged
+    65 and older; testing begins; social distancing begins; economic
+    closures, if in use, are implemented
+-   At the importation time, five people are moved from compartment S to
+    compartment E
+-   If closures are being implemented, the rules in Tables
+    <a href="#tab:rulesreactive">1.1</a> and
+    <a href="#tab:ruleselimination">1.2</a> are followed
+-   The SARS-X–specific vaccine is rolled out starting on day 107 or 372
+    after the response time, depending on the investment assumption
+-   All people aged 15 and over are eligible for vaccination, and we
+    assume 80% take it up
+-   Distribution rate increases linearly to a maximum of 1% of the
+    population per day, at which is stays until 80% coverage is reached
+-   When vaccine rollout is complete, closures, testing and social
+    distancing end
+-   When the doubling time is more than 30 days and there are fewer than
+    1,000 people in hospital, the simulation ends.
+
+| From/to            | No closures                                                                                                             | Light closures                                                    | Heavy closures                                            |
+|:-------------------|:------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------|:----------------------------------------------------------|
+| **No closures**    |                                                                                                                         |                                                                   | t = response time OR Hospital occupancy &gt; 95% capacity |
+| **Light closures** | (Growth rate &lt; 0.025 OR Hospital occupancy &lt; 25% capacity) AND vaccine rollout complete OR $R(D(\textbf{1}) < 1$) |                                                                   | Hospital occupancy &gt; 95% capacity                      |
+| **Heavy closures** |                                                                                                                         | Hospital occupancy &lt; 25% capacity AND t &gt; 7 + response time |                                                           |
+
+Table 1.1: State transition rules for reactive closure strategies
+
+| From/to            | No closures                                        | Light closures                            | Heavy closures                                            |
+|:-------------------|:---------------------------------------------------|:------------------------------------------|:----------------------------------------------------------|
+| **No closures**    |                                                    |                                           | t = response time OR Hospital occupancy &gt; 95% capacity |
+| **Light closures** | Vaccine rollout complete OR $R(D(\textbf{1}) < 1$) |                                           | Rt &gt; 1.2                                               |
+| **Heavy closures** | Vaccine rollout complete OR $R(D(\textbf{1}) < 1$) | Rt &lt; 0.95 AND t &gt; 7 + response time |                                                           |
+
+Table 1.2: State transition rules for the elimination strategy
+
+# 2 Epi model
+
+## 2.1 Disease state transitions
 
 <div class="figure">
 
@@ -28,14 +75,14 @@
 
 <p class="caption">
 
-Figure 1.1: Disease state transitions
+Figure 2.1: Disease state transitions
 
 </p>
 
 </div>
 
 Possible transitions between disease states are shown in Figure
-<a href="#fig:statetransitions">1.1</a>. Transition rates are functions
+<a href="#fig:statetransitions">2.1</a>. Transition rates are functions
 of time $t$, vaccination status $v$, and group identity $g$ (where the
 groups are the 45 sectors and the four age groups).
 
@@ -48,7 +95,7 @@ k_0(t) = \rho(t)\beta\left(D(x)\cdot I^{(eff)}\right),
 
 $$\begin{equation}
 k_1(v,t) = \eta_{A,v}k_0(t)
-\qquad(1.1)
+\qquad(2.1)
 \end{equation}$$
 
 with
@@ -135,13 +182,13 @@ k_8 = p_D/\lambda_H
 
 is the rate of death following hospitalisation.
 
-## 1.2 Vaccination state transitions
+## 2.2 Vaccination state transitions
 
 In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who
 have received a full schedule of BPSV, and $v=2$ to people who have
 received a full schedule of the specific vaccine. How we model
 transitions between vaccination states is shown in Figure
-<a href="#fig:vaccinetransitions">1.2</a>.
+<a href="#fig:vaccinetransitions">2.2</a>.
 
 $k_9$ and $k_{15}$ represent the rates of BPSV vaccination of
 unvaccinated susceptible and recovered people, and $k_{16}$ and $k_{17}$
@@ -159,13 +206,13 @@ epidemiological pathway of the lower vaccination level.
 
 <p class="caption">
 
-Figure 1.2: Vaccine state transitions
+Figure 2.2: Vaccine state transitions
 
 </p>
 
 </div>
 
-## 1.3 Contact rates
+## 2.3 Contact rates
 
 The configuration $x$ and the proportion of workers working from home
 $q$ determine the scaling of exposure to infection between different
@@ -260,7 +307,7 @@ Finally, $A^{(H)}(\textbf{1})$ is sampled as a fraction of
 $A(\textbf{1})- A^{(S)}(\textbf{1}) - A^{(T)}(\textbf{1})$, which leaves
 $A^{(L)}$.
 
-### 1.3.1 Matrix $A$: community contacts
+### 2.3.1 Matrix $A$: community contacts
 
 -   Any contact made at home, in a vehicle or other private place,
     retail outlet, public transport, leisure facilities, with loved ones
@@ -284,7 +331,7 @@ person scales superlinearly with school closure.
 
 $$\begin{equation}
 A_{ii}^{(S)}(x)=x_{S}^2A_{ii}^{(S)}(\textbf{1}).
-\qquad(1.2)
+\qquad(2.2)
 \end{equation}$$
 
 Matrix $A^{(T)}$ counts contacts between working people, representing
@@ -295,7 +342,7 @@ $\textbf{1}$ scaled accordingly:
 
 $$\begin{equation}
 A_{ij}^{(T)}(x) = x_{j}(1-q_i)(1-q_j)A_{ij}^{(T)}(\textbf{1}).
-\qquad(1.3)
+\qquad(2.3)
 \end{equation}$$
 
 $q_i$ is the proportion of workers from sector $i$ working from home,
@@ -314,7 +361,7 @@ Matrix $A^{(H)}(x)$ gives the contacts made in the hospitality sector:
 
 $$\begin{equation}
 A^{(H)}(x) = x_{H}^2A^{(H)}(\textbf{1})
-\qquad(1.4)
+\qquad(2.4)
 \end{equation}$$
 
 The value $x_{H}$ is the workforce-weighted average extent to which the
@@ -327,7 +374,7 @@ x_{H} = \frac{\sum_ix_{i}w_i}{\sum_iw_i}
 
 where we sum over only the hospitality sectors.
 
-### 1.3.2 Matrix $B$: Worker-to-worker contacts
+### 2.3.2 Matrix $B$: Worker-to-worker contacts
 
 -   Contacts made at work (office, studio, etc.) and which are reported
     to be made (almost) every day, or a few times per week  
@@ -337,7 +384,7 @@ where we sum over only the hospitality sectors.
 
 $$\begin{equation}
 B_{ii}(x) = x_{i}(1-q_i)^2B_{ii}(\textbf{1}),
-\qquad(1.5)
+\qquad(2.5)
 \end{equation}$$
 
 for the $i=1,...,N$ working groups, with the number of contacts adjusted
@@ -348,7 +395,7 @@ is, there are fewer contacts per person, but we do not approximate there
 being fewer people having them. This is because the latter is accounted
 for in the movement of people out of the group upon its closure.
 
-### 1.3.3 Matrix $C$: Consumers-to-worker contacts
+### 2.3.3 Matrix $C$: Consumers-to-worker contacts
 
 -   Contacts made at work (office, studio, etc.) and which are reported
     to be a few times per month, a few times per year or less often, for
@@ -363,7 +410,7 @@ for in the movement of people out of the group upon its closure.
 
 $$\begin{equation}
 C_{ij}(x) = x_{i}(1-q_i)C_{ij}(\textbf{1}),
-\qquad(1.6)
+\qquad(2.6)
 \end{equation}$$
 
 for $j=1,...,N+3$.
@@ -373,15 +420,15 @@ working from home, and linear scaling with respect to sector closure,
 which becomes superlinear scaling for sectors as individuals are moved
 out of the compartment, as with matrix $B(x)$.
 
-## 1.4 Social distancing
+## 2.4 Social distancing
 
 We parametrise the effects of ‘social distancing’ in the model using
-Google’s mobility data (Figure <a href="#fig:smoothmobility">1.3</a>).
+Google’s mobility data (Figure <a href="#fig:smoothmobility">2.3</a>).
 These changes in mobility were consequences of both government mandates
 and individual’s choices. As we cannot separate the two, we consider a
 range of possibilities, based on the range of mobility changes observed
 for a given level of stringency (Figure
-<a href="#fig:mobilitydrop">1.4</a>). In our model, the mandated
+<a href="#fig:mobilitydrop">2.4</a>). In our model, the mandated
 economic configuration leads to a change in contacts. We associate the
 reduction in contacts, which translates as a relative reduction in
 transmission, with the reduction in mobility.
@@ -392,7 +439,7 @@ transmission, with the reduction in mobility.
 
 <p class="caption">
 
-Figure 1.3: Mobility trajectories in 2020 for all countries, with points
+Figure 2.3: Mobility trajectories in 2020 for all countries, with points
 showing the point at which the largest drop was observed. Trajectories
 are averaged over “Retail and recreation,” “Transit stations” and
 “Workplaces” and smoothed with a spline of 80 knots.
@@ -407,7 +454,7 @@ are averaged over “Retail and recreation,” “Transit stations” and
 
 <p class="caption">
 
-Figure 1.4: The largest drop in mobility from Figure
+Figure 2.4: The largest drop in mobility from Figure
 ef{fig:smoothmobility} is plotted against the stringency on that date.
 
 </p>
@@ -446,7 +493,7 @@ $$f(y,g) = (f_1(y,g))^\beta(f_2(y,g))^{(1-\beta)}.$$
 
 <p class="caption">
 
-Figure 1.5: Fit of model to data.
+Figure 2.5: Fit of model to data.
 
 </p>
 
@@ -458,7 +505,7 @@ Figure 1.5: Fit of model to data.
 
 <p class="caption">
 
-Figure 1.6: Posterior distribution for parameters $k_1$ and $b$.
+Figure 2.6: Posterior distribution for parameters $k_1$ and $b$.
 
 </p>
 
@@ -470,14 +517,14 @@ Figure 1.6: Posterior distribution for parameters $k_1$ and $b$.
 
 <p class="caption">
 
-Figure 1.7: Sampled curves for four levels of mitigation. Data shown as
+Figure 2.7: Sampled curves for four levels of mitigation. Data shown as
 points.
 
 </p>
 
 </div>
 
-# 2 Socio-economic costs
+# 3 Socio-economic costs
 
 We assign monetary values to YLLs and to years of education in order to
 add health and education costs of mitigation strategies to the costs of
@@ -495,7 +542,7 @@ COVID-19 ($D$), the remaining life expectancy per age group ($l$), the
 value of a life year (VLY), and discount rate $r$; and the lost output
 over the period due to reduced economic activity ($Z_0-Z$).
 
-## 2.1 Lost lives
+## 3.1 Lost lives
 
 To value lives lost, we make use of the expected remaining life years
 per age group (Global Burden of Disease Collaborative Network 2021).
@@ -541,7 +588,7 @@ $$\begin{equation}
 f_{\text{lives}}(D,l^{\text{(death)}},\text{VLY},r)=\text{VLY}*Y.
 \end{equation}$$
 
-## 2.2 Lost economic output
+## 3.2 Lost economic output
 
 We measure the cost of economic closures in terms of lost gross value
 added (GVA): the GDP generated by an economic configuration is the
@@ -566,7 +613,7 @@ total GVA for the $T$-day period is:
 
 $$\begin{equation}
 Z = \frac{1}{365}\left(\sum_{i\neq\text{ed}}^{\mathcal{N}}\sum_{d=1}^Tz_i\hat{x}_{i}(d) + Tz_{\text{ed}}\right)
-\qquad(2.1)
+\qquad(3.1)
 \end{equation}$$
 
 and the GDP loss compared to the maximum is $Z_0-Z$. All economic
@@ -574,7 +621,7 @@ sectors contribute GVA according to the level they are open for
 production, except for the education sector which contributes its
 maximum possible monthly GVA, $z_{\text{ed}}$ per month.
 
-## 2.3 Lost education
+## 3.3 Lost education
 
 Education loss is quantified as the effective number of years of
 schooling lost. In each month $\tau=1,...,T$ of the projection period,
