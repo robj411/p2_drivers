@@ -399,8 +399,8 @@ date.](README_files/figure-gfm/mobilitydrop.png)
 
 -   We want to write mobility as a function of mandate and some epi
     outcome, e.g. deaths: $m = (1-b)f(y,g) + b$ where $m$ is mobility,
-    $y$ is deaths per million, $g$ is government mandate, and $`0<b<1`$
-    is the baseline.
+    $y$ is deaths per million, $g$ is government mandate, and
+    $`0 < b < 1`$ is the baseline.
 -   We want mobility to drop monotonically with both the mandate and the
     epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
 -   We want a maximum mobility of 1 when both the mandate and the epi
