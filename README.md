@@ -1,21 +1,26 @@
 100-day mission: Model description
 ================
 
--   [1 Disease state transitions](#1-disease-state-transitions)
--   [2 Vaccination state transitions](#2-vaccination-state-transitions)
--   [3 Contact rates](#3-contact-rates)
-    -   [3.1 Matrix $A$: community
-        contacts](#31-matrix-a-community-contacts)
-    -   [3.2 Matrix $B$: Worker-to-worker
-        contacts](#32-matrix-b-worker-to-worker-contacts)
-    -   [3.3 Matrix $C$: Consumers-to-worker
-        contacts](#33-matrix-c-consumers-to-worker-contacts)
--   [4 Definitions of socio-economic
-    costs](#4-definitions-of-socio-economic-costs)
-    -   [4.0.1 Valuing lost lives](#401-valuing-lost-lives)
-    -   [4.0.2 Valuing lost education](#402-valuing-lost-education)
+-   [1 Epi model](#1-epi-model)
+    -   [1.1 Disease state transitions](#11-disease-state-transitions)
+    -   [1.2 Vaccination state
+        transitions](#12-vaccination-state-transitions)
+    -   [1.3 Contact rates](#13-contact-rates)
+        -   [1.3.1 Matrix $A$: community
+            contacts](#131-matrix-a-community-contacts)
+        -   [1.3.2 Matrix $B$: Worker-to-worker
+            contacts](#132-matrix-b-worker-to-worker-contacts)
+        -   [1.3.3 Matrix $C$: Consumers-to-worker
+            contacts](#133-matrix-c-consumers-to-worker-contacts)
+    -   [1.4 Social distancing](#14-social-distancing)
+-   [2 Socio-economic costs](#2-socio-economic-costs)
+    -   [2.1 Lost lives](#21-lost-lives)
+    -   [2.2 Lost economic output](#22-lost-economic-output)
+    -   [2.3 Lost education](#23-lost-education)
 
-# 1 Disease state transitions
+# 1 Epi model
+
+## 1.1 Disease state transitions
 
 <div class="figure">
 
@@ -130,13 +135,13 @@ k_8 = p_D/\lambda_H
 
 is the rate of death following hospitalisation.
 
-# 2 Vaccination state transitions
+## 1.2 Vaccination state transitions
 
 In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who
 have received a full schedule of BPSV, and $v=2$ to people who have
 received a full schedule of the specific vaccine. How we model
 transitions between vaccination states is shown in Figure
-<a href="#fig:vaccinetransitions">2.1</a>.
+<a href="#fig:vaccinetransitions">1.2</a>.
 
 $k_9$ and $k_{15}$ represent the rates of BPSV vaccination of
 unvaccinated susceptible and recovered people, and $k_{16}$ and $k_{17}$
@@ -154,13 +159,13 @@ epidemiological pathway of the lower vaccination level.
 
 <p class="caption">
 
-Figure 2.1: Vaccine state transitions
+Figure 1.2: Vaccine state transitions
 
 </p>
 
 </div>
 
-# 3 Contact rates
+## 1.3 Contact rates
 
 The configuration $x$ and the proportion of workers working from home
 $q$ determine the scaling of exposure to infection between different
@@ -255,7 +260,7 @@ Finally, $A^{(H)}(\textbf{1})$ is sampled as a fraction of
 $A(\textbf{1})- A^{(S)}(\textbf{1}) - A^{(T)}(\textbf{1})$, which leaves
 $A^{(L)}$.
 
-## 3.1 Matrix $A$: community contacts
+### 1.3.1 Matrix $A$: community contacts
 
 -   Any contact made at home, in a vehicle or other private place,
     retail outlet, public transport, leisure facilities, with loved ones
@@ -279,7 +284,7 @@ person scales superlinearly with school closure.
 
 $$\begin{equation}
 A_{ii}^{(S)}(x)=x_{S}^2A_{ii}^{(S)}(\textbf{1}).
-\qquad(3.1)
+\qquad(1.2)
 \end{equation}$$
 
 Matrix $A^{(T)}$ counts contacts between working people, representing
@@ -290,7 +295,7 @@ $\textbf{1}$ scaled accordingly:
 
 $$\begin{equation}
 A_{ij}^{(T)}(x) = x_{j}(1-q_i)(1-q_j)A_{ij}^{(T)}(\textbf{1}).
-\qquad(3.2)
+\qquad(1.3)
 \end{equation}$$
 
 $q_i$ is the proportion of workers from sector $i$ working from home,
@@ -309,7 +314,7 @@ Matrix $A^{(H)}(x)$ gives the contacts made in the hospitality sector:
 
 $$\begin{equation}
 A^{(H)}(x) = x_{H}^2A^{(H)}(\textbf{1})
-\qquad(3.3)
+\qquad(1.4)
 \end{equation}$$
 
 The value $x_{H}$ is the workforce-weighted average extent to which the
@@ -322,7 +327,7 @@ x_{H} = \frac{\sum_ix_{i}w_i}{\sum_iw_i}
 
 where we sum over only the hospitality sectors.
 
-## 3.2 Matrix $B$: Worker-to-worker contacts
+### 1.3.2 Matrix $B$: Worker-to-worker contacts
 
 -   Contacts made at work (office, studio, etc.) and which are reported
     to be made (almost) every day, or a few times per week  
@@ -332,7 +337,7 @@ where we sum over only the hospitality sectors.
 
 $$\begin{equation}
 B_{ii}(x) = x_{i}(1-q_i)^2B_{ii}(\textbf{1}),
-\qquad(3.4)
+\qquad(1.5)
 \end{equation}$$
 
 for the $i=1,...,N$ working groups, with the number of contacts adjusted
@@ -343,7 +348,7 @@ is, there are fewer contacts per person, but we do not approximate there
 being fewer people having them. This is because the latter is accounted
 for in the movement of people out of the group upon its closure.
 
-## 3.3 Matrix $C$: Consumers-to-worker contacts
+### 1.3.3 Matrix $C$: Consumers-to-worker contacts
 
 -   Contacts made at work (office, studio, etc.) and which are reported
     to be a few times per month, a few times per year or less often, for
@@ -358,7 +363,7 @@ for in the movement of people out of the group upon its closure.
 
 $$\begin{equation}
 C_{ij}(x) = x_{i}(1-q_i)C_{ij}(\textbf{1}),
-\qquad(3.5)
+\qquad(1.6)
 \end{equation}$$
 
 for $j=1,...,N+3$.
@@ -368,16 +373,76 @@ working from home, and linear scaling with respect to sector closure,
 which becomes superlinear scaling for sectors as individuals are moved
 out of the compartment, as with matrix $B(x)$.
 
-# 4 Definitions of socio-economic costs
+## 1.4 Social distancing
+
+We parametrise the effects of ‘social distancing’ in the model using
+Google’s mobility data (Figure <a href="#fig:smoothmobility">1.3</a>).
+These changes in mobility were consequences of both government mandates
+and individual’s choices. As we cannot separate the two, we consider a
+range of possibilities, based on the range of mobility changes observed
+for a given level of stringency (Figure
+<a href="#fig:mobilitydrop">1.4</a>). In our model, the mandated
+economic configuration leads to a change in contacts. We associate the
+reduction in contacts, which translates as a relative reduction in
+transmission, with the reduction in mobility.
+
+![(\#fig:smoothmobility) Mobility trajectories in 2020 for all
+countries, with points showing the point at which the largest drop was
+observed. Trajectories are averaged over
+`Retail and recreation'',`Transit stations’’ and \`\`Workplaces’’ and
+smoothed with a spline of 80
+knots.](README_files/figure-gfm/smoothmobility.png)
+
+![(\#fig:mobilitydrop) The largest drop in mobility from Figure is
+plotted against the stringency on that
+date.](README_files/figure-gfm/mobilitydrop.png)
+
+-   We want to write mobility as a function of mandate and some epi
+    outcome, e.g. deaths: $m = (1-b)f(y,g) + b$ where $m$ is mobility,
+    $y$ is deaths per million, $g$ is government mandate, and $0<b<1$ is
+    the baseline.
+-   We want mobility to drop monotonically with both the mandate and the
+    epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
+-   We want a maximum mobility of 1 when both the mandate and the epi
+    outcome are 0: $f(0,0)=1$.
+-   We want mobility to approach $b$ when the mandate and the epi
+    outcome become large: $lim_{x\to 10^6, g\to 1}f(y,g)= 0$.
+-   We want to allow for the possibility of redundancy between the two
+    variables: $f(0,0)/f(0,g) > f(x,0)/f(y,g)$ and
+    $f(0,0)/f(y,0) > f(0,g)/f(y,g)$ for $y,g>0$.
+
+A simple model to achieve these criteria is:
+$$f(y,g) = \frac{1}{1+k_1y+k_2g}$$ with $k_1, k_2>0$.
+
+However, we might also want a model that can be parametrised with a
+distribution whose uncertainty covers the whole range of possible
+eventualities. The equivalent model with compounded effects would be
+$$f_1(y,g) = \frac{1}{1+k_1y}\frac{1}{1+k_2g}.$$ The equivalent model
+with completely overlapping effects would be
+$$f_2(y,g) = \frac{1}{1+\max(k_1y,k_2g)}.$$ Then we could include ‘model
+uncertainty’ via some parameter $\beta\sim\mathcal{U}(0,1)$, defining
+$$f(y,g) = (f_1(y,g))^\beta(f_2(y,g))^{(1-\beta)}.$$
+
+![(\#fig:mobilityfitted) Fit of model to
+data.](README_files/figure-gfm/mobilityfitted.png)
+
+![(\#fig:mobilityposterior) Posterior distribution for parameters $k_1$
+and $b$.](README_files/figure-gfm/mobilityposterior.png)
+
+![(\#fig:mobilitycurves) Sampled curves for four levels of mitigation.
+Data shown as points.](README_files/figure-gfm/mobilitycurves.png)
+
+# 2 Socio-economic costs
 
 We assign monetary values to YLLs and to years of education in order to
 add health and education costs of mitigation strategies to the costs of
-economic closures. This enables comparisons between configurations,
-which forms the basis of the decision framework.
+economic closures. We define the total socio-economic costs TSC of an
+epidemic as the sum of the individual costs:
 
-We define the total socio-economic costs TSC of an economic
-configuration $\{x_{i,\tau}\}$ as the sum of the individual costs:
-`math\text{TSC} = f_{\text{education}}(X,\text{VSY}) + f_{\text{lives}}(D,l,\text{VLY},r) + f_{\text{GDP}}(Z_0-Z,r), \label{eq:swf}`
+$$\begin{equation}
+\text{TSC} = f_{\text{education}}(X,\text{VSY}) + f_{\text{lives}}(D,l,\text{VLY},r) + f_{\text{GDP}}(Z_0-Z,r),
+\label{eq:swf}
+\end{equation}$$
 
 where the arguments are the number of school years lost ($X$) and the
 value of a school year (VSY); the number of deaths per age group due to
@@ -385,70 +450,85 @@ COVID-19 ($D$), the remaining life expectancy per age group ($l$), the
 value of a life year (VLY), and discount rate $r$; and the lost output
 over the period due to reduced economic activity ($Z_0-Z$).
 
-The cost includes both immediate costs, and mid- to long-term costs, all
-attributable to choices made about closures over a short time period.
-The losses are added up over all years for which the loss is expected to
-persist, using the same discounting rate $r$ of 3%, which is implicit in
-the VSY and applied to the other losses. As the counterfactual
-no-pandemic scenario has a cost of 0, Equation represents the sum total
-socio-economic costs of the pandemic over the period in question.  
-The individual components $f_{\text{lives}}$, $f_{\text{GDP}}$, and
-$f_{\text{education}}$ are described in full in Sections , , and ,
-respectively.
-
-### 4.0.1 Valuing lost lives
+## 2.1 Lost lives
 
 To value lives lost, we make use of the expected remaining life years
-per age group . These are used to estimate the expected number of years
-of life lost per death, and to estimate the value of a life year. We map
-the remaining life expectancy $l_a$ for the GBD age groups $a$ to $l_g$
-for the model age groups $g$ as a population-weighted average, taking
-into account the size of each age group, $N_a$. For the expected number
-of life years lost per death, we take into account also the probability
-to die given infection, $P(D|I,a)$ (Table ):
-`mathl_g^{\text{(death)}} = \frac{\sum_{a\in g}N_al_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)};`
-`mathl_g^{\text{(life)}} = \frac{\sum_{a\in g}N_al_a}{\sum_{a\in g}N_a};`
+per age group (Global Burden of Disease Collaborative Network 2021).
+These are used to estimate the expected number of years of life lost per
+death, and to estimate the value of a life year. We map the remaining
+life expectancy $l_a$ for the GBD age groups $a$ to $l_g$ for the model
+age groups $g$ as a population-weighted average, taking into account the
+size of each age group, $N_a$. For the expected number of life years
+lost per death, we take into account also the probability to die given
+infection, $P(D|I,a)$:
+$$l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_al_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; $$
+$$l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_al_a}{\sum_{a\in g}N_a}; $$
 
 Expected life years remaining with discounting taken into account can be
-written $$\begin{align}
-\hat{l}_g&=\sum_{y=1}^{l_g}\frac{1}{(1+r)^{y}}%\\
-\end{align}$$ for discount rate $r>0$. The discounted number of years
-lost given $D_g$ deaths due to COVID-19 for each age group is
+written
 
-``` {.mathy=\\sum_gd_g\\hat{l}_g^{\\text{(death)}}.```}
-%We use this notation to define the cost as a simple product of the VLY and the discounted number of years for input into Equation \ref{eq:swf}.
+$$\begin{equation}
+\hat{l}_g=\sum_{y=1}^{l_g}\frac{1}{(1+r)^{y}}
+\end{equation}$$
 
-The VLY used by policy makers should reflect the value that members of the society place on reductions of their own mortality. %We do not take into account any health costs apart from lives lost due to COVID-19. 
-We rely on the intrinsic rather than instrumental interpretation of the valuation of life \cite{Cutler2020}, and we use existing estimates of the value of a statistical life (VSL) to estimate VLY. We interpret the VSL as a population-weighted average \citemref{Ananthapavan2021,Robinson2021}, where each age group has a VSL defined by the number of expected life years remaining, and where each discounted year has the same value: 
-  ```math\text{VSL}=\frac{\sum_gN_g\hat{l}_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.```
+for discount rate $r>0$. The discounted number of years lost given $D_g$
+deaths due to COVID-19 for each age group is $$\begin{equation}
+Y=\sum_gD_g\hat{l}_g^{\text{(death)}}.
+\end{equation}$$
 
-Finally, we define the value of lives lost as 
-```mathf_{\text{lives}}(D,l^{\text{(death)}},\text{VLY},r)=\text{VLY}*Y.```
-In the applications, we report the total YLLs,  ```math\text{YLL}=\sum_gD_gl_g^{\text{(death)}}, ``` in their natural units of years, and, separately, the monetized life years lost, $f_{\text{lives}}(D,l^{\text{(death)}},\text{VLY},r)$, in \$.
+The VLY used by policy makers should reflect the value that members of
+the society place on reductions of their own mortality. We rely on the
+intrinsic rather than instrumental interpretation of the valuation of
+life (Cutler and Summers 2020), and we use existing estimates of the
+value of a statistical life (VSL) to estimate VLY. We interpret the VSL
+as a population-weighted average (Ananthapavan et al. 2021; Robinson,
+Sullivan, and Shogren 2021), where each age group has a VSL defined by
+the number of expected life years remaining, and where each discounted
+year has the same value:
 
-We identify three estimates for the VSL in Indonesia. For the example in Section \ref{illustration}, we use the value of \$950,000 for a life of a working-age individual \cite{Wulandari}. %The author describes this value as ``high'', contrasting it with several estimates for comparable regions.
-With 38 years remaining life expectancy for this group, we get an estimate for the VLY of \$42,000. For the scenarios, we use a range of values from \$20,000 to \$80,000 that encompass upper and lower limits for the VLY. The upper limit comes from an estimate of the VSL being worth 160 times GNI per capita (based on purchasing power parity \citemref{Robinson2021}), which we evaluate to be \$1,910,000, giving the VLY as \$80,000. For the lower limit, we use an estimate of \$592,000 for the VSL \citemref{Viscusi2017}. 
+$$\begin{equation}
+\text{VSL}=\frac{\sum_gN_g\hat{l}_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
+\end{equation}$$
 
+Finally, we define the value of lives lost as
 
-### Valuing lost economic output
+$$\begin{equation}
+f_{\text{lives}}(D,l^{\text{(death)}},\text{VLY},r)=\text{VLY}*Y.
+\end{equation}$$
 
-%% define GVA
+## 2.2 Lost economic output
 
-We measure the cost of economic closures in terms of lost gross value added (GVA): the GDP generated by an economic configuration is the maximum GVA per month (denoted $z_i$ for each sector $i$) multiplied by the respective sector openings, summed over the period. The maximum possible GDP (which is with no closures for $T$ months) is $Z_0=T\sum_{i}z_i$, and we use pre-pandemic output to define the maximum possible values.
+We measure the cost of economic closures in terms of lost gross value
+added (GVA): the GDP generated by an economic configuration is the
+maximum GVA (denoted $z_i$ for each sector $i$) multiplied by the
+respective sector openings, summed over the period. The maximum possible
+GDP (which is with no closures) is $Z_0=T\sum_{i}z_i$, and we use
+pre-pandemic output to define the maximum possible values.
 
-Recall that $w_{i,\tau}$ denotes the proportion of the workforce contributing to economic production out of the total workforce $N_i$. The workforce can be additionally depleted due to sickness, hospitalisation and death, leaving a smaller fraction ($\hat{w}_{i,\tau}$) to contribute to production.\footnote{$\hat{w}_{i,\tau}=w_{i,\tau}-\sum_{v}\mathbb{E}_{d\in \tau}\left(I_{S,v,i}(d)+H_{v,i}(d)+D_{v,i}(d)\right)/N_i$ for vaccine status $v$, infectious and symptomatic $I_S$, hospitalised $H$, deceased $D$, with total population $N_i$ for sector $i$. $\mathbb{E}_{d\in \tau}$ represents that we compute the average number for all days $d$ in month $\tau$.} The output for the remaining workforce is $\hat{x}_{i,\tau}=\hat{w}_{i,\tau}$. Then the total GVA for the period is: 
-  ```math\label{eq:economiccost}
-Z = \sum_{i\neq \text{ed}}^{\mathcal{N}}\sum_{\tau=1}^Tz_i\hat{x}_{i,\tau} + Tz_{\text{ed}}
-```
+$x_{i}$ is the proportion of the workforce contributing to economic
+production out of the total workforce $N_i$. The workforce can be
+additionally depleted due to sickness, hospitalisation and death,
+leaving a smaller fraction ($\hat{x}_{i}$) to contribute to production.
+
+$$\begin{equation}
+\hat{x}_{i}(d)=x_{i}(d)-\sum_{v}\left(I_{S,v,i}(d)+H_{v,i}(d)+D_{v,i}(d)\right)/N_i
+\end{equation}$$
+
+for vaccine status $v$, infectious and symptomatic $I_S$, hospitalised
+$H$, deceased $D$, with total population $N_i$ for sector $i$. Then the
+total GVA for the $T$-day period is:
+
+$$\begin{equation}
+Z = \frac{1}{365}\left(\sum_{i\neq\text{ed}}^{\mathcal{N}}\sum_{d=1}^Tz_i\hat{x}_{i}(d) + Tz_{\text{ed}}\right)
+\qquad(2.1)
+\end{equation}$$
 
 and the GDP loss compared to the maximum is $Z_0-Z$. All economic
 sectors contribute GVA according to the level they are open for
 production, except for the education sector which contributes its
-maximum possible monthly GVA, $z_{\text{ed}}$ per month. %Note that the
-economic loss due to absence {(symptomatic infection, hospitalisation,
-and death)} is negligible compared to other costs (Figure ).
+maximum possible monthly GVA, $z_{\text{ed}}$ per month.
 
-### 4.0.2 Valuing lost education
+## 2.3 Lost education
 
 Education loss is quantified as the effective number of years of
 schooling lost. In each month $\tau=1,...,T$ of the projection period,
@@ -497,6 +577,34 @@ consequent changes to demand, consumption or growth.
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
+<div id="ref-Ananthapavan2021" class="csl-entry">
+
+Ananthapavan, Jaithri, Marj Moodie, Andrew J. Milat, and Rob Carter.
+2021. “<span class="nocase">Systematic review to update ‘value of a
+statistical life’ estimates for Australia</span>.” *International
+Journal of Environmental Research and Public Health* 18 (11).
+<https://doi.org/10.3390/ijerph18116168>.
+
+</div>
+
+<div id="ref-Cutler2020" class="csl-entry">
+
+Cutler, David M., and Lawrence H. Summers. 2020. “<span
+class="nocase">The COVID-19 pandemic and the \$16 trillion
+virus</span>.” *JAMA* 324 (15). <https://doi.org/10.1257/pol.20170046>.
+
+</div>
+
+<div id="ref-GlobalBurdenofDiseaseCollaborativeNetwork2021"
+class="csl-entry">
+
+Global Burden of Disease Collaborative Network. 2021. “<span
+class="nocase">Global Burden of Disease Study 2019 (GBD 2019) Reference
+Life Table</span>.” Seattle, United States of America: Institute for
+Health Metrics; Evaluation (IHME).
+
+</div>
+
 <div id="ref-Haw2020" class="csl-entry">
 
 Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo
@@ -504,6 +612,15 @@ Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. “<span
 class="nocase">Optimizing social and economic activity while containing
 SARS-CoV-2 transmission using DAEDALUS</span>.” *Nature Computational
 Science* 2: 223–33. <https://doi.org/10.25561/83928>.
+
+</div>
+
+<div id="ref-Robinson2021" class="csl-entry">
+
+Robinson, Lisa A., Ryan Sullivan, and Jason F. Shogren. 2021. “<span
+class="nocase">Do the benefits of COVID-19 policies exceed the costs?
+Exploring uncertainties in the age–VSL relationship</span>.” *Risk
+Analysis* 41 (5): 761–70. <https://doi.org/10.1111/risa.13561>.
 
 </div>
 
