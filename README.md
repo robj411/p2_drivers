@@ -11,8 +11,8 @@
             contacts](#231-matrix-a-community-contacts)
         -   [2.3.2 Matrix $B$: Worker-to-worker
             contacts](#232-matrix-b-worker-to-worker-contacts)
-        -   [2.3.3 Matrix $C$: Consumers-to-worker
-            contacts](#233-matrix-c-consumers-to-worker-contacts)
+        -   [2.3.3 Matrix $C$: Consumer-to-worker
+            contacts](#233-matrix-c-consumer-to-worker-contacts)
     -   [2.4 Social distancing](#24-social-distancing)
 -   [3 Socio-economic costs](#3-socio-economic-costs)
     -   [3.1 Lost lives](#31-lost-lives)
@@ -249,20 +249,19 @@ closures, each matrix is transformed independently, before they are all
 added together again.
 
 Matrix $D(\textbf{1})$ is estimated using as a basis a contact matrix
-from (Walker et al. 2020). These are 16-by-16 matrices, ($D^{(16)}$),
-for five-year age bands $a$ up to age group 75+. We map the matrix to a
+from (Walker et al. 2020). These are 16-by-16 matrices, $D^{(16)}$, for
+five-year age bands $a$ up to age group 75+. We map the matrix to a
 four-by-four matrix $D^{(4)}$ corresponding to the four age groups $g$
 used in the DAEDALUS model, using population sizes, $\hat{P}_a$:
 
 ``` math
-D_{gg'}^{(4)} = \frac{\sum_{a\in g}\hat{P}_{a}\sum_{a'\in g'}D^{(16)}_{a,a'}}{\sum_{a\in g}\hat{P}_{a}}.
+D_{gg'}^{(4)} = \frac{\sum_{a\in g}\hat{P}_{a}\sum_{a'\in g'}D^{(16)}_{a,a'}}{\sum_{a\in g}\hat{P}_{a}},
 ```
 
-Using $P_g$ to represent the population sizes of the DAEDALUS age
-groups,
+and $P_g$ to represent the population sizes of the DAEDALUS age groups,
 
 ``` math
-P_g=\sum_{a\in g}\hat{P}_a,
+P_g=\sum_{a\in g}\hat{P}_a.
 ```
 
 We get to the matrix $D(\textbf{1})$ by broadcasting the four-by-four
@@ -288,13 +287,12 @@ contacts that come from workplaces, and workplace-related contacts. From
 these, we get $B(\textbf{1})$ and $C(\textbf{1})$, constructing the
 matrices and normalising.
 
-Matrix B is diagonal owing to lack of data regarding between-sector
-contacts (Haw et al. 2022). Note that $B_{ii}(\textbf{1})=0$ for $i>N$.
-Consumer-to-worker contacts (matrix $C$) describe contacts experienced
-by workers from consumers per sector. Note that $C_{ij}(\textbf{1})=0$
-for $i>N$. Matrix $\hat{C}(\textbf{1})$ is the complement of matrix
-$C(\textbf{1})$, computed by multiplying through by population,
-transposing, and dividing again by population.
+Matrix B is diagonal and $B_{ii}(\textbf{1})=0$ for $i>N$ (Haw et al.
+2022). Consumer-to-worker contacts (matrix $C$) describe contacts
+experienced by workers from consumers per sector. Note that
+$C_{ij}(\textbf{1})=0$ for $i>N$. Matrix $\hat{C}(\textbf{1})$ is the
+complement of matrix $C(\textbf{1})$, computed by multiplying through by
+population, transposing, and dividing again by population.
 
 With $D(\textbf{1})$, $C(\textbf{1})$, $B(\textbf{1})$ and
 $\hat{C}(\textbf{1})$, we learn $A(\textbf{1})$.
@@ -323,14 +321,6 @@ $A^{(L)}$.
 
 ### 2.3.1 Matrix $A$: community contacts
 
--   Any contact made at home, in a vehicle or other private place,
-    retail outlet, public transport, leisure facilities, with loved ones
-    in a closed place (“Chez des proches en lieux clos”), open place
-    (park, street)
--   Disaggregated by age group (0 – 4; 5 – 19; 20 – 64; 65+)
--   Consumer-consumer contacts are added with respect to the proportion
-    the hospitality and education sectors are opened
-
 We construct $A(x)$ from its constituent parts, representing intra- and
 inter-household interactions ($L$), school interactions ($S$),
 hospitality interactions ($H$) and travel interactions ($T$):
@@ -339,9 +329,9 @@ hospitality interactions ($H$) and travel interactions ($T$):
 A(x)=A^{(L)} + A^{(S)}(x) + A^{(H)}(x) + A^{(T)}(x).
 ```
 
-School contacts under $x$ are simply the scaled values. $x_{S}$ is the
-extent to which schools are open, so that the number of contacts per
-person scales superlinearly with school closure.
+School contacts under $x$ are the peacetime values scaled by the extent
+of closure. $x_{S}$ is the extent to which schools are open, so that the
+number of contacts per person scales superlinearly with school closure.
 
 $$\begin{equation}
 A_{ii}^{(S)}(x)=x_{S}^2A_{ii}^{(S)}(\textbf{1}).
@@ -390,12 +380,6 @@ where we sum over only the hospitality sectors.
 
 ### 2.3.2 Matrix $B$: Worker-to-worker contacts
 
--   Contacts made at work (office, studio, etc.) and which are reported
-    to be made (almost) every day, or a few times per week  
--   Disaggregated by sector
--   Individuals who stated that they are in employment
--   Individuals who are of working age (20 – 64)
-
 $$\begin{equation}
 B_{ii}(x) = x_{i}(1-q_i)^2B_{ii}(\textbf{1}),
 \qquad(2.5)
@@ -409,18 +393,13 @@ is, there are fewer contacts per person, but we do not approximate there
 being fewer people having them. This is because the latter is accounted
 for in the movement of people out of the group upon its closure.
 
-### 2.3.3 Matrix $C$: Consumers-to-worker contacts
+$$B_{ii}(x) = x_{i}^2(1-q_i)^2B_{ii}(\textbf{1})$$
 
--   Contacts made at work (office, studio, etc.) and which are reported
-    to be a few times per month, a few times per year or less often, for
-    the first time
--   Disaggregated by sector
--   Individuals who stated that they are in employment  
--   Individuals who are of working age (20 – 64)  
--   If more than 20 contacts are made by the individual, the survey
-    respondent could state the total number of contacts made instead of
-    listing all individual contacts. If this was the case, this number
-    was used instead of the sum of individual contacts made
+$$\begin{equation}
+B_{ii}(x) = \hat{x}_i^2B_{ii}(\textbf{1}), \quad \hat{x}_i=\max(x_{i}-q_i,0)
+\end{equation}$$
+
+### 2.3.3 Matrix $C$: Consumer-to-worker contacts
 
 $$\begin{equation}
 C_{ij}(x) = x_{i}(1-q_i)C_{ij}(\textbf{1}),
