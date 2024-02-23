@@ -386,16 +386,33 @@ economic configuration leads to a change in contacts. We associate the
 reduction in contacts, which translates as a relative reduction in
 transmission, with the reduction in mobility.
 
-![(\#fig:smoothmobility) Mobility trajectories in 2020 for all
-countries, with points showing the point at which the largest drop was
-observed. Trajectories are averaged over
-`Retail and recreation'',`Transit stations’’ and \`\`Workplaces’’ and
-smoothed with a spline of 80
-knots.](README_files/figure-gfm/smoothmobility.png)
+<div class="figure">
 
-![(\#fig:mobilitydrop) The largest drop in mobility from Figure is
-plotted against the stringency on that
-date.](README_files/figure-gfm/mobilitydrop.png)
+<img src="README_files/figure-gfm/smoothmobility.png" alt="Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over &quot;Retail and recreation&quot;, &quot;Transit stations&quot; and &quot;Workplaces&quot; and smoothed with a spline of 80 knots." width="2809" />
+
+<p class="caption">
+
+Figure 1.3: Mobility trajectories in 2020 for all countries, with points
+showing the point at which the largest drop was observed. Trajectories
+are averaged over “Retail and recreation,” “Transit stations” and
+“Workplaces” and smoothed with a spline of 80 knots.
+
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/mobilitydrop.png" alt="The largest drop in mobility from Figure  ef{fig:smoothmobility} is plotted against the stringency on that date." width="3000" />
+
+<p class="caption">
+
+Figure 1.4: The largest drop in mobility from Figure
+ef{fig:smoothmobility} is plotted against the stringency on that date.
+
+</p>
+
+</div>
 
 -   We want to write mobility as a function of mandate and some epi
     outcome, e.g. deaths: $m = (1-b)f(y,g) + b$ where $m$ is mobility,
@@ -406,7 +423,7 @@ date.](README_files/figure-gfm/mobilitydrop.png)
 -   We want a maximum mobility of 1 when both the mandate and the epi
     outcome are 0: $f(0,0)=1$.
 -   We want mobility to approach $b$ when the mandate and the epi
-    outcome become large: $lim_{x\to 10^6, g\to 1}f(y,g)= 0$.
+    outcome become large: $\lim_{x\to 10^6, g\to 1}f(y,g)= 0$.
 -   We want to allow for the possibility of redundancy between the two
     variables: $f(0,0)/f(0,g) > f(x,0)/f(y,g)$ and
     $f(0,0)/f(y,0) > f(0,g)/f(y,g)$ for $y,g>0$.
@@ -423,14 +440,42 @@ $$f_2(y,g) = \frac{1}{1+\max(k_1y,k_2g)}.$$ Then we could include ‘model
 uncertainty’ via some parameter $\beta\sim\mathcal{U}(0,1)$, defining
 $$f(y,g) = (f_1(y,g))^\beta(f_2(y,g))^{(1-\beta)}.$$
 
-![(\#fig:mobilityfitted) Fit of model to
-data.](README_files/figure-gfm/mobilityfitted.png)
+<div class="figure">
 
-![(\#fig:mobilityposterior) Posterior distribution for parameters $k_1$
-and $b$.](README_files/figure-gfm/mobilityposterior.png)
+<img src="README_files/figure-gfm/mobilityfitted.png" alt="Fit of model to data." width="2096" />
 
-![(\#fig:mobilitycurves) Sampled curves for four levels of mitigation.
-Data shown as points.](README_files/figure-gfm/mobilitycurves.png)
+<p class="caption">
+
+Figure 1.5: Fit of model to data.
+
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/mobilityposterior.png" alt="Posterior distribution for parameters $k_1$ and $b$." width="2096" />
+
+<p class="caption">
+
+Figure 1.6: Posterior distribution for parameters $k_1$ and $b$.
+
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/mobilitycurves.png" alt="Sampled curves for four levels of mitigation. Data shown as points." width="2096" />
+
+<p class="caption">
+
+Figure 1.7: Sampled curves for four levels of mitigation. Data shown as
+points.
+
+</p>
+
+</div>
 
 # 2 Socio-economic costs
 
