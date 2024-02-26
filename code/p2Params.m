@@ -29,8 +29,10 @@ end
 
 p2.Tres = data.rts;
 p2.t_tit = data.rts;
-
 p2.dur    = 1;
+p2.frac_sym_infectiousness_remaining = min(1,p2.dur./(dis.Tsr+dis.Tsh)*2);
+p2.frac_asym_infectiousness_remaining = min(1,p2.dur./dis.Tay);
+
 % p2.qg1    = 1/(dis.Tay-p2.dur);
 % p2.qg2    = (1-dis.ph)./(dis.Ts-p2.dur);
 % p2.qg2_v1 = (1-(1-dis.hv1)*dis.ph)./(dis.Ts_v1-p2.dur);
