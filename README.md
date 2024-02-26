@@ -18,6 +18,8 @@
         -   [3.3.3 Matrix $C$: Consumer-to-worker
             contacts](#333-matrix-c-consumer-to-worker-contacts)
     -   [3.4 Social distancing](#34-social-distancing)
+    -   [3.5 Self isolating](#35-self-isolating)
+    -   [3.6 Equations](#36-equations)
 -   [4 Econ model](#4-econ-model)
     -   [4.1 Configurations](#41-configurations)
     -   [4.2 Impact of tourism](#42-impact-of-tourism)
@@ -114,14 +116,16 @@ $$l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_al_a}{\sum_{a\in g}N_a}; $$
 Expected life years remaining with discounting taken into account can be
 written
 
-$$\begin{equation}
+``` math
 \hat{l}_g=\sum_{y=1}^{l_g}\frac{1}{(1+r)^{y}}
-\end{equation}$$
+```
 
 for discount rate $r>0$. The discounted number of years lost given $D_g$
-deaths due to COVID-19 for each age group is $$\begin{equation}
+deaths due to COVID-19 for each age group is
+
+``` math
 Y=\sum_gD_g\hat{l}_g^{\text{(death)}}.
-\end{equation}$$
+```
 
 The VLY used by policy makers should reflect the value that members of
 the society place on reductions of their own mortality. We rely on the
@@ -158,18 +162,17 @@ can be additionally depleted due to sickness, hospitalisation and death,
 leaving a smaller fraction ($`\hat{x}_{i}(t)`$) to contribute to
 production.
 
-$$\begin{equation}
+``` math
 \hat{x}_{i}(t)=x_{i}(t)-\sum_{v}\left(I_{S,v,i}(t)+H_{v,i}(t)+D_{v,i}(t)\right)/N_i
-\end{equation}$$
+```
 
 for vaccine status $v$, infectious and symptomatic $I_S$, hospitalised
 $H$, deceased $D$, with total population $N_i$ for sector $i$. Then the
 total GVA for the $T$-day period is:
 
-$$\begin{equation}
+``` math
 Z = \frac{1}{365}\left(\sum_{i\neq\text{ed}}^{\mathcal{N}}\sum_{t=1}^Tz_i\hat{x}_{i}(t) + Tz_{\text{ed}}\right)
-\qquad(2.1)
-\end{equation}$$
+```
 
 and the GDP loss compared to the maximum is $Z_0-Z$. All economic
 sectors contribute GVA according to the level they are open for
@@ -236,11 +239,14 @@ For HICs, we have parameters 7.97 and 6.87.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions"  />
+<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I_A$: asymptomatic infectious. $I_S$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$: vaccination status."  />
 
 <p class="caption">
 
-Figure 3.1: Disease state transitions
+Figure 3.1: Disease state transitions. $S$: susceptible. $E$: exposed.
+$I_A$: asymptomatic infectious. $I_S$: symptomatic infectious. $H$:
+hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$: vaccination
+status.
 
 </p>
 
@@ -254,19 +260,15 @@ groups are the 45 sectors and the four age groups).
 The rate of infection of susceptible individuals, $k_1(v,t)$, is defined
 as
 
-``` math
-k_0(t) = \rho(t)\beta\left(D(x)\cdot I^{(eff)}\right), 
-```
-
 $$\begin{equation}
-k_1(v,t) = \eta_{A,v}k_0(t)
+k_1(v,t) = \eta_{A,v}\rho(t)\beta\left(D(x)\cdot I^{(eff)}\right)
 \qquad(3.1)
 \end{equation}$$
 
 with
 
 ``` math
- I^{(eff)}=\sum_{v=0}^2(\epsilon (1-p_3+\delta p_3)I_{A,v}+(1-p_4+\delta p_4)I_{S,v}). 
+ I^{(eff)}=\sum_{v=0}^2(\epsilon (1-p_3)I_{A,v}+(1-p_4)I_{S,v}). 
 ```
 
 Here, $\eta_{A,v}$ is the relative probability to be infected given
@@ -275,13 +277,12 @@ of infection, $\beta$, which captures the impact of social distancing;
 $D(x)$ is the contact matrix between groups and depends on the economic
 configuration $x$; $\epsilon$ is the reduction in infectiousness from
 asymptomatic relative to symptomatic individuals; $p_3$ and $p_4$ are
-the proportions of asymptomatic and symptomatic infectious days,
-respectively, spent self isolating; $\delta$ is the infectiousness
-remaining given the rate to self isolate; and $I_{\cdot,\cdot}$ is the
-vector of number of infectious asymptomatic ($I_{A,\cdot}$) and
-symptomatic ($I_{S,\cdot}$) people who are unvaccinated ($I_{\cdot,0}$),
-vaccinated with the BPSV ($I_{\cdot,1}$), or vaccinated with the
-specific vaccine ($I_{\cdot,2}$).
+the proportions of asymptomatic and symptomatic infectiousness averted,
+respectively, due to self isolating; and $I_{\cdot,\cdot}$ is the vector
+of number of infectious asymptomatic ($I_{A,\cdot}$) and symptomatic
+($I_{S,\cdot}$) people who are unvaccinated ($I_{\cdot,0}$), vaccinated
+with the BPSV ($I_{\cdot,1}$), or vaccinated with the specific vaccine
+($I_{\cdot,2}$).
 
 ``` math
  k_2 = (1-p_S)/\sigma 
@@ -355,23 +356,24 @@ received a full schedule of the specific vaccine. How we model
 transitions between vaccination states is shown in Figure
 <a href="#fig:vaccinetransitions">3.2</a>.
 
-$k_9$ and $k_{15}$ represent the rates of BPSV vaccination of
-unvaccinated susceptible and recovered people, and $k_{16}$ and $k_{17}$
-represent the rates of vaccinating BPSV-vaccinated susceptible and
-recovered people. $k_{13}$ and $k_{14}$ represent the rates of
-vaccinating people directly with the specific vaccine. $k_{10}$ and
-$k_{18}$ are the rates of seroconversion to vaccine-induced immunity,
-and $k_{12}(t)=k_1(0,t)$ and $k_{19}(t)=k_1(1,t)$ are the rates of
-infection of just-vaccinated people, which returns them to the
-epidemiological pathway of the lower vaccination level.
+$w_{0,1}$ represents the rates of BPSV vaccination of unvaccinated
+susceptible and recovered people, and $w_{1,2}$ represents the rates of
+vaccinating BPSV-vaccinated susceptible and recovered people. $w_{0,2}$
+represents the rates of vaccinating people directly with the specific
+vaccine. $m_{1}$ and $m_{2}$ are the rates of seroconversion to
+vaccine-induced immunity, and $k_{12}(t)=k_1(0,t)$ and
+$k_{19}(t)=k_1(1,t)$ are the rates of infection of just-vaccinated
+people, which returns them to the epidemiological pathway of the lower
+vaccination level.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions"  />
+<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $M$: vaccinated but not yet protected. $R$: recovered. $v$: vaccination status."  />
 
 <p class="caption">
 
-Figure 3.2: Vaccine state transitions
+Figure 3.2: Vaccine state transitions. $S$: susceptible. $M$: vaccinated
+but not yet protected. $R$: recovered. $v$: vaccination status.
 
 </p>
 
@@ -606,30 +608,30 @@ ef{fig:smoothmobility} is plotted against the stringency on that date.
 </div>
 
 -   We want to write mobility as a function of mandate and some epi
-    outcome, e.g. deaths: $m = (1-b)f(y,g) + b$ where $m$ is mobility,
-    $y$ is deaths per million, $g$ is government mandate, and
-    $`0 < b < 1`$ is the baseline.
+    outcome, e.g. deaths: $m = (1-p_8)f(y,g) + p_8$ where $m$ is
+    mobility, $y$ is deaths per million, $g$ is government mandate, and
+    $`0 < p_8 < 1`$ is the baseline.
 -   We want mobility to drop monotonically with both the mandate and the
     epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
 -   We want a maximum mobility of 1 when both the mandate and the epi
     outcome are 0: $f(0,0)=1$.
--   We want mobility to approach $b$ when the mandate and the epi
+-   We want mobility to approach $p_8$ when the mandate and the epi
     outcome become large: $\lim_{x\to 10^6, g\to 1}f(y,g)= 0$.
 -   We want to allow for the possibility of redundancy between the two
     variables: $f(0,0)/f(0,g) > f(x,0)/f(y,g)$ and
     $f(0,0)/f(y,0) > f(0,g)/f(y,g)$ for $y,g>0$.
 
 A simple model to achieve these criteria is:
-$$f(y,g) = \frac{1}{1+k_1y+k_2g}$$ with $k_1, k_2>0$.
+$$f(y,g) = \frac{1}{1+p_9y+p_{10}g}$$ with $p_9, p_{10}>0$.
 
 However, we might also want a model that can be parametrised with a
 distribution whose uncertainty covers the whole range of possible
 eventualities. The equivalent model with compounded effects would be
-$$f_1(y,g) = \frac{1}{1+k_1y}\frac{1}{1+k_2g}.$$ The equivalent model
+$$f_1(y,g) = \frac{1}{1+p_9y}\frac{1}{1+p_{10}g}.$$ The equivalent model
 with completely overlapping effects would be
-$$f_2(y,g) = \frac{1}{1+\max(k_1y,k_2g)}.$$ Then we could include ‘model
-uncertainty’ via some parameter $\beta\sim\mathcal{U}(0,1)$, defining
-$$f(y,g) = (f_1(y,g))^\beta(f_2(y,g))^{(1-\beta)}.$$
+$$f_2(y,g) = \frac{1}{1+\max(p_9y,p_{10}g)}.$$ Then we could include
+‘model uncertainty’ via some parameter $\beta\sim\mathcal{U}(0,1)$,
+defining $$f(y,g) = (f_1(y,g))^{p_{11}}(f_2(y,g))^{(1-p_{11})}.$$
 
 <div class="figure">
 
@@ -645,11 +647,11 @@ Figure 3.5: Fit of model to data.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/mobilityposterior.png" alt="Posterior distribution for parameters $k_1$ and $b$." width="2096" />
+<img src="README_files/figure-gfm/mobilityposterior.png" alt="Posterior distribution for parameters $p_9$ and $p_8$." width="2096" />
 
 <p class="caption">
 
-Figure 3.6: Posterior distribution for parameters $k_1$ and $b$.
+Figure 3.6: Posterior distribution for parameters $p_9$ and $p_8$.
 
 </p>
 
@@ -667,6 +669,44 @@ points.
 </p>
 
 </div>
+
+## 3.5 Self isolating
+
+We assume that infectious people who know their status have a
+probability $p_1\sim\mathcal(U)(0,1)$ to self isolate, starting one day
+into their infectious period. We assume constant infectiousness over
+time. Then the amount of infectiousness averted of symptomatic people is
+$p_4=p_1(\gamma_I-\min(1,1/\gamma_I))$, who isolate due to the onset of
+symptoms, which we assume happens concurrently with onset of
+infectiousness. The fraction of asymptomatic cases identified by testing
+is $p_2$. We assume asymptomatic cases have the same probability to self
+isolate and that test results are returned after one day of
+infectiousness. Then the infectiousness that testing averts is
+$p_3=p_1(\gamma_A-\min(1,1/\gamma_A))$.
+
+<!-- b0    = 2.197; -->
+<!-- b1    = 0.1838; -->
+<!-- b2    = -1.024; -->
+<!-- frac_cases_found = 1./(1+exp(b0+b1*Ip+b2*log10(trate))); -->
+<!-- frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5); -->
+<!-- frac_cases_found = max(frac_cases_found, trate/10^5 ); -->
+
+## 3.6 Equations
+
+$$\begin{align}
+\frac{dS_{i,v}}{dt} & = m_{v,i}M_{i,v} - \left( k_1(v,t) + \sum_{u=v+1}^{2}w_{v,u,i} \right)S_{i,v} \\
+\frac{dM_{i,v}}{dt} & = \sum_{u=0}^{v-1}w_{u,v,i}S_{i,u} -\left( k_1(v,t) + m_{v,i} \right)M_{i,v} \\
+\frac{dE_{i,v}}{dt} & = k_1(v,t)(S_{i,v}+M_{i,v-1}) - (k_2+k_4)E_{i,v} \\
+\frac{dI_{A,i,v}}{dt} & = k_2E_{i,v} - k_3I_{A,i,v} \\
+\frac{dI_{S,i,v}}{dt} & = k_4E_{i,v} - (k_5+k_6)I_{S,i,v} \\
+\frac{dR_{i,v}}{dt} & = k_3I_{A,i,v} + k_5I_{S,i,v} + k_7 H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}R_{i,v-1}\\
+\frac{dH_{i,v}}{dt} & = k_6I_{S,i,v} - (k_7 + k_8) H_{i,v} \\
+\frac{dD_{i,v}}{dt} & =  k_8 H_{i,v}
+\end{align}$$
+
+$w_{u,v,i}$ is the rate of vaccination from level $u$ to level $v$.
+$w_{u,v,i}=0$ for $u=2$; $m_{v,i}$ is the rate of maturation of immunity
+following vaccination. $m_{v,i}=0$ for $v=0$.
 
 # 4 Econ model
 
@@ -2527,16 +2567,16 @@ We write
 $$y\sim\text{Beta}(\alpha(u),\beta(u))$$
 
 where $u$ is the fraction of GDP coming from the Food and accommodation
-sector. We learn three parameters $p_1$, $p_2$ and $p_3$ to best fit the
+sector. We learn three parameters $p_5$, $p_6$ and $p_7$ to best fit the
 relationship between $u$ and $y$ in countries we have observations for:
 
-$$p_1 = \alpha(u)+\beta(u)$$
+$$p_5 = \alpha(u)+\beta(u)$$
 
-$$p_2u + p_3 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
+$$p_6u + p_7 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
 
-Here, $p_1$ controls the variance of the distribution and $p_2$ and
-$p_3$ the linear relationship between $u$ and $y$. Using an optimisation
-routine in R we find $p_1=5.93$, $p_2=3.66$ and $p_3=0.099$. Results are
+Here, $p_5$ controls the variance of the distribution and $p_6$ and
+$p_7$ the linear relationship between $u$ and $y$. Using an optimisation
+routine in R we find $p_5=5.93$, $p_6=3.66$ and $p_7=0.099$. Results are
 shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
 values as inputs for all country models.
 
