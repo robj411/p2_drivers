@@ -607,7 +607,7 @@ We parametrise the effects of 'social distancing' in the model using Google's mo
 knitr::include_graphics(path = "README_files/figure-gfm/smoothmobility.png")
 ```
 
-```{r mobilitydrop,fig.cap='The largest drop in mobility from Figure \\@ref(fig:smoothmobility) is plotted against the stringency on that date.', echo=F,message=F,warning=F}
+```{r mobilitydrop,fig.cap='The largest drop in mobility plotted against the stringency on that date.', echo=F,message=F,warning=F}
 knitr::include_graphics(path = "README_files/figure-gfm/mobilitydrop.png")
 ```
 

@@ -597,14 +597,11 @@ are averaged over “Retail and recreation,” “Transit stations” and
 
 <div class="figure">
 
-&lt;img src=“README\_files/figure-gfm/mobilitydrop.png” alt=“The largest
-drop in mobility from Figure <a href="#fig:smoothmobility">3.3</a> is
-plotted against the stringency on that date.” width=“3000” /&gt;
+<img src="README_files/figure-gfm/mobilitydrop.png" alt="The largest drop in mobility plotted against the stringency on that date." width="3000" />
 
 <p class="caption">
 
-Figure 3.4: The largest drop in mobility from Figure
-<a href="#fig:smoothmobility">3.3</a> is plotted against the stringency
+Figure 3.4: The largest drop in mobility plotted against the stringency
 on that date.
 
 </p>
