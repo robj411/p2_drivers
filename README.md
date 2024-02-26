@@ -698,10 +698,10 @@ $$\begin{align}
 \frac{dS_{i,v}}{dt} & = m_{v,i}M_{i,v} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
 \frac{dM_{i,v}}{dt} & = \sum_{u=0}^{v-1}w_{u,v,i}(t)S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)M_{i,v} \\
 \frac{dE_{i,v}}{dt} & = k_{1,v}(t)(S_{i,v}+M_{i,v-1}) - (k_2+k_4)E_{i,v} \\
-\frac{dI_{A,i,v}}{dt} & = k_2E_{i,v} - k_3I_{A,i,v} \\
-\frac{dI_{S,i,v}}{dt} & = k_4E_{i,v} - (k_{5,i,v}+k_{6,i,v})I_{S,i,v} \\
-\frac{dR_{i,v}}{dt} & = k_3I_{A,i,v} + k_{5,i,v}I_{S,i,v} + k_{7,i}(t) H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}(t)R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}(t)R_{i,v-1}\\
-\frac{dH_{i,v}}{dt} & = k_{6,i,v}I_{S,i,v} - (k_{7,i}(t) + k_{8,i}(t)) H_{i,v} \\
+\frac{dI_{i,v}^{(A)}}{dt} & = k_2E_{i,v} - k_3I_{i,v}^{(A)} \\
+\frac{dI_{i,v}^{(S)}}{dt} & = k_4E_{i,v} - (k_{5,i,v}+k_{6,i,v})I_{i,v}^{(S)} \\
+\frac{dR_{i,v}}{dt} & = k_3I_{i,v}^{(A)} + k_{5,i,v}I_{i,v}^{(S)} + k_{7,i}(t) H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}(t)R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}(t)R_{i,v-1}\\
+\frac{dH_{i,v}}{dt} & = k_{6,i,v}I_{i,v}^{(S)} - (k_{7,i}(t) + k_{8,i}(t)) H_{i,v} \\
 \frac{dD_{i,v}}{dt} & =  k_{8,i}(t) H_{i,v}
 \end{align}$$
 
