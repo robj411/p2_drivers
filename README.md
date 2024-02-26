@@ -705,8 +705,8 @@ $$\begin{align}
 \end{align}$$
 
 $w_{u,v,i}$ is the rate of vaccination from level $u$ to level $v$.
-$w_{u,v,i}=0$ for $u=2$; $m_{v,i}$ is the rate of maturation of immunity
-following vaccination. $m_{v,i}=0$ for $v=0$.
+$w_{2,v,i}=0$. $m_{v,i}$ is the rate of maturation of immunity following
+vaccination. $m_{0,i}=0$ and $M_{0,i}\equiv 0$.
 
 # 4 Econ model
 
