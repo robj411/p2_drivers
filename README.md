@@ -257,11 +257,11 @@ Possible transitions between disease states are shown in Figure
 of time $t$, vaccination status $v$, and group identity $g$ (where the
 groups are the 45 sectors and the four age groups).
 
-The rate of infection of susceptible individuals, $k_1(v,t)$, is defined
-as
+The rate of infection of susceptible individuals, $k_{1,v}(t)$, is
+defined as
 
 $$\begin{equation}
-k_1(v,t) = \eta_{A,v}\rho(t)\beta\left(D(x)\cdot I^{(eff)}(t)\right)
+k_{1,v}(t) = \eta_{A,v}\rho(t)\beta\left(D(x)\cdot I^{(eff)}(t)\right)
 \qquad(3.1)
 \end{equation}$$
 
@@ -305,47 +305,46 @@ is the rate of recovery from asymptomatic infection;
 is the rate of symptom onset;
 
 ``` math
-k_5(i,v) =  (1-p_H(i,v)) / \gamma_I(i,v)
+k_{5,i,v} =  (1-p_{H,i,v}) / \gamma_{I,i,v}
 ```
 
-is the rate of recovery from symptomatic infection, where $p_H(v)$ is
+is the rate of recovery from symptomatic infection, where $p_{H,i,v}$ is
 the probability to be hospitalised, and
-$\gamma_I(i,v) = p_H(i,v)\gamma_H + (1-p_H(i,v))\gamma_R$ is the
+$\gamma_{I,i,v} = p_{H,i,v}\gamma_H + (1-p_{H,i,v})\gamma_R$ is the
 expected time to be in compartment $I^{(S)}$: $\gamma_H$ is the expected
 duration before hospitalisation and $\gamma_R$ is the expected duration
 before recovery.
 
 ``` math
-p_H(i,v)=\eta_{H,v}\hat{p}_H(i)
+p_{H,i,v}=\eta_{H,v}\hat{p}_{H,i}
 ```
 
-is the baseline probability to be hospitalised ($`\hat{p}_H(i)`$)
+is the baseline probability to be hospitalised ($`\hat{p}_{H,i}`$)
 adjusted by the vaccine effect protecting against hospitalisation
 ($`\eta_{H,v}`$). Then
 
 ``` math
-k_6(i,v) = p_H(i,v)/\gamma_I(i,v)
+k_{6,i,v} = p_{H,i,v}/\gamma_{I,i,v}
 ```
 
 is the rate of hospitalisation following symptomatic infection.
 
 ``` math
-k_7(i,H) = (1-p_D(i,H)) / \lambda_H(i,H)
+k_{7,i}(t) = (1-p_{D,i}(t)) / \lambda_{H,i}(t)
 ```
 
 is the rate of recovery of hospitalised patients, where
-$`p_D(i,H)=\hat{p}_D(i)f_H(H)`$ is the baseline probability to die given
-hospitalisation, adjusted by a factor encoding the increase in fatality
-rate as hospital occupancy increases,
-$`f_H(H)=\max\{1,1+1.87(H-H_{\text{max}})/H_{\text{max}}\}`$.
-$\lambda_H(i,H) = p_D(i,H)\lambda_D + (1-p_D(i,H))\lambda_R$ is the
+$`p_{D,i}(t)=\hat{p}_{D,i}f_H(t)`$ is the baseline probability to die
+given hospitalisation, adjusted by a factor encoding the increase in
+fatality rate as hospital occupancy increases,
+$`f_H(t)=\max\{1,1+1.87(H(t)-H_{\text{max}})/H_{\text{max}}\}`$.
+$\lambda_H(i,t) = p_D(i,t)\lambda_D + (1-p_{D,i}(t))\lambda_R$ is the
 expected time to be in compartment $H$: $\lambda_D$ is the expected
 duration before death and $\lambda_R$ is the expected duration before
-recovery. $p_D(i,H)$ is the probability to die given hospitalisation.
-Finally,
+recovery. Finally,
 
 ``` math
-k_8(i,H) = p_D(i,H)/\lambda_H(i,H)
+k_{8,i}(t) = p_{D,i}(t)/\lambda_{H,i}(t)
 ```
 
 is the rate of death following hospitalisation.
@@ -358,12 +357,12 @@ received a full schedule of the specific vaccine. How we model
 transitions between vaccination states is shown in Figure
 <a href="#fig:vaccinetransitions">3.2</a>.
 
-$w_{0,1}$ represents the rates of BPSV vaccination of unvaccinated
-susceptible and recovered people, and $w_{1,2}$ represents the rates of
-vaccinating BPSV-vaccinated susceptible and recovered people. $w_{0,2}$
-represents the rates of vaccinating people directly with the specific
-vaccine. $m_{1}$ and $m_{2}$ are the rates of seroconversion to
-vaccine-induced immunity, and $k_{12}(t)=k_1(0,t)$ and
+$w_{0,1,i}(t)$ represents the rates of BPSV vaccination of unvaccinated
+susceptible and recovered people, and $w_{1,2,i}(t)$ represents the
+rates of vaccinating BPSV-vaccinated susceptible and recovered people.
+$w_{0,2,i}(t)$ represents the rates of vaccinating people directly with
+the specific vaccine. $m_{1}$ and $m_{2}$ are the rates of
+seroconversion to vaccine-induced immunity, and $k_{12}(t)=k_1(0,t)$ and
 $k_{19}(t)=k_1(1,t)$ are the rates of infection of just-vaccinated
 people, which returns them to the epidemiological pathway of the lower
 vaccination level.
@@ -696,9 +695,9 @@ $p_3=p_1(\gamma_A-\min(1,1/\gamma_A))$.
 ## 3.6 Equations
 
 $$\begin{align}
-\frac{dS_{i,v}}{dt} & = m_{v,i}M_{i,v} - \left( k_1(v,t) + \sum_{u=v+1}^{2}w_{v,u,i} \right)S_{i,v} \\
-\frac{dM_{i,v}}{dt} & = \sum_{u=0}^{v-1}w_{u,v,i}S_{i,u} -\left( k_1(v,t) + m_{v,i} \right)M_{i,v} \\
-\frac{dE_{i,v}}{dt} & = k_1(v,t)(S_{i,v}+M_{i,v-1}) - (k_2+k_4)E_{i,v} \\
+\frac{dS_{i,v}}{dt} & = m_{v,i}M_{i,v} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i} \right)S_{i,v} \\
+\frac{dM_{i,v}}{dt} & = \sum_{u=0}^{v-1}w_{u,v,i}S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)M_{i,v} \\
+\frac{dE_{i,v}}{dt} & = k_{1,v}(t)(S_{i,v}+M_{i,v-1}) - (k_2+k_4)E_{i,v} \\
 \frac{dI_{A,i,v}}{dt} & = k_2E_{i,v} - k_3I_{A,i,v} \\
 \frac{dI_{S,i,v}}{dt} & = k_4E_{i,v} - (k_5+k_6)I_{S,i,v} \\
 \frac{dR_{i,v}}{dt} & = k_3I_{A,i,v} + k_5I_{S,i,v} + k_7 H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}R_{i,v-1}\\
@@ -706,9 +705,20 @@ $$\begin{align}
 \frac{dD_{i,v}}{dt} & =  k_8 H_{i,v}
 \end{align}$$
 
-$w_{u,v,i}$ is the rate of vaccination from level $u$ to level $v$.
-$w_{2,v,i}=0$. $m_{v,i}$ is the rate of maturation of immunity following
-vaccination. $m_{0,i}=0$ and $M_{0,i}\equiv 0$.
+$$\begin{align}
+\frac{dS_{i,v}}{dt} & = m_{v,i}M_{i,v} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i} \right)S_{i,v} \\
+\frac{dM_{i,v}}{dt} & = \sum_{u=0}^{v-1}w_{u,v,i}S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)M_{i,v} \\
+\frac{dE_{i,v}}{dt} & = k_{1,v}(t)(S_{i,v}+M_{i,v-1}) - (k_2+k_4)E_{i,v} \\
+\frac{dI_{A,i,v}}{dt} & = k_2E_{i,v} - k_3I_{A,i,v} \\
+\frac{dI_{S,i,v}}{dt} & = k_4E_{i,v} - (k_5+k_6)I_{S,i,v} \\
+\frac{dR_{i,v}}{dt} & = k_3I_{A,i,v} + k_5I_{S,i,v} + k_7 H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}R_{i,v-1}\\
+\frac{dH_{i,v}}{dt} & = k_6I_{S,i,v} - (k_7 + k_8) H_{i,v} \\
+\frac{dD_{i,v}}{dt} & =  k_8 H_{i,v}
+\end{align}$$
+
+$w_{u,v,i}(t)$ is the rate of vaccination from level $u$ to level $v$.
+$w_{2,v,i}(t)=0$. $m_{v,i}$ is the rate of maturation of immunity
+following vaccination. $m_{0,i}=0$ and $M_{0,i}\equiv 0$.
 
 # 4 Econ model
 
