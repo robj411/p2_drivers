@@ -597,21 +597,24 @@ are averaged over “Retail and recreation,” “Transit stations” and
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/mobilitydrop.png" alt="The largest drop in mobility from Figure  ef{fig:smoothmobility} is plotted against the stringency on that date." width="3000" />
+&lt;img src=“README\_files/figure-gfm/mobilitydrop.png” alt=“The largest
+drop in mobility from Figure <a href="#fig:smoothmobility">3.3</a> is
+plotted against the stringency on that date.” width=“3000” /&gt;
 
 <p class="caption">
 
 Figure 3.4: The largest drop in mobility from Figure
-ef{fig:smoothmobility} is plotted against the stringency on that date.
+<a href="#fig:smoothmobility">3.3</a> is plotted against the stringency
+on that date.
 
 </p>
 
 </div>
 
 -   We want to write mobility as a function of mandate and some epi
-    outcome, e.g. deaths: $m = (1-p_8)f(y,g) + p_8$ where $m$ is
-    mobility, $y$ is deaths per million, $g$ is government mandate, and
-    $`0 < p_8 < 1`$ is the baseline.
+    outcome, e.g. deaths: $\rho(t) = (1-p_8)f(y(t),g(t)) + p_8$ where
+    $\rho(t)$ is mobility, $y$ is deaths per million, $g$ is government
+    mandate, and $`0 < p_8 < 1`$ is the baseline.
 -   We want mobility to drop monotonically with both the mandate and the
     epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
 -   We want a maximum mobility of 1 when both the mandate and the epi
@@ -680,10 +683,10 @@ time. Then the amount of infectiousness averted of symptomatic people is
 $p_4=p_1(\gamma_I-\min(1,1/\gamma_I))$, who isolate due to the onset of
 symptoms, which we assume happens concurrently with onset of
 infectiousness. The fraction of asymptomatic cases identified by testing
-is $p_2$. We assume asymptomatic cases have the same probability to self
-isolate and that test results are returned after one day of
+is $p_2(t)$. We assume asymptomatic cases have the same probability to
+self isolate and that test results are returned after one day of
 infectiousness. Then the infectiousness that testing averts is
-$p_3=p_1(\gamma_A-\min(1,1/\gamma_A))$.
+$p_3(t)=p_1p_2(t)(\gamma_A-\min(1,1/\gamma_A))$.
 
 <!-- b0    = 2.197; -->
 <!-- b1    = 0.1838; -->

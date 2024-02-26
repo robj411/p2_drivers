@@ -607,11 +607,11 @@ We parametrise the effects of 'social distancing' in the model using Google's mo
 knitr::include_graphics(path = "README_files/figure-gfm/smoothmobility.png")
 ```
 
-```{r mobilitydrop,fig.cap='The largest drop in mobility from Figure \ref{fig:smoothmobility} is plotted against the stringency on that date.', echo=F,message=F,warning=F}
+```{r mobilitydrop,fig.cap='The largest drop in mobility from Figure \\@ref(fig:smoothmobility) is plotted against the stringency on that date.', echo=F,message=F,warning=F}
 knitr::include_graphics(path = "README_files/figure-gfm/mobilitydrop.png")
 ```
 
-- We want to write mobility as a function of mandate and some epi outcome, e.g. deaths: $m = (1-p_8)f(y,g) + p_8$ where $m$ is mobility, $y$ is deaths per million, $g$ is government mandate, and $`0 < p_8 < 1`$ is the baseline.
+- We want to write mobility as a function of mandate and some epi outcome, e.g. deaths: $\rho(t) = (1-p_8)f(y(t),g(t)) + p_8$ where $\rho(t)$ is mobility, $y$ is deaths per million, $g$ is government mandate, and $`0 < p_8 < 1`$ is the baseline.
 - We want mobility to drop monotonically with both the mandate and the epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
 - We want a maximum mobility of 1 when both the mandate and the epi outcome are 0: $f(0,0)=1$.
 - We want mobility to approach $p_8$ when the mandate and the epi outcome become large: $\lim_{x\to 10^6, g\to 1}f(y,g)= 0$.
@@ -637,7 +637,7 @@ knitr::include_graphics(path = "README_files/figure-gfm/mobilitycurves.png")
 
 ## Self isolating
 
-We assume that infectious people who know their status have a probability $p_1\sim\mathcal(U)(0,1)$ to self isolate, starting one day into their infectious period. We assume constant infectiousness over time. Then the amount of infectiousness averted of symptomatic people is $p_4=p_1(\gamma_I-\min(1,1/\gamma_I))$, who isolate due to the onset of symptoms, which we assume happens concurrently with onset of infectiousness. The fraction of asymptomatic cases identified by testing is $p_2$. We assume asymptomatic cases have the same probability to self isolate and that test results are returned after one day of infectiousness. Then the infectiousness that testing averts is $p_3=p_1(\gamma_A-\min(1,1/\gamma_A))$. 
+We assume that infectious people who know their status have a probability $p_1\sim\mathcal(U)(0,1)$ to self isolate, starting one day into their infectious period. We assume constant infectiousness over time. Then the amount of infectiousness averted of symptomatic people is $p_4=p_1(\gamma_I-\min(1,1/\gamma_I))$, who isolate due to the onset of symptoms, which we assume happens concurrently with onset of infectiousness. The fraction of asymptomatic cases identified by testing is $p_2(t)$. We assume asymptomatic cases have the same probability to self isolate and that test results are returned after one day of infectiousness. Then the infectiousness that testing averts is $p_3(t)=p_1p_2(t)(\gamma_A-\min(1,1/\gamma_A))$. 
 
 <!-- b0    = 2.197; -->
 <!-- b1    = 0.1838; -->
