@@ -239,14 +239,14 @@ For HICs, we have parameters 7.97 and 6.87.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I_A$: asymptomatic infectious. $I_S$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$: vaccination status."  />
+<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I^{(A)}$: asymptomatic infectious. $I^{(S)}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$: vaccination status."  />
 
 <p class="caption">
 
 Figure 3.1: Disease state transitions. $S$: susceptible. $E$: exposed.
-$I_A$: asymptomatic infectious. $I_S$: symptomatic infectious. $H$:
-hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$: vaccination
-status.
+$I^{(A)}$: asymptomatic infectious. $I^{(S)}$: symptomatic infectious.
+$H$: hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$:
+vaccination status.
 
 </p>
 
@@ -261,14 +261,14 @@ The rate of infection of susceptible individuals, $k_1(v,t)$, is defined
 as
 
 $$\begin{equation}
-k_1(v,t) = \eta_{A,v}\rho(t)\beta\left(D(x)\cdot I^{(eff)}\right)
+k_1(v,t) = \eta_{A,v}\rho(t)\beta\left(D(x)\cdot I^{(eff)}(t)\right)
 \qquad(3.1)
 \end{equation}$$
 
 with
 
 ``` math
- I^{(eff)}=\sum_{v=0}^2(\epsilon (1-p_3)I_{A,v}+(1-p_4)I_{S,v}). 
+ I^{(eff)}(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{v}^{(A)}(t)+(1-p_4(t))I_{v}^{(S)}(t)). 
 ```
 
 Here, $\eta_{A,v}$ is the relative probability to be infected given
@@ -279,10 +279,10 @@ configuration $x$; $\epsilon$ is the reduction in infectiousness from
 asymptomatic relative to symptomatic individuals; $p_3$ and $p_4$ are
 the proportions of asymptomatic and symptomatic infectiousness averted,
 respectively, due to self isolating; and $I_{\cdot,\cdot}$ is the vector
-of number of infectious asymptomatic ($I_{A,\cdot}$) and symptomatic
-($I_{S,\cdot}$) people who are unvaccinated ($I_{\cdot,0}$), vaccinated
-with the BPSV ($I_{\cdot,1}$), or vaccinated with the specific vaccine
-($I_{\cdot,2}$).
+of number of infectious asymptomatic ($I_{\cdot}^{(A)}$) and symptomatic
+($I_{\cdot}^{(S)}$) people who are unvaccinated ($I_{0}^{(\cdot)}$),
+vaccinated with the BPSV ($I_{1}^{(\cdot)}$), or vaccinated with the
+specific vaccine ($I_{2}^{(\cdot)}$).
 
 ``` math
  k_2 = (1-p_S)/\sigma 
@@ -305,45 +305,47 @@ is the rate of recovery from asymptomatic infection;
 is the rate of symptom onset;
 
 ``` math
-k_5 =  (1-p_H) / \gamma_I 
+k_5(i,v) =  (1-p_H(i,v)) / \gamma_I(i,v)
 ```
 
-is the rate of recovery from symptomatic infection, where $p_H$ is the
-probability to be hospitalised, and
-$\gamma_I = p_H\gamma_H + (1-p_H)\gamma_R$ is the expected time to be in
-compartment $I_S$: $\gamma_H$ is the expected duration before
-hospitalisation and $\gamma_R$ is the expected duration before recovery.
+is the rate of recovery from symptomatic infection, where $p_H(v)$ is
+the probability to be hospitalised, and
+$\gamma_I(i,v) = p_H(i,v)\gamma_H + (1-p_H(i,v))\gamma_R$ is the
+expected time to be in compartment $I^{(S)}$: $\gamma_H$ is the expected
+duration before hospitalisation and $\gamma_R$ is the expected duration
+before recovery.
 
 ``` math
-p_H=\eta_{H,v}\hat{p}_H
+p_H(i,v)=\eta_{H,v}\hat{p}_H(i)
 ```
 
-is the baseline probability to be hospitalised ($`\hat{p}_H`$) adjusted
-by the vaccine effect protecting against hospitalisation
+is the baseline probability to be hospitalised ($`\hat{p}_H(i)`$)
+adjusted by the vaccine effect protecting against hospitalisation
 ($`\eta_{H,v}`$). Then
 
 ``` math
-k_6 = p_H/\gamma_I
+k_6(i,v) = p_H(i,v)/\gamma_I(i,v)
 ```
 
 is the rate of hospitalisation following symptomatic infection.
 
 ``` math
-k_7 = (1-p_D) / \lambda_H
+k_7(i,H) = (1-p_D(i,H)) / \lambda_H(i,H)
 ```
 
 is the rate of recovery of hospitalised patients, where
-$`p_D=\hat{p}_Df_H(H)`$ is the baseline probability to die given
+$`p_D(i,H)=\hat{p}_D(i)f_H(H)`$ is the baseline probability to die given
 hospitalisation, adjusted by a factor encoding the increase in fatality
 rate as hospital occupancy increases,
 $`f_H(H)=\max\{1,1+1.87(H-H_{\text{max}})/H_{\text{max}}\}`$.
-$\lambda_H = p_D\lambda_D + (1-p_D)\lambda_R$ is the expected time to be
-in compartment $H$: $\lambda_D$ is the expected duration before death
-and $\lambda_R$ is the expected duration before recovery. $p_D$ is the
-probability to die given hospitalisation. Finally,
+$\lambda_H(i,H) = p_D(i,H)\lambda_D + (1-p_D(i,H))\lambda_R$ is the
+expected time to be in compartment $H$: $\lambda_D$ is the expected
+duration before death and $\lambda_R$ is the expected duration before
+recovery. $p_D(i,H)$ is the probability to die given hospitalisation.
+Finally,
 
 ``` math
-k_8 = p_D/\lambda_H
+k_8(i,H) = p_D(i,H)/\lambda_H(i,H)
 ```
 
 is the rate of death following hospitalisation.
