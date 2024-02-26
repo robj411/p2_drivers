@@ -1,8 +1,8 @@
 function dis = population_disease_parameters(data,dis,R0betafun)
 
-%% COUNTRY PARAMETERS:
+%% COUNTRY PARAMETERS
 
-%% INITIAL DISEASE PARAMETERS:
+%% INITIAL DISEASE PARAMETERS
 %Population by Age
 nn     = data.Npop';
 nn     = [nn(1:16),sum(nn(17:end))];%last age range for disease is 80+
@@ -12,7 +12,7 @@ nntot  = repelem(nntot,ranges);
 nnprop = nn./nntot;
 subs   = 1:4;
 subs   = repelem(subs,ranges);
-lx = data.lx;
+nSectors = data.nSectors;
 adInd = data.adInd;
 
 
@@ -21,21 +21,21 @@ phgs    = dis.ihr./dis.ps;
 pdgh    = dis.ifr./dis.ihr;
 dis.hfr = pdgh;
 phgs    = accumarray(subs',phgs.*nnprop);
-dis.ph  = [repmat(phgs(adInd),data.lx,1);phgs];
+dis.ph  = [repmat(phgs(adInd),nSectors,1);phgs];
 nnh     = nn.*dis.ihr;
 nnhtot  = [nnh(1),sum(nnh(2:4)),sum(nnh(5:13)),sum(nnh(14:end))];
 nnhtot  = repelem(nnhtot,ranges);
 nnhprop = nnh./nnhtot;
 pdgh    = accumarray(subs',pdgh.*nnhprop);
-dis.pd  = [repmat(pdgh(adInd),data.lx,1);pdgh];
+dis.pd  = [repmat(pdgh(adInd),nSectors,1);pdgh];
 
-dis.rr_infection = 1; % [repmat(data.bmi_rr(1,1),lx,1); 1; 1; data.bmi_rr(1,1); data.bmi_rr(2,1)];
+dis.rr_infection = 1; % [repmat(data.bmi_rr(1,1),nSectors,1); 1; 1; data.bmi_rr(1,1); data.bmi_rr(2,1)];
 
-dis.ph([1:lx, lx+adInd]) = data.bmi_rr(1,2) * dis.ph([1:lx, lx+adInd]);
-dis.pd([1:lx, lx+adInd]) = data.bmi_rr(1,3) * dis.pd([1:lx, lx+adInd]);
+dis.ph([1:nSectors, nSectors+adInd]) = data.bmi_rr(1,2) * dis.ph([1:nSectors, nSectors+adInd]);
+dis.pd([1:nSectors, nSectors+adInd]) = data.bmi_rr(1,3) * dis.pd([1:nSectors, nSectors+adInd]);
 
-dis.ph(lx + data.adInd + 1) = data.bmi_rr(2,2) * dis.ph(lx + data.adInd + 1);
-dis.pd(lx + data.adInd + 1) = data.bmi_rr(2,3) * dis.pd(lx + data.adInd + 1);
+dis.ph(nSectors + adInd + 1) = data.bmi_rr(2,2) * dis.ph(nSectors + adInd + 1);
+dis.pd(nSectors + adInd + 1) = data.bmi_rr(2,3) * dis.pd(nSectors + adInd + 1);
 
 %Durations
 dis.Ts = ((1-dis.ph).*dis.Tsr)   + (dis.ph.*dis.Tsh);
@@ -51,31 +51,31 @@ dis.h    = dis.ph./dis.Ts;
 dis.mu   = dis.pd./dis.Th;
 dis.nu   = 1/dis.Ti;
 
-%% vaccination
+%% vaccines
 
-%Vaccination: Broadly protective sarbecovirus vaccine (BPSV)
-dis.hrv1 = 1/14;                       %time to develop v-acquired immunity
-dis.scv1 = 0.35;                       %infection-blocking efficacy
-heff1 = 0.80;                       %severe-disease-blocking efficacy
+%Vaccine: Broadly protective sarbecovirus vaccine (BPSV)
+dis.hrv1 = 1/21;                       %time to develop v-acquired immunity
+dis.scv1 = 0.35;                       %infection-blocking effectiveness
+heff1 = 0.80;                       %severe-disease-blocking effectiveness
 dis.hv1  = 1-((1-heff1)/(1-dis.scv1)); 
-dis.trv1 = 0;%.52;                       %transmission-blocking efficacy
+dis.trv1 = 0;%.52;                       %transmission-blocking effectiveness
 dis.nuv1 = 1/365000000; %365/5;                      %duration of v-acquired immunity
 
-dis.Ts_v1 = ((1-(1-dis.hv1)*dis.ph).*dis.Tsr)  +((1-dis.hv1)*dis.ph.*dis.Tsh);
-dis.g2_v1 = (1-(1-dis.hv1)*dis.ph)./dis.Ts_v1;
-dis.h_v1  = (1-dis.hv1)*dis.ph./dis.Ts_v1;
+Ts_v1 = ((1-(1-dis.hv1)*dis.ph).*dis.Tsr)  +((1-dis.hv1)*dis.ph.*dis.Tsh);
+dis.g2_v1 = (1-(1-dis.hv1)*dis.ph)./Ts_v1;
+dis.h_v1  = (1-dis.hv1)*dis.ph./Ts_v1;
 
 % SARS-X specific
-% dis.hrv2 = 1/14;                       %time to develop v-acquired immunity
-dis.scv2 = 0.55;                       %infection-blocking efficacy
-heff2 = 0.90;                       %severe-disease-blocking efficacy
+dis.hrv2 = 1/21;                       %time to develop v-acquired immunity
+dis.scv2 = 0.55;                       %infection-blocking effectiveness
+heff2 = 0.90;                       %severe-disease-blocking effectiveness
 dis.hv2  = 1-((1-heff2)/(1-dis.scv2)); 
-dis.trv2 = 0;%.52;                       %transmission-blocking efficacy
-dis.nuv2 = 1/365000000; %/365/5;                      %duration of v-acquired immunity
+dis.trv2 = 0;                       %transmission-blocking effectiveness
+dis.nuv2 = 1/365000000;                     %duration of v-acquired immunity
 
-dis.Ts_v2 = ((1-(1-dis.hv2)*dis.ph).*dis.Tsr)  +((1-dis.hv2)*dis.ph.*dis.Tsh);
-dis.g2_v2 = (1-(1-dis.hv2)*dis.ph)./dis.Ts_v2;
-dis.h_v2  = (1-dis.hv2)*dis.ph./dis.Ts_v2;
+Ts_v2 = ((1-(1-dis.hv2)*dis.ph).*dis.Tsr) + ((1-dis.hv2)*dis.ph.*dis.Tsh);
+dis.g2_v2 = (1-(1-dis.hv2)*dis.ph)./Ts_v2;
+dis.h_v2  = (1-dis.hv2)*dis.ph./Ts_v2;
 
 %% Transmission
 
@@ -110,10 +110,11 @@ dis.generation_time = log(dis.R0) / (log(2) / dis.Td);
 % get upper Rs in different configurations
 configurations = [data.x_elim, data.x_schc, data.x_econ];
 NNbar                = data.NNs;
-NNvec                = repmat(NNbar(1:lx),1,size(configurations,2)).*configurations;
-NNworkSum            = sum(NNvec,1);
-NNvec(lx+1:length(NNbar),:)     = repmat(NNbar(lx+1:length(NNbar)),1,size(configurations,2));
-NNvec(lx+adInd,:)    = sum(NNbar([1:lx,lx+adInd]))-NNworkSum;
+NNvec                = repmat(NNbar,1,size(configurations,2));
+% NNvec                = repmat(NNbar(1:nSectors),1,size(configurations,2)).*configurations;
+% NNworkSum            = sum(NNvec,1);
+% NNvec(nSectors+1:length(NNbar),:)     = repmat(NNbar(nSectors+1:length(NNbar)),1,size(configurations,2));
+% NNvec(nSectors+adInd,:)    = sum(NNbar([1:nSectors,nSectors+adInd]))-NNworkSum;
 R0s = [];
 zs = zeros(size(data.NNs));
 for i=1:size(configurations,2)

@@ -1,83 +1,81 @@
-function [data,returnobject,isequence] = p2Run(data,dis,inp3,int,Xit,p2)
+function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
 
-    adInd = data.adInd;
-    lx    = data.lx;
-    ln    = length(data.NNs);
+    %% get configurations
+    
+    [data, configuration] = get_strategy_design(data, strategy, p2);
+    
+    %% get contact matrices
+    
+    nSectors = data.nSectors;
+    nStrata = length(data.NNs);
+    nConfigs = length(configuration)/data.nSectors;
 
-    NNbar                = data.NNs;
-    XitMat               = reshape(Xit,lx,int);
-    WitMat               = XitMat.^(1/data.alp);
-    WitMat(data.EdInd,:) = XitMat(data.EdInd,:);
-    NNvec                = repmat(NNbar(1:lx),1,int).*WitMat;
-    NNworkSum            = sum(NNvec,1);
-    NNvec(lx+1:ln,:)     = repmat(NNbar(lx+1:ln),1,int);
-    NNvec(lx+adInd,:)    = sum(NNbar([1:lx,lx+adInd]))-NNworkSum;
-    data.NNvec           = NNvec;
+    NNbar = data.NNs;
+    NNvec = repmat(NNbar,1,nConfigs);
+    configMat = reshape(configuration,nSectors,nConfigs);
+    workerConfigMat = configMat;
+%     NNvec                = repmat(NNbar(1:nSectors),1,int).*workerConfigMat;
+%     NNworkSum            = sum(NNvec,1);
+%     NNvec(nSectors+1:nStrata,:)     = repmat(NNbar(nSectors+1:nStrata),1,int);
+%     NNvec(nSectors+adInd,:)    = sum(NNbar([1:nSectors,nSectors+adInd]))-NNworkSum;
+    data.NNvec = NNvec;
     zs = zeros(size(data.NNs));
     
-    xmin = data.x_econ(:,2)/10;
+    % get very low-contact matrix
+    config_min = data.x_econ(:,2)/10;
     NNmin = NNbar;
-    NNmin(1:lx) = NNmin(1:lx) .* xmin;
-    NNmin(lx+adInd) =  sum(NNbar([1:lx,lx+adInd])) - sum(NNmin(1:lx));
-    Dmin = p2MakeDs(data,NNmin,xmin,data.wfh(2,:));
-    CImin = get_R(data.ntot, dis, NNmin, zs, zs, NNmin, Dmin, 1, 1, 0, 0);
+%     NNmin(1:nSectors) = NNmin(1:nSectors) .* xmin;
+%     NNmin(nSectors+adInd) =  sum(NNbar([1:nSectors,nSectors+adInd])) - sum(NNmin(1:nSectors));
+    Dmin = p2MakeDs(data,NNmin,config_min,data.wfh(2,:));
+    candidate_infectees_min = get_R(nStrata, dis, NNmin, zs, zs, NNmin, Dmin, 1, 1, 0, 0);
     
-    Dvec = zeros(ln,ln,int);
-    CIs = zeros(int,1);
-    for i = 1:int
-        Dtemp   = p2MakeDs(data,NNvec(:,i),XitMat(:,i),data.hw(i,:));
+    Dvec = zeros(nStrata,nStrata,nConfigs);
+    candidate_infectees = zeros(nConfigs,1);
+    for i = 1:nConfigs
+        % get matrix per configuration
+        Dtemp = p2MakeDs(data,NNvec(:,i),configMat(:,i),data.hw(i,:));
+        % store matrix in list
         Dvec(:,:,i) = Dtemp;
         
-        CIs(i) = get_R(data.ntot, dis, NNvec(:,i), zs, zs,...
+        candidate_infectees(i) = get_R(nStrata, dis, NNvec(:,i), zs, zs,...
             NNvec(:,i), Dtemp, 1, 1, 0, 0);
     end
-    CImax = CIs(1);
+    candidate_infectees_max = candidate_infectees(1);
+        
+    % store amount by which configurations reduce contacts
+    data.rel_mobility = (candidate_infectees_max - candidate_infectees)./(candidate_infectees_max-candidate_infectees_min);
+    data.Dvec = Dvec;
+    data.strategy = strategy;
     
-    % copy over only required items
-    rundata = struct;
-    
-    rundata.Dvec = Dvec;
-    rundata.tvec = data.tvec;
-    rundata.compindex = data.compindex; 
-    rundata.NNs = data.NNs; 
-    rundata.t_import = data.t_import; 
-    rundata.hw = data.hw; 
-    rundata.inext = data.inext; 
-    rundata.imand = data.imand; 
-    rundata.Npop = data.Npop; 
-    rundata.NNvec = data.NNvec; 
-    rundata.rel_mobility = (CImax - CIs)./(CImax-CImin);
-    
-    S0 = NNvec(:,1);
-    
-    [data,returnobject,isequence] = p2SimVax(rundata,Dvec,dis,S0,inp3,WitMat,p2);
+    [data, returnobject, isequence] = p2SimVax(data, dis, workerConfigMat, p2);
 
 end
 
 %%
 
-function [data,returnobject,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p2)               
-    %% PARAMETERS:
-    compindex = data.compindex;
-    ntot          = size(data.NNs,1);
-    adInd         = 3;
-    lx            = ntot-4;
+function [data,returnobject,isequence] = p2SimVax(data, dis, workerConfigMat, p2)    
+    
+    
+    %% PARAMETERS
+    nStrata = size(data.NNs,1);
+    nSectors = data.nSectors;
     NNvec = data.NNvec;
-    NNbar         = NNvec(:,1);
-    sumWorkingAge = sum(NNbar([1:lx,lx+3]));
-
-    nc = max(struct2array(data.compindex));
-
-    zn = zeros(ntot,1);
-
+    NNbar = NNvec(:,1);
+    sumWorkingAge = sum(NNbar([1:nSectors,nSectors+3]));
+    compindex = data.compindex;
+    nODEs = max(struct2array(compindex));
+    S0 = NNvec(:,1);
+    Dvec = data.Dvec;
+    
+    % initial conditions
     t0 = data.tvec(1);
-    y0_mat = zeros(ntot,nc);
+    y0_mat = zeros(nStrata,nODEs);
     y0_mat(:,compindex.S_index(1)) = S0;
     y0_mat(:,compindex.S_index(2)) = S0;
-    
-%     y0 = [S0;repmat(zn,6,1);NNbar-S0;repmat(zn,nc-9,1);S0];
     y0 = reshape(y0_mat,[],1);
 
+    % store outputs
+    zn = zeros(nStrata,1);
     Tout       = t0;
     Iout       = zn';
     Isaout     = zn';
@@ -92,7 +90,7 @@ function [data,returnobject,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p
     Sout       = sum(S0);
     rout       = 0;
 
-    %% LOOP:
+    %% LOOP
 
     i = 1;
     isequence = [];
@@ -101,22 +99,22 @@ function [data,returnobject,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p
 
     while Tout(end)<tend 
 
-        Wit               = WitMat(:,i);    
+        Wit               = workerConfigMat(:,i);    
         NNfeed            = NNvec(:,i);
         NNfeed(NNfeed==0) = 1;
         D                 = Dvec(:,:,i);
 
         %Vaccination Rollout by Sector
         NNnext              = NNvec(:,i);
-        NNnext(lx+[1,2])    = 1;
-        NNnext([1:lx,lx+3]) = NNnext([1:lx,lx+3])/sumWorkingAge;
+        NNnext(nSectors+[1,2])    = 1;
+        NNnext([1:nSectors,nSectors+3]) = NNnext([1:nSectors,nSectors+3])/sumWorkingAge;
         NNnext(end)         = 1;
         p2.NNnext = NNnext;
 
         isequence = [isequence; [t0 i]];
         
         [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0,inext,still_susc]=...
-         integr8(data,NNfeed,D,i,t0,tend,dis,y0,inp3,p2);
+         integr8(data,NNfeed,D,i,t0,tend,dis,y0,p2);
         if inext==0
             tend = tout(end);
         end
@@ -128,9 +126,9 @@ function [data,returnobject,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p
         Insout     = [Insout;Insclass(2:end,:)];
         Hout       = [Hout;Hclass(2:end,:)];
         Dout       = [Dout;Dclass(2:end,:)]; 
-        W   = Wit'.*ones(length(tout),lx);
+        W   = Wit'.*ones(length(tout),nSectors);
         Wout       = [Wout;W(1:end-1,:)];    
-        hw  = data.hw(i,:).*ones(length(tout),lx);
+        hw  = data.hw(i,:).*ones(length(tout),nSectors);
         hwout      = [hwout;hw(1:end-1,:)];
         poutout    = [poutout;pout(2:end)];
         betamodout = [betamodout;betamod(2:end)];
@@ -142,35 +140,35 @@ function [data,returnobject,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p
 
             t0 = Tout(end);
 
-%             y_mat    = reshape(y0,[ntot,nc]);%IC
+%             y_mat    = reshape(y0,[nStrata,nODEs]);%IC
 %             
-%             Xh2w                   = NNvec(1:lx,inext)-NNvec(1:lx,i);%Addition to each wp next intervention step
+%             Xh2w                   = NNvec(1:nSectors,inext)-NNvec(1:nSectors,i);%Addition to each wp next intervention step
 %             Xw2h                   = -Xh2w; 
 %             Xw2h(Xw2h<0)           = 0;
-%             Xw2h                   = Xw2h./NNvec(1:lx,i);
-%             Xw2h(NNvec(1:lx,i)==0) = 0;
+%             Xw2h                   = Xw2h./NNvec(1:nSectors,i);
+%             Xw2h(NNvec(1:nSectors,i)==0) = 0;
 % 
-%             if NNvec(lx+adInd,i)>0 %when would this not be the case?
+%             if NNvec(nSectors+adInd,i)>0 %when would this not be the case?
 %                 Xh2w(Xh2w<0) = 0;
-%                 Xh2w         = Xh2w/NNvec(lx+adInd,i);
+%                 Xh2w         = Xh2w/NNvec(nSectors+adInd,i);
 %             else
 %                 Xh2w         = 0;
 %             end
 % 
 %             %Move all infection statuses:
-%             y0w2h = y_mat(1:lx,:).*repmat(Xw2h,1,nc);%IC%number of people to be put at home (+)
+%             y0w2h = y_mat(1:nSectors,:).*repmat(Xw2h,1,nODEs);%IC%number of people to be put at home (+)
 %             y0w2h = [-y0w2h;sum(y0w2h,1)];
 % 
-%             y0h2w = y_mat(lx+adInd,:);
+%             y0h2w = y_mat(nSectors+adInd,:);
 %             y0h2w = kron(y0h2w,Xh2w);
 %             y0h2w = [y0h2w;-sum(y0h2w,1)];
 % 
-%             y_mat([1:lx,lx+adInd],:) = y_mat([1:lx,lx+adInd],:)+y0w2h+y0h2w;
+%             y_mat([1:nSectors,nSectors+adInd],:) = y_mat([1:nSectors,nSectors+adInd],:)+y0w2h+y0h2w;
 %                 
 %             
 % %             disp([t0 i inext])
 %             
-%             y0                    = reshape(y_mat,ntot*nc,1);
+%             y0                    = reshape(y_mat,nStrata*nODEs,1);
             i                     = inext;
         end   
 
@@ -192,10 +190,10 @@ function [data,returnobject,isequence] = p2SimVax(data,Dvec,dis,S0,inp3,WitMat,p
     returnobject.Htot = sum(Hout,2);
     returnobject.hospmat = Hout;
     returnobject.deathtot = sum(Dout,2);
-    returnobject.death1 = sum(Dout(:,lx+1),2);
-    returnobject.death2 = sum(Dout(:,lx+2),2);
-    returnobject.death3 = sum(Dout(:,[1:lx,lx+3]),2);
-    returnobject.death4 = sum(Dout(:,lx+4),2);
+    returnobject.death1 = sum(Dout(:,nSectors+1),2);
+    returnobject.death2 = sum(Dout(:,nSectors+2),2);
+    returnobject.death3 = sum(Dout(:,[1:nSectors,nSectors+3]),2);
+    returnobject.death4 = sum(Dout(:,nSectors+4),2);
     returnobject.deathmat = Dout;
     returnobject.betamod = betamodout;
     returnobject.selfisolation = poutout;
@@ -205,26 +203,47 @@ end
 %%
 
 function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0new,inext,still_susc]=...
-          integr8(data,NN0,D,i,t0,tend,dis,y0,inp3,p2)
-    %% CALL:
+          integr8(data,NN0,D,i,t0,tend,dis,y0,p2)
+      
+    %% copy over only required items
+    
+    rundata = struct;
+    
+%     rundata.nSectors = data.nSectors;
+%     rundata.hw = data.hw; 
+%     rundata.inext = data.inext; 
+%     rundata.NNs = data.NNs; 
+    rundata.NNvec = data.NNvec; 
+    rundata.Dvec = data.Dvec;
+    rundata.tvec = data.tvec;
+    rundata.compindex = data.compindex; 
+    rundata.t_import = data.t_import; 
+    rundata.imand = data.imand; 
+    rundata.rel_mobility = data.rel_mobility;
+    
+    %% CALL
 
-    ntot = size(data.NNs,1);
-    fun  = @(t,y)ODEs(data,NN0,D,i,t,dis,y,p2);
+    compindex = data.compindex;
+    nStrata = size(NN0,1);
+    fun  = @(t,y)ODEs(rundata,NN0,D,i,t,dis,y,p2);
     sumNN0 = sum(NN0);
+    strategy = data.strategy;
 
-    if strcmp(inp3,'Elimination')
-        options = odeset('Events',@(t,y)elimination(t,y,data,sumNN0,ntot,dis,i,p2));
-    elseif strcmp(inp3,'Economic Closures') || strcmp(inp3,'School Closures')
-        options = odeset('Events',@(t,y)reactive_closures(t,y,data,ntot,dis,i,p2));
-    elseif strcmp(inp3,'No Closures')
-        options = odeset('Events',@(t,y)unmitigated(t,y,data,ntot,dis,i,p2));
+    if strcmp(strategy,'Elimination')
+        options = odeset('Events',@(t,y)elimination(t,y,data,sumNN0,nStrata,dis,i,p2));
+    elseif strcmp(strategy,'Economic Closures') || strcmp(strategy,'School Closures')
+        options = odeset('Events',@(t,y)reactive_closures(t,y,data,nStrata,dis,i,p2));
+    elseif strcmp(strategy,'No Closures')
+        options = odeset('Events',@(t,y)unmitigated(t,y,data,nStrata,dis,i,p2));
     end
 
+    % solve ODEs
     [tout,yout,~,~,ie] = ode45(fun,[t0 tend],y0,options);
 
+    % process event
     y0new     = yout(end,:)'; 
-    y_mat    = reshape(y0new,ntot,[]);
-    compindex = data.compindex;
+    y_mat    = reshape(y0new,nStrata,[]);
+    
 % ie is the index ("value") returned
 % inext is the value it maps to (from get_strategy_design)
 % disp([max(tout) i ie' ie'])
@@ -232,12 +251,14 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
         if ie <= length(data.inext)
             inext = data.inext(ie(end));
         elseif ie == length(data.inext)+1 % importation event
+            % keep the same i
             inext = i;
+            % move 5 people from S to E
             current_S = y_mat(:,compindex.S_index(1));
             imported = 5/sum(current_S)*current_S;
             new_E = y_mat(:,compindex.E_index(1)) + imported;
-            new_s = current_S - imported;
-            y_mat(:,compindex.S_index(1)) = new_s;
+            new_S = current_S - imported;
+            y_mat(:,compindex.S_index(1)) = new_S;
             y_mat(:,compindex.E_index(1)) = new_E;
             y0new = reshape(y_mat,[],1);
         else %end
@@ -248,30 +269,26 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     end
     
 
-    %% OUTPUT VARIABLES:
+    %% OUTPUT VARIABLES
 
-    indices = 1:ntot;
-    compindex = data.compindex;
-    Ia   = yout(:,(compindex.I_index(1)-1)*ntot + indices);
-    Is   = yout(:,(compindex.I_index(2)-1)*ntot + indices);
-    Iav1   = yout(:,(compindex.I_index(3)-1)*ntot + indices);
-    Isv1   = yout(:,(compindex.I_index(4)-1)*ntot + indices);
-    Iav2   = yout(:,(compindex.I_index(5)-1)*ntot + indices);
-    Isv2   = yout(:,(compindex.I_index(6)-1)*ntot + indices);
-    H     = yout(:,(compindex.H_index(1)-1)*ntot + indices);
-    Hv1     = yout(:,(compindex.H_index(2)-1)*ntot + indices);
-    Hv2     = yout(:,(compindex.H_index(3)-1)*ntot + indices);
-    D     = yout(:,(compindex.D_index(1)-1)*ntot + indices);
-%     V     = yout(:,(compindex.V_index(1)-1)*ntot + indices);
-    still_susc = sum(yout(:,(repelem(compindex.S_index([1,3:end]),1,length(indices))-1)*ntot + repmat(indices,1,length(compindex.S_index)-1)),2);
-
+    indices = 1:nStrata;
+    Ia   = yout(:,(compindex.I_index(1)-1)*nStrata + indices);
+    Is   = yout(:,(compindex.I_index(2)-1)*nStrata + indices);
+    Iav1   = yout(:,(compindex.I_index(3)-1)*nStrata + indices);
+    Isv1   = yout(:,(compindex.I_index(4)-1)*nStrata + indices);
+    Iav2   = yout(:,(compindex.I_index(5)-1)*nStrata + indices);
+    Isv2   = yout(:,(compindex.I_index(6)-1)*nStrata + indices);
+    H     = yout(:,(compindex.H_index(1)-1)*nStrata + indices);
+    Hv1     = yout(:,(compindex.H_index(2)-1)*nStrata + indices);
+    Hv2     = yout(:,(compindex.H_index(3)-1)*nStrata + indices);
+    D     = yout(:,(compindex.D_index(1)-1)*nStrata + indices);
+    still_susc = sum(yout(:,(repelem(compindex.S_index([1,3:end]),1,length(indices))-1)*nStrata + repmat(indices,1,length(compindex.S_index)-1)),2);
 
     Iclass   = Ia + Is + Iav1 + Isv1 + Iav2 + Isv2; 
     Hclass   = H + Hv1 + Hv2; 
     Dclass   = D;
-%     Vclass   = V;
 
-    %% TIME-DEPENDENT PARAMETERS:
+    %% TIME-DEPENDENT PARAMETERS
     
     occ   = max(1,sum(Hclass,2));
     mu = zeros(size(Hclass));
@@ -301,7 +318,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
 %     
 %     betam = social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i));
 %     
-%     Rtret = get_R(ntot,dis2,Stest,Stest1,Stest2,...
+%     Rtret = get_R(nStrata,dis2,Stest,Stest1,Stest2,...
 %             data.NNvec(:,3),data.Dvec(:,:,3),dis.beta,betam(end),pout(end),pout(end));
 %         disp([2 sum(Iclass(end,:))/10^5 Ip(end) pout(end) Rtret])
 
@@ -311,12 +328,11 @@ end
 
 function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
 
-    ntot = size(data.NNs,1);
+    nStrata = size(NN0,1);
+    y_mat = reshape(y,nStrata,[]); 
 
-    y_mat = reshape(y,ntot,[]); 
-
-
-    %% IC:
+    %% initial conditions
+    
     compindex = data.compindex;
 
     S =      y_mat(:,compindex.S_index(1));
@@ -341,11 +357,10 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     Rv2 =    y_mat(:,compindex.R_index(3));
     DE =    y_mat(:,compindex.D_index(1));
     
-    %% SELF-ISOLATION:
+    %% SELF-ISOLATION
 
     [p3, p4] = compute_fraction_self_isolating(sum(Ia+Is + Iav1+Isv1 + Iav2+Isv2), sum(NN0), p2, t, i);
     
-    % those not self isolating
     Ina = (1-p3) .* Ia;
     Inav1 = (1-p3) .* Iav1;
     Inav2 = (1-p3) .* Iav2;
@@ -353,7 +368,7 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     Insv1 = (1-p4) .* Isv1;
     Insv2 = (1-p4) .* Isv2;
 
-    %% TIME-DEPENDENT DISEASE PARAMETERS:
+    %% TIME-DEPENDENT DISEASE PARAMETERS
 
     % unchanged
     sig1 = dis.sig1;
@@ -380,23 +395,23 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     g3 = dis2.g3;
     mu = dis2.mu;
 
-    %% FOI:
+    %% FOI
     
     foi = get_foi(dis2, hospital_occupancy, p2, data, i,...
         Ina,Ins,Inav1,Insv1,Inav2,Insv2,D,NN0);
 
-    %% VACCINATION:
+    %% VACCINATION
     
     [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
-        get_vax_rates(p2, t, ntot, R,S,DE, Rv1,Sv1);
+        get_vax_rates(p2, t, nStrata, R,S,DE, Rv1,Sv1);
 
 %     if i==5 & t < 600
-%         Rt = get_R(ntot,dis2,S+Shv1,Sv1,Sv2,...
+%         Rt = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
 %             data.NNvec(:,i),D,beta,betamod,p3,p4);
 %         disp([t/100 Rt])
 %     end
 
-    %% EQUATIONS:
+    %% EQUATIONS
 
     Sdot=      -v1rates - v2rates      -S.*foi  +nu.*R   ; 
     Shv1dot=    v1rates               - hrv1*Shv1   -Shv1.*foi;
@@ -428,7 +443,7 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     Vdot =  - dis.nuv1*V - (mu.*Hv1 + v12rater + v12rates).*vaccine_pp + v1rater + hrv1*Shv1;
     Bdot =  - dis.nuv2*B - mu.*Hv2.*booster_pp + v2rater + v2rates + v12rater + v12rates;
 
-    %% OUTPUT:
+    %% OUTPUT
     
     f_mat = zeros(size(y_mat));
     f_mat(:,compindex.S_index(1)) = Sdot;
@@ -456,11 +471,8 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     f_mat(:,compindex.V_index(2)) = Bdot;
     
     f = reshape(f_mat,[],1);
-%     disp([t sum(sum(f_mat<0 &y_mat<eps/1000))])
-    eps10 = eps*100000000;
+    eps10 = eps*1e6;
     f(y<eps10) = max(0,f(y<eps10)); %%! exit wave was lost
-
-%     g = h.*Ins + qh.*Iss + h_v1.*Insv1 + qh_v1.*Issv1 + h_v2.*Insv2 + qh_v2.*Issv2;
 
 end
 
@@ -468,9 +480,9 @@ end
 
 
 
-function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
+function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,p2)
     
-    y_mat = reshape(y,ntot,[]);
+    y_mat = reshape(y,nStrata,[]);
     compindex = data.compindex;
     
     S    = y_mat(:,compindex.S_index(1));
@@ -506,7 +518,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
         ddk    = 10^5*sum(dis2.mu.*(H + Hv1 + Hv2))/sumN;
         betamod = social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i));
         
-        Rt1 = get_R(ntot,dis2,S+Shv1,Sv1,Sv2,...
+        Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
             data.NNvec(:,3),data.Dvec(:,:,3),dis2.beta,betamod,p3,p4);
 %         disp([t Rt1])
         R1flag3 = min(0.95-Rt1,0);
@@ -548,9 +560,10 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     R2flag = otherval + ival + tval;
     if ival==0 && tval==0
         if otherval~=0
-            Rt2 = get_R(ntot,dis2,S+Shv1,Sv1,Sv2,...
+            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
                 data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
             R2flag = min(1.00-Rt2,0);
+            
         end
     end
     
@@ -570,12 +583,12 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     % t is greater than the end of the vaccine rollout: otherval = 0
     tval = min(t-(max(p2.tpoints)+7),0);
     % hval: no patients
-    hval = min(1000-sum(H + Hv1 + Hv2),0);
+    hval = min(p2.hosp_final_threshold - sum(H + Hv1 + Hv2),0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
-        Rt3 = get_R(ntot,dis2,S+Shv1,Sv1,Sv2,...
+        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
             data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
-        Rthresh = exp(dis.generation_time*log(2) / 30); % R value for which doubling time is 30 days
+        Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
 %         disp([t/100 Rt3])
     end
@@ -585,9 +598,9 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,ntot,dis,i,p2)
     
 end 
 
-function [value,isterminal,direction] = reactive_closures(t,y,data,ntot,dis,i,p2)
+function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i,p2)
     
-    y_mat = reshape(y,ntot,[]);
+    y_mat = reshape(y,nStrata,[]);
     compindex = data.compindex;
     
     S    = y_mat(:,compindex.S_index(1));
@@ -668,7 +681,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,ntot,dis,i,p2
         if otherval~=0
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
-            Rt2    = get_R(ntot,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
+            Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
             R2flag = min(1.00-Rt2,0);
         end
     end
@@ -687,13 +700,13 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,ntot,dis,i,p2
     % t is greater than the end of the vaccine rollout: otherval = 0
     tval = min(t-(max(p2.tpoints)+7),0);
     % hval: no patients
-    hval = min(1000-sum(H + Hv1 + Hv2),0);
+    hval = min(p2.hosp_final_threshold-sum(H + Hv1 + Hv2),0);
     R3flag = tval + hval;
     if tval==0 && hval==0
-        Rt3 = get_R(ntot,dis2,S+Shv1,Sv1,Sv2,...
+        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
             data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
 %         doubling_time = dis.generation_time*log(2) /  log(Rt3);
-        Rthresh = exp(dis.generation_time*log(2) / 30); % R value for which doubling time is 30 days
+        Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
 %         if t<600 
 %             disp([t/100 hval tval r Rt3 Rthresh ])
@@ -709,10 +722,10 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,ntot,dis,i,p2
     
 end
 
-function [value,isterminal,direction] = unmitigated(t,y,data,ntot,dis,i,p2)
+function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     
 
-    y_mat = reshape(y,ntot,[]);
+    y_mat = reshape(y,nStrata,[]);
     compindex = data.compindex;
 
     S    = y_mat(:,compindex.S_index(1));
@@ -755,7 +768,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,ntot,dis,i,p2)
         if otherval~=0
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
-            Rt2    = get_R(ntot,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
+            Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
             R2flag = min(1.00-Rt2,0);
         end
     end
@@ -777,12 +790,12 @@ function [value,isterminal,direction] = unmitigated(t,y,data,ntot,dis,i,p2)
     % t is greater than the end of the vaccine rollout: otherval = 0
     tval = min(t-(max(p2.tpoints)+7),0);
     % hval: no patients
-    hval = min(1000-sum(H + Hv1 + Hv2),0);
+    hval = min(p2.hosp_final_threshold-sum(H + Hv1 + Hv2),0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
-        Rt3 = get_R(ntot,dis2,S+Shv1,Sv1,Sv2,...
+        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
             data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,1,0,0);
-        Rthresh = exp(dis.generation_time*log(2) / 30); % R value for which doubling time is 30 days
+        Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
     end
     value(5)      =  R3flag;

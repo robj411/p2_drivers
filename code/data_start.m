@@ -5,9 +5,8 @@ function data = data_start()
     ikeep     = [6,7,8,13,14,16,17,18];
     data      = rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
     data.adInd = 3;
-    data.lx = length(data.B);
+    data.nSectors = length(data.B);
     data.tvec = [0 365*12];
-    data.alp = 1;
     data.EdInd    = 41;%education sector index
     data.HospInd  = [32,43,44];%hospitality sector indices
     

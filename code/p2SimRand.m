@@ -3,13 +3,12 @@
 
 income_levels = {'LLMIC','UMIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
-vaccination_levels = [365, 100];
+vaccination_levels = [326, 100];
 bpsv_levels = [0, 1];
 
 nsamples  = 1;
 n_income = numel(income_levels);
 
-% synthetic_countries_base = cell(nsamples,length(income_levels));
 synthetic_countries = cell(nsamples,length(income_levels));
 synthetic_countries_dis = cell(nsamples,length(income_levels));
 synthetic_countries_dis_basis = cell(nsamples,1);
@@ -19,7 +18,6 @@ synthetic_countries_p2 = cell(nsamples,length(income_levels),length(vaccination_
 
 [CD, country_parameter_distributions] = load_country_data();
 data = data_start();
-lx = data.lx;
 
 %% disease variables
 
@@ -53,15 +51,13 @@ for i = 1:nsamples
     for il = 1:n_income
         rng(i);
         income_level = income_levels{il};
-        
         % country data. random samples
         ldata1     = p2RandCountry(data,CD,income_level,country_parameter_distributions);
-%         synthetic_countries_base{i,il} = ldata1;
-
+        % get combined country and disease parameters
         dis1 = population_disease_parameters(ldata1,dis,R0_to_beta);
-
+        % sample a response time
         ldata1.rts = get_response_time(ldata1,dis1,ldata1.Hres);
-        
+        % get p2 parameters: depend on vaccine scenario
         for vl = 1:length(vaccination_levels)
             for bl = 1:length(bpsv_levels)
                 [ldata,dis2,p2] = p2Params(ldata1,dis1,vaccination_levels(vl),bpsv_levels(bl));
@@ -75,6 +71,7 @@ end
 clear synthetic_countries_dis_basis
 
 %% set up simulation
+
 inputcolumnnames = {'VLY','VSY',...
     'School_contacts','School_age','Working_age','Elders',...
     'Unemployment_rate','GDP','Labour_share','Work_contacts',...
@@ -99,35 +96,38 @@ outputs   = zeros(nsamples,length(outputcolumnnames));
 
 %% simulate
 
-hts = zeros(nsamples,n_income);
-endsusctcell = cell(n_income,length(strategies));
 for il = 1:n_income
     income_level = income_levels{il};
     for ms = 1:length(strategies)
         strategy = strategies{ms};
-        ht = zeros(1,nsamples);
-        endsusct = zeros(length(vaccination_levels)*length(bpsv_levels),nsamples);
         for vl = 1:length(vaccination_levels)
             for bl = 1:length(bpsv_levels)
-                endsusci = zeros(1,nsamples);
                 parfor i = 1:nsamples
+                    %% load stored objects
                     dis2 = synthetic_countries_dis{i,il};
                     ldata = synthetic_countries{i,il};                   
                     p2 = synthetic_countries_p2{i,il,vl,bl};
-                    [rdata, xoptim] = get_strategy_design(ldata,strategy,p2);
-                    int = 5;
                     try
-
-                        [~,returned,iseq] = p2Run(rdata,dis2,strategy,int,xoptim,p2);
+                        %% run model
+                        [~,returned,iseq] = p2Run(ldata,dis2,strategy,p2);
+        %                         figure('Position', [100 100 400 300]); plot(returned.Tout,returned.Htot)
+                        
+                        %% store some numbers
+                        % store final time point
                         endsim = max(returned.Tout);
+                        % store time mitigation ends
                         endmit = iseq(end,1);
+                        % get index of endmit time
                         [~,exitwave] = min(abs(returned.Tout-endmit));
+                        % get fraction of deaths that happen after
+                        % mitigation ends
                         exitwavefrac = 1-sum(returned.deathtot(exitwave))/sum(returned.deathtot(end));
-        %                         figure('Position', [100 100 400 300]); plot(f(:,1),f(:,7:10))
+                        % total still susceptible at end of simulation
                         endsusc = returned.Stotal(end)/returned.Stotal(1);
-                        endsusci(i) = endsusc;  
-                        ht(i) = returned.Htot(find(returned.Tout > p2.Tres,1));
-
+                        % hospital occupancy at response time
+                        ht = returned.Htot(find(returned.Tout > p2.Tres,1));
+                        
+                        %% costs
                         [cost,~]    = p2Cost(ldata,dis2,p2,returned);
                         sec         = nan(1,4);
                         sec(1)      = sum(cost([3,6,7:10],:),'all');
@@ -150,7 +150,7 @@ for il = 1:n_income
                             ldata.sdl ldata.sdb ldata.self_isolation_compliance dis2.CI ...
                             ldata.obj([1 32])'/gdp ldata.frac_tourism_international ...
                             ldata.remote_teaching_effectiveness ldata.t_import...
-                            ldata.remote_quantile ht(i) endsusc exitwavefrac...
+                            ldata.remote_quantile ht endsusc exitwavefrac...
                             dis2.Td dis2.generation_time ...
                             dis2.R0 dis2.beta mean(dis2.ihr) ...
                             mean(dis2.hfr) mean(dis2.ifr) dis2.ps dis2.Tlat ...
@@ -169,7 +169,6 @@ for il = 1:n_income
                         disp([il ms vl bl i]);
                     end
                 end   
-                endsusct((vl-1)*length(bpsv_levels)+bl,:) = endsusci;
                 disp([il ms vl bl])
                 disp(outputs)
                 T = array2table([inputs outputs]);
@@ -177,8 +176,6 @@ for il = 1:n_income
                 writetable(T,strcat('results/VOI_',string(strategy),'_',string(income_level),'_',string(vaccination_levels(vl)),'_',string(bpsv_levels(bl)),'.csv'));
             end
         end
-        printendsusct = [(1:nsamples)/1000; endsusct];
-%         disp(printendsusct(:,printendsusct(5,:)+2e-2<printendsusct(3,:)|printendsusct(4,:)+2e-2<printendsusct(2,:)));
     end
 end
 

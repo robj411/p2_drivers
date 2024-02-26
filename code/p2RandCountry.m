@@ -1,7 +1,7 @@
 function data = p2RandCountry(data,CD,income_level,country_parameter_distributions)
 
 %% start
-lx = data.lx;
+nSectors = data.nSectors;
 
 contacts = data.contacts;
 
@@ -210,7 +210,7 @@ data.la   = defivalue;
 FAAind = 32;
 pointiness = 1000;
 
-adultindices = [1:lx,lx+data.adInd];
+adultindices = [1:nSectors,nSectors+data.adInd];
 workingagepop = sum(data.NNs(adultindices));
 
 adult_props = data.NNs(adultindices)./workingagepop;
@@ -343,7 +343,7 @@ data.x_schc(FAAind,:) = min(FAAmax,data.x_schc(FAAind,:));
 %Contact Matrix
 data.contacts = contacts;
 data = get_basic_contacts(data);
-basic_contact_matrix = p2MakeDs(data,data.NNs,ones(data.lx,1),zeros(1,data.lx));
+basic_contact_matrix = p2MakeDs(data,data.NNs,ones(data.nSectors,1),zeros(1,data.nSectors));
 data.contacts.basic_contact_matrix = basic_contact_matrix;
 
 % get covid wt doubling time

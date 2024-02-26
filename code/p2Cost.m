@@ -72,7 +72,7 @@ hospts        = hospmat(:,notEd);
 deaths        = deathmat(:,notEd);%number of workers absent
 abspc         = max((isoasy + isosym + isorec + nissym + hospts + deaths)./data.NNs(notEd)',0);%percentage of workers absent
 prespc        = 1-abspc;%percentage of workers present
-presx         = prespc.^data.alp;%percentage of gdp output%the alpha relationship only holds for present workers!!!
+presx         = prespc;%percentage of gdp output%the alpha relationship only holds for present workers!!!
 absx          = 1-presx;%percentage of gdp lost
 absxint       = trapz(t,absx);
 gdpl_lbs      = absxint.*data.obj(notEd)';
@@ -80,7 +80,7 @@ cost(7,notEd) = gdpl_lbs;
 
 %Labour Demand
 w             = workers(:,notEd);
-x             = w.^data.alp;
+x             = w;
 xint          = diff(t)'*(1-x(1:end-1,:));
 gdpl_lbd      = xint.*data.obj(notEd)';
 cost(8,notEd) = gdpl_lbd;
