@@ -94,7 +94,7 @@ dis.h_v2  = (1-dis.hv2)*dis.ph./dis.Ts_v2;
 % R0a = max(d); 
 
 zs = zeros(size(data.NNs));
-dis.CI = get_R(data.ntot, dis, dis.h, dis.g2, data.NNs, zs, zs,...
+dis.CI = get_R(data.ntot, dis, data.NNs, zs, zs,...
     data.NNs, data.contacts.basic_contact_matrix, 1, 1, 0, 0); %R0a;
 
 
@@ -118,7 +118,7 @@ R0s = [];
 zs = zeros(size(data.NNs));
 for i=1:size(configurations,2)
     Dtemp   = p2MakeDs(data,NNvec(:,i),configurations(:,i),data.wfh(1,:));
-    R0s(i) = get_R(data.ntot, dis, dis.h, dis.g2, NNvec(:,i), zs, zs,...
+    R0s(i) = get_R(data.ntot, dis, NNvec(:,i), zs, zs,...
             NNvec(:,i), Dtemp, dis.beta, 1, 0, 0);
 end
 dis.R0s = R0s;
