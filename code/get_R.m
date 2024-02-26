@@ -1,5 +1,7 @@
-function R = get_R(ntot, dis, h, g2, S,Sv1,Sv2, N, contact_matrix, beta, betamod, p3, p4)
+function R = get_R(ntot, dis, S,Sv1,Sv2, N, contact_matrix, beta, betamod, p3, p4)
 
+    h = dis.h;
+    g2 = dis.g2;
     
     S_sum = S + Sv1 + Sv2;
     S_frac = S ./ S_sum;
