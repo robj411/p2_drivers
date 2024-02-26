@@ -1,21 +1,29 @@
-function [cost,ccost_t] = p2Cost(data,dis,p2,g)
+function [cost,ccost_t] = p2Cost(data,dis,p2,returnobject)
 
-t  = g(:,1);
+t  = returnobject.Tout;
 lx = length(data.obj);
 ln = lx+4;
 
+workers = returnobject.workers;
+homeworkers = returnobject.homeworkers;
+Isamat = returnobject.Isamat;
+Issmat = returnobject.Issmat;
+Insmat = returnobject.Insmat;
+hospmat = returnobject.hospmat;
+deathmat = returnobject.deathmat;
+selfisolation = returnobject.selfisolation;
+
 %% VLYL
 
-deaths    = g(end,1+2*lx+4*ln+1:1+2*lx+5*ln);
-cost(1,:) = deaths;
+deaths    = deathmat;
+cost(1,:) = deaths(end,:);
 
-lyl       = deaths.*data.lgh;
+lyl       = deaths(end,:).*data.lgh;
 cost(2,:) = lyl;
 
 vlyl      = lyl*data.vly;
 cost(3,:) = vlyl;
 
-deaths          = g(:,1+2*lx+4*ln+1:1+2*lx+5*ln);
 ccost_t(:,1:ln) = deaths.*data.lgh.*data.vly;
 
 %% VSYL
@@ -25,12 +33,12 @@ students         = data.NNs(Stu);
 cost(4,lx+[1,2]) = students;
 
 %Student Supply
-isoasy       = g(:,1+2*lx+0*ln+Stu).*14/(dis.Tay-p2.dur);%.*(1-(1/3));%sfh still contribute; 14-day isolation period
-isosym       = g(:,1+2*lx+1*ln+Stu);
-isorec       = g(:,1+2*lx+1*ln+Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.dur);%.*(1-(1/3));
-nissym       = g(:,1+2*lx+2*ln+Stu);
-hospts       = g(:,1+2*lx+3*ln+Stu);
-deaths       = g(:,1+2*lx+4*ln+Stu);
+isoasy       = Isamat(:,Stu).*14/(dis.Tay-p2.dur) ; %g(:,1+2*lx+0*ln+Stu).*14/(dis.Tay-p2.dur);
+isosym       = Issmat(:,Stu) ; %g(:,1+2*lx+1*ln+Stu);
+isorec       = Issmat(:,Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.dur) ; %g(:,1+2*lx+1*ln+Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.dur);%.*(1-(1/3));
+nissym       = Insmat(:,Stu) ; %g(:,1+2*lx+2*ln+Stu);
+hospts       = hospmat(:,Stu) ; %g(:,1+2*lx+3*ln+Stu);
+deaths       = deathmat(:,Stu) ; %g(:,1+2*lx+4*ln+Stu);
 abs          = isoasy + isosym + isorec + nissym + hospts;% + deaths;%numbers of students
 absint       = trapz(t,abs)/365;
 cost(5,lx+1) = absint;
@@ -39,7 +47,7 @@ cost(6,lx+1) = vsyl_sts;
 
 %Student Demand
 not_sick         = students-abs;
-not_sick_at_home        = not_sick.*(1-g(:,1+data.EdInd)) .* (1 - data.remote_teaching_effectiveness);%.*(1-(1/3));%numbers of students
+not_sick_at_home        = not_sick.*(1-returnobject.workers(:,data.EdInd)) .* (1 - data.remote_teaching_effectiveness);%.*(1-(1/3));%numbers of students
 preslint     = trapz(t,not_sick_at_home)/365;%= (diff(t)'*presl)/365;
 cost(5,lx+2) = preslint;
 vsyl_std     = preslint*data.vsy;
@@ -55,13 +63,13 @@ ccost_t(:,ln+lx+2) = cumtrapz(t,not_sick_at_home,1)./365.*data.vsy;
 notEd = [1:(data.EdInd-1),(data.EdInd+1):lx];
 
 %Labour Supply
-hw            = g(:,1+1*lx+notEd);
-isoasy        = g(:,1+2*lx+0*ln+notEd).*(1-hw).*14/(dis.Tay-p2.dur);%hw still contribute; 14-day isolation period
-isosym        = g(:,1+2*lx+1*ln+notEd);
-isorec        = g(:,1+2*lx+1*ln+notEd).*(1-hw).*(14-dis.Ts(notEd)'+p2.dur)./(dis.Ts(notEd)'-p2.dur);
-nissym        = g(:,1+2*lx+2*ln+notEd);
-hospts        = g(:,1+2*lx+3*ln+notEd);
-deaths        = g(:,1+2*lx+4*ln+notEd);%number of workers absent
+hw            = homeworkers(:,notEd);
+isoasy        = Isamat(:,notEd).*(1-hw).*14/(dis.Tay-p2.dur);%hw still contribute; 14-day isolation period
+isosym        = Issmat(:,notEd);
+isorec        = Issmat(:,notEd).*(1-hw).*(14-dis.Ts(notEd)'+p2.dur)./(dis.Ts(notEd)'-p2.dur);
+nissym        = Insmat(:,notEd);
+hospts        = hospmat(:,notEd);
+deaths        = deathmat(:,notEd);%number of workers absent
 abspc         = max((isoasy + isosym + isorec + nissym + hospts + deaths)./data.NNs(notEd)',0);%percentage of workers absent
 prespc        = 1-abspc;%percentage of workers present
 presx         = prespc.^data.alp;%percentage of gdp output%the alpha relationship only holds for present workers!!!
@@ -71,7 +79,7 @@ gdpl_lbs      = absxint.*data.obj(notEd)';
 cost(7,notEd) = gdpl_lbs;
 
 %Labour Demand
-w             = g(:,1+notEd);
+w             = workers(:,notEd);
 x             = w.^data.alp;
 xint          = diff(t)'*(1-x(1:end-1,:));
 gdpl_lbd      = xint.*data.obj(notEd)';
