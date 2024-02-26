@@ -7,19 +7,20 @@
     -   [2.2 Lost economic output](#22-lost-economic-output)
     -   [2.3 Lost education](#23-lost-education)
 -   [3 Epi model](#3-epi-model)
-    -   [3.1 Disease state transitions](#31-disease-state-transitions)
-    -   [3.2 Vaccination state
-        transitions](#32-vaccination-state-transitions)
-    -   [3.3 Contact rates](#33-contact-rates)
-        -   [3.3.1 Matrix $A$: community
-            contacts](#331-matrix-a-community-contacts)
-        -   [3.3.2 Matrix $B$: Worker-to-worker
-            contacts](#332-matrix-b-worker-to-worker-contacts)
-        -   [3.3.3 Matrix $C$: Consumer-to-worker
-            contacts](#333-matrix-c-consumer-to-worker-contacts)
-    -   [3.4 Social distancing](#34-social-distancing)
-    -   [3.5 Self isolating](#35-self-isolating)
-    -   [3.6 Equations](#36-equations)
+    -   [3.1 Ordinary differential
+        equations](#31-ordinary-differential-equations)
+    -   [3.2 Disease state transitions](#32-disease-state-transitions)
+    -   [3.3 Vaccination state
+        transitions](#33-vaccination-state-transitions)
+    -   [3.4 Contact rates](#34-contact-rates)
+        -   [3.4.1 Matrix $A$: community
+            contacts](#341-matrix-a-community-contacts)
+        -   [3.4.2 Matrix $B$: Worker-to-worker
+            contacts](#342-matrix-b-worker-to-worker-contacts)
+        -   [3.4.3 Matrix $C$: Consumer-to-worker
+            contacts](#343-matrix-c-consumer-to-worker-contacts)
+    -   [3.5 Social distancing](#35-social-distancing)
+    -   [3.6 Self isolating](#36-self-isolating)
 -   [4 Econ model](#4-econ-model)
     -   [4.1 Configurations](#41-configurations)
     -   [4.2 Impact of tourism](#42-impact-of-tourism)
@@ -235,7 +236,20 @@ For HICs, we have parameters 7.97 and 6.87.
 
 # 3 Epi model
 
-## 3.1 Disease state transitions
+## 3.1 Ordinary differential equations
+
+$$\begin{align}
+\frac{dS_{i,v}}{dt} & = m_{v,i}M_{i,v} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
+\frac{dM_{i,v}}{dt} & = \sum_{u=0}^{v-1}w_{u,v,i}(t)S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)M_{i,v} \quad (\text{for }v\in\{1,2\}) \\
+\frac{dE_{i,v}}{dt} & = k_{1,v}(t)(S_{i,v}+M_{i,v-1}) - (k_2+k_4)E_{i,v} \\
+\frac{dI_{i,v}^{(A)}}{dt} & = k_2E_{i,v} - k_3I_{i,v}^{(A)} \\
+\frac{dI_{i,v}^{(S)}}{dt} & = k_4E_{i,v} - (k_{5,i,v}+k_{6,i,v})I_{i,v}^{(S)} \\
+\frac{dR_{i,v}}{dt} & = k_3I_{i,v}^{(A)} + k_{5,i,v}I_{i,v}^{(S)} + k_{7,i}(t) H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}(t)R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}(t)R_{i,v-1}\\
+\frac{dH_{i,v}}{dt} & = k_{6,i,v}I_{i,v}^{(S)} - (k_{7,i}(t) + k_{8,i}(t)) H_{i,v} \\
+\frac{dD_{i,v}}{dt} & =  k_{8,i}(t) H_{i,v}
+\end{align}$$
+
+## 3.2 Disease state transitions
 
 <div class="figure">
 
@@ -349,7 +363,7 @@ k_{8,i}(t) = p_{D,i}(t)/\lambda_{H,i}(t)
 
 is the rate of death following hospitalisation.
 
-## 3.2 Vaccination state transitions
+## 3.3 Vaccination state transitions
 
 In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who
 have received a full schedule of BPSV, and $v=2$ to people who have
@@ -380,7 +394,7 @@ but not yet protected. $R$: recovered. $v$: vaccination status.
 
 </div>
 
-## 3.3 Contact rates
+## 3.4 Contact rates
 
 The configuration $x$ and the proportion of workers working from home
 $q$ determine the scaling of exposure to infection between different
@@ -473,7 +487,7 @@ Finally, $A^{(H)}(\textbf{1})$ is sampled as a fraction of
 $A(\textbf{1})- A^{(S)}(\textbf{1}) - A^{(T)}(\textbf{1})$, which leaves
 $A^{(L)}$.
 
-### 3.3.1 Matrix $A$: community contacts
+### 3.4.1 Matrix $A$: community contacts
 
 We construct $A(x)$ from its constituent parts, representing intra- and
 inter-household interactions ($L$), school interactions ($S$),
@@ -532,7 +546,7 @@ x_{H} = \frac{\sum_ix_{i}w_i}{\sum_iw_i}
 
 where we sum over only the hospitality sectors.
 
-### 3.3.2 Matrix $B$: Worker-to-worker contacts
+### 3.4.2 Matrix $B$: Worker-to-worker contacts
 
 $$\begin{equation}
 B_{ii}(x) = x_{i}(1-q_i)^2B_{ii}(\textbf{1}),
@@ -553,7 +567,7 @@ $$B_{ii}(x) = x_{i}^2(1-q_i)^2B_{ii}(\textbf{1})$$
 B_{ii}(x) = \hat{x}_i^2B_{ii}(\textbf{1}), \quad \hat{x}_i=\max(x_{i}-q_i,0)
 ```
 
-### 3.3.3 Matrix $C$: Consumer-to-worker contacts
+### 3.4.3 Matrix $C$: Consumer-to-worker contacts
 
 $$\begin{equation}
 C_{ij}(x) = x_{i}(1-q_i)C_{ij}(\textbf{1}),
@@ -567,7 +581,7 @@ working from home, and linear scaling with respect to sector closure,
 which becomes superlinear scaling for sectors as individuals are moved
 out of the compartment, as with matrix $B(x)$.
 
-## 3.4 Social distancing
+## 3.5 Social distancing
 
 We parametrise the effects of ‘social distancing’ in the model using
 Google’s mobility data (Figure <a href="#fig:smoothmobility">3.3</a>).
@@ -671,7 +685,7 @@ points.
 
 </div>
 
-## 3.5 Self isolating
+## 3.6 Self isolating
 
 We assume that infectious people who know their status have a
 probability $p_1\sim\mathcal(U)(0,1)$ to self isolate, starting one day
@@ -691,23 +705,6 @@ $p_3(t)=p_1p_2(t)(\gamma_A-\min(1,1/\gamma_A))$.
 <!-- frac_cases_found = 1./(1+exp(b0+b1*Ip+b2*log10(trate))); -->
 <!-- frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5); -->
 <!-- frac_cases_found = max(frac_cases_found, trate/10^5 ); -->
-
-## 3.6 Equations
-
-$$\begin{align}
-\frac{dS_{i,v}}{dt} & = m_{v,i}M_{i,v} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
-\frac{dM_{i,v}}{dt} & = \sum_{u=0}^{v-1}w_{u,v,i}(t)S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)M_{i,v} \\
-\frac{dE_{i,v}}{dt} & = k_{1,v}(t)(S_{i,v}+M_{i,v-1}) - (k_2+k_4)E_{i,v} \\
-\frac{dI_{i,v}^{(A)}}{dt} & = k_2E_{i,v} - k_3I_{i,v}^{(A)} \\
-\frac{dI_{i,v}^{(S)}}{dt} & = k_4E_{i,v} - (k_{5,i,v}+k_{6,i,v})I_{i,v}^{(S)} \\
-\frac{dR_{i,v}}{dt} & = k_3I_{i,v}^{(A)} + k_{5,i,v}I_{i,v}^{(S)} + k_{7,i}(t) H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}(t)R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}(t)R_{i,v-1}\\
-\frac{dH_{i,v}}{dt} & = k_{6,i,v}I_{i,v}^{(S)} - (k_{7,i}(t) + k_{8,i}(t)) H_{i,v} \\
-\frac{dD_{i,v}}{dt} & =  k_{8,i}(t) H_{i,v}
-\end{align}$$
-
-$w_{u,v,i}(t)$ is the rate of vaccination from level $u$ to level $v$.
-$w_{2,v,i}(t)=0$. $m_{v,i}$ is the rate of maturation of immunity
-following vaccination. $m_{0,i}=0$ and $M_{0,i}\equiv 0$.
 
 # 4 Econ model
 
