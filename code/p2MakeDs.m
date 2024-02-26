@@ -49,7 +49,7 @@ matA(1:lx,lx+1:end)     = repmat(CworkRow,lx,1);
 matA(:,[1:lx,lx+adInd]) = repmat(matA(:,lx+adInd),1,lx+1).*repmat(NNrel',ln,1);
 
 %Transport:
-matA(1:lx,1:lx)=    matA(1:lx,1:lx)+    repmat(w',lx,1).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,lx,1).*repmat(1-hw',1,lx);%home-working has a compound effect
+matA(1:lx,1:lx)=    matA(1:lx,1:lx)+    repmat(w',lx,1).*repmat(w,1,lx).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,lx,1).*repmat(1-hw',1,lx);%home-working has a compound effect
 mat = repmat(w',lx,1).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,lx,1).*repmat(1-hw',1,lx);
 
 %% WORKER-WORKER AND COMMUNITY-WORKER MATRICES:
@@ -58,13 +58,13 @@ mat = repmat(w',lx,1).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,lx,1).*re
 valB          = contacts.B;
 valB          = valB.*(1-hw).*(1-hw);%home-working has a compound effect
 valC          = contacts.C;
-valC          = valC.*(1-hw);
+valC          = valC.*(1-hw).*(1-hw);
 valB(lx+1:ln) = 0;
 valC(lx+1:ln) = 0;
 x(lx+1:ln)    = 0;
 w(lx+1:ln)    = 0;
-matB          = diag(w.*valB');
-matC          = repmat(x.*valC',1,ln).*NNrep;
+matB          = diag(w.^2.*valB');
+matC          = repmat(x.*w.*valC',1,ln).*NNrep;
 % move school contacts to students
 teacher_contacts = x(data.EdInd).*valC(data.EdInd);
 matC(data.EdInd,:) = 0.1 * teacher_contacts .* NNrep(data.EdInd,:);
