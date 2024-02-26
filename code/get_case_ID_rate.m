@@ -12,7 +12,8 @@ function p3 = get_case_ID_rate(p2, Ip)
     
     frac_cases_found = max(frac_cases_found, trate/10^5 );
     
-    p3 = p2.self_isolation_compliance .* frac_cases_found / p2.dur;
+    frac_infectiousness_averted = 1 - p2.frac_asym_infectiousness_remaining;
+    p3 = p2.self_isolation_compliance .* frac_cases_found * frac_infectiousness_averted;
     
 end
     
