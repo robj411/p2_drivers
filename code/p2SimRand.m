@@ -6,7 +6,7 @@ strategies = {'No Closures','School Closures','Economic Closures','Elimination'}
 vaccination_levels = [365, 100];
 bpsv_levels = [0, 1];
 
-nsamples  = 2048;
+nsamples  = 1;
 n_income = numel(income_levels);
 
 % synthetic_countries_base = cell(nsamples,length(income_levels));
@@ -118,23 +118,23 @@ for il = 1:n_income
                     int = 5;
                     try
 
-                        [~,f,g,iseq] = p2Run(rdata,dis2,strategy,int,xoptim,p2);
-                        endsim = max(f(:,1));
+                        [~,returned,iseq] = p2Run(rdata,dis2,strategy,int,xoptim,p2);
+                        endsim = max(returned.Tout);
                         endmit = iseq(end,1);
-                        [~,exitwave] = min(abs(f(:,1)-endmit));
-                        exitwavefrac = 1-sum(f(exitwave,7:10))/sum(f(end,7:10));
+                        [~,exitwave] = min(abs(returned.Tout-endmit));
+                        exitwavefrac = 1-sum(returned.deathtot(exitwave))/sum(returned.deathtot(end));
         %                         figure('Position', [100 100 400 300]); plot(f(:,1),f(:,7:10))
-                        endsusc = f(end,11)/f(1,11);
+                        endsusc = returned.Stotal(end)/returned.Stotal(1);
                         endsusci(i) = endsusc;  
-                        ht(i) = f(find(f(:,1) > p2.Tres,1),3);
+                        ht(i) = returned.Htot(find(returned.Tout > p2.Tres,1));
 
-                        [cost,~]    = p2Cost(ldata,dis2,p2,g);
+                        [cost,~]    = p2Cost(ldata,dis2,p2,returned);
                         sec         = nan(1,4);
                         sec(1)      = sum(cost([3,6,7:10],:),'all');
                         sec(2)      = sum(cost([3],:),'all');
                         sec(3)      = sum(cost([6],:),'all');
                         sec(4)      = sum(cost([7:10],:),'all');  
-                        total_deaths = sum(f(end,7:10));
+                        total_deaths = returned.deathtot(end);
                         
                         gdp = sum(ldata.obj);
                         popsize = sum(ldata.Npop);
@@ -165,11 +165,13 @@ for il = 1:n_income
                             disp(i)
                         end
                     catch
-                        disp(strcat(string(strategy),'_',string(income_level),'_',string(vaccination_levels(vl)),'_',string(bpsv_levels(bl)),'_',string(i),' NA'))
+                        disp(strcat(string(income_level),'_',string(strategy),'_',string(vaccination_levels(vl)),'_',string(bpsv_levels(bl)),'_',string(i),' NA'))
                         disp([il ms vl bl i]);
                     end
                 end   
                 endsusct((vl-1)*length(bpsv_levels)+bl,:) = endsusci;
+                disp([il ms vl bl])
+                disp(outputs)
                 T = array2table([inputs outputs]);
                 T.Properties.VariableNames = columnnames;
                 writetable(T,strcat('results/VOI_',string(strategy),'_',string(income_level),'_',string(vaccination_levels(vl)),'_',string(bpsv_levels(bl)),'.csv'));
