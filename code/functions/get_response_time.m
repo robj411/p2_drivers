@@ -1,3 +1,13 @@
+% simulates a random response time based on country and pathogen
+% characteristics, taking the average of many simulations
+
+% dis: struct of pathogen parameters
+% data: struct of general model parameters
+% hosp_trigger: number of hospital cases at which the country responds
+
+% response_time: time  at which the country responds
+% (international alert time)
+
 function response_time = get_response_time(data, dis, hosp_trigger)
     
     Npop = data.Npop;

@@ -1,3 +1,7 @@
+% load in basic data and make general definitions
+
+% data: struct of general model parameters
+
 function data = data_start()
 
     load('../country_mats/Argentina.mat','data');%loading Argentina, but only keeping country-independent parameters

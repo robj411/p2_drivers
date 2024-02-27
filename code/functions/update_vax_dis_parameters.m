@@ -1,3 +1,18 @@
+% updates parameters relating to hospitalisation as a function of
+% waning vaccine immunity, and past infection
+
+% dis: struct of pathogen parameters
+% S: number susceptible by stratum
+% Sn: number susceptible and not previously infected or vaccinated by stratum
+% compindex: struct of compartment indices 
+% y_mat: matrix of present values in all compartments
+
+% dis2: updated struct of pathogen parameters
+% V: amount of BPSV in population
+% B: amount of SARS-X vaccine in population
+% vaccine_pp: amount of BPSV per person
+% booster_pp: amount of SARS-X vaccine per person
+
 function [dis2, V, B, vaccine_pp, booster_pp] = update_vax_dis_parameters(dis, S, Sn, compindex, y_mat)
 
     V =    y_mat(:,compindex.V_index(1));

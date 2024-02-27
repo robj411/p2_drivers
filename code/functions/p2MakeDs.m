@@ -1,4 +1,13 @@
-function f = p2MakeDs(data,NN,x,hw)
+% construct contact matrices from components for configurations
+
+% data: struct of general model parameters
+% NN: population by stratum
+% x: economic configuration
+% hw: proportion working from home by stratum
+
+% D: contact matrix
+
+function D = p2MakeDs(data,NN,x,hw)
 
 
 contacts = data.contacts; 
@@ -76,7 +85,5 @@ contacts_between_workers_and_customers = matC .* repmat(NN,1,ln);
 Cback = contacts_between_workers_and_customers' ./ repmat(NN,1,ln);
 
 D = matA + contacts.workrel*(matB + matC + Cback);
-
-f = D;
 
 end

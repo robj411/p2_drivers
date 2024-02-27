@@ -1,3 +1,9 @@
+% samples many pathogen values from distributions
+
+% nsamples: the number of samples to take
+
+% param_struct: struct containing all values sampled
+
 function param_struct = sample_disease_parameters(nsamples)
 
 sevenpathogens = readtable('../data/sevenpathogens.csv');

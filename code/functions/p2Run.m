@@ -1,3 +1,15 @@
+% run model
+
+% dis: struct of pathogen parameters
+% strategy: string specifying which mitigation strategy is followed
+% p2: struct of p2 intervention parameters
+% data: struct of general model parameters
+
+% data: struct of general model parameters
+% returnobject: struct of epi outcomes 
+% isequence: tables of configurations (i values) chosen and times at which
+% they were chosen
+
 function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
 
     %% get configurations

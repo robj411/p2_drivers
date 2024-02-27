@@ -1,3 +1,13 @@
+% simulate a random country by drawing from distributions and data
+
+% data: struct of general model parameters
+% CD: table of country data values
+% income_level: string indicating income level (e.g. HIC)
+% country_parameter_distributions: pre-specified, named distributions and
+% parameters
+
+% data: struct of general model parameters
+
 function data = p2RandCountry(data,CD,income_level,country_parameter_distributions)
 
 %% start
@@ -20,6 +30,7 @@ contacts.hospitality_frac = betarnd(10,40,1,1);
 
 data.remote_quantile = internet_coverage_quantile;
 data.response_time_quantile = unifrnd(0,1);
+data.remote_teaching_effectiveness = unifrnd(0,1,1,1);
 
 %% values from distributions
 pindices = find(strcmp(country_parameter_distributions.igroup,income_level) | ...
@@ -39,6 +50,8 @@ contacts.pt = pt;
 contacts.schoolA1_frac = schoolA1_frac;
 contacts.schoolA2_frac = schoolA2_frac;
 data.Hmax = Hmax; 
+data.labsh = labsh;
+
 
 if strcmp(income_level,'LLMIC')
     country_indices = strcmp(CD.igroup,'LIC') | strcmp(CD.igroup,'LMIC');
@@ -74,25 +87,23 @@ contacts.C = unifrnd(max(contacts.C/2-1,0),contacts.C*2+1);
 nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
 [~,idx] = sort(CD.average_contacts(nonempind));
 nonempind = nonempind(idx);
-%weights = unifrnd(0,1,1,1) + cumsum(CD.popsum(nonempind)/sum(CD.popsum(nonempind)));
-%demoindex = find(weights>1,1) ; %randsample(nonempind,1,true,weights);
 demoindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(demoindex,4:24));
+cols = strmatch('Npop', CD.Properties.VariableNames);
+randvalue = table2array(CD(demoindex,cols));
 defivalue = 50*10^6*randvalue'/sum(randvalue);
 data.Npop = defivalue;
 
 %NNs
 nonempind = find(~isnan(CD.NNs1) & country_indices);
 randindex = nonempind(randi(numel(nonempind)));
-%weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
-%randindex = randsample(nonempind,1,true,weights);
-randvalue = table2array(CD(randindex,25:69));%number of workers by sector in real country
+colNNs = strmatch('NNs', CD.Properties.VariableNames);
+randvalue = table2array(CD(randindex,colNNs));%number of workers by sector in real country
 defivalue = randvalue/sum(table2array(CD(randindex,3+[5:13])));%proportion of adult population by sector in real country
 defivalue = sum(data.Npop(5:13))*defivalue;%number of workers by sector in artificial country
-defivalue = [defivalue,data.Npop(1),sum(data.Npop(2:4)),sum(data.Npop(5:13))-sum(defivalue),sum(data.Npop(14:end))]';
-data.NNs  = defivalue;
+NNs = [defivalue,data.Npop(1),sum(data.Npop(2:4)),sum(data.Npop(5:13))-sum(defivalue),sum(data.Npop(14:end))]';
+data.NNs  = NNs;
 data.NNs(data.NNs==0) = 1;
-data.ntot     = size(data.NNs,1);
+data.nStrata     = size(data.NNs,1);
 
 %CM -- match to pop for now
 % nonempind = find(~isnan(CD.CMaa) & country_indices);
@@ -101,99 +112,49 @@ randvalue = table2array(CD(demoindex,70:325));
 defivalue = reshape(randvalue,16,16);
 contacts.CM   = defivalue;
 
-%comm
-% nonempind = find(~isnan(CD.comm) & country_indices);
-% mincomm = min(CD.comm(nonempind));
-% maxcomm = max(CD.comm(nonempind));
-% contacts.comm = unifrnd(mincomm,maxcomm,1,1);
-
-%travelA3
-% nonempind     = find(~isnan(CD.travelA3) & country_indices);
-% mina3 = min(CD.travelA3(nonempind));
-% maxa3 = max(CD.travelA3(nonempind));
-% normalise France values: 18% travel is pt, and pt has 2.5% of contacts,
-% which is 0.555
-% contacts.travelA3 =  pt/0.18*0.555 ; %unifrnd(mina3,maxa3,1,1);
-
-%schoolA1&schoolA2
-% mina1 = min(CD.schoolA1);
-% maxa1 = max(CD.schoolA1);
-% mina2 = min(CD.schoolA2);
-% maxa2 = max(CD.schoolA2);
-% contacts.schoolA1 = unifinv(school_contact_quantile,mina1,maxa1) ; 
-% contacts.schoolA2 = unifinv(school_contact_quantile,mina2,maxa2);
-
-% sample_uniform({'schoolA1','schoolA2'},CD,country_indices)
-
-%workp
-nonempind  = find(~isnan(CD.workp) & country_indices);
-minwp = min(CD.workp(nonempind));
-maxwp = max(CD.workp(nonempind));
-contacts.workp = unifrnd(minwp,maxwp,1,1);
+%workp = number of contacts in workplace
+contacts.workp = sample_uniform("workp",CD,country_indices);
 
 
 %%
-%wfh
+%wfh = work from home
+
 nonempind = find(~isnan(CD.wfhl1) & country_indices);
-mins = min(table2array(CD(nonempind,376:420)));
-maxs = max(table2array(CD(nonempind,421:465)));
+mins = min(table2array(CD(nonempind,strmatch('wfhl', CD.Properties.VariableNames))));
+maxs = max(table2array(CD(nonempind,strmatch('wfhu', CD.Properties.VariableNames))));
 newprop = unifinv(internet_coverage_quantile,mins,maxs);
 data.wfh  = [newprop; newprop];
 
 % date of importation
 data.t_import = unifrnd(0,20,1,1);
 
-%Tres
-% nonempind = find(~isnan(CD.Tres) & country_indices & CD.Tres<365);
-% mint = 30; %min(CD.Tres(nonempind));
-% maxt = 90; %max(CD.Tres(nonempind));
-% data.Tres = unifinv(data.response_time_quantile, mint,maxt);
+%Hres = hospital occupancy at response time in origin country
 data.Hres = unifinv(data.response_time_quantile, 1,20);
 
-%t_tit
-% nonempind  = find(~isnan(CD.t_tit) & country_indices & CD.t_tit<365);
-% mint = min(CD.t_tit(nonempind));
-% maxt = max(CD.t_tit(nonempind));
-% data.t_tit = data.Tres; %unifrnd(mint,maxt,1,1);
-
-%trate
-nonempind  = find(~isnan(CD.trate) & country_indices);
-mint = min(CD.trate(nonempind));
-maxt = max(CD.trate(nonempind));
-data.trate = unifrnd(mint,maxt,1,1);
+%trate = testing rate
+data.trate = sample_uniform("trate",CD,country_indices);
 
 %sdl
-nonempind = find(~isnan(CD.sdl) & country_indices);
-mins = min(CD.sdl(nonempind));
-maxs = max(CD.sdl(nonempind));
-data.sdl  = unifrnd(mins,maxs,1,1);
+data.sdl = sample_uniform("sdl",CD,country_indices);
 
 %sdb
-nonempind = find(~isnan(CD.sdb) & country_indices);
-mins = min(CD.sdb(nonempind));
-maxs = max(CD.sdb(nonempind));
-data.sdb  = unifrnd(mins,maxs,1,1);
+data.sdb = sample_uniform("sdb",CD,country_indices);
 
-%t_vax
-nonempind  = find(~isnan(CD.t_vax) & country_indices);
-mint = min(CD.t_vax(nonempind));
-maxt = max(CD.t_vax(nonempind));
-data.t_vax = 1000; %unifinv(data.response_time_quantile, mint,maxt);
+%t_vax = time to start vaccine administration
+data.t_vax = 1000; 
 
-%arate
+%arate = vaccine administration rate
 data.vaccination_rate_pc = unifrnd(0.5,1.5,1,1)/100;
 
-%puptake
+%puptake = population uptake
 data.vaccine_uptake = unifrnd(.4,.8,1,1);
 
-%la
+%la = life expectancy
 nonempind = find(~isnan(CD.la1) & country_indices);
+cols = strmatch('la', CD.Properties.VariableNames);
 randindex = nonempind(randi(numel(nonempind)));
-%weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
-%randindex = randsample(nonempind,1,true,weights);
-randvalue = table2array(CD(randindex,476:493));
-defivalue = randvalue;
-data.la   = defivalue;
+randvalue = table2array(CD(randindex,cols));
+data.la   = randvalue;
 
 
 %% change sizes of sectors
@@ -245,13 +206,14 @@ data.NNs(resample_sectors) = workingagepop2 .* vals;
 % data.NNs(FAAind) = FAAfrac * workingagepop;
 % data.NNs(otherindices) = data.NNs(otherindices)./leftoverpop .* workingagepop .* leftover_frac;
 
-%obj: income per worker
+%% obj: income per worker
 nonempind                   = find(~isnan(CD.obj1)&~isnan(CD.NNs1) & country_indices);
-% randindex                   = nonempind(randi(numel(nonempind)));
-weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
-randindex = randsample(nonempind,1,true,weights);
-randvalue                   = table2array(CD(randindex,331:375));%gva by sector in real country
-defivalue                   = randvalue./table2array(CD(randindex,25:69));%gva per worker by sector in real country
+randindex                   = nonempind(randi(numel(nonempind)));
+% weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
+% randindex = randsample(nonempind,1,true,weights);
+cols1 = strmatch('obj', CD.Properties.VariableNames);
+randvalue                   = table2array(CD(randindex,cols1));%gva by sector in real country
+defivalue                   = randvalue./table2array(CD(randindex,colNNs));%gva per worker by sector in real country
 defivalue(isnan(defivalue)) = 0;
 defivalue(isinf(defivalue)) = 0;
 defivalue                   = data.NNs(1:45).*defivalue';%gva by sector in artificial country
@@ -260,49 +222,52 @@ data.obj                    = defivalue;
 
 %% valuations
 
-%vly
-na        = [data.Npop(1:17)',sum(data.Npop(18:end))];%length is 18 to match life table
-gdp       = 365*sum(data.obj);
-la        = data.la;
-lg        = [dot(la(1),na(1))/sum(na(1)),...
-             dot(la(2:4),na(2:4))/sum(na(2:4)),...
-             dot(la(5:13),na(5:13))/sum(na(5:13)),...
-             dot(la(14:end),na(14:end))/sum(na(14:end))];
-for k = 1:length(lg)
-    lgh(k) = sum(1./((1+0.03).^(1:lg(k))));
-end 
-vsl       = 160*gdp/sum(na);
-defivalue = vsl/(dot(lgh,[na(1);sum(na(2:4));sum(na(5:13));sum(na(14:end))])/sum(na));
-data.vly  = defivalue;
+discount_rate = 0.03;
+gdp = 365*sum(data.obj);
 data.gdp = gdp;
 data.gdppc = gdp/sum(data.Npop);
 
-%vsy
+%vly = value of a life year
+pop_sizes        = [data.Npop(1:17)',sum(data.Npop(18:end))];%length is 18 to match life table
+pop_sizes_4 = [pop_sizes(1);sum(pop_sizes(2:4));sum(pop_sizes(5:13));sum(pop_sizes(14:end))];
+
+% map life expectancy to our age groups
+life_expectancy  = data.la;
+age_map = {1, 2:4, 5:13, 14:length(pop_sizes)};
+life_expectancy_4 = zeros(size(age_map));
+for k = 1:length(life_expectancy_4)
+    index = age_map{k};
+    life_expectancy_4(k) = dot(life_expectancy(index),pop_sizes(index))/sum(pop_sizes(index));
+end
+% get discounted values
+discounted_life_expectancy = zeros(size(life_expectancy_4));
+for k = 1:length(life_expectancy_4)
+    discounted_life_expectancy(k) = sum(1./((1+discount_rate).^(1:life_expectancy_4(k))));
+end 
+
+vsl       = 160*gdp/sum(pop_sizes);
+discounted_value_of_a_life_year = vsl/(dot(discounted_life_expectancy,pop_sizes_4)/sum(pop_sizes_4));
+data.vly  = discounted_value_of_a_life_year;
+
+%% vsy = value of a school year
+rate_of_return_one_year = 0.08;
 agefracs = data.Npop(2:4)/sum(data.Npop(2:4));
 midages = [7 12 17];
-workstarts = 20 - midages;
 working_years = 45;
+workstarts = 20 - midages;
 workends = working_years + workstarts;
-discount_rate = 0.03;
-rate_of_return_one_year = 0.08;
+
+% present value
 PV = ((1-(1+discount_rate).^(-workends))/discount_rate - (1-(1+discount_rate).^(-workstarts))/discount_rate)*agefracs;
 
-data.remote_teaching_effectiveness = unifrnd(0,1,1,1);
 mean_annual_income = labsh*gdp/workingagepop;
-data.labsh = labsh;
-
 educationloss_all_students = ...
     PV*mean_annual_income*rate_of_return_one_year*sum(data.Npop(2:4));
 educationloss_per_student = ...
     PV*mean_annual_income*rate_of_return_one_year;
 
-
-
-defivalue = 0.5454*gdp/sum(data.Npop(2:4));
 data.vsy  = educationloss_per_student;
 data.educationloss_all_students  = educationloss_all_students;
-
-
 
 
 %% international tourism 
@@ -330,22 +295,12 @@ data.x_econ(FAAind,:) = min(FAAmax,data.x_econ(FAAind,:));
 data.x_schc(FAAind,:) = min(FAAmax,data.x_schc(FAAind,:));
 
 
-
 %% contacts
 
 %Contact Matrix
-data.contacts = contacts;
-data = get_basic_contacts(data);
+data.contacts = get_basic_contacts(data, contacts);
 basic_contact_matrix = p2MakeDs(data,data.NNs,ones(data.nSectors,1),zeros(1,data.nSectors));
 data.contacts.basic_contact_matrix = basic_contact_matrix;
-
-% get covid wt doubling time
-
-% dis = population_disease_parameters(data,dis_ref,R0betafun);
-
-% data.Td_CWT = dis.Td;
-
-
 
 
 end

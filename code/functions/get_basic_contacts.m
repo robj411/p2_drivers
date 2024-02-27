@@ -1,7 +1,13 @@
-function [data] = get_basic_contacts(data)
+% take population contact matrix and decompose into items that will be
+% impacted differently by configurations
+
+% data: struct of general model parameters
+
+% contacts: struct of contact parameters
+
+function contacts = get_basic_contacts(data, contacts)
 
 
-contacts = data.contacts; 
 NN = data.NNs;
 
 Npop     = data.Npop;
@@ -117,6 +123,5 @@ C4 = max((1-contacts.hospitality_frac) * C4, 0);
 
 contacts.C4 = C4;
 contacts.contact_props = contact_props;
-data.contacts = contacts; 
 
 end

@@ -1,3 +1,12 @@
+% updates parameters relating to hospital outcomes as a function of
+% hospital occupancy
+
+% occ: hospital occupancy
+% dis: struct of pathogen parameters
+% p2: struct of p2 intervention parameters
+
+% dis2: updated struct of pathogen parameters
+
 function dis2 = update_hosp_dis_parameters(occ, p2, dis)
 
     dis2 = dis;

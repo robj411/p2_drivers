@@ -1,3 +1,11 @@
+% compute the fraction of people identified by testing and then the
+% fraction of infectiousness averted as a consequence
+
+% p2: struct of p2 intervention parameters
+% Ip: number of cases per 10^5 population
+
+% p3: fraction of infectiousness averted
+
 function p3 = get_case_ID_rate(p2, Ip)
 
     trate = p2.trate;

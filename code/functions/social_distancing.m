@@ -1,3 +1,13 @@
+% function to compute the impact of social distancing on transmission,
+% which is a function of current closures and current deaths
+
+% lower_bound
+% rate
+% deaths_per_10k
+% current_drop
+
+% sd_out: amount by which to scale transmission. Value between 0 and 1.
+
 function sd_out = social_distancing(lower_bound,rate,deaths_per_10k,current_drop ) 
 
     sd = (lower_bound-rate)+(1-lower_bound+rate)*(1+((lower_bound-1)/(1-lower_bound+rate))).^(deaths_per_10k./10);

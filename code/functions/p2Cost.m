@@ -1,3 +1,12 @@
+% computes socio-economic costs from epi model outputs
+
+% p2: struct of p2 intervention parameters
+% data: struct of general model parameters
+% dis: struct of pathogen parameters
+% returnobject: output from epi model
+
+% cost: 
+
 function [cost,ccost_t] = p2Cost(data,dis,p2,returnobject)
 
 t  = returnobject.Tout;
