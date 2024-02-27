@@ -181,16 +181,9 @@ maxt = max(CD.t_vax(nonempind));
 data.t_vax = 1000; %unifinv(data.response_time_quantile, mint,maxt);
 
 %arate
-% nonempind  = find(~isnan(CD.arate) & country_indices);
-% mint = min(CD.arate(nonempind));
-% maxt = max(CD.arate(nonempind));
 data.vaccination_rate_pc = unifrnd(0.5,1.5,1,1)/100;
 
 %puptake
-% nonempind    = find(~isnan(CD.puptake) & country_indices);
-% mint = min(CD.puptake(nonempind));
-% maxt = max(CD.puptake(nonempind));
-% data.puptake = unifrnd(mint,maxt,1,1);
 data.vaccine_uptake = unifrnd(.4,.8,1,1);
 
 %la

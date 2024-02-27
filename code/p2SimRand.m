@@ -1,4 +1,8 @@
 
+dae_path = 'functions';
+
+addpath(dae_path);
+
 %% global variables
 
 income_levels = {'LLMIC','UMIC','HIC'};
