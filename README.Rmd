@@ -194,11 +194,13 @@ All economic sectors contribute GVA according to the level they are open for pro
 
 For the value of a year of education, we use the method of [@Psacharopoulos2021a]. The loss due to school closure is
 
-$$L_3 =  \text{VSY}\left( \frac{T}{365}p_{16}w_{g_{\text{school}}} + \frac{1-p_{16}}{365} \int_{t=0}^T\left(p_1p_2I_{g_{\text{school}}}^{(A)} + p_1I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt\right)$$
+$$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}w_{g_{\text{school}}} + (1-p_{16})A \right)\text{VSY}$$
 
 where
 
-$$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{14}\cdot p_{15}.$$
+$$A=\int_{t=0}^T\left(p_1p_2I_{g_{\text{school}}}^{(A)} + p_1I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt$$
+
+$$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{15}.$$
 
 $p_{12}$ is the present value of lost earnings:
 
@@ -236,7 +238,7 @@ The value $p_{16}$ represents the ineffectiveness of remote teaching, which we s
 
 ## Disease state transitions
 
-```{tikz statetransitions, fig.cap = "Disease state transitions. $S$: susceptible. $E$: exposed. $I^{(A)}$: asymptomatic infectious. $I^{(S)}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$: vaccination status.", fig.ext = 'png',echo=F}
+```{tikz statetransitions, fig.cap = "Disease state transitions. $S$: susceptible. $E$: exposed. $I^{(A)}$: asymptomatic infectious. $I^{(S)}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$: vaccination status.", fig.ext = 'png',echo=F,fig.height=3,fig.width=4}
 \usetikzlibrary{shapes}
 \usetikzlibrary{fit}
 \usetikzlibrary{arrows}

@@ -183,11 +183,13 @@ For the value of a year of education, we use the method of
 (Psacharopoulos, Collis, and Patrinos 2021). The loss due to school
 closure is
 
-$$L_3 =  \text{VSY}\left( \frac{T}{365}p_{16}w_{g_{\text{school}}} + \frac{1-p_{16}}{365} \int_{t=0}^T\left(p_1p_2I_{g_{\text{school}}}^{(A)} + p_1I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt\right)$$
+$$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}w_{g_{\text{school}}} + (1-p_{16})A \right)\text{VSY}$$
 
 where
 
-$$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{14}\cdot p_{15}.$$
+$$A=\int_{t=0}^T\left(p_1p_2I_{g_{\text{school}}}^{(A)} + p_1I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt$$
+
+$$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{15}.$$
 
 $p_{12}$ is the present value of lost earnings:
 
