@@ -161,10 +161,11 @@ production.
 \hat{x}_{i}(t)=x_{i}(t)-\sum_{v}\left(p_3p_{17}I_{v,i}^{(A)}(t)+p_4p_{17}I_{v,i}^{(S)}(t)+H_{v,i}(t)+D_{v,i}(t)\right)/N_i
 ```
 
-for vaccine status $v$, infectious and symptomatic $I_S$, hospitalised
-$H$, deceased $D$, with total population $N_i$ for sector $i$. $p_3$ is
-the fraction of asymptomatic infectious averted by self isolating, $p_4$
-is the fraction of symptomatic infectious averted by self isolating. and
+for vaccine status $v$, infectious and asymptomatic $I_{v,i}^{(A)}$,
+infectious and symptomatic $I_{v,i}^{(S)}$, hospitalised $H$, deceased
+$D$, with total population $N_i$ for sector $i$. $p_3$ is the fraction
+of asymptomatic infectious averted by self isolating, $p_4$ is the
+fraction of symptomatic infectious averted by self isolating. and
 $p_{17}$ is the number of infectious periods for which individuals are
 required to isolate.
 
@@ -188,15 +189,20 @@ For the value of a year of education, we use the method of
 (Psacharopoulos, Collis, and Patrinos 2021). The loss due to school
 closure is
 
-$$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}w_{g_{\text{school}}} + (1-p_{16})A \right)\text{VSY}$$
+$$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}w_{g_{\text{school}}}+A_2 + (1-p_{16})A_1 \right)\text{VSY}$$
 
 where $p_{16}$ is the proportion of students affected,
 $w_{g_{\text{school}}}$ is the total number of students, $p_{14}$ is the
 extent and amount of time (in years) schools are closed:
-$$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{\text{ed}}(t))dt,$$ and $A$
-represents education lost due to student sickness with COVID-19:
+$$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{\text{ed}}(t))dt,$$ $A_1$
+represents education lost due to student sickness with COVID-19
 
-$$A=\int_{t=0}^T\left(p_3p_{17}I_{i_{\text{school}}}^{(A)} + p_4p_{17}I_{i_{\text{school}}}^{(S)}+H_{i_{\text{school}}}\right)dt.$$
+$$A_1=\int_{t=0}^T\left(p_4p_{17}I_{i_{\text{school}}}^{(S)}+H_{i_{\text{school}}}\right)dt,$$
+
+and $A_2$ represents education lost due to asymptomatic self isolation
+(which comes at a cost only when schools are open):
+
+$$A_2=\int_{t=0}^Tp_3p_{17}I_{i_{\text{school}}}^{(A)} dt.$$
 
 $$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{15}.$$
 
