@@ -173,10 +173,12 @@ We measure the cost of economic closures in terms of lost gross value added (GVA
 $x_{i}(t)$ is the proportion of the workforce contributing to economic production out of the total workforce $N_i$ on day $t$. The workforce can be additionally depleted due to sickness, hospitalisation and death, leaving a smaller fraction ($`\hat{x}_{i}(t)`$) to contribute to production.
 
 ```math
-\hat{x}_{i}(t)=x_{i}(t)-\sum_{v}\left(I_{S,v,i}(t)+H_{v,i}(t)+D_{v,i}(t)\right)/N_i
+\hat{x}_{i}(t)=x_{i}(t)-\sum_{v}\left(p_3p_{17}I_{v,i}^{(A)}(t)+p_4p_{17}I_{v,i}^{(S)}(t)+H_{v,i}(t)+D_{v,i}(t)\right)/N_i
 ```
 
-for vaccine status $v$, infectious and symptomatic $I_S$, hospitalised $H$, deceased $D$, with total population $N_i$ for sector $i$. Then the total GVA for the $T$-day period is: 
+for vaccine status $v$, infectious and symptomatic $I_S$, hospitalised $H$, deceased $D$, with total population $N_i$ for sector $i$. $p_3$ is the fraction of asymptomatic infectious averted by self isolating, $p_4$ is the fraction of symptomatic infectious averted by self isolating. and $p_{17}$ is the number of infectious periods for which individuals are required to isolate.
+
+Then the total GVA for the $T$-day period is: 
 
 ```math
 Z = \frac{1}{365}\left(\sum_{i\neq\text{ed}}^{\mathcal{N}}\sum_{t=1}^Tz_i\hat{x}_{i}(t) + Tz_{\text{ed}}\right)
@@ -197,11 +199,11 @@ For the value of a year of education, we use the method of [@Psacharopoulos2021a
 $$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}w_{g_{\text{school}}} + (1-p_{16})A \right)\text{VSY}$$
 
 where $p_{16}$ is the proportion of students affected, $w_{g_{\text{school}}}$ is the total number of students, $p_{14}$ is the extent and amount of time (in years) schools are closed: 
-$$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$
+$$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{\text{ed}}(t))dt,$$
 and $A$ represents education lost due to student sickness with COVID-19:
 
-$$A=\int_{t=0}^T\left(p_3I_{g_{\text{school}}}^{(A)} + p_4I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt.$$ 
-$p_3$ is the fraction of asymptomatic infectious averted by self isolating, and $p_4$ is the fraction of symptomatic infectious averted by self isolating.
+$$A=\int_{t=0}^T\left(p_3p_{17}I_{i_{\text{school}}}^{(A)} + p_4p_{17}I_{i_{\text{school}}}^{(S)}+H_{i_{\text{school}}}\right)dt.$$ 
+
 
 $$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{15}.$$
 
