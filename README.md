@@ -1,85 +1,85 @@
 100-day mission: Model description
 ================
 
--   [1 Simulation rules](#1-simulation-rules)
--   [2 Socio-economic costs](#2-socio-economic-costs)
-    -   [2.1 Lost lives](#21-lost-lives)
-    -   [2.2 Lost economic output](#22-lost-economic-output)
-    -   [2.3 Lost education](#23-lost-education)
--   [3 Epi model](#3-epi-model)
-    -   [3.1 Ordinary differential
-        equations](#31-ordinary-differential-equations)
-    -   [3.2 Disease state transitions](#32-disease-state-transitions)
-    -   [3.3 Vaccination state
-        transitions](#33-vaccination-state-transitions)
-    -   [3.4 Contact rates](#34-contact-rates)
-        -   [3.4.1 Matrix $A$: community
-            contacts](#341-matrix-a-community-contacts)
-        -   [3.4.2 Matrix $B$: Worker-to-worker
-            contacts](#342-matrix-b-worker-to-worker-contacts)
-        -   [3.4.3 Matrix $C$: Consumer-to-worker
-            contacts](#343-matrix-c-consumer-to-worker-contacts)
-    -   [3.5 Social distancing](#35-social-distancing)
-    -   [3.6 Self isolating](#36-self-isolating)
--   [4 Econ model](#4-econ-model)
-    -   [4.1 Configurations](#41-configurations)
-    -   [4.2 Impact of tourism](#42-impact-of-tourism)
-        -   [4.2.1 Food and accommodation services
-            sector](#421-food-and-accommodation-services-sector)
-        -   [4.2.2 Sector shrinkage as a result of the
-            pandemic](#422-sector-shrinkage-as-a-result-of-the-pandemic)
-        -   [4.2.3 Loss of international
-            tourists](#423-loss-of-international-tourists)
-        -   [4.2.4 Dependence on international
-            tourism](#424-dependence-on-international-tourism)
-    -   [4.3 Remote working](#43-remote-working)
--   [5 Parametric distributions](#5-parametric-distributions)
-    -   [5.1 Hospital capacity](#51-hospital-capacity)
-    -   [5.2 Labour share of GVA](#52-labour-share-of-gva)
+- [1 Simulation rules](#1-simulation-rules)
+- [2 Socio-economic costs](#2-socio-economic-costs)
+  - [2.1 Lost lives](#21-lost-lives)
+  - [2.2 Lost economic output](#22-lost-economic-output)
+  - [2.3 Lost education](#23-lost-education)
+- [3 Epi model](#3-epi-model)
+  - [3.1 Ordinary differential
+    equations](#31-ordinary-differential-equations)
+  - [3.2 Disease state transitions](#32-disease-state-transitions)
+  - [3.3 Vaccination state
+    transitions](#33-vaccination-state-transitions)
+  - [3.4 Contact rates](#34-contact-rates)
+    - [3.4.1 Matrix $A$: community
+      contacts](#341-matrix-a-community-contacts)
+    - [3.4.2 Matrix $B$: Worker-to-worker
+      contacts](#342-matrix-b-worker-to-worker-contacts)
+    - [3.4.3 Matrix $C$: Consumer-to-worker
+      contacts](#343-matrix-c-consumer-to-worker-contacts)
+  - [3.5 Social distancing](#35-social-distancing)
+  - [3.6 Self isolating](#36-self-isolating)
+- [4 Econ model](#4-econ-model)
+  - [4.1 Configurations](#41-configurations)
+  - [4.2 Impact of tourism](#42-impact-of-tourism)
+    - [4.2.1 Food and accommodation services
+      sector](#421-food-and-accommodation-services-sector)
+    - [4.2.2 Sector shrinkage as a result of the
+      pandemic](#422-sector-shrinkage-as-a-result-of-the-pandemic)
+    - [4.2.3 Loss of international
+      tourists](#423-loss-of-international-tourists)
+    - [4.2.4 Dependence on international
+      tourism](#424-dependence-on-international-tourism)
+  - [4.3 Remote working](#43-remote-working)
+- [5 Parametric distributions](#5-parametric-distributions)
+  - [5.1 Hospital capacity](#51-hospital-capacity)
+  - [5.2 Labour share of GVA](#52-labour-share-of-gva)
 
 # 1 Simulation rules
 
--   Countries are instantiated with two random variables: the response
-    time, and their importation time
--   The response time is the time at which the reporting country reports
-    having seen X hospital cases, where X is a random number between 1
-    and 20
--   The importation time is a random number between 0 and 20 days, where
-    0 days would be equivalent to the spillover, or origin, country
--   The simulation starts at the minimum between the response time and
-    the importation time
--   At the response time, the BPSV, if present, is given to people aged
-    65 and older; testing begins; social distancing begins; economic
-    closures, if in use, are implemented
--   At the importation time, five people are moved from compartment S to
-    compartment E
--   If closures are being implemented, the rules in Tables
-    <a href="#tab:rulesreactive">1.1</a> and
-    <a href="#tab:ruleselimination">1.2</a> are followed
--   The SARS-X–specific vaccine is rolled out starting on day 107 or 372
-    after the response time, depending on the investment assumption
--   All people aged 15 and over are eligible for vaccination, and we
-    assume 80% take it up
--   Distribution rate increases linearly to a maximum of 1% of the
-    population per day, at which is stays until 80% coverage is reached
--   When vaccine rollout is complete, closures, testing and social
-    distancing end
--   When the doubling time is more than 30 days and there are fewer than
-    1,000 people in hospital, the simulation ends.
+- Countries are instantiated with two random variables: the response
+  time, and their importation time
+- The response time is the time at which the reporting country reports
+  having seen X hospital cases, where X is a random number between 1 and
+  20
+- The importation time is a random number between 0 and 20 days, where 0
+  days would be equivalent to the spillover, or origin, country
+- The simulation starts at the minimum between the response time and the
+  importation time
+- At the response time, the BPSV, if present, is given to people aged 65
+  and older; testing begins; social distancing begins; economic
+  closures, if in use, are implemented
+- At the importation time, five people are moved from compartment S to
+  compartment E
+- If closures are being implemented, the rules in Tables
+  <a href="#tab:rulesreactive">1.1</a> and
+  <a href="#tab:ruleselimination">1.2</a> are followed
+- The SARS-X–specific vaccine is rolled out starting on day 107 or 372
+  after the response time, depending on the investment assumption
+- All people aged 15 and over are eligible for vaccination, and we
+  assume 80% take it up
+- Distribution rate increases linearly to a maximum of 1% of the
+  population per day, at which is stays until 80% coverage is reached
+- When vaccine rollout is complete, closures, testing and social
+  distancing end
+- When the doubling time is more than 30 days and there are fewer than
+  1,000 people in hospital, the simulation ends.
 
-| From/to            | No closures                                                                                                             | Light closures                                                    | Heavy closures                                            |
-|:-------------------|:------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------|:----------------------------------------------------------|
-| **No closures**    |                                                                                                                         |                                                                   | t = response time OR Hospital occupancy &gt; 95% capacity |
-| **Light closures** | (Growth rate &lt; 0.025 OR Hospital occupancy &lt; 25% capacity) AND vaccine rollout complete OR $R(D(\textbf{1}) < 1$) |                                                                   | Hospital occupancy &gt; 95% capacity                      |
-| **Heavy closures** |                                                                                                                         | Hospital occupancy &lt; 25% capacity AND t &gt; 7 + response time |                                                           |
+| From/to            | No closures                                                                                                         | Light closures                                                | Heavy closures                                          |
+|:-------------------|:--------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------|:--------------------------------------------------------|
+| **No closures**    |                                                                                                                     |                                                               | t = response time OR Hospital occupancy \> 95% capacity |
+| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity) AND vaccine rollout complete OR $R(D(\textbf{1}) < 1$) |                                                               | Hospital occupancy \> 95% capacity                      |
+| **Heavy closures** |                                                                                                                     | Hospital occupancy \< 25% capacity AND t \> 7 + response time |                                                         |
 
 Table 1.1: State transition rules for reactive closure strategies
 
-| From/to            | No closures                                        | Light closures                            | Heavy closures                                            |
-|:-------------------|:---------------------------------------------------|:------------------------------------------|:----------------------------------------------------------|
-| **No closures**    |                                                    |                                           | t = response time OR Hospital occupancy &gt; 95% capacity |
-| **Light closures** | Vaccine rollout complete OR $R(D(\textbf{1}) < 1$) |                                           | Rt &gt; 1.2                                               |
-| **Heavy closures** | Vaccine rollout complete OR $R(D(\textbf{1}) < 1$) | Rt &lt; 0.95 AND t &gt; 7 + response time |                                                           |
+| From/to            | No closures                                        | Light closures                        | Heavy closures                                          |
+|:-------------------|:---------------------------------------------------|:--------------------------------------|:--------------------------------------------------------|
+| **No closures**    |                                                    |                                       | t = response time OR Hospital occupancy \> 95% capacity |
+| **Light closures** | Vaccine rollout complete OR $R(D(\textbf{1}) < 1$) |                                       | Rt \> 1.2                                               |
+| **Heavy closures** | Vaccine rollout complete OR $R(D(\textbf{1}) < 1$) | Rt \< 0.95 AND t \> 7 + response time |                                                         |
 
 Table 1.2: State transition rules for the elimination strategy
 
@@ -158,12 +158,17 @@ leaving a smaller fraction ($`\hat{x}_{i}(t)`$) to contribute to
 production.
 
 ``` math
-\hat{x}_{i}(t)=x_{i}(t)-\sum_{v}\left(I_{S,v,i}(t)+H_{v,i}(t)+D_{v,i}(t)\right)/N_i
+\hat{x}_{i}(t)=x_{i}(t)-\sum_{v}\left(p_3p_{17}I_{v,i}^{(A)}(t)+p_4p_{17}I_{v,i}^{(S)}(t)+H_{v,i}(t)+D_{v,i}(t)\right)/N_i
 ```
 
 for vaccine status $v$, infectious and symptomatic $I_S$, hospitalised
-$H$, deceased $D$, with total population $N_i$ for sector $i$. Then the
-total GVA for the $T$-day period is:
+$H$, deceased $D$, with total population $N_i$ for sector $i$. $p_3$ is
+the fraction of asymptomatic infectious averted by self isolating, $p_4$
+is the fraction of symptomatic infectious averted by self isolating. and
+$p_{17}$ is the number of infectious periods for which individuals are
+required to isolate.
+
+Then the total GVA for the $T$-day period is:
 
 ``` math
 Z = \frac{1}{365}\left(\sum_{i\neq\text{ed}}^{\mathcal{N}}\sum_{t=1}^Tz_i\hat{x}_{i}(t) + Tz_{\text{ed}}\right)
@@ -185,9 +190,13 @@ closure is
 
 $$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}w_{g_{\text{school}}} + (1-p_{16})A \right)\text{VSY}$$
 
-where
+where $p_{16}$ is the proportion of students affected,
+$w_{g_{\text{school}}}$ is the total number of students, $p_{14}$ is the
+extent and amount of time (in years) schools are closed:
+$$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{\text{ed}}(t))dt,$$ and $A$
+represents education lost due to student sickness with COVID-19:
 
-$$A=\int_{t=0}^T\left(p_1p_2I_{g_{\text{school}}}^{(A)} + p_1I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt$$
+$$A=\int_{t=0}^T\left(p_3p_{17}I_{i_{\text{school}}}^{(A)} + p_4p_{17}I_{i_{\text{school}}}^{(S)}+H_{i_{\text{school}}}\right)dt.$$
 
 $$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{15}.$$
 
@@ -197,14 +206,7 @@ $$p_{12} = \frac{1}{w_{g_{\text{school}}}}\sum_{a\in g_{\text{school}}}N_a\left(
 
 for discount rate $r=0.03$, number $N_a$ students currently age $a$, and
 expected number of years of work $n=45$. $p_{13}$ is mean annual
-earnings, $p_{14}$ is the extent and amount of time (in years) schools
-are closed: $$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$
-$p_{15}=0.08$ is the rate of return for one year, $S$ is the total
-number of students, $p_{16}$ is the proportion of students affected, and
-$\int_t I_S(t)dt$ represents education lost due to student sickness with
-COVID-19. $p_1$ is compliance with the requirement to self isolate if
-infectious and $p_2$ is the fraction of cases identified through
-testing.
+earnings, $p_{15}=0.08$ is the rate of return for one year.
 
 The value $p_{16}$ represents the ineffectiveness of remote teaching,
 which we sample as a standard uniform random variable. We note that no
@@ -234,20 +236,21 @@ $$\begin{align}
 
 ## 3.2 Disease state transitions
 
-<div class="figure">
-
-<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I^{(A)}$: asymptomatic infectious. $I^{(S)}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$: vaccination status."  />
-
-<p class="caption">
-
-Figure 3.1: Disease state transitions. $S$: susceptible. $E$: exposed.
-$I^{(A)}$: asymptomatic infectious. $I^{(S)}$: symptomatic infectious.
-$H$: hospitalised. $R$: recovered. $D$: died. $i$: stratum. $v$:
-vaccination status.
-
-</p>
-
-</div>
+<figure>
+<img src="README_files/figure-gfm/statetransitions-1.png"
+alt="Figure 3.1: Disease state transitions. S: susceptible. E: exposed. I^{(A)}: asymptomatic infectious. I^{(S)}: symptomatic infectious. H: hospitalised. R: recovered. D: died. i: stratum. v: vaccination status." />
+<figcaption aria-hidden="true">Figure 3.1: Disease state transitions.
+<span class="math inline"><em>S</em></span>: susceptible. <span
+class="math inline"><em>E</em></span>: exposed. <span
+class="math inline"><em>I</em><sup>(<em>A</em>)</sup></span>:
+asymptomatic infectious. <span
+class="math inline"><em>I</em><sup>(<em>S</em>)</sup></span>:
+symptomatic infectious. <span class="math inline"><em>H</em></span>:
+hospitalised. <span class="math inline"><em>R</em></span>: recovered.
+<span class="math inline"><em>D</em></span>: died. <span
+class="math inline"><em>i</em></span>: stratum. <span
+class="math inline"><em>v</em></span>: vaccination status.</figcaption>
+</figure>
 
 Possible transitions between disease states are shown in Figure
 <a href="#fig:statetransitions">3.1</a>. Transition rates are functions
@@ -364,18 +367,15 @@ $k_{19}(t)=k_1(1,t)$ are the rates of infection of just-vaccinated
 people, which returns them to the epidemiological pathway of the lower
 vaccination level.
 
-<div class="figure">
-
-<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $M$: vaccinated but not yet protected. $R$: recovered. $v$: vaccination status."  />
-
-<p class="caption">
-
-Figure 3.2: Vaccine state transitions. $S$: susceptible. $M$: vaccinated
-but not yet protected. $R$: recovered. $v$: vaccination status.
-
-</p>
-
-</div>
+<figure>
+<img src="README_files/figure-gfm/vaccinetransitions-1.png"
+alt="Figure 3.2: Vaccine state transitions. S: susceptible. M: vaccinated but not yet protected. R: recovered. v: vaccination status." />
+<figcaption aria-hidden="true">Figure 3.2: Vaccine state transitions.
+<span class="math inline"><em>S</em></span>: susceptible. <span
+class="math inline"><em>M</em></span>: vaccinated but not yet protected.
+<span class="math inline"><em>R</em></span>: recovered. <span
+class="math inline"><em>v</em></span>: vaccination status.</figcaption>
+</figure>
 
 ## 3.4 Contact rates
 
@@ -383,17 +383,17 @@ The configuration $x$ and the proportion of workers working from home
 $q$ determine the scaling of exposure to infection between different
 groups for different reasons:
 
--   Worker absence due to sector closure
--   Worker absence due to working from home
--   Student absence due to school closure
--   Customer absence due to sector closure: impact on workers
--   Customer absence due to sector closure: impact on customers
+- Worker absence due to sector closure
+- Worker absence due to working from home
+- Student absence due to school closure
+- Customer absence due to sector closure: impact on workers
+- Customer absence due to sector closure: impact on customers
 
 We construct contact matrix $D(x)$ as the sum of four matrices: $A(x)$
 (community contacts), $B(x)$ (worker-to-worker contacts), $C(x)$
 (consumer-to-worker contacts), and $\hat{C}(x)$ (worker-to-consumer
 contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning
-with a “target matrix,” which the four matrices should add up to, which
+with a “target matrix”, which the four matrices should add up to, which
 is taken from (Walker et al. 2020). By sampling relevant values, we
 decompose the whole matrix into its component parts. To incorporate
 closures, each matrix is transformed independently, before they are all
@@ -577,47 +577,36 @@ economic configuration leads to a change in contacts. We associate the
 reduction in contacts, which translates as a relative reduction in
 transmission, with the reduction in mobility.
 
-<div class="figure">
+<figure>
+<img src="README_files/figure-gfm/smoothmobility.png"
+alt="Figure 3.3: Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over “Retail and recreation”, “Transit stations” and “Workplaces” and smoothed with a spline of 80 knots." />
+<figcaption aria-hidden="true">Figure 3.3: Mobility trajectories in 2020
+for all countries, with points showing the point at which the largest
+drop was observed. Trajectories are averaged over “Retail and
+recreation”, “Transit stations” and “Workplaces” and smoothed with a
+spline of 80 knots.</figcaption>
+</figure>
 
-<img src="README_files/figure-gfm/smoothmobility.png" alt="Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over &quot;Retail and recreation&quot;, &quot;Transit stations&quot; and &quot;Workplaces&quot; and smoothed with a spline of 80 knots." width="2809" />
+<figure>
+<img src="README_files/figure-gfm/mobilitydrop.png"
+alt="Figure 3.4: The largest drop in mobility plotted against the stringency on that date." />
+<figcaption aria-hidden="true">Figure 3.4: The largest drop in mobility
+plotted against the stringency on that date.</figcaption>
+</figure>
 
-<p class="caption">
-
-Figure 3.3: Mobility trajectories in 2020 for all countries, with points
-showing the point at which the largest drop was observed. Trajectories
-are averaged over “Retail and recreation,” “Transit stations” and
-“Workplaces” and smoothed with a spline of 80 knots.
-
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/mobilitydrop.png" alt="The largest drop in mobility plotted against the stringency on that date." width="3000" />
-
-<p class="caption">
-
-Figure 3.4: The largest drop in mobility plotted against the stringency
-on that date.
-
-</p>
-
-</div>
-
--   We want to write mobility as a function of mandate and some epi
-    outcome, e.g. deaths: $\rho(t) = (1-p_8)f(y(t),g(t)) + p_8$ where
-    $\rho(t)$ is mobility, $y$ is deaths per million, $g$ is government
-    mandate, and $`0 < p_8 < 1`$ is the baseline.
--   We want mobility to drop monotonically with both the mandate and the
-    epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
--   We want a maximum mobility of 1 when both the mandate and the epi
-    outcome are 0: $f(0,0)=1$.
--   We want mobility to approach $p_8$ when the mandate and the epi
-    outcome become large: $\lim_{x\to 10^6, g\to 1}f(y,g)= 0$.
--   We want to allow for the possibility of redundancy between the two
-    variables: $f(0,0)/f(0,g) > f(x,0)/f(y,g)$ and
-    $f(0,0)/f(y,0) > f(0,g)/f(y,g)$ for $y,g>0$.
+- We want to write mobility as a function of mandate and some epi
+  outcome, e.g. deaths: $\rho(t) = (1-p_8)f(y(t),g(t)) + p_8$ where
+  $\rho(t)$ is mobility, $y$ is deaths per million, $g$ is government
+  mandate, and $`0 < p_8 < 1`$ is the baseline.
+- We want mobility to drop monotonically with both the mandate and the
+  epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
+- We want a maximum mobility of 1 when both the mandate and the epi
+  outcome are 0: $f(0,0)=1$.
+- We want mobility to approach $p_8$ when the mandate and the epi
+  outcome become large: $\lim_{x\to 10^6, g\to 1}f(y,g)= 0$.
+- We want to allow for the possibility of redundancy between the two
+  variables: $f(0,0)/f(0,g) > f(x,0)/f(y,g)$ and
+  $f(0,0)/f(y,0) > f(0,g)/f(y,g)$ for $y,g>0$.
 
 A simple model to achieve these criteria is:
 $$f(y,g) = \frac{1}{1+p_9y+p_{10}g}$$ with $p_9, p_{10}>0$.
@@ -631,42 +620,27 @@ $$f_2(y,g) = \frac{1}{1+\max(p_9y,p_{10}g)}.$$ Then we could include
 ‘model uncertainty’ via some parameter $\beta\sim\mathcal{U}(0,1)$,
 defining $$f(y,g) = (f_1(y,g))^{p_{11}}(f_2(y,g))^{(1-p_{11})}.$$
 
-<div class="figure">
+<figure>
+<img src="README_files/figure-gfm/mobilityfitted.png"
+alt="Figure 3.5: Fit of model to data." />
+<figcaption aria-hidden="true">Figure 3.5: Fit of model to
+data.</figcaption>
+</figure>
 
-<img src="README_files/figure-gfm/mobilityfitted.png" alt="Fit of model to data." width="2096" />
+<figure>
+<img src="README_files/figure-gfm/mobilityposterior.png"
+alt="Figure 3.6: Posterior distribution for parameters p_9 and p_8." />
+<figcaption aria-hidden="true">Figure 3.6: Posterior distribution for
+parameters <span class="math inline"><em>p</em><sub>9</sub></span> and
+<span class="math inline"><em>p</em><sub>8</sub></span>.</figcaption>
+</figure>
 
-<p class="caption">
-
-Figure 3.5: Fit of model to data.
-
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/mobilityposterior.png" alt="Posterior distribution for parameters $p_9$ and $p_8$." width="2096" />
-
-<p class="caption">
-
-Figure 3.6: Posterior distribution for parameters $p_9$ and $p_8$.
-
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/mobilitycurves.png" alt="Sampled curves for four levels of mitigation. Data shown as points." width="2096" />
-
-<p class="caption">
-
-Figure 3.7: Sampled curves for four levels of mitigation. Data shown as
-points.
-
-</p>
-
-</div>
+<figure>
+<img src="README_files/figure-gfm/mobilitycurves.png"
+alt="Figure 3.7: Sampled curves for four levels of mitigation. Data shown as points." />
+<figcaption aria-hidden="true">Figure 3.7: Sampled curves for four
+levels of mitigation. Data shown as points.</figcaption>
+</figure>
 
 ## 3.6 Self isolating
 
@@ -693,1754 +667,58 @@ $p_3(t)=p_1p_2(t)(\gamma_A-\min(1,1/\gamma_A))$.
 
 ## 4.1 Configurations
 
-<table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-
-Table 4.1: Economic configurations used to implement strategies. Values
-are the openness of the sector expressed as a percentage. Elimination
-values are taken from Australia. Lockdown and Economic Closures values
-are taken from the UK. School Closures values are taken from Indonesia.
-
-</caption>
-<thead>
-<tr>
-<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
-</th>
-<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
-
-<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
-
-Elimination
-
-</div>
-
-</th>
-<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
-
-<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
-
-Economic closures
-
-</div>
-
-</th>
-<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
-
-<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
-
-School closures
-
-</div>
-
-</th>
-</tr>
-<tr>
-<th style="text-align:left;">
-
-Sector
-
-</th>
-<th style="text-align:right;">
-
-Lockdown
-
-</th>
-<th style="text-align:right;">
-
-Elimination
-
-</th>
-<th style="text-align:right;">
-
-Lockdown
-
-</th>
-<th style="text-align:right;">
-
-Economic Closures
-
-</th>
-<th style="text-align:right;">
-
-Lockdown (School Closures)
-
-</th>
-<th style="text-align:right;">
-
-School Closures
-
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-
-Agriculture, hunting, forestry
-
-</td>
-<td style="text-align:right;">
-
-86
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-86
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Fishing and aquaculture
-
-</td>
-<td style="text-align:right;">
-
-86
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-86
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Mining and quarrying, energy producing products
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-<td style="text-align:right;">
-
-67
-
-</td>
-<td style="text-align:right;">
-
-79
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Mining and quarrying, non-energy producing products
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Mining support service activities
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Food products, beverages and tobacco
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Textiles, textile products, leather and footwear
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-89
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Wood and products of wood and cork
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-95
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Paper products and printing
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Coke and refined petroleum products
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-87
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Chemical and chemical products
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Pharmaceuticals, medicinal chemical and botanical products
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Rubber and plastics products
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-87
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Other non-metallic mineral products
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-<td style="text-align:right;">
-
-89
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Basic metals
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Fabricated metal products
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Computer, electronic and optical equipment
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Electrical equipment
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Machinery and equipment, nec
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-89
-
-</td>
-<td style="text-align:right;">
-
-95
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Motor vehicles, trailers and semi-trailers
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-66
-
-</td>
-<td style="text-align:right;">
-
-82
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Other transport equipment
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-66
-
-</td>
-<td style="text-align:right;">
-
-82
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Manufacturing nec; repair and installation of machinery and equipment
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Electricity, gas, steam and air conditioning supply
-
-</td>
-<td style="text-align:right;">
-
-89
-
-</td>
-<td style="text-align:right;">
-
-97
-
-</td>
-<td style="text-align:right;">
-
-89
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Water supply; sewerage, waste management and remediation activities
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-<td style="text-align:right;">
-
-97
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Construction
-
-</td>
-<td style="text-align:right;">
-
-56
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-56
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-<td style="text-align:right;">
-
-95
-
-</td>
-<td style="text-align:right;">
-
-95
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Wholesale and retail trade; repair of motor vehicles
-
-</td>
-<td style="text-align:right;">
-
-64
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-64
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-<td style="text-align:right;">
-
-97
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Land transport and transport via pipelines
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-82
-
-</td>
-<td style="text-align:right;">
-
-83
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Water transport
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-82
-
-</td>
-<td style="text-align:right;">
-
-81
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Air transport
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-18
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-82
-
-</td>
-<td style="text-align:right;">
-
-16
-
-</td>
-<td style="text-align:right;">
-
-42
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Warehousing and support activities for transportation
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-82
-
-</td>
-<td style="text-align:right;">
-
-64
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Postal and courier activities
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-82
-
-</td>
-<td style="text-align:right;">
-
-64
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Accommodation and food service activities
-
-</td>
-<td style="text-align:right;">
-
-10
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-<td style="text-align:right;">
-
-10
-
-</td>
-<td style="text-align:right;">
-
-85
-
-</td>
-<td style="text-align:right;">
-
-77
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Publishing, audiovisual and broadcasting activities
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Telecommunications
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-IT and other information services
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-91
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Financial and insurance activities
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-96
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Real estate activities
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Professional, scientific and technical activities
-
-</td>
-<td style="text-align:right;">
-
-85
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-85
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-95
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Administrative and support services
-
-</td>
-<td style="text-align:right;">
-
-66
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-66
-
-</td>
-<td style="text-align:right;">
-
-80
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-95
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Public administration and defence; compulsory social security
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-96
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Education
-
-</td>
-<td style="text-align:right;">
-
-10
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-10
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-10
-
-</td>
-<td style="text-align:right;">
-
-10
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Human health and social work activities
-
-</td>
-<td style="text-align:right;">
-
-75
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-75
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Arts, entertainment and recreation
-
-</td>
-<td style="text-align:right;">
-
-55
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-55
-
-</td>
-<td style="text-align:right;">
-
-71
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-96
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Other service activities
-
-</td>
-<td style="text-align:right;">
-
-54
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-54
-
-</td>
-<td style="text-align:right;">
-
-83
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-96
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Activities of households as employers; undifferentiated goods- and
-services-producing activities of households for own use
-
-</td>
-<td style="text-align:right;">
-
-49
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-49
-
-</td>
-<td style="text-align:right;">
-
-53
-
-</td>
-<td style="text-align:right;">
-
-90
-
-</td>
-<td style="text-align:right;">
-
-96
-
-</td>
-</tr>
-</tbody>
-</table>
+|                                                           Sector                                                           | Lockdown | Elimination | Lockdown | Economic Closures | Lockdown (School Closures) | School Closures |
+|:--------------------------------------------------------------------------------------------------------------------------:|:--------:|:-----------:|:--------:|:-----------------:|:--------------------------:|:---------------:|
+|                                               Agriculture, hunting, forestry                                               |    86    |     100     |    86    |        88         |            100             |       100       |
+|                                                  Fishing and aquaculture                                                   |    86    |     100     |    86    |        88         |            100             |       100       |
+|                                      Mining and quarrying, energy producing products                                       |    90    |     100     |    90    |        91         |             67             |       79        |
+|                                    Mining and quarrying, non-energy producing products                                     |    90    |     100     |    90    |        91         |            100             |       100       |
+|                                             Mining support service activities                                              |    90    |     100     |    90    |        91         |            100             |       100       |
+|                                            Food products, beverages and tobacco                                            |    70    |     100     |    70    |        94         |            100             |       100       |
+|                                      Textiles, textile products, leather and footwear                                      |    70    |     98      |    70    |        94         |             89             |       92        |
+|                                             Wood and products of wood and cork                                             |    70    |     98      |    70    |        94         |            100             |       95        |
+|                                                Paper products and printing                                                 |    70    |     98      |    70    |        94         |            100             |       98        |
+|                                            Coke and refined petroleum products                                             |    70    |     88      |    70    |        94         |             87             |       88        |
+|                                               Chemical and chemical products                                               |    70    |     88      |    70    |        94         |            100             |       100       |
+|                                 Pharmaceuticals, medicinal chemical and botanical products                                 |    70    |     88      |    70    |        94         |            100             |       100       |
+|                                                Rubber and plastics products                                                |    70    |     88      |    70    |        94         |             87             |       100       |
+|                                            Other non-metallic mineral products                                             |    70    |     88      |    70    |        94         |             92             |       89        |
+|                                                        Basic metals                                                        |    70    |     100     |    70    |        94         |            100             |       100       |
+|                                                 Fabricated metal products                                                  |    70    |     100     |    70    |        94         |             90             |       100       |
+|                                         Computer, electronic and optical equipment                                         |    70    |     100     |    70    |        94         |             90             |       100       |
+|                                                    Electrical equipment                                                    |    70    |     100     |    70    |        94         |             90             |       100       |
+|                                                Machinery and equipment, nec                                                |    70    |     100     |    70    |        94         |             89             |       95        |
+|                                         Motor vehicles, trailers and semi-trailers                                         |    70    |     100     |    70    |        94         |             66             |       82        |
+|                                                 Other transport equipment                                                  |    70    |     100     |    70    |        94         |             66             |       82        |
+|                           Manufacturing nec; repair and installation of machinery and equipment                            |    70    |     98      |    70    |        94         |             98             |       100       |
+|                                    Electricity, gas, steam and air conditioning supply                                     |    89    |     97      |    89    |        100        |             94             |       94        |
+|                            Water supply; sewerage, waste management and remediation activities                             |    92    |     97      |    92    |        98         |            100             |       100       |
+|                                                        Construction                                                        |    56    |     94      |    56    |        92         |             95             |       95        |
+|                                    Wholesale and retail trade; repair of motor vehicles                                    |    64    |     100     |    64    |        100        |             92             |       97        |
+|                                         Land transport and transport via pipelines                                         |    63    |     100     |    63    |        82         |             83             |       100       |
+|                                                      Water transport                                                       |    63    |     100     |    63    |        82         |             81             |       98        |
+|                                                       Air transport                                                        |    63    |     18      |    63    |        82         |             16             |       42        |
+|                                   Warehousing and support activities for transportation                                    |    63    |     91      |    63    |        82         |             64             |       91        |
+|                                               Postal and courier activities                                                |    63    |     91      |    63    |        82         |             64             |       91        |
+|                                         Accommodation and food service activities                                          |    10    |     92      |    10    |        85         |             77             |       91        |
+|                                    Publishing, audiovisual and broadcasting activities                                     |    88    |     100     |    88    |        91         |            100             |       100       |
+|                                                     Telecommunications                                                     |    88    |     100     |    88    |        91         |            100             |       100       |
+|                                             IT and other information services                                              |    88    |     100     |    88    |        91         |            100             |       100       |
+|                                             Financial and insurance activities                                             |    94    |     100     |    94    |        96         |            100             |       100       |
+|                                                   Real estate activities                                                   |    98    |     100     |    98    |        98         |            100             |       100       |
+|                                     Professional, scientific and technical activities                                      |    85    |     100     |    85    |        92         |             90             |       95        |
+|                                            Administrative and support services                                             |    66    |     90      |    66    |        80         |             90             |       95        |
+|                               Public administration and defence; compulsory social security                                |   100    |     100     |   100    |        100        |             96             |       100       |
+|                                                         Education                                                          |    10    |     100     |    10    |        100        |             10             |       10        |
+|                                          Human health and social work activities                                           |    75    |     100     |    75    |        92         |            100             |       100       |
+|                                             Arts, entertainment and recreation                                             |    55    |     94      |    55    |        71         |             90             |       96        |
+|                                                  Other service activities                                                  |    54    |     94      |    54    |        83         |             90             |       96        |
+| Activities of households as employers; undifferentiated goods- and services-producing activities of households for own use |    49    |     94      |    49    |        53         |             90             |       96        |
+
+Economic configurations used to implement strategies. Values are the
+openness of the sector expressed as a percentage. Elimination values are
+taken from Australia. Lockdown and Economic Closures values are taken
+from the UK. School Closures values are taken from Indonesia.
 
 ## 4.2 Impact of tourism
 
@@ -2453,23 +731,9 @@ correlation of their % contributions to GDP is 0.64 and the order of
 magnitude is similar (1 to 7% vs 2 to 10% of GDP). The other two sectors
 considered (Air transport and Arts, entertainment and recreation) have
 little correlation with tourism in terms of % of GDP. (See Figure
-<a href="#fig:pairs">4.1</a>.)
+<a href="#fig:pairs"><strong>??</strong></a>.)
 
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/pairs-1.png" alt="Correlations between tourism-related data. First: https://www.unwto.org/tourism-statistics/key-tourism-statistics. Second to fourth: https://www.unwto.org/tourism-data/international-tourism-and-covid-19. Fifth to seventh: OECD."  />
-
-<p class="caption">
-
-Figure 4.1: Correlations between tourism-related data. First:
-<https://www.unwto.org/tourism-statistics/key-tourism-statistics>.
-Second to fourth:
-<https://www.unwto.org/tourism-data/international-tourism-and-covid-19>.
-Fifth to seventh: OECD.
-
-</p>
-
-</div>
+<img src="README_files/figure-gfm/pairs-1.png" title="Correlations between tourism-related data. First: https://www.unwto.org/tourism-statistics/key-tourism-statistics. Second to fourth: https://www.unwto.org/tourism-data/international-tourism-and-covid-19. Fifth to seventh: OECD." alt="Correlations between tourism-related data. First: https://www.unwto.org/tourism-statistics/key-tourism-statistics. Second to fourth: https://www.unwto.org/tourism-data/international-tourism-and-covid-19. Fifth to seventh: OECD." style="display: block; margin: auto;" />
 
 ### 4.2.2 Sector shrinkage as a result of the pandemic
 
@@ -2505,37 +769,15 @@ measures - whichever is lower.
 ### 4.2.3 Loss of international tourists
 
 We model the distribution of $z$ using data from 2020 (Figure
-<a href="#fig:tourismhist">4.2</a>, bottom-right plot). We fit to it a
-log-normal distribution, and find mean value -1.39 and standard
-deviation 0.39 (Figure <a href="#fig:ytd">4.3</a>). We use these values
-as inputs for all country models.
+<a href="#fig:tourismhist"><strong>??</strong></a>, bottom-right plot).
+We fit to it a log-normal distribution, and find mean value -1.39 and
+standard deviation 0.39 (Figure
+<a href="#fig:ytd"><strong>??</strong></a>). We use these values as
+inputs for all country models.
 
-<div class="figure" style="text-align: center">
+<img src="README_files/figure-gfm/tourismhist-1.png" title="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector." alt="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector." style="display: block; margin: auto;" />
 
-<img src="README_files/figure-gfm/tourismhist-1.png" alt="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector."  />
-
-<p class="caption">
-
-Figure 4.2: Distributions of tourism-related data from
-<https://www.unwto.org/tourism-data/international-tourism-and-covid-19>.
-In grey are the subset of countries for which we have GVA data by
-sector.
-
-</p>
-
-</div>
-
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/ytd-1.png" alt="Fit of log-normal distribution to loss-of-tourism data."  />
-
-<p class="caption">
-
-Figure 4.3: Fit of log-normal distribution to loss-of-tourism data.
-
-</p>
-
-</div>
+<img src="README_files/figure-gfm/ytd-1.png" title="Fit of log-normal distribution to loss-of-tourism data." alt="Fit of log-normal distribution to loss-of-tourism data." style="display: block; margin: auto;" />
 
 ### 4.2.4 Dependence on international tourism
 
@@ -2558,11 +800,18 @@ $$p_6u + p_7 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
 Here, $p_5$ controls the variance of the distribution and $p_6$ and
 $p_7$ the linear relationship between $u$ and $y$. Using an optimisation
 routine in R we find $p_5=5.93$, $p_6=3.66$ and $p_7=0.099$. Results are
-shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
+shown in Figure <a href="#fig:sectortourism">4.1</a>. We use these
 values as inputs for all country models.
 
 <figure>
-<img src="figures/sectortourism.png" style="width:60.0%" alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure 4.2)." /><figcaption aria-hidden="true">Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
+<img src="figures/sectortourism.png" style="width:60.0%"
+alt="Figure 4.1: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure ??)." />
+<figcaption aria-hidden="true">Figure 4.1: Predicting the percentage of
+tourism that comes from abroad as a function of the size of the sector.
+Each row represents a beta distribution whose mean is determined by the
+size of the sector (u). Blue points show the data we have available
+(grey bars in Figure
+<a href="#fig:tourismhist"><strong>??</strong></a>).</figcaption>
 </figure>
 
 ## 4.3 Remote working
@@ -2573,636 +822,50 @@ We assume that the value we sample within the range is related to
 internet infrastructure, so that a low value in one sector implies low
 values in all sectors. We:
 
--   take the subset of countries in the income group (LLMIC / UMIC /
-    HIC);
--   take the minimum of the lower bounds by sector (5%);
--   take the maximum of the upper bounds by sector (95%);
--   sample from a uniform distribution between these bounds, taking the
-    same quantile for each sector.
+- take the subset of countries in the income group (LLMIC / UMIC / HIC);
+- take the minimum of the lower bounds by sector (5%);
+- take the maximum of the upper bounds by sector (95%);
+- sample from a uniform distribution between these bounds, taking the
+  same quantile for each sector.
 
 <!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 1.78 and  3.11. For UMICs, we have parameters 14.32 and  6.44. For HICs, we have parameters 9.57 and  1.39. -->
 
 # 5 Parametric distributions
 
-<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<caption>
-
-Table 5.1: Parameter distributions.
-
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-
-Parameter
-
-</th>
-<th style="text-align:left;">
-
-Income group
-
-</th>
-<th style="text-align:left;">
-
-Distribution
-
-</th>
-<th style="text-align:right;">
-
-Parameter 1
-
-</th>
-<th style="text-align:right;">
-
-Parameter 2
-
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-
-internet coverage
-
-</td>
-<td style="text-align:left;">
-
-LLMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-1.78
-
-</td>
-<td style="text-align:right;">
-
-3.11
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-internet coverage
-
-</td>
-<td style="text-align:left;">
-
-UMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-14.32
-
-</td>
-<td style="text-align:right;">
-
-6.44
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-internet coverage
-
-</td>
-<td style="text-align:left;">
-
-HIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-9.57
-
-</td>
-<td style="text-align:right;">
-
-1.39
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-remaining international tourism
-
-</td>
-<td style="text-align:left;">
-
-all
-
-</td>
-<td style="text-align:left;">
-
-Log normal
-
-</td>
-<td style="text-align:right;">
-
--1.39
-
-</td>
-<td style="text-align:right;">
-
-0.39
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Labour share of GVA
-
-</td>
-<td style="text-align:left;">
-
-LLMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-5.09
-
-</td>
-<td style="text-align:right;">
-
-4.51
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Labour share of GVA
-
-</td>
-<td style="text-align:left;">
-
-UMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-7.06
-
-</td>
-<td style="text-align:right;">
-
-8.18
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Labour share of GVA
-
-</td>
-<td style="text-align:left;">
-
-HIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-7.97
-
-</td>
-<td style="text-align:right;">
-
-6.87
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Hospital capacity
-
-</td>
-<td style="text-align:left;">
-
-LLMIC
-
-</td>
-<td style="text-align:left;">
-
-Gamma
-
-</td>
-<td style="text-align:right;">
-
-1.30
-
-</td>
-<td style="text-align:right;">
-
-20.20
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Hospital capacity
-
-</td>
-<td style="text-align:left;">
-
-UMIC
-
-</td>
-<td style="text-align:left;">
-
-Gamma
-
-</td>
-<td style="text-align:right;">
-
-1.73
-
-</td>
-<td style="text-align:right;">
-
-40.73
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Hospital capacity
-
-</td>
-<td style="text-align:left;">
-
-HIC
-
-</td>
-<td style="text-align:left;">
-
-Gamma
-
-</td>
-<td style="text-align:right;">
-
-2.05
-
-</td>
-<td style="text-align:right;">
-
-46.57
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Public transport fraction
-
-</td>
-<td style="text-align:left;">
-
-LLMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-4.88
-
-</td>
-<td style="text-align:right;">
-
-3.65
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Public transport fraction
-
-</td>
-<td style="text-align:left;">
-
-UMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-2.06
-
-</td>
-<td style="text-align:right;">
-
-2.59
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Public transport fraction
-
-</td>
-<td style="text-align:left;">
-
-HIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-3.23
-
-</td>
-<td style="text-align:right;">
-
-11.65
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Nursery contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-LLMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-1.35
-
-</td>
-<td style="text-align:right;">
-
-1.56
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Nursery contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-UMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-1.51
-
-</td>
-<td style="text-align:right;">
-
-1.21
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Nursery contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-HIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-4.31
-
-</td>
-<td style="text-align:right;">
-
-2.82
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-School contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-LLMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-3.87
-
-</td>
-<td style="text-align:right;">
-
-2.22
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-School contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-UMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-8.23
-
-</td>
-<td style="text-align:right;">
-
-5.77
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-School contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-HIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-7.63
-
-</td>
-<td style="text-align:right;">
-
-3.75
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-tourism P1+P2
-
-</td>
-<td style="text-align:left;">
-
-all
-
-</td>
-<td style="text-align:left;">
-
-NA
-
-</td>
-<td style="text-align:right;">
-
-6.73
-
-</td>
-<td style="text-align:right;">
-
-NA
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Tourism to international
-
-</td>
-<td style="text-align:left;">
-
-all
-
-</td>
-<td style="text-align:left;">
-
-NA
-
-</td>
-<td style="text-align:right;">
-
-4.14
-
-</td>
-<td style="text-align:right;">
-
-0.05
-
-</td>
-</tr>
-</tbody>
-</table>
+|            Parameter            | Income group | Distribution | Parameter 1 | Parameter 2 |
+|:-------------------------------:|--------------|:------------:|-------------|-------------|
+|        internet coverage        | LLMIC        |     Beta     | 1.78        | 3.11        |
+|        internet coverage        | UMIC         |     Beta     | 14.32       | 6.44        |
+|        internet coverage        | HIC          |     Beta     | 9.57        | 1.39        |
+| remaining international tourism | all          |  Log normal  | -1.39       | 0.39        |
+|       Labour share of GVA       | LLMIC        |     Beta     | 5.09        | 4.51        |
+|       Labour share of GVA       | UMIC         |     Beta     | 7.06        | 8.18        |
+|       Labour share of GVA       | HIC          |     Beta     | 7.97        | 6.87        |
+|        Hospital capacity        | LLMIC        |    Gamma     | 1.3         | 20.2        |
+|        Hospital capacity        | UMIC         |    Gamma     | 1.73        | 40.73       |
+|        Hospital capacity        | HIC          |    Gamma     | 2.05        | 46.57       |
+|    Public transport fraction    | LLMIC        |     Beta     | 4.88        | 3.65        |
+|    Public transport fraction    | UMIC         |     Beta     | 2.06        | 2.59        |
+|    Public transport fraction    | HIC          |     Beta     | 3.23        | 11.65       |
+|    Nursery contacts fraction    | LLMIC        |     Beta     | 1.35        | 1.56        |
+|    Nursery contacts fraction    | UMIC         |     Beta     | 1.51        | 1.21        |
+|    Nursery contacts fraction    | HIC          |     Beta     | 4.31        | 2.82        |
+|    School contacts fraction     | LLMIC        |     Beta     | 3.87        | 2.22        |
+|    School contacts fraction     | UMIC         |     Beta     | 8.23        | 5.77        |
+|    School contacts fraction     | HIC          |     Beta     | 7.63        | 3.75        |
+|          tourism P1+P2          | all          |      NA      | 6.73        | NA          |
+|    Tourism to international     | all          |      NA      | 4.14        | 0.05        |
+
+Parameter distributions.
 
 ## 5.1 Hospital capacity
 
-<div class="figure">
-
-<img src="README_files/figure-gfm/hmax-1.png" alt="Hospital capacity: available beds minus usual occupancy."  />
-
-<p class="caption">
-
-Figure 5.1: Hospital capacity: available beds minus usual occupancy.
-
-</p>
-
-</div>
+<figure>
+<img src="README_files/figure-gfm/hmax-1.png"
+alt="Figure 4.2: Hospital capacity: available beds minus usual occupancy." />
+<figcaption aria-hidden="true">Figure 4.2: Hospital capacity: available
+beds minus usual occupancy.</figcaption>
+</figure>
 
 We model these values with gamma distributions. For LLMICs, we have
 parameters 1.3 and 0.05. For UMICs, we have parameters 1.73 and 0.02.
@@ -3215,21 +878,16 @@ We estimate the average annual income per working-age adult as the total
 GVA multiplied by the fraction of GVA that goes to labour divided by the
 number of working-age adults. For the fraction of GVA that goes to
 labour we use PWT estimates from 2011 (Figure
-<a href="#fig:labsh">5.2</a>).
+<a href="#fig:labsh">4.3</a>).
 
 <!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is 207% of GDP. For a UMIC, the cost of a lost school year is 73% of GDP. For an HIC, the cost of a lost school year is 30% of GDP. -->
 
-<div class="figure">
-
-<img src="README_files/figure-gfm/labsh-1.png" alt="Fraction of GVA that goes to labour (PWT, 2011)."  />
-
-<p class="caption">
-
-Figure 5.2: Fraction of GVA that goes to labour (PWT, 2011).
-
-</p>
-
-</div>
+<figure>
+<img src="README_files/figure-gfm/labsh-1.png"
+alt="Figure 4.3: Fraction of GVA that goes to labour (PWT, 2011)." />
+<figcaption aria-hidden="true">Figure 4.3: Fraction of GVA that goes to
+labour (PWT, 2011).</figcaption>
+</figure>
 
 We model these values with Beta distributions. For LLMICs, we have
 parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18.
@@ -3258,8 +916,8 @@ Behaviour* 7 (March). <https://doi.org/10.1038/s41562-022-01506-4>.
 
 <div id="ref-Cutler2020" class="csl-entry">
 
-Cutler, David M., and Lawrence H. Summers. 2020. “<span
-class="nocase">The COVID-19 pandemic and the \$16 trillion
+Cutler, David M., and Lawrence H. Summers. 2020.
+“<span class="nocase">The COVID-19 pandemic and the \$16 trillion
 virus</span>.” *JAMA* 324 (15). <https://doi.org/10.1257/pol.20170046>.
 
 </div>
@@ -3267,10 +925,10 @@ virus</span>.” *JAMA* 324 (15). <https://doi.org/10.1257/pol.20170046>.
 <div id="ref-GlobalBurdenofDiseaseCollaborativeNetwork2021"
 class="csl-entry">
 
-Global Burden of Disease Collaborative Network. 2021. “<span
-class="nocase">Global Burden of Disease Study 2019 (GBD 2019) Reference
-Life Table</span>.” Seattle, United States of America: Institute for
-Health Metrics; Evaluation (IHME).
+Global Burden of Disease Collaborative Network. 2021.
+“<span class="nocase">Global Burden of Disease Study 2019 (GBD 2019)
+Reference Life Table</span>.” Seattle, United States of America:
+Institute for Health Metrics; Evaluation (IHME).
 
 </div>
 
@@ -3286,10 +944,10 @@ countries</span>.” *European Economic Review* 133: 103679.
 <div id="ref-Haw2020" class="csl-entry">
 
 Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo
-Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. “<span
-class="nocase">Optimizing social and economic activity while containing
-SARS-CoV-2 transmission using DAEDALUS</span>.” *Nature Computational
-Science* 2: 223–33. <https://doi.org/10.25561/83928>.
+Pianella, Rob Johnson, Sumali Bajaj, et al. 2022.
+“<span class="nocase">Optimizing social and economic activity while
+containing SARS-CoV-2 transmission using DAEDALUS</span>.” *Nature
+Computational Science* 2: 223–33. <https://doi.org/10.25561/83928>.
 
 </div>
 
@@ -3312,18 +970,19 @@ Choice* 17 (2): 161–75. <https://doi.org/10.1080/15582159.2023.2210941>.
 
 <div id="ref-Psacharopoulos2021a" class="csl-entry">
 
-Psacharopoulos, George, Victoria; Collis, and Patrinos. 2021. “<span
-class="nocase">The COVID-19 Cost of School Closures in Earnings and
-Income across the World</span>.” *Comparative Education Review* 65 (2).
+Psacharopoulos, George, Victoria; Collis, and Patrinos. 2021.
+“<span class="nocase">The COVID-19 Cost of School Closures in Earnings
+and Income across the World</span>.” *Comparative Education Review* 65
+(2).
 
 </div>
 
 <div id="ref-Robinson2021" class="csl-entry">
 
-Robinson, Lisa A., Ryan Sullivan, and Jason F. Shogren. 2021. “<span
-class="nocase">Do the benefits of COVID-19 policies exceed the costs?
-Exploring uncertainties in the age–VSL relationship</span>.” *Risk
-Analysis* 41 (5): 761–70. <https://doi.org/10.1111/risa.13561>.
+Robinson, Lisa A., Ryan Sullivan, and Jason F. Shogren. 2021.
+“<span class="nocase">Do the benefits of COVID-19 policies exceed the
+costs? Exploring uncertainties in the age–VSL relationship</span>.”
+*Risk Analysis* 41 (5): 761–70. <https://doi.org/10.1111/risa.13561>.
 
 </div>
 
