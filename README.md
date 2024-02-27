@@ -35,6 +35,7 @@
     -   [4.3 Remote working](#43-remote-working)
 -   [5 Parametric distributions](#5-parametric-distributions)
     -   [5.1 Hospital capacity](#51-hospital-capacity)
+    -   [5.2 Labour share of GVA](#52-labour-share-of-gva)
 
 # 1 Simulation rules
 
@@ -182,7 +183,7 @@ For the value of a year of education, we use the method of
 (Psacharopoulos, Collis, and Patrinos 2021). The loss due to school
 closure is
 
-$$L_3 =  \text{VSY}\left(S\cdot \beta + (1-\beta)\cdot \int_tI_S(t)dt\right)$$
+$$L_3 =  \text{VSY}\left( \frac{T}{365}p_{16}w_{g_{\text{school}}} + \frac{1-p_{16}}{365} \int_{t=0}^T\left(p_1p_2I_{g_{\text{school}}}^{(A)} + p_1I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt\right)$$
 
 where
 
@@ -190,18 +191,22 @@ $$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{14}\cdot p_{15}.$$
 
 $p_{12}$ is the present value of lost earnings:
 
-$$p_{12} = \frac{1}{S}\sum_aN_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
+$$p_{12} = \frac{1}{w_{g_{\text{school}}}}\sum_{a\in g_{\text{school}}}N_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
 for discount rate $r=0.03$, number $N_a$ students currently age $a$, and
 expected number of years of work $n=45$. $p_{13}$ is mean annual
 earnings, $p_{14}$ is the extent and amount of time (in years) schools
 are closed: $$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$
 $p_{15}=0.08$ is the rate of return for one year, $S$ is the total
-number of students, $\beta$ is the proportion of students affected, and
+number of students, $p_{16}$ is the proportion of students affected, and
 $\int_t I_S(t)dt$ represents education lost due to student sickness with
-COVID-19. The value $\beta$ represents the ineffectiveness of remote
-teaching, which we sample as a standard uniform random variable. We note
-that no strong predictors of effectiveness of remote teaching have been
+COVID-19. $p_1$ is compliance with the requirement to self isolate if
+infectious and $p_2$ is the fraction of cases identified through
+testing.
+
+The value $p_{16}$ represents the ineffectiveness of remote teaching,
+which we sample as a standard uniform random variable. We note that no
+strong predictors of effectiveness of remote teaching have been
 identified (Patrinos 2023). We assume that losses are linear in duration
 of school closure, although there is not consensus even on this
 (Betthäuser, Bach-Mortensen, and Engzell 2023). Important factors to
@@ -209,30 +214,6 @@ include in future work might be those relating to parental circumstances
 including education level, engagement and socio-economic status
 (Moscoviz and Evans 2022). However, these factors might be more
 pertinent to intra- rather than international modelling.
-
-We estimate the average annual income per working-age adult as the total
-GVA multiplied by the fraction of GVA that goes to labour divided by the
-number of working-age adults. For the fraction of GVA that goes to
-labour we use PWT estimates from 2011 (Figure
-<a href="#fig:labsh">2.1</a>).
-
-<!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is 207% of GDP. For a UMIC, the cost of a lost school year is 73% of GDP. For an HIC, the cost of a lost school year is 30% of GDP. -->
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/labsh-1.png" alt="Fraction of GVA that goes to labour (PWT, 2011)."  />
-
-<p class="caption">
-
-Figure 2.1: Fraction of GVA that goes to labour (PWT, 2011).
-
-</p>
-
-</div>
-
-We model these values with Beta distributions. For LLMICs, we have
-parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18.
-For HICs, we have parameters 7.97 and 6.87.
 
 # 3 Epi model
 
@@ -2597,7 +2578,7 @@ values in all sectors. We:
 -   sample from a uniform distribution between these bounds, taking the
     same quantile for each sector.
 
-<!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 5.09 and  4.51. For UMICs, we have parameters 7.06 and  8.18. For HICs, we have parameters 7.97 and  6.87. -->
+<!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 1.78 and  3.11. For UMICs, we have parameters 14.32 and  6.44. For HICs, we have parameters 9.57 and  1.39. -->
 
 # 5 Parametric distributions
 
@@ -3225,6 +3206,32 @@ We model these values with gamma distributions. For LLMICs, we have
 parameters 1.3 and 0.05. For UMICs, we have parameters 1.73 and 0.02.
 For HICs, we have parameters 2.05 and 0.02. (Data sources: World Bank
 (beds); OECD, WHO euro (bed occupancy rates).)
+
+## 5.2 Labour share of GVA
+
+We estimate the average annual income per working-age adult as the total
+GVA multiplied by the fraction of GVA that goes to labour divided by the
+number of working-age adults. For the fraction of GVA that goes to
+labour we use PWT estimates from 2011 (Figure
+<a href="#fig:labsh">5.2</a>).
+
+<!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is 207% of GDP. For a UMIC, the cost of a lost school year is 73% of GDP. For an HIC, the cost of a lost school year is 30% of GDP. -->
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/labsh-1.png" alt="Fraction of GVA that goes to labour (PWT, 2011)."  />
+
+<p class="caption">
+
+Figure 5.2: Fraction of GVA that goes to labour (PWT, 2011).
+
+</p>
+
+</div>
+
+We model these values with Beta distributions. For LLMICs, we have
+parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18.
+For HICs, we have parameters 7.97 and 6.87.
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 

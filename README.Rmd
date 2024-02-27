@@ -194,7 +194,7 @@ All economic sectors contribute GVA according to the level they are open for pro
 
 For the value of a year of education, we use the method of [@Psacharopoulos2021a]. The loss due to school closure is
 
-$$L_3 =  \text{VSY}\left(S\cdot \beta + (1-\beta)\cdot \int_tI_S(t)dt\right)$$
+$$L_3 =  \text{VSY}\left( \frac{T}{365}p_{16}w_{g_{\text{school}}} + \frac{1-p_{16}}{365} \int_{t=0}^T\left(p_1p_2I_{g_{\text{school}}}^{(A)} + p_1I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt\right)$$
 
 where
 
@@ -202,84 +202,15 @@ $$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{14}\cdot p_{15}.$$
 
 $p_{12}$ is the present value of lost earnings:
 
-$$p_{12} = \frac{1}{S}\sum_aN_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
+$$p_{12} = \frac{1}{w_{g_{\text{school}}}}\sum_{a\in g_{\text{school}}}N_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
 for discount rate $r=0.03$, number $N_a$ students currently age $a$, and expected number of years of work $n=45$. $p_{13}$ is mean annual earnings, $p_{14}$ is the extent and amount of time (in years) schools are closed: 
 $$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$
-$p_{15}=0.08$ is the rate of return for one year, $S$ is the total number of students, $\beta$ is the proportion of students affected, and $\int_t I_S(t)dt$ represents education lost due to student sickness with COVID-19. The value $\beta$ represents the ineffectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified [@Patrinos2023]. We assume that losses are linear in duration of school closure, although there is not consensus even on this [@Betthauser2023]. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status [@Moscoviz2022]. However, these factors might be more pertinent to intra- rather than international modelling.
+$p_{15}=0.08$ is the rate of return for one year, $S$ is the total number of students, $p_{16}$ is the proportion of students affected, and $\int_t I_S(t)dt$ represents education lost due to student sickness with COVID-19. $p_1$ is compliance with the requirement to self isolate if infectious and $p_2$ is the fraction of cases identified through testing.
+
+The value $p_{16}$ represents the ineffectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified [@Patrinos2023]. We assume that losses are linear in duration of school closure, although there is not consensus even on this [@Betthauser2023]. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status [@Moscoviz2022]. However, these factors might be more pertinent to intra- rather than international modelling.
 
 
-
-
-We estimate the average annual income per working-age adult as the total GVA multiplied by the fraction of GVA that goes to labour divided by the number of working-age adults. For the fraction of GVA that goes to labour we use PWT estimates from 2011 (Figure \@ref(fig:labsh)). 
-
-<!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is `r round(62*3/.9)`% of GDP. For a UMIC, the cost of a lost school year is `r round(22*3/.9)`% of GDP. For an HIC, the cost of a lost school year is `r round(9*3/.9)`% of GDP. -->
-
-```{r labsh,fig.cap='Fraction of GVA that goes to labour (PWT, 2011).',echo=F,warning=F,message=F}
-
-
-# L = PV Y alpha \gamma S beta
-
-# L total loss
-# PV present value of lost earning
-# Y mean annual earnings
-# alpha fraction of year
-# \gamma rate of return for one year of school
-# S number of students
-# beta proportion affected
-
-alpha <- 1/3
-gamma <- .08
-Y <- c(4377, 10470, 32687)
-S <- c(141, 1117, 258)*1e6
-beta <- .9
-dr <- .03
-PV <- (1-(1+dr)^(-45))/dr
-gdp <- c(.588,31,54)*1e12
-# PV*Y*alpha*gamma*S*beta/gdp*100
-
-labs <- setDT(read_dta('data/lab_share_data.dta'))
-labs[!is.na(labsh),maxyear:=max(year),by=countrycode]
-labincome <- left_join(subset(labs,year==maxyear),incomelevels,by=c('countrycode'="Country.Code"))
-labincome <- labincome[,.(labsh,IncomeGroup)]
-ggplot(subset(labincome,!is.na(IncomeGroup)&IncomeGroup!='')) + 
-  geom_histogram(aes(x=labsh),colour='navyblue',fill='grey') +
-  facet_wrap(~IncomeGroup) +
-  theme_bw(base_size = 15) +
-  labs(x='Labour share of GVA, %',y='')
-
-
-hic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup=='High income')$labsh,"beta",start=list(shape1=1,shape2=1))
-mic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup%in%c('Upper middle income'))$labsh,"beta",start=list(shape1=1,shape2=1))
-llmic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup%in%c('Low income','Lower middle income'))$labsh,"beta",start=list(shape1=1,shape2=1))
-
-```
-
-We model these values with Beta distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape1'],2)` and  `r round(llmic$estimate['shape2'],2)`. For UMICs, we have parameters `r round(mic$estimate['shape1'],2)` and  `r round(mic$estimate['shape2'],2)`. For HICs, we have parameters `r round(hic$estimate['shape1'],2)` and  `r round(hic$estimate['shape2'],2)`.
-
-\newpage
-
-```{r,echo=F,warning=F,message=F,include=F}
-
-tvradio <- readxl::read_xlsx('data/DHS_MICS_MIS_assets-for-remote-learning_nat_subnat-1.xlsx')
-tvradio <- tvradio[,c(2,13,21,29,56)]
-
-tvradio <- readODS::read_ods('data/educationlosses.ods',col_names=T,sheet=2)
-
-ggplot(subset(tvradio,is.na(mobile)&!country%in%c('sweden','china','botswana'))) +
-  geom_label(aes(x=internet,y=`loss per week`,label=country)) + 
-  theme_bw(base_size = 15) + labs(x='Internet',y='Education loss per week')
-ggplot(subset(tvradio,!is.na(radio))) +
-  geom_label(aes(x=radio,y=`loss per week`,label=country)) + 
-  theme_bw(base_size = 15) + labs(x='Radio',y='Education loss per week')
-ggplot(subset(tvradio,!is.na(tv))) +
-  geom_label(aes(x=tv,y=`loss per week`,label=country)) + 
-  theme_bw(base_size = 15) + labs(x='Mobile',y='Education loss per week')
-ggplot(subset(tvradio,!is.na(mobile))) +
-  geom_label(aes(x=mobile,y=`loss per week`,label=country)) + 
-  theme_bw(base_size = 15) + labs(x='TV',y='Education loss per week')
-
-```
 
 
 
@@ -925,6 +856,81 @@ llmic <- fitdistr(subset(hmaxi,!is.na(Hmax)&igroup%in%c('LMIC','LIC'))$Hmax,"gam
 ```
 
 We model these values with gamma distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape'],2)` and  `r round(llmic$estimate['rate'],2)`. For UMICs, we have parameters `r round(mic$estimate['shape'],2)` and  `r round(mic$estimate['rate'],2)`. For HICs, we have parameters `r round(hic$estimate['shape'],2)` and  `r round(hic$estimate['rate'],2)`. (Data sources: World Bank (beds); OECD, WHO euro (bed occupancy rates).)
+
+## Labour share of GVA
+
+We estimate the average annual income per working-age adult as the total GVA multiplied by the fraction of GVA that goes to labour divided by the number of working-age adults. For the fraction of GVA that goes to labour we use PWT estimates from 2011 (Figure \@ref(fig:labsh)). 
+
+<!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is `r round(62*3/.9)`% of GDP. For a UMIC, the cost of a lost school year is `r round(22*3/.9)`% of GDP. For an HIC, the cost of a lost school year is `r round(9*3/.9)`% of GDP. -->
+
+```{r labsh,fig.cap='Fraction of GVA that goes to labour (PWT, 2011).',echo=F,warning=F,message=F}
+
+
+# L = PV Y alpha \gamma S beta
+
+# L total loss
+# PV present value of lost earning
+# Y mean annual earnings
+# alpha fraction of year
+# \gamma rate of return for one year of school
+# S number of students
+# beta proportion affected
+
+alpha <- 1/3
+gamma <- .08
+Y <- c(4377, 10470, 32687)
+S <- c(141, 1117, 258)*1e6
+beta <- .9
+dr <- .03
+PV <- (1-(1+dr)^(-45))/dr
+gdp <- c(.588,31,54)*1e12
+# PV*Y*alpha*gamma*S*beta/gdp*100
+
+labs <- setDT(read_dta('data/lab_share_data.dta'))
+labs[!is.na(labsh),maxyear:=max(year),by=countrycode]
+labincome <- left_join(subset(labs,year==maxyear),incomelevels,by=c('countrycode'="Country.Code"))
+labincome <- labincome[,.(labsh,IncomeGroup)]
+ggplot(subset(labincome,!is.na(IncomeGroup)&IncomeGroup!='')) + 
+  geom_histogram(aes(x=labsh),colour='navyblue',fill='grey') +
+  facet_wrap(~IncomeGroup) +
+  theme_bw(base_size = 15) +
+  labs(x='Labour share of GVA, %',y='')
+
+
+hic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup=='High income')$labsh,"beta",start=list(shape1=1,shape2=1))
+mic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup%in%c('Upper middle income'))$labsh,"beta",start=list(shape1=1,shape2=1))
+llmic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup%in%c('Low income','Lower middle income'))$labsh,"beta",start=list(shape1=1,shape2=1))
+
+```
+
+We model these values with Beta distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape1'],2)` and  `r round(llmic$estimate['shape2'],2)`. For UMICs, we have parameters `r round(mic$estimate['shape1'],2)` and  `r round(mic$estimate['shape2'],2)`. For HICs, we have parameters `r round(hic$estimate['shape1'],2)` and  `r round(hic$estimate['shape2'],2)`.
+
+\newpage
+
+```{r,echo=F,warning=F,message=F,include=F}
+
+tvradio <- readxl::read_xlsx('data/DHS_MICS_MIS_assets-for-remote-learning_nat_subnat-1.xlsx')
+tvradio <- tvradio[,c(2,13,21,29,56)]
+
+tvradio <- readODS::read_ods('data/educationlosses.ods',col_names=T,sheet=2)
+
+ggplot(subset(tvradio,is.na(mobile)&!country%in%c('sweden','china','botswana'))) +
+  geom_label(aes(x=internet,y=`loss per week`,label=country)) + 
+  theme_bw(base_size = 15) + labs(x='Internet',y='Education loss per week')
+ggplot(subset(tvradio,!is.na(radio))) +
+  geom_label(aes(x=radio,y=`loss per week`,label=country)) + 
+  theme_bw(base_size = 15) + labs(x='Radio',y='Education loss per week')
+ggplot(subset(tvradio,!is.na(tv))) +
+  geom_label(aes(x=tv,y=`loss per week`,label=country)) + 
+  theme_bw(base_size = 15) + labs(x='Mobile',y='Education loss per week')
+ggplot(subset(tvradio,!is.na(mobile))) +
+  geom_label(aes(x=mobile,y=`loss per week`,label=country)) + 
+  theme_bw(base_size = 15) + labs(x='TV',y='Education loss per week')
+
+```
+
+
+
 
 
 \newpage
