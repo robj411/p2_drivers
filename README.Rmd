@@ -134,11 +134,11 @@ Table: (\#tab:ruleselimination) State transition rules for the elimination strat
 We assign monetary values to YLLs and to years of education in order to add health and education costs of mitigation strategies to the costs of economic closures. We define the total socio-economic costs TSC of an epidemic as the sum of the individual costs:
 
 \begin{equation}
-\text{TSC} = L + f_{\text{lives}}(D,l,\text{VLY},r) + (Z_0-Z),
+\text{TSC} = L_1\text{VLY} + L_2 + L_3\text{VSY},
 \label{eq:swf}
 \end{equation}
 
-where the arguments are the value of school years lost ($L$); the number of deaths per age group due to COVID-19 ($D$), the remaining life expectancy per age group ($l$), the value of a life year (VLY), and discount rate $r$; and the lost output over the period due to reduced economic activity ($Z_0-Z$).
+where $L_1$ is the number of discounted life years lost and VLY the value of a discounted life year; $L_2$ is the lost output over the period due to reduced economic activity; and $L_3$ is the number of school years lost and VSY the value of one school year.
 
 
 ## Lost lives
@@ -155,7 +155,7 @@ $$l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_al_a}{\sum_{a\in g}N_a}; $$
 
 for discount rate $r>0$. The discounted number of years lost given $D_g$ deaths due to COVID-19 for each age group is 
 ```math
-Y=\sum_gD_g\hat{l}_g^{\text{(death)}}.
+L_1=\sum_gD_g\hat{l}_g^{\text{(death)}}.
 ```
 
 The VLY used by policy makers should reflect the value that members of the society place on reductions of their own mortality. 
@@ -163,13 +163,6 @@ We rely on the intrinsic rather than instrumental interpretation of the valuatio
 
 \begin{equation}
 \text{VSL}=\frac{\sum_gN_g\hat{l}_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
-\end{equation}
-
-
-Finally, we define the value of lives lost as 
-
-\begin{equation}
-f_{\text{lives}}(D,l^{\text{(death)}},\text{VLY},r)=\text{VLY}*Y.
 \end{equation}
 
 
@@ -189,7 +182,11 @@ for vaccine status $v$, infectious and symptomatic $I_S$, hospitalised $H$, dece
 Z = \frac{1}{365}\left(\sum_{i\neq\text{ed}}^{\mathcal{N}}\sum_{t=1}^Tz_i\hat{x}_{i}(t) + Tz_{\text{ed}}\right)
 ```
 
-and the GDP loss compared to the maximum is $Z_0-Z$. All economic sectors contribute GVA according to the level they are open for production, except for the education sector which contributes its maximum possible monthly GVA, $z_{\text{ed}}$ per month.
+and the GDP loss compared to the maximum is 
+
+$$L_2=Z_0-Z.$$
+
+All economic sectors contribute GVA according to the level they are open for production, except for the education sector which contributes its maximum possible monthly GVA, $z_{\text{ed}}$ per month.
 
 
 ## Lost education
@@ -197,15 +194,19 @@ and the GDP loss compared to the maximum is $Z_0-Z$. All economic sectors contri
 
 For the value of a year of education, we use the method of [@Psacharopoulos2021a]. The loss due to school closure is
 
-$$L =  \text{PV}\cdot Y\cdot \alpha\cdot \gamma\cdot \left(S\cdot \beta + (1-\beta)\cdot \int_tI_S(t)dt\right)$$
+$$L_3 =  \text{VSY}\left(S\cdot \beta + (1-\beta)\cdot \int_tI_S(t)dt\right)$$
 
-where PV is the present value of lost earnings:
+where
 
-$$\text{PV} = \frac{1}{S}\sum_aN_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
+$$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{14}\cdot p_{15}.$$
 
-for discount rate $r=0.03$, number $N_a$ students currently age $a$, and expected number of years of work $n=45$. $Y$ is mean annual earnings, $\alpha$ is the extent and amount of time (in years) schools are closed: 
-$$\alpha=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$
-$\gamma=0.08$ is the rate of return for one year, $S$ is the total number of students, $\beta$ is the proportion of students affected, and $\int_t I_S(t)dt$ represents education lost due to student sickness with COVID-19. The value $\beta$ represents the ineffectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified [@Patrinos2023]. We assume that losses are linear in duration of school closure, although there is not consensus even on this [@Betthauser2023]. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status [@Moscoviz2022]. However, these factors might be more pertinent to intra- rather than international modelling.
+$p_{12}$ is the present value of lost earnings:
+
+$$p_{12} = \frac{1}{S}\sum_aN_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
+
+for discount rate $r=0.03$, number $N_a$ students currently age $a$, and expected number of years of work $n=45$. $p_{13}$ is mean annual earnings, $p_{14}$ is the extent and amount of time (in years) schools are closed: 
+$$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$
+$p_{15}=0.08$ is the rate of return for one year, $S$ is the total number of students, $\beta$ is the proportion of students affected, and $\int_t I_S(t)dt$ represents education lost due to student sickness with COVID-19. The value $\beta$ represents the ineffectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified [@Patrinos2023]. We assume that losses are linear in duration of school closure, although there is not consensus even on this [@Betthauser2023]. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status [@Moscoviz2022]. However, these factors might be more pertinent to intra- rather than international modelling.
 
 
 
@@ -328,7 +329,7 @@ below left=5pt and 0pt of #1.south east] %
   \node[plate=(#2-wrap)(#2-caption)] (#2) {}; % draw (used to have #1)
 }
 \tikzstyle{latent} = [circle,fill=white,draw=black,inner sep=1pt,
-minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
+minimum size=15pt, font=\fontsize{10}{10}\selectfont, node distance=1]
 \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
     \node[latent] (S) {$S_{i,v}$} ; %
     \node[latent, right=of S] (E1) {$E_{i,v}$} ; %
@@ -337,14 +338,14 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
     \node[latent, below=of L1] (I1) {$H_{i,v}$} ; %
     \node[latent, right=of L1] (R) {$R_{i,v}$} ; %
     \node[latent, right=of I1] (D) {$D_{i,v}$} ; %
-    \draw [arrow] (S) -- node [above] {$k_1$} (E1);
+    \draw [arrow] (S) -- node [above] {$k_{1,v}(t)$} (E1);
     \draw [arrow] (E1) -- node [above] {$k_4$} (L1);
     \draw [arrow] (E1) -- node [above] {$k_2$} (L2);
-    \draw [arrow] (L1) -- node [left] {$k_6$} (I1);
-    \draw [arrow] (L1) -- node [above] {$k_5$} (R);
+    \draw [arrow] (L1) -- node [left] {$k_{6,i,v}$} (I1);
+    \draw [arrow] (L1) -- node [above] {$k_{5,i,v}$} (R);
     \draw [arrow] (L2) edge[bend left=10] node [above] (T6) {$k_3$} (R);
-    \draw [arrow] (I1) -- node [above] {$k_7$} (R);
-    \draw [arrow] (I1) -- node [above] {$k_8$} (D);
+    \draw [arrow] (I1) -- node [right] {$k_{7,i}(t)$} (R);
+    \draw [arrow] (I1) -- node [above] {$k_{8,i}(t)$} (D);
    \plate[inner sep=0.25cm, yshift=0.12cm] {plate3} {(S) (L2) (D)} {$i\in\{1,...,49\}; v\in\{0,1,2\}$}; 
 \end{tikzpicture}
 ```

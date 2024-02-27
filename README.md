@@ -90,15 +90,14 @@ economic closures. We define the total socio-economic costs TSC of an
 epidemic as the sum of the individual costs:
 
 $$\begin{equation}
-\text{TSC} = L + f_{\text{lives}}(D,l,\text{VLY},r) + (Z_0-Z),
+\text{TSC} = L_1\text{VLY} + L_2 + L_3\text{VSY},
 \label{eq:swf}
 \end{equation}$$
 
-where the arguments are the value of school years lost ($L$); the number
-of deaths per age group due to COVID-19 ($D$), the remaining life
-expectancy per age group ($l$), the value of a life year (VLY), and
-discount rate $r$; and the lost output over the period due to reduced
-economic activity ($Z_0-Z$).
+where $L_1$ is the number of discounted life years lost and VLY the
+value of a discounted life year; $L_2$ is the lost output over the
+period due to reduced economic activity; and $L_3$ is the number of
+school years lost and VSY the value of one school year.
 
 ## 2.1 Lost lives
 
@@ -125,7 +124,7 @@ for discount rate $r>0$. The discounted number of years lost given $D_g$
 deaths due to COVID-19 for each age group is
 
 ``` math
-Y=\sum_gD_g\hat{l}_g^{\text{(death)}}.
+L_1=\sum_gD_g\hat{l}_g^{\text{(death)}}.
 ```
 
 The VLY used by policy makers should reflect the value that members of
@@ -140,12 +139,6 @@ year has the same value:
 
 $$\begin{equation}
 \text{VSL}=\frac{\sum_gN_g\hat{l}_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
-\end{equation}$$
-
-Finally, we define the value of lives lost as
-
-$$\begin{equation}
-f_{\text{lives}}(D,l^{\text{(death)}},\text{VLY},r)=\text{VLY}*Y.
 \end{equation}$$
 
 ## 2.2 Lost economic output
@@ -175,9 +168,12 @@ total GVA for the $T$-day period is:
 Z = \frac{1}{365}\left(\sum_{i\neq\text{ed}}^{\mathcal{N}}\sum_{t=1}^Tz_i\hat{x}_{i}(t) + Tz_{\text{ed}}\right)
 ```
 
-and the GDP loss compared to the maximum is $Z_0-Z$. All economic
-sectors contribute GVA according to the level they are open for
-production, except for the education sector which contributes its
+and the GDP loss compared to the maximum is
+
+$$L_2=Z_0-Z.$$
+
+All economic sectors contribute GVA according to the level they are open
+for production, except for the education sector which contributes its
 maximum possible monthly GVA, $z_{\text{ed}}$ per month.
 
 ## 2.3 Lost education
@@ -186,29 +182,33 @@ For the value of a year of education, we use the method of
 (Psacharopoulos, Collis, and Patrinos 2021). The loss due to school
 closure is
 
-$$L =  \text{PV}\cdot Y\cdot \alpha\cdot \gamma\cdot \left(S\cdot \beta + (1-\beta)\cdot \int_tI_S(t)dt\right)$$
+$$L_3 =  \text{VSY}\left(S\cdot \beta + (1-\beta)\cdot \int_tI_S(t)dt\right)$$
 
-where PV is the present value of lost earnings:
+where
 
-$$\text{PV} = \frac{1}{S}\sum_aN_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
+$$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{14}\cdot p_{15}.$$
+
+$p_{12}$ is the present value of lost earnings:
+
+$$p_{12} = \frac{1}{S}\sum_aN_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
 for discount rate $r=0.03$, number $N_a$ students currently age $a$, and
-expected number of years of work $n=45$. $Y$ is mean annual earnings,
-$\alpha$ is the extent and amount of time (in years) schools are closed:
-$$\alpha=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$ $\gamma=0.08$ is
-the rate of return for one year, $S$ is the total number of students,
-$\beta$ is the proportion of students affected, and $\int_t I_S(t)dt$
-represents education lost due to student sickness with COVID-19. The
-value $\beta$ represents the ineffectiveness of remote teaching, which
-we sample as a standard uniform random variable. We note that no strong
-predictors of effectiveness of remote teaching have been identified
-(Patrinos 2023). We assume that losses are linear in duration of school
-closure, although there is not consensus even on this (Betthäuser,
-Bach-Mortensen, and Engzell 2023). Important factors to include in
-future work might be those relating to parental circumstances including
-education level, engagement and socio-economic status (Moscoviz and
-Evans 2022). However, these factors might be more pertinent to intra-
-rather than international modelling.
+expected number of years of work $n=45$. $p_{13}$ is mean annual
+earnings, $p_{14}$ is the extent and amount of time (in years) schools
+are closed: $$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$
+$p_{15}=0.08$ is the rate of return for one year, $S$ is the total
+number of students, $\beta$ is the proportion of students affected, and
+$\int_t I_S(t)dt$ represents education lost due to student sickness with
+COVID-19. The value $\beta$ represents the ineffectiveness of remote
+teaching, which we sample as a standard uniform random variable. We note
+that no strong predictors of effectiveness of remote teaching have been
+identified (Patrinos 2023). We assume that losses are linear in duration
+of school closure, although there is not consensus even on this
+(Betthäuser, Bach-Mortensen, and Engzell 2023). Important factors to
+include in future work might be those relating to parental circumstances
+including education level, engagement and socio-economic status
+(Moscoviz and Evans 2022). However, these factors might be more
+pertinent to intra- rather than international modelling.
 
 We estimate the average annual income per working-age adult as the total
 GVA multiplied by the fraction of GVA that goes to labour divided by the
