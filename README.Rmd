@@ -26,7 +26,7 @@ output:
     editor_options: 
       chunk_output_type: inline
 bibliography: 
-  - "../../../Desktop/work/papers/DAEDALUS.bib"
+  - "DAEDALUS.bib"
 always_allow_html: true
 ---
 
@@ -196,9 +196,12 @@ For the value of a year of education, we use the method of [@Psacharopoulos2021a
 
 $$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}w_{g_{\text{school}}} + (1-p_{16})A \right)\text{VSY}$$
 
-where
+where $p_{16}$ is the proportion of students affected, $w_{g_{\text{school}}}$ is the total number of students, $p_{14}$ is the extent and amount of time (in years) schools are closed: 
+$$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$
+and $A$ represents education lost due to student sickness with COVID-19:
 
-$$A=\int_{t=0}^T\left(p_1p_2I_{g_{\text{school}}}^{(A)} + p_1I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt$$
+$$A=\int_{t=0}^T\left(p_3I_{g_{\text{school}}}^{(A)} + p_4I_{g_{\text{school}}}^{(S)}+H_{g_{\text{school}}}\right)dt.$$ 
+$p_3$ is the fraction of asymptomatic infectious averted by self isolating, and $p_4$ is the fraction of symptomatic infectious averted by self isolating.
 
 $$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{15}.$$
 
@@ -206,9 +209,7 @@ $p_{12}$ is the present value of lost earnings:
 
 $$p_{12} = \frac{1}{w_{g_{\text{school}}}}\sum_{a\in g_{\text{school}}}N_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
-for discount rate $r=0.03$, number $N_a$ students currently age $a$, and expected number of years of work $n=45$. $p_{13}$ is mean annual earnings, $p_{14}$ is the extent and amount of time (in years) schools are closed: 
-$$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{ed}(t))dt,$$
-$p_{15}=0.08$ is the rate of return for one year, $S$ is the total number of students, $p_{16}$ is the proportion of students affected, and $\int_t I_S(t)dt$ represents education lost due to student sickness with COVID-19. $p_1$ is compliance with the requirement to self isolate if infectious and $p_2$ is the fraction of cases identified through testing.
+for discount rate $r=0.03$, number $N_a$ students currently age $a$, and expected number of years of work $n=45$. $p_{13}$ is mean annual earnings, $p_{15}=0.08$ is the rate of return for one year.
 
 The value $p_{16}$ represents the ineffectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified [@Patrinos2023]. We assume that losses are linear in duration of school closure, although there is not consensus even on this [@Betthauser2023]. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status [@Moscoviz2022]. However, these factors might be more pertinent to intra- rather than international modelling.
 
