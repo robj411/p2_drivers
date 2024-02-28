@@ -230,9 +230,9 @@ pertinent to intra- rather than international modelling.
 ## 3.1 Ordinary differential equations
 
 $$\begin{align}
-\frac{dS_{i,v}}{dt} & = \sum_{u=0}^{v-1}m_{v,i}S_{i,u,v}^{(V)} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
-\frac{dS_{i,u,v}^{(V)}}{dt} & = w_{u,v,i}(t)S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)S_{i,u,v}^{(V)}  \\
-\frac{dE_{i,v}}{dt} & = k_{1,v}(t)\left(S_{i,v}+\sum_{u=v+1}^2S_{i,v,u}^{(V)}\right) - (k_2+k_4)E_{i,v} \\
+\frac{dS_{i,v}}{dt} & = \sum_{u=0}^{v-1}m_{v,i}S_{i,u,v}^{(C)} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
+\frac{dS_{i,u,v}^{(C)}}{dt} & = w_{u,v,i}(t)S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)S_{i,u,v}^{(C)}  \\
+\frac{dE_{i,v}}{dt} & = k_{1,v}(t)\left(S_{i,v}+\sum_{u=v+1}^2S_{i,v,u}^{(C)}\right) - (k_2+k_4)E_{i,v} \\
 \frac{dI_{i,v}^{(A)}}{dt} & = k_2E_{i,v} - k_3I_{i,v}^{(A)} \\
 \frac{dI_{i,v}^{(S)}}{dt} & = k_4E_{i,v} - (k_{5,i,v}+k_{6,i,v})I_{i,v}^{(S)} \\
 \frac{dR_{i,v}}{dt} & = k_3I_{i,v}^{(A)} + k_{5,i,v}I_{i,v}^{(S)} + k_{7,i}(t) H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}(t)R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}(t)R_{i,v-1}\\
@@ -374,13 +374,13 @@ vaccination level.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{(V)}$: vaccinated but not yet protected. $R$: recovered. $v$: vaccination status."  />
+<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{(C)}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $v$: vaccination status."  />
 
 <p class="caption">
 
-Figure 3.2: Vaccine state transitions. $S$: susceptible. $S^{(V)}$:
-vaccinated but not yet protected. $R$: recovered. $v$: vaccination
-status.
+Figure 3.2: Vaccine state transitions. $S$: susceptible. $S^{(C)}$:
+recently vaccinated but has not yet seroconverted (i.e. is not protected
+by most recent vaccination). $R$: recovered. $v$: vaccination status.
 
 </p>
 
