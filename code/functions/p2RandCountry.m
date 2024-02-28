@@ -31,6 +31,7 @@ contacts.hospitality_frac = betarnd(10,40,1,1);
 data.remote_quantile = internet_coverage_quantile;
 data.response_time_quantile = unifrnd(0,1);
 data.remote_teaching_effectiveness = unifrnd(0,1,1,1);
+data.self_isolation_compliance = unifrnd(0,1,1,1);
 
 %% values from distributions
 pindices = find(strcmp(country_parameter_distributions.igroup,income_level) | ...
@@ -75,9 +76,6 @@ bmi_rr = norminv(bmi_rr_quantile, bmi.*bmi_gradients + bmi_intercepts, bmi_sigma
 data.bmi_rr = bmi_rr;
 data.bmi = bmi;
 data.bmi_rr_quantile = bmi_rr_quantile(1,:);
-
-% self isolation compliance
-data.self_isolation_compliance = unifrnd(0,1,1,1);
 
 % contacts
 contacts.B = unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);

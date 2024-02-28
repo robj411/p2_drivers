@@ -82,6 +82,9 @@ pHat = betafit(samples);
 hyper_param_struct.(thisparam) = pHat;
 newparams = betarnd(pHat(1),pHat(2),nsamples,1);
 param_struct.(thisparam) = newparams;
+
+param_struct.frac_presymptomatic = unifrnd(0,1,nsamples,1);
+
 disp(hyper_param_struct)
 
 %% ihr and hfr 

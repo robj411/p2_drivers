@@ -25,11 +25,17 @@ p2.Tres = data.rts;
 p2.t_tit = data.rts;
 
 % testing impacts
-p2.self_isolation_compliance = data.self_isolation_compliance;
+self_isolation_compliance = data.self_isolation_compliance;
 p2.trate = data.trate;                      %Test-Isolate-Trace Rate
 p2.dur    = 1;
-p2.frac_sym_infectiousness_remaining = min(1,p2.dur./(dis.Tsr+dis.Tsh)*2);
-p2.frac_asym_infectiousness_remaining = min(1,p2.dur./dis.Tay);
+% needs to account for discovery rule
+% sym: assume isolation on symptoms, so infectiousness averted is frac that
+% is presymptomatic
+frac_sym_infectiousness_averted = self_isolation_compliance * (1-dis.frac_presymptomatic);
+p2.frac_sym_infectiousness_remaining = 1 - frac_sym_infectiousness_averted;
+% assume they test after one day.
+frac_asym_infectiousness_averted = self_isolation_compliance * min(1,1-p2.dur./dis.Tay);
+p2.frac_asym_infectiousness_remaining = 1 - frac_asym_infectiousness_averted;
 
 % Hospital Capacity
 p2.Hmax  = data.Hmax*sum(data.Npop)/10^5;   %Hospital Capacity
