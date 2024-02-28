@@ -8,7 +8,7 @@ strategies = {'No Closures','School Closures','Economic Closures','Elimination'}
 vaccination_levels = [326, 100];
 bpsv_levels = [0, 1];
 
-nsamples  = 1;
+nsamples  = 2048;
 n_income = numel(income_levels);
 
 synthetic_countries = cell(nsamples,length(income_levels));
@@ -18,7 +18,7 @@ synthetic_countries_p2 = cell(nsamples,length(income_levels),length(vaccination_
 
 %% country variables
 
-[CD, country_parameter_distributions] = load_country_data();
+[CD, country_parameter_distributions, social_dist_coefs] = load_country_data();
 data = data_start();
 
 %% disease variables
@@ -54,7 +54,7 @@ for i = 1:nsamples
         rng(i);
         income_level = income_levels{il};
         % country data. random samples
-        ldata1     = p2RandCountry(data,CD,income_level,country_parameter_distributions);
+        ldata1     = p2RandCountry(data,CD,income_level,country_parameter_distributions,social_dist_coefs);
         % get combined country and disease parameters
         dis1 = population_disease_parameters(ldata1,dis,R0_to_beta);
         % sample a response time
@@ -80,7 +80,7 @@ inputcolumnnames = {'VLY','VSY',...
     'Hospitality_contacts',...
     'Hospital_capacity','Test_rate','Hospital_response','Response_time',...
     'Vaccination_rate','Vaccine_uptake',...
-    'Social_distancing_max','Social_distancing_rate','Fraction_infectiousness_averted','Candidate_infectees',...
+    'Social_distancing_baseline','Social_distancing_death','Social_distancing_mandate','Fraction_infectiousness_averted','Candidate_infectees',...
     'Agriculture','Food_sector','International_tourism',...
     'Remote_teaching_effectiveness','Importation_time',...
     'Remote_quantile','Hospital_occupancy_at_response', 'Remaining_susceptible','Exit_wave',... 
@@ -149,7 +149,7 @@ for il = 1:n_income
                             contacts.hospitality_frac...
                             ldata.Hmax ldata.trate ldata.Hres p2.Tres...
                             ldata.vaccination_rate_pc ldata.vaccine_uptake ...
-                            ldata.sdl ldata.sdb 1-p2.frac_sym_infectiousness_remaining dis2.CI ...
+                            ldata.sd_baseline ldata.sd_death_coef ldata.sd_mandate_coef 1-p2.frac_sym_infectiousness_remaining dis2.CI ...
                             ldata.obj([1 32])'/gdp ldata.frac_tourism_international ...
                             ldata.remote_teaching_effectiveness ldata.t_import...
                             ldata.remote_quantile ht endsusc exitwavefrac...
@@ -171,8 +171,10 @@ for il = 1:n_income
                         disp([il ms vl bl i]);
                     end
                 end   
-                disp([il ms vl bl])
-                disp(outputs)
+%                 disp([il ms vl bl])
+%                 disp(outputs)
+%                 ldata = synthetic_countries{1,il}; 
+%                 disp([ldata.sd_baseline ldata.sd_death_coef ldata.sd_mandate_coef])
                 T = array2table([inputs outputs]);
                 T.Properties.VariableNames = columnnames;
                 writetable(T,strcat('results/VOI_',string(strategy),'_',string(income_level),'_',string(vaccination_levels(vl)),'_',string(bpsv_levels(bl)),'.csv'));

@@ -5,10 +5,11 @@
 % income_level: string indicating income level (e.g. HIC)
 % country_parameter_distributions: pre-specified, named distributions and
 % parameters
+% social_dist_coefs: table of parameters for social distancing function
 
 % data: struct of general model parameters
 
-function data = p2RandCountry(data,CD,income_level,country_parameter_distributions)
+function data = p2RandCountry(data,CD,income_level,country_parameter_distributions, social_dist_coefs)
 
 %% start
 nSectors = data.nSectors;
@@ -32,6 +33,12 @@ data.remote_quantile = internet_coverage_quantile;
 data.response_time_quantile = unifrnd(0,1);
 data.remote_teaching_effectiveness = unifrnd(0,1,1,1);
 data.self_isolation_compliance = unifrnd(0,1,1,1);
+
+sdtab_ncol = size(social_dist_coefs,1);
+randrow = randi([1 sdtab_ncol],1,1);
+data.sd_baseline = social_dist_coefs.baseline(randrow);
+data.sd_death_coef = exp(social_dist_coefs.deathcoef(randrow));
+data.sd_mandate_coef = exp(social_dist_coefs.mandatecoef(randrow));
 
 %% values from distributions
 pindices = find(strcmp(country_parameter_distributions.igroup,income_level) | ...

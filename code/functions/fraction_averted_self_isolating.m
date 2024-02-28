@@ -27,6 +27,6 @@ function [p3, p4] = fraction_averted_self_isolating(sumI, sumN, p2, t, mandate)
         p4 = p3;
     end
     
-%     p4 = p3;
+    p4 = p3;
 end
 

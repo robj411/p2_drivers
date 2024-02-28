@@ -232,6 +232,10 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     rundata.t_import = data.t_import; 
     rundata.imand = data.imand; 
     rundata.rel_mobility = data.rel_mobility;
+
+    rundata.sd_baseline = data.sd_baseline;
+    rundata.sd_death_coef = data.sd_death_coef;
+    rundata.sd_mandate_coef = data.sd_mandate_coef;
     
     %% CALL
 
@@ -312,7 +316,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     ddk = 10^5*sum(mu.*Hclass,2)/sumNN0;
     betamod = betamod_wrapped(ddk, p2, data, i);
     
-    pout = compute_fraction_self_isolating(sum(Iclass,2), sumNN0, p2, tout, i);
+    pout = fraction_averted_self_isolating(sum(Iclass,2), sumNN0, p2, tout, i);
     
     Isaclass = pout .* (Ia + Iav1 + Iav2); 
     Issclass = pout .* (Is + Isv1 + Isv2); 
@@ -371,7 +375,7 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     
     %% SELF-ISOLATION
 
-    [p3, p4] = compute_fraction_self_isolating(sum(Ia+Is + Iav1+Isv1 + Iav2+Isv2), sum(NN0), p2, t, i);
+    [p3, p4] = fraction_averted_self_isolating(sum(Ia+Is + Iav1+Isv1 + Iav2+Isv2), sum(NN0), p2, t, i);
     
     Ina = (1-p3) .* Ia;
     Inav1 = (1-p3) .* Iav1;
@@ -525,10 +529,14 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,
     minttvec4 = min(t-(data.tvec(end-1)+0.1),0);
     if ((i==2 && minttvec3==0) || (i==3  && minttvec4==0))
         
-        [p3, p4] = compute_fraction_self_isolating(sum(Ia+Is + Iav1+Isv1 + Iav2+Isv2), sumN, p2, t, i);
+        [p3, p4] = fraction_averted_self_isolating(sum(Ia+Is + Iav1+Isv1 + Iav2+Isv2), sumN, p2, t, i);
+        
+        baseline = data.sd_baseline;
+        death_coef = data.sd_death_coef;
+        mandate_coef = data.sd_mandate_coef;
         
         ddk    = 10^5*sum(dis2.mu.*(H + Hv1 + Hv2))/sumN;
-        betamod = social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i));
+        betamod = social_distancing(baseline, death_coef, mandate_coef,ddk,data.rel_mobility(i));
         
         Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
             data.NNvec(:,3),data.Dvec(:,:,3),dis2.beta,betamod,p3,p4);
