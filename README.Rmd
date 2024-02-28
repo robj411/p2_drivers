@@ -231,9 +231,9 @@ The value $p_{16}$ represents the ineffectiveness of remote teaching, which we s
 ## Ordinary differential equations
 
 \begin{align}
-\frac{dS_{i,v}}{dt} & = m_{v,i}M_{i,v} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
-\frac{dM_{i,v}}{dt} & = \sum_{u=0}^{v-1}w_{u,v,i}(t)S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)M_{i,v} \quad (\text{for }v\in\{1,2\}) \\
-\frac{dE_{i,v}}{dt} & = k_{1,v}(t)(S_{i,v}+M_{i,v-1}) - (k_2+k_4)E_{i,v} \\
+\frac{dS_{i,v}}{dt} & = \sum_{u=0}^{v-1}m_{v,i}S_{i,u,v}^{(V)} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
+\frac{dS_{i,u,v}^{(V)}}{dt} & = w_{u,v,i}(t)S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)S_{i,u,v}^{(V)}  \\
+\frac{dE_{i,v}}{dt} & = k_{1,v}(t)(S_{i,v}+S_{i,v,v+1}^{(V)}) - (k_2+k_4)E_{i,v} \\
 \frac{dI_{i,v}^{(A)}}{dt} & = k_2E_{i,v} - k_3I_{i,v}^{(A)} \\
 \frac{dI_{i,v}^{(S)}}{dt} & = k_4E_{i,v} - (k_{5,i,v}+k_{6,i,v})I_{i,v}^{(S)} \\
 \frac{dR_{i,v}}{dt} & = k_3I_{i,v}^{(A)} + k_{5,i,v}I_{i,v}^{(S)} + k_{7,i}(t) H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}(t)R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}(t)R_{i,v-1}\\
@@ -297,7 +297,7 @@ Possible transitions between disease states are shown in Figure \@ref(fig:statet
 The rate of infection of susceptible individuals, $k_{1,v}(t)$, is defined as
 
 \begin{equation}
-k_{1,v}(t) = \eta_{A,v}\rho(t)\beta\left(D(x)\cdot I^{(eff)}(t)\right)
+k_{1,v}(t) = \eta_{A,v}\rho(t)\beta\left(M(x)\cdot I^{(eff)}(t)\right)
 (\#eq:infection)
 \end{equation}
 
@@ -307,7 +307,7 @@ with
  I^{(eff)}(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{v}^{(A)}(t)+(1-p_4(t))I_{v}^{(S)}(t)). 
 ```
 
-  Here, $\eta_{A,v}$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of social distancing; $D(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p_3$ and $p_4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{\cdot,\cdot}$ is the vector of number of infectious asymptomatic ($I_{\cdot}^{(A)}$) and symptomatic ($I_{\cdot}^{(S)}$) people who are unvaccinated ($I_{0}^{(\cdot)}$), vaccinated with the BPSV ($I_{1}^{(\cdot)}$), or vaccinated with the specific vaccine ($I_{2}^{(\cdot)}$).
+  Here, $\eta_{A,v}$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of social distancing; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p_3$ and $p_4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{\cdot,\cdot}$ is the vector of number of infectious asymptomatic ($I_{\cdot}^{(A)}$) and symptomatic ($I_{\cdot}^{(S)}$) people who are unvaccinated ($I_{0}^{(\cdot)}$), vaccinated with the BPSV ($I_{1}^{(\cdot)}$), or vaccinated with the specific vaccine ($I_{2}^{(\cdot)}$).
 
 ```math
  k_2 = (1-p_S)/\sigma 
@@ -363,7 +363,7 @@ In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who have rece
 
 $w_{0,1,i}(t)$ represents the rates of BPSV vaccination of unvaccinated susceptible and recovered people, and $w_{1,2,i}(t)$ represents the rates of vaccinating BPSV-vaccinated susceptible and recovered people. $w_{0,2,i}(t)$ represents the rates of vaccinating people directly with the specific vaccine. $m_{1}$ and $m_{2}$ are the rates of seroconversion to vaccine-induced immunity, and $k_{12}(t)=k_1(0,t)$ and $k_{19}(t)=k_1(1,t)$ are the rates of infection of just-vaccinated people, which returns them to the epidemiological pathway of the lower vaccination level.
 
-```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $M$: vaccinated but not yet protected. $R$: recovered. $v$: vaccination status.", fig.ext = 'png',echo=F}
+```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $S^{(V)}$: vaccinated but not yet protected. $R$: recovered. $v$: vaccination status.", fig.ext = 'png',echo=F}
 \usetikzlibrary{shapes}
 \usetikzlibrary{fit}
 \usetikzlibrary{arrows}
@@ -389,15 +389,16 @@ below left=5pt and 0pt of #1.south east] %
 \tikzstyle{latent} = [circle,fill=white,draw=black,inner sep=1pt,
 minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
 \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
-\clip (-2, -10) rectangle (8, 1);
+\clip (-3, -10) rectangle (8, 1);
 \node[latent] (S) {$S_{v=0}$} ; %
     \node[latent, draw=white,right=of S] (em) {$...$} ; %
     \node[latent, right=of em] (R) {$R_{v=0}$} ; %
-    \node[latent, below=of S] (S01) {$M_{v=1}$} ; %
+    \node[latent, below=of S] (S01) {$S_{0,1}^{(V)}$} ; %
     \node[latent, below=of S01] (S1) {$S_{v=1}$} ; %
     \node[latent, draw=white,right=of S1] (emv) {$...$} ; %
     \node[latent, right=of emv] (Rv) {$R_{v=1}$} ; %
-    \node[latent, below=of S1,yshift=-1cm] (S12) {$M_{v=2}$} ; %
+    \node[latent, below=of S1,yshift=-1cm] (S12) {$S_{1,2}^{(V)}$} ; %
+    \node[latent, left=of S12,xshift=.7cm] (S02) {$S_{0,2}^{(V)}$} ; %
     \node[latent, below=of S12] (S2) {$S_{v=2}$} ; %
     \node[latent, draw=white,right=of S2] (emv2) {$...$} ; %
     \node[latent, right=of emv2] (Rv2) {$R_{v=2}$} ; %
@@ -405,7 +406,7 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
     \draw [arrow] (S) -- node [above] {} (em);
     \draw [arrow] (em) -- node [above] {} (R);
     \draw [arrow] (S01) -- node [below] {$k_{12}$} (em);
-    \draw [arrow] (S12) -- node [right] {$k_{12}$} (em);
+    \draw [arrow] (S02) edge[bend right] node [above,yshift=.5cm] {$k_{12}$} (em);
     \draw [arrow] (S12) -- node [right] {$k_{19}$} (emv);
     \draw [arrow] (S1) -- node [above] {} (emv);
     \draw [arrow] (emv) -- node [above] {} (Rv);
@@ -413,11 +414,12 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
     \draw [arrow] (S01) -- node [right] {$m_1$} (S1);
     % \draw [arrow] (Rv) edge[bend right=-30] node [below] {$k_{14}$} (S1);
     % \draw [arrow] (Rv2) edge[bend right=-30] node [below] {$k_{18}$} (S2);
-    \draw [arrow] (S) edge[bend right] node [left] {$w_{0,2}$} (S12);
+    \draw [arrow] (S) edge[bend right] node [left] {$w_{0,2}$} (S02);
     \draw [arrow] (R) edge[bend left] node [right] {$w_{0,2}$} (Rv2);
     \draw [arrow] (R) -- node [right] {$w_{0,1}$} (Rv);
     \draw [arrow] (S1) -- node [left] {$w_{1,2}$} (S12);
     \draw [arrow] (S12) -- node [right] {$m_2$} (S2);
+    \draw [arrow] (S02) -- node [right] {$m_2$} (S2);
     \draw [arrow] (Rv) -- node [left] {$w_{1,2}$} (Rv2);
     \draw [arrow] (S2) -- node [above] {} (emv2);
     \draw [arrow] (emv2) -- node [above] {} (Rv2);
@@ -435,12 +437,12 @@ The configuration $x$ and the proportion of workers working from home $q$ determ
 - Customer absence due to sector closure: impact on workers
 - Customer absence due to sector closure: impact on customers
 
-We construct contact matrix $D(x)$ as the sum of four matrices: $A(x)$ (community contacts), $B(x)$ (worker-to-worker contacts), $C(x)$ (consumer-to-worker contacts), and  $\hat{C}(x)$ (worker-to-consumer contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning with a "target matrix", which the four matrices should add up to, which is taken from [@Walker2020]. By sampling relevant values, we decompose the whole matrix into its component parts. To incorporate closures, each matrix is transformed independently, before they are all added together again.
+We construct contact matrix $M(x)$ as the sum of four matrices: $A(x)$ (community contacts), $B(x)$ (worker-to-worker contacts), $C(x)$ (consumer-to-worker contacts), and  $\hat{C}(x)$ (worker-to-consumer contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning with a "target matrix", which the four matrices should add up to, which is taken from [@Walker2020]. By sampling relevant values, we decompose the whole matrix into its component parts. To incorporate closures, each matrix is transformed independently, before they are all added together again.
 
-Matrix $D(\textbf{1})$ is estimated using as a basis a contact matrix from [@Walker2020]. These are 16-by-16 matrices, $D^{(16)}$, for five-year age bands $a$ up to age group 75+. We map the matrix to a four-by-four matrix $D^{(4)}$ corresponding to the four age groups $g$ used in the DAEDALUS model, using population sizes, $\hat{P}_a$:
+Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix from [@Walker2020]. These are 16-by-16 matrices, $M^{(16)}$, for five-year age bands $a$ up to age group 75+. We map the matrix to a four-by-four matrix $M^{(4)}$ corresponding to the four age groups $g$ used in the DAEDALUS model, using population sizes, $\hat{P}_a$:
 
 ```math
-D_{gg'}^{(4)} = \frac{\sum_{a\in g}\hat{P}_{a}\sum_{a'\in g'}D^{(16)}_{a,a'}}{\sum_{a\in g}\hat{P}_{a}},
+M_{gg'}^{(4)} = \frac{\sum_{a\in g}\hat{P}_{a}\sum_{a'\in g'}M^{(16)}_{a,a'}}{\sum_{a\in g}\hat{P}_{a}},
 ```
 
 and $P_g$ to represent the population sizes of the DAEDALUS age groups,
@@ -449,19 +451,19 @@ and $P_g$ to represent the population sizes of the DAEDALUS age groups,
 P_g=\sum_{a\in g}\hat{P}_a.
 ```
 
-We get to the matrix $D(\textbf{1})$ by broadcasting the four-by-four matrix to the 49-by-49 one. Contacts from all groups $i$ to working groups $j$ depend on the age group of the group ($`g(i)`$), and the fraction of the age-population represented in group $j$, where $w_{j}$ is the number of people in group $j$:
+We get to the matrix $M(\textbf{1})$ by broadcasting the four-by-four matrix to the 49-by-49 one. Contacts from all groups $i$ to working groups $j$ depend on the age group of the group ($`g(i)`$), and the fraction of the age-population represented in group $j$, where $w_{j}$ is the number of people in group $j$:
 
 ```math
-D_{ij}(\textbf{1}) = D^{(4)}_{g(i),g(j)}\frac{w_{j}}{P_{g(j)}}
+M_{ij}(\textbf{1}) = M^{(4)}_{g(i),g(j)}\frac{w_{j}}{P_{g(j)}}
 ```
 
 for $i$ and $j$ including all groups (working and non-working). Each group $i$ contains people that belong to only one age group $g$. We refer to the age group of the people in group $i$ as $g(i)$. Then $P_{g(j)}$ is the number of people in the age group of group $j$, so $P_{g(j)}=w_{j}$ for age groups 0 to 4, 5 to 19 and 65+, and $P_{g(j)}=\sum_{j\in\{1,...,N,N+3\}}w_{j}$ for ages 20 to 64. 
 
-In setting up a country, we sample values for $D^{(16)}$ (from which we get $`D(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces, and workplace-related contacts. From these, we get $B(\textbf{1})$ and $C(\textbf{1})$, constructing the matrices and normalising. 
+In setting up a country, we sample values for $M^{(16)}$ (from which we get $`M(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces, and workplace-related contacts. From these, we get $B(\textbf{1})$ and $C(\textbf{1})$, constructing the matrices and normalising. 
 
 Matrix B is diagonal and $B_{ii}(\textbf{1})=0$ for $i>N$ [@Haw2020]. Consumer-to-worker contacts (matrix $C$) describe contacts experienced by workers from consumers per sector. Note that $C_{ij}(\textbf{1})=0$ for $i>N$. Matrix $\hat{C}(\textbf{1})$ is the complement of matrix $C(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
 
-With $D(\textbf{1})$, $C(\textbf{1})$, $B(\textbf{1})$ and $\hat{C}(\textbf{1})$, we learn $A(\textbf{1})$. 
+With $M(\textbf{1})$, $C(\textbf{1})$, $B(\textbf{1})$ and $\hat{C}(\textbf{1})$, we learn $A(\textbf{1})$. 
 
 $A$ is decomposed into its constituent parts, representing intra- and inter-household interactions ($L$), school interactions ($S$), hospitality interactions ($H$) and travel interactions ($T$):
 
