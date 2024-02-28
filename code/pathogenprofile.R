@@ -2,6 +2,9 @@ fn <- function(){}
 folder <- utils::getSrcDirectory(fn)
 setwd(ifelse(folder=='','.',folder))
 
+data_path <- '../data'
+figure_path <- '../figures'
+
 rnms <- c(paste0('ihr',1:17),paste0('ifr',1:17),
           'ps','Tlat','Tay','Tsr','Tsh','Threc','Thd','Ti','red','R0')
 pp <- data.frame(SARS=c(c(0.0578, 0.0578, 0.0578, 0.0578,	
@@ -70,7 +73,7 @@ tpp <- as.data.frame(t(pp))
 colnames(tpp) <- c(rnms,'ihr','ifr')
 pairs(tpp[,-c(1:34,42:43)])
 
-write.csv(tpp,'../data/sevenpathogens.csv',row.names = F)
+write.csv(tpp,file.path(data_path,'sevenpathogens.csv'),row.names = F)
 
 
 ## ihr #######################################
@@ -95,7 +98,9 @@ colnames(dat)[colnames(dat)=='Var2'] <- 'variable'
 fit8 <- brm(value ~ -1+ variable + s(x,by=variable), data=subset(dat,x>1), chains = 2)
 me8 <- brms:::conditional_effects.brmsfit(fit8, ndraws = 200, spaghetti = TRUE)
 x11(); plot(me8, ask = FALSE, points = TRUE)
-png('../figures/trainingihr.png'); matplot(t(logihr),typ='l',xlab='Age group index',ylab='Log relative risk: IHR'); dev.off()
+png(file.path(figure_path,'trainingihr.png')); 
+matplot(t(logihr),typ='l',xlab='Age group index',ylab='Log relative risk: IHR'); 
+dev.off()
 
 fit1 <- brm(value ~ -1 + variable + s(x,by=variable,k=4), data=subset(dat,x>1), chains = 2)
 me1 <- brms:::conditional_effects.brmsfit(fit1, ndraws = 200, spaghetti = TRUE)
@@ -112,7 +117,7 @@ for(d in diseases) meltps$parameter <- gsub(d,'',meltps$parameter)
 meltps$sample <- rep(1:2000)
 castps <- dcast(subset(meltps,!is.na(disease)),formula=sample+disease~parameter,value.var='value')
 pairsp <- ggpairs(castps,columns=3:6,aes(colour=disease))
-png("../figures/pairsplot.png", height = 900, width = 900)
+png(file.path(figure_path,'pairsplot.png'), height = 900, width = 900)
 print(pairsp)
 dev.off()
 
@@ -135,7 +140,7 @@ ggplot(allsampleslonglong) +
   geom_line(aes(x=Var2,y=value,group=Var1,colour=disease),alpha=1,size=1.5) +
   labs(x='Age group index',y='Log relative risk: IHR',colour='Pathogen') -> pathogenplot
 ggsave(pathogenplot,filename='pathogenplot.png',width=9,height=9)
-png("../figures/pathogenplot.png", height = 600, width = 600)
+png(file.path(figure_path,'pathogenplot.png'), height = 600, width = 600)
 print(pathogenplot)
 dev.off()
 
@@ -156,7 +161,7 @@ for(i in 1:nsamples){
   samples <- rbind(samples,funeval)
 }
 x11(); matplot(t(samples),typ='l')
-write.csv(samples,'ihrrr.csv',row.names = F)
+write.csv(samples,file.path(data_path,'ihrrr.csv'),row.names = F)
 
 
 meltnew <- melt(samples[1:100,])
@@ -165,7 +170,7 @@ ggplot() +
   geom_line(data=allsampleslonglong,aes(x=Var2,y=value,group=Var1),colour='grey',alpha=1,size=1) +
   geom_line(data=meltnew,aes(x=Var2,y=value,group=sample),colour='navyblue',alpha=.5,size=1) +
   labs(x='Age group index',y='Log relative risk: IHR') -> samplelogplot
-png("../figures/samplelogplot.png", height = 600, width = 600)
+png(file.path(figure_path,'samplelogplot.png'), height = 600, width = 600)
 print(samplelogplot)
 dev.off()
 
@@ -185,7 +190,7 @@ colnames(dat)[colnames(dat)=='Var2'] <- 'variable'
 fit8 <- brm(value ~ -1+ variable + s(x,by=variable), data=subset(dat,x>1), chains = 2)
 me8 <- brms:::conditional_effects.brmsfit(fit8, ndraws = 200, spaghetti = TRUE)
 x11(); plot(me8, ask = FALSE, points = TRUE)
-png('../figures/traininghfr.png'); matplot(t(loghfr),typ='l',xlab='Age group index',ylab='Log relative risk: HFR'); dev.off()
+png(file.path(figure_path,'traininghfr.png')); matplot(t(loghfr),typ='l',xlab='Age group index',ylab='Log relative risk: HFR'); dev.off()
 
 fit1 <- brm(value ~ -1 + variable + s(x,by=variable,k=4), data=subset(dat,x>1), chains = 2)
 me1 <- brms:::conditional_effects.brmsfit(fit1, ndraws = 200, spaghetti = TRUE)
@@ -202,7 +207,7 @@ for(d in diseases) meltps$parameter <- gsub(d,'',meltps$parameter)
 meltps$sample <- rep(1:2000)
 castps <- dcast(subset(meltps,!is.na(disease)),formula=sample+disease~parameter,value.var='value')
 pairsp <- ggpairs(castps,columns=3:6,aes(colour=disease))
-png("../figures/pairsplothfr.png", height = 900, width = 900)
+png(file.path(figure_path,'pairsplothfr.png'), height = 900, width = 900)
 print(pairsp)
 dev.off()
 
@@ -224,7 +229,7 @@ allsampleslonglong$disease <- rep(diseases,each=2000)
 ggplot(allsampleslonglong) + 
   geom_line(aes(x=Var2,y=value,group=Var1,colour=disease),alpha=1,size=1.5) +
   labs(x='Age group index',y='Log relative risk: HFR',colour='Pathogen') -> pathogenplot
-png("../figures/pathogenplothfr.png", height = 600, width = 600)
+png(file.path(figure_path,'pathogenplothfr.png'), height = 600, width = 600)
 print(pathogenplot)
 dev.off()
 
@@ -243,7 +248,7 @@ for(i in 1:nsamples){
   newpoints <- rbind(newpoints,funeval)
 }
 x11(); matplot(t(newpoints),typ='l')
-write.csv(newpoints,'hfrrr.csv',row.names = F)
+write.csv(newpoints,file.path(data_path,'hfrrr.csv'),row.names = F)
 
 
 meltnew <- melt(newpoints[1:100,])
@@ -252,7 +257,7 @@ ggplot() +
   geom_line(data=allsampleslonglong,aes(x=Var2,y=value,group=Var1),colour='grey',alpha=1,size=1) +
   geom_line(data=meltnew,aes(x=Var2,y=value,group=sample),colour='navyblue',alpha=.5,size=1) +
   labs(x='Age group index',y='Log relative risk: HFR') -> samplelogplot
-png("../figures/samplelogplothfr.png", height = 600, width = 600)
+png(file.path(figure_path,'samplelogplothfr.png'), height = 600, width = 600)
 print(samplelogplot)
 dev.off()
 

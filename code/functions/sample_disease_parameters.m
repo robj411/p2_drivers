@@ -109,8 +109,8 @@ maxhfr = betarnd(pHat(1),pHat(2),nsamples,1);
 % maxhfr = unifrnd(0,1,nsamples,1);
 
 
-ihrrr = exp(table2array(readtable('ihrrr.csv')));
-hfrrr = exp(table2array(readtable('hfrrr.csv')));
+ihrrr = exp(table2array(readtable('../data/ihrrr.csv')));
+hfrrr = exp(table2array(readtable('../data/hfrrr.csv')));
 
 maxihrrr = max(ihrrr');
 maxhfrrr = max(hfrrr');
