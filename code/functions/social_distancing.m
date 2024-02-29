@@ -10,13 +10,14 @@
 
 
 % function sd_out = social_distancing(lower_bound,rate,deaths_per_10k,current_drop ) 
-function sd_out = social_distancing(baseline, death_coef, mandate_coef,deaths_per_10k,current_drop ) 
+function sd_out = social_distancing(baseline, death_coef, mandate_coef,...
+                                    deaths_per_100k,rel_mobility, rel_stringency) 
 
-    rel_mobility = 1-current_drop ;
+%     rel_mobility = 1-current_drop ;
     
     
 %     sd = (lower_bound-rate)+(1-lower_bound+rate)*(1+((lower_bound-1)/(1-lower_bound+rate))).^(deaths_per_10k./10);
-    sd = 1./(1+death_coef.*deaths_per_10k + mandate_coef.*current_drop) .* (1-baseline) + baseline;
+    sd = 1./(1+death_coef.*deaths_per_100k + mandate_coef.*rel_stringency) .* (1-baseline) + baseline;
     sd = min(rel_mobility, max(sd, baseline)); % if sd computed is higher than mandate, we should return 1
     
     sd_out = sd./rel_mobility;
