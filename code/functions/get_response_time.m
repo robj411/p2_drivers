@@ -33,6 +33,15 @@ function response_time = get_response_time(data, dis, hosp_trigger)
 end
 
 
+% simulates one branching process
+
+% R0: basic reproduction number 
+% mean_ihr: average ratio of hospitalisation
+% hosp_trigger: number of hospital cases at which a response is made
+
+% branch_out: vector with the number of generations and the number of
+% hospitalisations in the simulation
+
 function branch_out = branching_process(R0, mean_ihr, hosp_trigger)
     % Initialize variables
     n_infections = [];
