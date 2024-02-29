@@ -98,6 +98,7 @@ maxihrs = max(ihrs');
 maxhfrs = hfrs(:,end); %max(hfrs(hfrs<1)');
 
 pHat = betafit(maxihrs);
+pHat = pHat./min(1,min(pHat));
 maxihr = betarnd(pHat(1),pHat(2),nsamples,1);
 %%!! ihr cannot exceed probability symptomatic
 while(sum(maxihr>param_struct.ps)>0)

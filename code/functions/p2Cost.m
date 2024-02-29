@@ -42,13 +42,14 @@ students         = data.NNs(Stu);
 cost(4,lx+[1,2]) = students;
 
 %Student Supply
-isoasy       = Isamat(:,Stu).*14/(dis.Tay-p2.dur) ; %g(:,1+2*lx+0*ln+Stu).*14/(dis.Tay-p2.dur);
-isosym       = Issmat(:,Stu) ; %g(:,1+2*lx+1*ln+Stu);
-isorec       = Issmat(:,Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.dur) ; %g(:,1+2*lx+1*ln+Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.dur);%.*(1-(1/3));
+days_per_infectious_day = 2;
+isoasy       = Isamat(:,Stu).*days_per_infectious_day./dis.Tay.*dis.Tsr ; %g(:,1+2*lx+0*ln+Stu).*14/(dis.Tay-p2.dur);
+isosym       = Issmat(:,Stu).*days_per_infectious_day./dis.Ts(Stu).*dis.Tsr ; %g(:,1+2*lx+1*ln+Stu);
+% isorec       = Issmat(:,Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.dur) ; %g(:,1+2*lx+1*ln+Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.dur);%.*(1-(1/3));
 nissym       = Insmat(:,Stu) ; %g(:,1+2*lx+2*ln+Stu);
 hospts       = hospmat(:,Stu) ; %g(:,1+2*lx+3*ln+Stu);
 deaths       = deathmat(:,Stu) ; %g(:,1+2*lx+4*ln+Stu);
-abs          = isoasy + isosym + isorec + nissym + hospts;% + deaths;%numbers of students
+abs          = isoasy + isosym + nissym + hospts;% + deaths;%numbers of students
 absint       = trapz(t,abs)/365;
 cost(5,lx+1) = absint;
 vsyl_sts     = absint*data.vsy;

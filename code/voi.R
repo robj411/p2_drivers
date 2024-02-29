@@ -22,7 +22,7 @@ if(Sys.info()[['sysname']]=='Linux'){
 
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','UMIC','HIC')
-vaccination_levels <- c(365,100)
+vaccination_levels <- c(326,100)
 bpsv_levels <- c(0,1)
 result_cols <- c('Cost','dYLLs','School','GDP_loss')
 
@@ -100,9 +100,9 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'Contacts'=c('Work_contacts','Hospitality_contacts','School_contacts'),
                     'Timing'=c('Response_time','Importation_time'),
                     'Timing + R0'=c('R0','Response_time','Importation_time'),
-                    'Testing'=c('Test_rate','Self_isolation_compliance'),
-                    'Testing + R0'=c('R0','Test_rate','Self_isolation_compliance'),
-                    'Social distancing'=c('Social_distancing_rate','Social_distancing_max'),
+                    'Testing'=c('Test_rate','Fraction_infectiousness_averted'),
+                    'Testing + R0'=c('R0','Test_rate','Fraction_infectiousness_averted'),
+                    'Social distancing'=c('Social_distancing_baseline','Social_distancing_death','Social_distancing_mandate'),
                     #'BMI RR' = c('BMI','BMI_hospitalisation','BMI_infection','BMI_death'),
                     'IHR + R0'=c('Mean_IHR', 'R0'),
                     'HFR + R0'=c('Mean_HFR', 'R0'),
@@ -110,9 +110,9 @@ multisource <- list('Sectors'=c('Agriculture','Food_sector'),
                     'IHR + IFR + R0'=c('Mean_IHR','Mean_IFR', 'R0'),
                     'Duration + IHR + R0'=c('R0','Mean_IHR','Time_to_discharge'),
                     'Hosp + Duration + R0'=c('R0','Hospital_capacity','Time_to_discharge'),
-                    'Hosp + IHR + R0'=c('R0','Mean_IHR','Hospital_capacity'),
-                    'SD rate + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR'),
-                    'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Hospital_capacity')
+                    'Hosp + IHR + R0'=c('R0','Mean_IHR','Hospital_capacity')#,
+                    # 'SD rate + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR'),
+                    # 'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Hospital_capacity')
                     #'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Mean_IFR','Hospital_capacity')
                     )
 
@@ -184,9 +184,14 @@ for(bl in 1:length(bpsv_levels)){
     }
   }
 }
-     
+ 
+
+params <- unlist(multisource)    
+params[!params%in%colnames(allresults)]
+
 ## negatives ###########################
 
+dispcols <- colnames()%in%c('Cost','GDP_loss','Deaths','School','igroup','strategy','samplei','Exit_wave','scen_Exit_wave')
 nneg <- 0
 for(vaccination_level in vaccination_levels){
   for(bpsv in bpsv_levels){
@@ -197,7 +202,7 @@ for(vaccination_level in vaccination_levels){
         subtab <- subset(difftab,igroup==income_level)
         subtab$sample <- 1:nrow(subtab)
         print(income_level)
-        print(subset(subtab,Cost< 0 & !(scen_Exit_wave>(1-1e-2)) )[,c(43:49,28,52)])
+        print(subset(subtab,Cost< 0 & !(scen_Exit_wave>(1-1e-2)) )[,dispcols])
         nneg <- nneg + nrow(subset(subtab,Cost< 0 ))
       }
     }

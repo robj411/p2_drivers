@@ -33,8 +33,8 @@ function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
     data.NNvec = NNvec;
     zs = zeros(size(data.NNs));
     
-    % get very low-contact matrix
-    config_min = data.x_econ(:,2)/10;
+    % get low-contact matrix
+    config_min = data.x_econ(:,2)*.9;
     NNmin = NNbar;
 %     NNmin(1:nSectors) = NNmin(1:nSectors) .* xmin;
 %     NNmin(nSectors+adInd) =  sum(NNbar([1:nSectors,nSectors+adInd])) - sum(NNmin(1:nSectors));
@@ -56,6 +56,9 @@ function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
         
     % store amount by which configurations reduce contacts
     data.rel_mobility = (candidate_infectees_max - candidate_infectees)./(candidate_infectees_max-candidate_infectees_min);
+    data.rel_mobility = (candidate_infectees)./(candidate_infectees_max);
+    rel_mobility_min = candidate_infectees_min/candidate_infectees_max;
+    data.rel_stringency = (1-data.rel_mobility) / max(1-[rel_mobility_min; data.rel_mobility]);
     data.Dvec = Dvec;
     data.strategy = strategy;
     
@@ -232,6 +235,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
     rundata.t_import = data.t_import; 
     rundata.imand = data.imand; 
     rundata.rel_mobility = data.rel_mobility;
+    rundata.rel_stringency = data.rel_stringency;
 
     rundata.sd_baseline = data.sd_baseline;
     rundata.sd_death_coef = data.sd_death_coef;
@@ -536,7 +540,8 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,
         mandate_coef = data.sd_mandate_coef;
         
         ddk    = 10^5*sum(dis2.mu.*(H + Hv1 + Hv2))/sumN;
-        betamod = social_distancing(baseline, death_coef, mandate_coef,ddk,data.rel_mobility(i));
+        betamod = social_distancing(baseline, death_coef, mandate_coef,ddk,...
+            data.rel_mobility(i),data.rel_stringency(i));
         
         Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
             data.NNvec(:,3),data.Dvec(:,:,3),dis2.beta,betamod,p3,p4);

@@ -19,12 +19,13 @@ function betamod = betamod_wrapped(ddk, p2, data, mandate)
         death_coef = data.sd_death_coef;
         mandate_coef = data.sd_mandate_coef;
         rel_mobility = data.rel_mobility(mandate);
+        rel_stringency = data.rel_stringency(mandate);
         
 %         betamod = social_distancing(p2.sdl,p2.sdb,ddk,rel_mobility);
-        betamod = social_distancing(baseline, death_coef, mandate_coef,ddk,rel_mobility);
+        betamod = social_distancing(baseline, death_coef, mandate_coef,ddk,rel_mobility, rel_stringency);
         if any(mandate==data.imand)
 %             betamod = min(betamod, social_distancing(p2.sdl,p2.sdb,2,rel_mobility));
-            betamod = min(betamod, social_distancing(baseline, death_coef, mandate_coef, 2, rel_mobility));
+            betamod = min(betamod, social_distancing(baseline, death_coef, mandate_coef, 2, rel_mobility, rel_stringency));
         end
     end
 
