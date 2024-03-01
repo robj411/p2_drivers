@@ -317,7 +317,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
         mu(ii,:)    = dis2.mu;
     end
     
-    ddk = 10^5*sum(mu.*Hclass,2)/sumNN0;
+    ddk = 10^6*sum(mu.*Hclass,2)/sumNN0;
     betamod = betamod_wrapped(ddk, p2, data, i);
     
     pout = fraction_averted_self_isolating(sum(Iclass,2), sumNN0, p2, tout, i);
@@ -340,7 +340,7 @@ function [tout,Iclass,Isaclass,Issclass,Insclass,Hclass,Dclass,pout,betamod,y0ne
 %     
 %     Rtret = get_R(nStrata,dis2,Stest,Stest1,Stest2,...
 %             data.NNvec(:,3),data.Dvec(:,:,3),dis.beta,betam(end),pout(end),pout(end));
-%         disp([2 sum(Iclass(end,:))/10^5 Ip(end) pout(end) Rtret])
+%         disp([2 sum(Iclass(end,:))/10^6 Ip(end) pout(end) Rtret])
 
 end
 
@@ -486,7 +486,7 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     f_mat(:,compindex.I_index(6)) = Isv2dot;
     f_mat(:,compindex.H_index(3)) = Hv2dot;
     f_mat(:,compindex.R_index(3)) = Rv2dot;
-    f_mat(:,compindex.D_index(1)) = DEdot;
+    f_mat(:,compindex.D_index(1)) = max(DEdot,0);
     f_mat(:,compindex.V_index(1)) = Vdot;
     f_mat(:,compindex.V_index(2)) = Bdot;
     
@@ -530,7 +530,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,
     R1flag3 = -1;
     R1flag4 = -1;
     minttvec3 = min(t-(data.tvec(end-1)+7),0);
-    minttvec4 = min(t-(data.tvec(end-1)+0.1),0);
+    minttvec4 = min(t-(data.tvec(end-1)+7),0);
     if ((i==2 && minttvec3==0) || (i==3  && minttvec4==0))
         
         [p3, p4] = fraction_averted_self_isolating(sum(Ia+Is + Iav1+Isv1 + Iav2+Isv2), sumN, p2, t, i);
@@ -539,7 +539,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,
         death_coef = data.sd_death_coef;
         mandate_coef = data.sd_mandate_coef;
         
-        ddk    = 10^5*sum(dis2.mu.*(H + Hv1 + Hv2))/sumN;
+        ddk    = 10^6*sum(dis2.mu.*(H + Hv1 + Hv2))/sumN;
         betamod = social_distancing(baseline, death_coef, mandate_coef,ddk,...
             data.rel_mobility(i),data.rel_stringency(i));
         
