@@ -174,30 +174,26 @@ All economic sectors contribute GVA according to the level they are open for pro
 
 
 ``` math
-\hat{x}_{i}(t)=x_{i}(t)w_i - (1-x_{i}(t))B_{1,i}(t)  - (1-x_{i}(t)(1-p_{19,i}))B_{2,i}(t)
+\hat{x}_{i}(t)=x_{i}(t) - \left((1-x_{i}(t))B_{1,i}(t)  + (1-x_{i}(t)(1-p_{19,i}))B_{2,i}(t)\right)/w_i
 ```
+
+where $p_{19,i}$ is the fraction of the sector working from home. $B_{1,i}(t)$ represents worker sickness and death:
+
+$$B_{1,i}(t)=\sum_{v=0}^2\left(1-p_{H,i,v})p_4p_{18}^{(S)}I_{i,v}^{(S)}+p_{H,i,v}p_4I_{i,v}^{(S)}+H_{i,v}+D_i\right),$$ 
+
+and $B_{2,i}(t)$ represents output from asymptomatic self-isolating workers:
+
+$$B_{2,i}(t)=p_3p_{18}^{(A)}I_{i}^{(A)}.$$ 
+
+$p_{18}$ is the number of days spent in self isolation per day of infectiousness (e.g. suppose the average infectious period is four days and mandatory self-isolation time is ten days, then $p_{18}^{(S)}=2.5$ and $p_{18}^{(A)}=p_{18}^{(S)}\gamma_I/\gamma_A$, where $\gamma_I$ and $\gamma_A$ are expected infectious periods for symptomatic and asymptomatic, respectively). $p_3$ and $p_4$ are the fractions of asymptomatic and symptomatic people self isolating, respectively. Other notations are vaccine status $v$, infectious and asymptomatic $I_{v,i}^{(A)}$, infectious and symptomatic $I_{v,i}^{(S)}$, hospitalised $H$, deceased $D$, and probability to be hospitalised $p_H$. 
+
+Then the total output is
 
 ``` math
 Z =  \frac{1 }{365} \sum_{i\neq\text{ed}}z_i\int_{t=0}^{T}\hat{x}_{i}(t)dt + \frac{T }{365}{z_\text{ed}},
 ```
 
-where $w_i$ is the total number of workers in sector $i$, $p_{19,i}$ is the fraction of the sector working from home, and $x_i(t)$ is the openness of the sector, $A_1(t)$ represents output lost due to worker sickness and death:
-
-$$B_{1,i}(t)=\sum_{v=0}^2\left(1-p_{H,i,v})p_4p_{18}^{(S)}I_{i,v}^{(S)}+p_{H,i,v}p_4I_{i,v}^{(S)}+H_{i,v}+D_i\right),$$ 
-
-$p_{18}$ is the number of days spent in self isolation per day of infectiousness (e.g. suppose the average infectious period is four days and mandatory self-isolation time is ten days, then $p_{18}^{(S)}=2.5$ and $p_{18}^{(A)}=p_{18}^{(S)}\gamma_I/\gamma_A$, where $\gamma_I$ and $\gamma_A$ are expected infectious periods for symptomatic and asymptomatic, respectively), and $B_{2,i}(t)$ represents output from asymptomatic self-isolating workers:
-
-$$B_{2,i}(t)=p_3p_{18}^{(A)}I_{i}^{(A)}.$$ 
-
-
-
-```math
-\hat{x}_{i}(t)=x_{i}(t)-\sum_{v}\left(p_3p_{18}I_{v,i}^{(A)}(t)+p_4p_{18}I_{v,i}^{(S)}(t)+H_{v,i}(t)+D_{v,i}(t)\right)/N_i
-```
-
-for vaccine status $v$, infectious and asymptomatic $I_{v,i}^{(A)}$, infectious and symptomatic $I_{v,i}^{(S)}$, hospitalised $H$, deceased $D$. $p_3$ is the fraction of asymptomatic infectious averted by self isolating, $p_4$ is the fraction of symptomatic infectious averted by self isolating, and $p_{18}$ is the number of infectious periods for which individuals are required to isolate.
-
-Then the GDP loss compared to the maximum is 
+and the GDP loss compared to the maximum is 
 
 $$L_2=Z_0-Z.$$
 
