@@ -8,7 +8,7 @@ strategies = {'No Closures','School Closures','Economic Closures','Elimination'}
 vaccination_levels = [326, 100];
 bpsv_levels = [0, 1];
 
-nsamples  = 512;
+nsamples  = 64;
 n_income = numel(income_levels);
 
 synthetic_countries = cell(nsamples,length(income_levels));
@@ -123,19 +123,21 @@ for il = 1:n_income
                         [~,exitwave] = min(abs(returned.Tout-endmit));
                         % get fraction of deaths that happen after
                         % mitigation ends
-                        exitwavefrac = 1-sum(returned.deathtot(exitwave))/sum(returned.deathtot(end));
+                        exitwavefrac = 1-returned.deathtot(exitwave)/returned.deathtot(end);
+%                         disp([ms vl bl i])
+%                         disp([endsim/1000 exitwavefrac ldata.self_isolation_compliance p2.frac_sym_infectiousness_averted p2.frac_presym_infectiousness_averted p2.frac_asym_infectiousness_averted ])
                         % total still susceptible at end of simulation
                         endsusc = returned.Stotal(end)/returned.Stotal(1);
                         % hospital occupancy at response time
                         ht = returned.Htot(find(returned.Tout > p2.Tres,1));
                         
                         %% costs
-                        [cost,~]    = p2Cost(ldata,dis2,p2,returned);
+                        costs    = p2Cost(ldata,dis2,p2,returned);
                         sec         = nan(1,4);
-                        sec(1)      = sum(cost([3,6,7:10],:),'all');
-                        sec(2)      = sum(cost([3],:),'all');
-                        sec(3)      = sum(cost([6],:),'all');
-                        sec(4)      = sum(cost([7:10],:),'all');  
+                        sec(2)      = sum(costs.value_dYLL); % dylls
+                        sec(3)      = sum(costs.value_SYL); % school
+                        sec(4)      = sum(costs.GDP_lost);  % gdp
+                        sec(1)      = sum(sec(2:4)); % cost
                         total_deaths = returned.deathtot(end);
                         
                         gdp = sum(ldata.obj);
@@ -151,9 +153,9 @@ for il = 1:n_income
                             contacts.schoolA2 ldata.NNs(47)/popsize working_age/popsize ldata.NNs(49)/popsize...
                             unemployment_rate ldata.gdp ldata.labsh contacts.workrel ...
                             contacts.hospitality_frac...
-                            ldata.Hmax ldata.trate ldata.Hres p2.Tres...
+                            p2.Hmax ldata.trate ldata.Hres p2.Tres...
                             ldata.vaccination_rate_pc ldata.vaccine_uptake ...
-                            ldata.sd_baseline ldata.sd_death_coef ldata.sd_mandate_coef 1-p2.frac_sym_infectiousness_remaining dis2.CI ...
+                            ldata.sd_baseline ldata.sd_death_coef ldata.sd_mandate_coef p2.frac_sym_infectiousness_averted dis2.CI ...
                             ldata.obj([1 32])'/gdp ldata.frac_tourism_international ...
                             ldata.remote_teaching_effectiveness ldata.t_import...
                             ldata.remote_quantile ht...
