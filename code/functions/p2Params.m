@@ -27,15 +27,28 @@ p2.t_tit = data.rts;
 % testing impacts
 self_isolation_compliance = data.self_isolation_compliance;
 p2.trate = data.trate;                      %Test-Isolate-Trace Rate
-p2.dur    = 1;
-% needs to account for discovery rule
+% amount averted by isolating needs to account for discovery rule
+% time taken to test
+time_to_test = 2;
+% time taken to isolate after symptoms
+time_to_isolate = 1;
+% total amount avertible if isolating after symptom onset
+frac_by_symptoms = max(1 - dis.frac_presymptomatic - time_to_isolate/dis.Tsr, 0);
+% remaining amount can be averted by testing
+frac_by_testing = 1 - frac_by_symptoms;
 % sym: assume isolation on symptoms, so infectiousness averted is frac that
-% is presymptomatic
-frac_sym_infectiousness_averted = self_isolation_compliance * (1-dis.frac_presymptomatic);
-p2.frac_sym_infectiousness_remaining = 1 - frac_sym_infectiousness_averted;
+% is presymptomatic, unless test taken in presymptomatic period
+% if people isolate when symptomatic, a fraction of infectiousness is
+% averted always
+frac_averted = frac_by_symptoms;
+p2.frac_sym_infectiousness_averted = self_isolation_compliance * frac_averted * 1;
+% if people test when presymptomatic, a fraction of presymptomatic
+% infectiousness is averted when testing
+frac_averted = max(frac_by_testing - time_to_test/dis.Tsr, 0);
+p2.frac_presym_infectiousness_averted = self_isolation_compliance * frac_averted;
 % assume they test after one day.
-frac_asym_infectiousness_averted = self_isolation_compliance * min(1,1-p2.dur./dis.Tay);
-p2.frac_asym_infectiousness_remaining = 1 - frac_asym_infectiousness_averted;
+p2.frac_asym_infectiousness_averted = self_isolation_compliance * min(1,1-time_to_test./dis.Tay);
+p2.time_to_test = time_to_test;
 
 % Hospital Capacity
 p2.Hmax  = data.Hmax*sum(data.Npop)/10^5;   %Hospital Capacity
@@ -44,7 +57,7 @@ p2.Hmax  = max(4*p2.thl,p2.Hmax);
 p2.SHmax = 2*p2.Hmax;
 
 % stopping criteria
-p2.hosp_final_threshold = 1000;
+p2.hosp_final_threshold = 100;
 p2.final_doubling_time_threshold = 30;
 
 %% Vaccine Uptake
