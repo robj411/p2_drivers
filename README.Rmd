@@ -212,7 +212,7 @@ where $p_{14}(t)$ is the effective amount of education lost per student at time 
 $$p_{14}(t) = (1-p_{16})(1-x_{\text{ed}}(t)),$$
 $w_{g_{\text{school}}}$ is the total number of students, $p_{16}$ is relative effectiveness of remote education and $x_{\text{ed}}(t)$ is the openness of schools, $A_1(t)$ represents education lost due to student sickness with COVID-19:
 
-$$A_1(t)=\sum_{v=0}^2\left(1-p_{H,i_{\text{school}},v})p_4p_{18}^{(S)}I_{i_{\text{school}},v}^{(S)}+p_{H,i_{\text{school}},v}p_4I_{i_{\text{school}},v}^{(S)}+H_{i_{\text{school}},v}\right),$$ 
+$$A_1(t)=\sum_{v=0}^2\left((1-p_{H,i_{\text{school}},v})p_4p_{18}^{(S)}I_{i_{\text{school}},v}^{(S)}+p_{H,i_{\text{school}},v}p_4I_{i_{\text{school}},v}^{(S)}+H_{i_{\text{school}},v}\right),$$ 
 
 $p_{18}$ is the number of days spent in self isolation per day of infectiousness (e.g. suppose the average infectious period is four days and mandatory self-isolation time is ten days, then $p_{18}^{(S)}=2.5$ and $p_{18}^{(A)}=p_{18}^{(S)}\gamma_I/\gamma_A$, where $\gamma_I$ and $\gamma_A$ are expected infectious periods for symptomatic and asymptomatic, respectively), and $A_2(t)$ represents education lost due to asymptomatic self isolation (which comes at a cost only when schools are open):
 
