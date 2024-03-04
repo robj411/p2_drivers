@@ -151,58 +151,86 @@ respective sector openings, summed over the period. The maximum possible
 GDP (which is with no closures) is $Z_0=\frac{T}{365}\sum_{i}z_i$, and
 we use pre-pandemic output to define the maximum possible values.
 
-$x_{i}(t)$ is the proportion of the workforce contributing to economic
-production out of the total workforce $N_i$ on day $t$. The workforce
-can be additionally depleted due to sickness, hospitalisation and death,
+All economic sectors contribute GVA according to the level they are open
+for production, except for the education sector which contributes its
+maximum possible GVA, $z_{\text{ed}}$. $x_{i}(t)$ is the proportion of
+the workforce contributing to economic production in sector $i$ out of
+the total workforce $w_i$ on day $t$. The workforce can be additionally
+depleted due to self isolation, sickness, hospitalisation and death,
 leaving a smaller fraction ($`\hat{x}_{i}(t)`$) to contribute to
 production.
 
 ``` math
-\hat{x}_{i}(t)=x_{i}(t)-\sum_{v}\left(p_3p_{17}I_{v,i}^{(A)}(t)+p_4p_{17}I_{v,i}^{(S)}(t)+H_{v,i}(t)+D_{v,i}(t)\right)/N_i
+\hat{x}_{i}(t)=x_{i}(t)w_i - (1-x_{i}(t))B_{1,i}(t)  - (1-x_{i}(t)(1-p_{19,i}))B_{2,i}(t)
+```
+
+``` math
+Z =  \frac{1 }{365} \sum_{i\neq\text{ed}}z_i\int_{t=0}^{T}\hat{x}_{i}(t)dt + \frac{T }{365}{z_\text{ed}},
+```
+
+where $w_i$ is the total number of workers in sector $i$, $p_{19,i}$ is
+the fraction of the sector working from home, and $x_i(t)$ is the
+openness of the sector, $A_1(t)$ represents output lost due to worker
+sickness and death:
+
+$$B_{1,i}(t)=\sum_{v=0}^2\left(1-p_{H,i,v})p_4p_{18}^{(S)}I_{i,v}^{(S)}+p_{H,i,v}p_4I_{i,v}^{(S)}+H_{i,v}+D_i\right),$$
+
+$p_{18}$ is the number of days spent in self isolation per day of
+infectiousness (e.g. suppose the average infectious period is four days
+and mandatory self-isolation time is ten days, then $p_{18}^{(S)}=2.5$
+and $p_{18}^{(A)}=p_{18}^{(S)}\gamma_I/\gamma_A$, where $\gamma_I$ and
+$\gamma_A$ are expected infectious periods for symptomatic and
+asymptomatic, respectively), and $B_{2,i}(t)$ represents output from
+asymptomatic self-isolating workers:
+
+$$B_{2,i}(t)=p_3p_{18}^{(A)}I_{i}^{(A)}.$$
+
+``` math
+\hat{x}_{i}(t)=x_{i}(t)-\sum_{v}\left(p_3p_{18}I_{v,i}^{(A)}(t)+p_4p_{18}I_{v,i}^{(S)}(t)+H_{v,i}(t)+D_{v,i}(t)\right)/N_i
 ```
 
 for vaccine status $v$, infectious and asymptomatic $I_{v,i}^{(A)}$,
 infectious and symptomatic $I_{v,i}^{(S)}$, hospitalised $H$, deceased
-$D$, with total population $N_i$ for sector $i$. $p_3$ is the fraction
-of asymptomatic infectious averted by self isolating, $p_4$ is the
-fraction of symptomatic infectious averted by self isolating. and
-$p_{17}$ is the number of infectious periods for which individuals are
-required to isolate.
+$D$. $p_3$ is the fraction of asymptomatic infectious averted by self
+isolating, $p_4$ is the fraction of symptomatic infectious averted by
+self isolating, and $p_{18}$ is the number of infectious periods for
+which individuals are required to isolate.
 
-Then the total GVA for the $T$-day period is:
-
-``` math
-Z = \frac{1}{365}\left(\sum_{i\neq\text{ed}}^{\mathcal{N}}\sum_{t=1}^Tz_i\hat{x}_{i}(t) + Tz_{\text{ed}}\right)
-```
-
-and the GDP loss compared to the maximum is
+Then the GDP loss compared to the maximum is
 
 $$L_2=Z_0-Z.$$
 
-All economic sectors contribute GVA according to the level they are open
-for production, except for the education sector which contributes its
-maximum possible monthly GVA, $z_{\text{ed}}$ per month.
-
 ## 2.3 Lost education
 
+The loss due to school closure is
+
+<!-- $$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}w_{g_{\text{school}}}+A_2 + (1-p_{16})A_1 \right)\text{VSY}$$ -->
+
+$$L_3 =  \frac{1 }{365} \int_{t=0}^{T}\left(p_{14}(t)w_{g_{\text{school}}} + (1-p_{14}(t))A_1(t)  +(1-2p_{14}(t))A_2(t)\right)dt,$$
+
+where $p_{14}(t)$ is the effective amount of education lost per student
+at time $t$ due to school closure:
+$$p_{14}(t) = (1-p_{16})(1-x_{\text{ed}}(t)),$$ $w_{g_{\text{school}}}$
+is the total number of students, $p_{16}$ is relative effectiveness of
+remote education and $x_{\text{ed}}(t)$ is the openness of schools,
+$A_1(t)$ represents education lost due to student sickness with
+COVID-19:
+
+$$A_1(t)=\sum_{v=0}^2\left(1-p_{H,i_{\text{school}},v})p_4p_{18}^{(S)}I_{i_{\text{school}}}^{(S)}+p_{H,i_{\text{school}},v}p_4I_{i_{\text{school}}}^{(S)}\right)+H_{i_{\text{school}}},$$
+
+$p_{18}$ is the number of days spent in self isolation per day of
+infectiousness (e.g. suppose the average infectious period is four days
+and mandatory self-isolation time is ten days, then $p_{18}^{(S)}=2.5$
+and $p_{18}^{(A)}=p_{18}^{(S)}\gamma_I/\gamma_A$, where $\gamma_I$ and
+$\gamma_A$ are expected infectious periods for symptomatic and
+asymptomatic, respectively), and $A_2(t)$ represents education lost due
+to asymptomatic self isolation (which comes at a cost only when schools
+are open):
+
+$$A_2(t)=p_3p_{18}^{(A)}I_{i_{\text{school}}}^{(A)}.$$
+
 For the value of a year of education, we use the method of
-(Psacharopoulos, Collis, and Patrinos 2021). The loss due to school
-closure is
-
-$$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}w_{g_{\text{school}}}+A_2 + (1-p_{16})A_1 \right)\text{VSY}$$
-
-where $p_{16}$ is the proportion of students affected,
-$w_{g_{\text{school}}}$ is the total number of students, $p_{14}$ is the
-extent and amount of time (in years) schools are closed:
-$$p_{14}=\frac{1}{365}\int_{t=1}^{T}(1-x_{\text{ed}}(t))dt,$$ $A_1$
-represents education lost due to student sickness with COVID-19
-
-$$A_1=\int_{t=0}^T\left(p_4p_{17}I_{i_{\text{school}}}^{(S)}+H_{i_{\text{school}}}\right)dt,$$
-
-and $A_2$ represents education lost due to asymptomatic self isolation
-(which comes at a cost only when schools are open):
-
-$$A_2=\int_{t=0}^Tp_3p_{17}I_{i_{\text{school}}}^{(A)} dt.$$
+(Psacharopoulos, Collis, and Patrinos 2021).
 
 $$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{15}.$$
 
@@ -214,7 +242,7 @@ for discount rate $r=0.03$, number $N_a$ students currently age $a$, and
 expected number of years of work $n=45$. $p_{13}$ is mean annual
 earnings, $p_{15}=0.08$ is the rate of return for one year.
 
-The value $p_{16}$ represents the ineffectiveness of remote teaching,
+The value $p_{16}$ represents the effectiveness of remote teaching,
 which we sample as a standard uniform random variable. We note that no
 strong predictors of effectiveness of remote teaching have been
 identified (Patrinos 2023). We assume that losses are linear in duration
