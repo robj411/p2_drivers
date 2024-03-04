@@ -66,7 +66,7 @@ for i = 1:size(disparams,2)
     if strmatch('R0',thisparam)
 %         newparams = min(newparams + 1.5,4);
         pd = makedist('Normal',pHat(1),pHat(2));
-        t = truncate(pd,1.5,4);
+        t = truncate(pd,2,4.5);
         newparams = icdf(t,U(:,i));
     end
     newparams(isnan(newparams)) = mean(sample_struct.(thisparam));
