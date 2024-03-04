@@ -7,108 +7,101 @@
 
 % cost: 
 
-function [cost,ccost_t] = p2Cost(data,dis,p2,returnobject)
+function costs = p2Cost(data,dis,p2,returnobject)
 
 t  = returnobject.Tout;
-lx = length(data.obj);
-ln = lx+4;
+nSectors = length(data.obj);
+nStrata = nSectors+4;
 
 workers = returnobject.workers;
 homeworkers = returnobject.homeworkers;
-Isamat = returnobject.Isamat;
-Issmat = returnobject.Issmat;
-Insmat = returnobject.Insmat;
+Iamat = returnobject.Iamat;
+Ismat = returnobject.Ismat;
 hospmat = returnobject.hospmat;
 deathmat = returnobject.deathmat;
 selfisolation = returnobject.selfisolation;
 
+costs = struct;
+
+days_per_infectious_day = 2.5;
+days_per_infectious_day_asym = days_per_infectious_day./dis.Tay.*dis.Tsr;
+
+p3 = selfisolation.p3;
+p4 = selfisolation.p4;
+
 %% VLYL
 
 deaths    = deathmat;
-cost(1,:) = deaths(end,:);
+costs.deaths = deaths(end,:);
 
 lyl       = deaths(end,:).*data.lgh;
-cost(2,:) = lyl;
+costs.life_years = lyl;
 
 vlyl      = lyl*data.vly;
-cost(3,:) = vlyl;
+costs.value_dYLL = vlyl;
 
-ccost_t(:,1:ln) = deaths.*data.lgh.*data.vly;
+% ccost_t(:,1:ln) = deaths.*data.lgh.*data.vly;
 
 %% VSYL
 
-Stu              = lx+2;
+Stu              = nSectors+2;
 students         = data.NNs(Stu);
-cost(4,lx+[1,2]) = students;
+% cost(4,nSectors+[1,2]) = students;
 
 %Student Supply
-days_per_infectious_day = 2;
-isoasy       = Isamat(:,Stu).*days_per_infectious_day./dis.Tay.*dis.Tsr ; %g(:,1+2*lx+0*ln+Stu).*14/(dis.Tay-p2.dur);
-isosym       = Issmat(:,Stu).*days_per_infectious_day./dis.Ts(Stu).*dis.Tsr ; %g(:,1+2*lx+1*ln+Stu);
-% isorec       = Issmat(:,Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.dur) ; %g(:,1+2*lx+1*ln+Stu).*(14-dis.Ts(Stu)+p2.dur)./(dis.Ts(Stu)-p2.dur);%.*(1-(1/3));
-nissym       = Insmat(:,Stu) ; %g(:,1+2*lx+2*ln+Stu);
-hospts       = hospmat(:,Stu) ; %g(:,1+2*lx+3*ln+Stu);
-deaths       = deathmat(:,Stu) ; %g(:,1+2*lx+4*ln+Stu);
-abs          = isoasy + isosym + nissym + hospts;% + deaths;%numbers of students
-absint       = trapz(t,abs)/365;
-cost(5,lx+1) = absint;
-vsyl_sts     = absint*data.vsy;
-cost(6,lx+1) = vsyl_sts;
+days_per_infectious_day_sym = days_per_infectious_day./dis.Ts(Stu).*dis.Tsr;
+prob_hosp = dis.ph(Stu).*[1 1-dis.hv1 1-dis.hv2];
+isoasym       = sum(reshape(Iamat(:,Stu,:),[],3),2).* days_per_infectious_day_asym .* p3; 
+
+symstudents = reshape(Ismat(:,Stu,:),[],3);
+sym_no_hosp       = sum(symstudents.*(1-prob_hosp),2).* p4 .* days_per_infectious_day_sym; 
+sym_to_hosp       = sum(symstudents.*prob_hosp,2).* p4 + hospmat(:,Stu) ; 
+% deaths       = deathmat(:,Stu) ; 
+isosym          = sym_no_hosp + sym_to_hosp;% + deaths;%numbers of students
 
 %Student Demand
-not_sick         = students-abs;
-not_sick_at_home        = not_sick.*(1-returnobject.workers(:,data.EdInd)) .* (1 - data.remote_teaching_effectiveness);%.*(1-(1/3));%numbers of students
-preslint     = trapz(t,not_sick_at_home)/365;%= (diff(t)'*presl)/365;
-cost(5,lx+2) = preslint;
-vsyl_std     = preslint*data.vsy;
-cost(6,lx+2) = vsyl_std;
-% disp([cost(6,lx+2),sum(not_sick),sum(1-g(:,1+data.EdInd))*1e7,sum(not_sick_at_home)])
-% figure('Position', [100 100 400 300]);plot(g(:,1),g(:,1+data.EdInd)')
+closure = (1-returnobject.workers(:,data.EdInd)) .* (1 - data.remote_teaching_effectiveness);
+not_learning        = closure.*students + (1-closure).*isosym + (1-2*closure).*isoasym;
+not_learning_int     = trapz(t,not_learning)/365;%= (diff(t)'*presl)/365;
 
-ccost_t(:,ln+lx+1) = cumtrapz(t,abs,1)./365.*data.vsy;
-ccost_t(:,ln+lx+2) = cumtrapz(t,not_sick_at_home,1)./365.*data.vsy;
+costs.value_SYL = not_learning_int * data.vsy;
+
 
 %% SGDPL
 
-notEd = [1:(data.EdInd-1),(data.EdInd+1):lx];
+notEd = [1:(data.EdInd-1),(data.EdInd+1):nSectors];
+worker_numbers = data.NNs(notEd);
 
-%Labour Supply
+% labour supply
+isoasym       = sum(Iamat(:,notEd,:),3).* days_per_infectious_day_asym .* p3; 
+
+days_per_infectious_day_sym = days_per_infectious_day./dis.Ts(notEd).*dis.Tsr;
+prob_hosp = dis.ph(notEd).*[1 1-dis.hv1 1-dis.hv2];
+
+sym_no_hosp_total = zeros(size(Ismat(:,notEd,:)));
+sym_to_hosp_total = zeros(size(Ismat(:,notEd,:)));
+for i = 1:size(sym_no_hosp_total,1)
+    for j = 1:size(prob_hosp,2)
+        sym_no_hosp_total(i,:,j) = Ismat(i,notEd,j) .* (1-prob_hosp(:,j)');
+        sym_to_hosp_total(i,:,j) = Ismat(i,notEd,j) .* prob_hosp(:,j)';
+    end
+end
+sym_no_hosp       = sum(sym_no_hosp_total,3).* p4 .* days_per_infectious_day_sym'; 
+sym_to_hosp       = sum(sym_to_hosp_total,3).* p4 + hospmat(:,notEd) + deathmat(:,notEd) ; 
+% deaths       = deathmat(:,Stu) ; 
+isosym          = sym_no_hosp + sym_to_hosp;% + deaths;%numbers of students
+
+% Labour demand
 hw            = homeworkers(:,notEd);
-isoasy        = Isamat(:,notEd).*(1-hw).*14/(dis.Tay-p2.dur);%hw still contribute; 14-day isolation period
-isosym        = Issmat(:,notEd);
-isorec        = Issmat(:,notEd).*(1-hw).*(14-dis.Ts(notEd)'+p2.dur)./(dis.Ts(notEd)'-p2.dur);
-nissym        = Insmat(:,notEd);
-hospts        = hospmat(:,notEd);
-deaths        = deathmat(:,notEd);%number of workers absent
-abspc         = max((isoasy + isosym + isorec + nissym + hospts + deaths)./data.NNs(notEd)',0);%percentage of workers absent
-prespc        = 1-abspc;%percentage of workers present
-presx         = prespc;%percentage of gdp output%the alpha relationship only holds for present workers!!!
-absx          = 1-presx;%percentage of gdp lost
-absxint       = trapz(t,absx);
-gdpl_lbs      = absxint.*data.obj(notEd)';
-cost(7,notEd) = gdpl_lbs;
+x             = workers(:,notEd);
 
-%Labour Demand
-w             = workers(:,notEd);
-x             = w;
-xint          = diff(t)'*(1-x(1:end-1,:));
-gdpl_lbd      = xint.*data.obj(notEd)';
-cost(8,notEd) = gdpl_lbd;
+worker_presence        = x - ((1-x).*isosym - (1-x.*(1-hw)).*isoasym)./worker_numbers';
+worker_presence_int     = trapz(t,worker_presence);
 
-%Consumer Demand
-% betamod       = g(:,1+2*lx+6*ln+1);
-% conloss       = min((1-betamod).*data.hconsl(notEd)',1).*data.hcon(notEd)';
-% prdloss       = (absx+1-x).*data.obj(notEd)';
-% difloss       = max(0,conloss-prdloss);%to avoid double counting
-% gdpl_crd      = trapz(t,difloss);
-cost(9,notEd) = 0;%gdpl_crd;
-%zero during ld: betamod(sum(x,2)<44)=1;
+GDP_in = sum(worker_presence_int .* data.obj(notEd)');
+max_GDP = (max(t)-min(t))*sum(data.obj);
+costs.GDP_lost = max_GDP - GDP_in;
 
-%Medium-Term
-cost(10,notEd) = 0;
-
-ccost_t(:,2*ln+notEd) = cumtrapz(t,absx,1).*data.obj(notEd)';
-ccost_t(:,3*ln+notEd) = cumtrapz(t,(1-x),1).*data.obj(notEd)';
 
 %% IMPC
 
