@@ -6,7 +6,7 @@
 
 % p3: fraction of infectiousness averted
 
-function p3 = get_case_ID_rate(p2, Ip)
+function frac_cases_found = get_case_ID_rate(p2, Ip)
 
     trate = p2.trate;
     
@@ -20,8 +20,7 @@ function p3 = get_case_ID_rate(p2, Ip)
     
     frac_cases_found = max(frac_cases_found, trate/10^5 );
     
-    frac_infectiousness_averted = 1 - p2.frac_asym_infectiousness_remaining;
-    p3 = frac_cases_found * frac_infectiousness_averted;
+    
     
 end
     
