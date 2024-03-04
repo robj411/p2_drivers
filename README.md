@@ -167,7 +167,7 @@ production.
 where $p_{19,i}$ is the fraction of the sector working from home.
 $B_{1,i}(t)$ represents worker sickness and death:
 
-$$B_{1,i}(t)=\sum_{v=0}^2\left(1-p_{H,i,v})p_4p_{18}^{(S)}I_{i,v}^{(S)}+p_{H,i,v}p_4I_{i,v}^{(S)}+H_{i,v}+D_{i,v}\right),$$
+$$B_{1,i}(t)=\sum_{v=0}^2\left((1-p_{H,i,v})p_4p_{18}^{(S)}I_{i,v}^{(S)}+p_{H,i,v}p_4I_{i,v}^{(S)}+H_{i,v}+D_{i,v}\right),$$
 
 and $B_{2,i}(t)$ represents output from asymptomatic self-isolating
 workers:
