@@ -191,7 +191,7 @@ params[!params%in%colnames(allresults)]
 
 ## negatives ###########################
 
-dispcols <- colnames()%in%c('Cost','GDP_loss','Deaths','School','igroup','strategy','samplei','Exit_wave','scen_Exit_wave')
+dispcols <- colnames(allresults)%in%c('Cost','GDP_loss','Deaths','School','igroup','strategy','samplei','Exit_wave','Scen_Exit_wave')
 nneg <- 0
 for(vaccination_level in vaccination_levels){
   for(bpsv in bpsv_levels){
@@ -202,7 +202,7 @@ for(vaccination_level in vaccination_levels){
         subtab <- subset(difftab,igroup==income_level)
         subtab$sample <- 1:nrow(subtab)
         print(income_level)
-        print(subset(subtab,Cost< 0 & !(scen_Exit_wave>(1-1e-2)) )[,dispcols])
+        print(subset(subtab,Cost< 0 & !(scen_Exit_wave>(1-1e-2)) )[,..dispcols])
         nneg <- nneg + nrow(subset(subtab,Cost< 0 ))
       }
     }
