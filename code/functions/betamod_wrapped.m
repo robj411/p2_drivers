@@ -9,8 +9,6 @@
 % betamod: scalar between 0 and 1
 
 function betamod = betamod_wrapped(ddk, p2, data, mandate)
-
-    
     
     if mandate==1 % means no mandate
         betamod = ones(size(ddk));
