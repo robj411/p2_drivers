@@ -167,7 +167,7 @@ production.
 where $p_{19,i}$ is the fraction of the sector working from home.
 $B_{1,i}(t)$ represents worker sickness and death:
 
-$$B_{1,i}(t)=\sum_{v=0}^2\left(1-p_{H,i,v})p_4p_{18}^{(S)}I_{i,v}^{(S)}+p_{H,i,v}p_4I_{i,v}^{(S)}+H_{i,v}+D_i\right),$$
+$$B_{1,i}(t)=\sum_{v=0}^2\left(1-p_{H,i,v})p_4p_{18}^{(S)}I_{i,v}^{(S)}+p_{H,i,v}p_4I_{i,v}^{(S)}+H_{i,v}+D_{i,v}\right),$$
 
 and $B_{2,i}(t)$ represents output from asymptomatic self-isolating
 workers:
@@ -212,7 +212,7 @@ remote education and $x_{\text{ed}}(t)$ is the openness of schools,
 $A_1(t)$ represents education lost due to student sickness with
 COVID-19:
 
-$$A_1(t)=\sum_{v=0}^2\left(1-p_{H,i_{\text{school}},v})p_4p_{18}^{(S)}I_{i_{\text{school}}}^{(S)}+p_{H,i_{\text{school}},v}p_4I_{i_{\text{school}}}^{(S)}\right)+H_{i_{\text{school}}},$$
+$$A_1(t)=\sum_{v=0}^2\left(1-p_{H,i_{\text{school}},v})p_4p_{18}^{(S)}I_{i_{\text{school}},v}^{(S)}+p_{H,i_{\text{school}},v}p_4I_{i_{\text{school}},v}^{(S)}+H_{i_{\text{school}},v}\right),$$
 
 $p_{18}$ is the number of days spent in self isolation per day of
 infectiousness (e.g. suppose the average infectious period is four days
