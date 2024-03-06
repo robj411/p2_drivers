@@ -33,29 +33,31 @@ function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
     data.NNvec = NNvec;
     zs = zeros(size(data.NNs));
     
-    % get low-contact matrix
-    config_min = data.x_econ(:,2)*.9;
-    NNmin = NNbar;
-%     NNmin(1:nSectors) = NNmin(1:nSectors) .* xmin;
-%     NNmin(nSectors+adInd) =  sum(NNbar([1:nSectors,nSectors+adInd])) - sum(NNmin(1:nSectors));
-    Dmin = p2MakeDs(data,NNmin,config_min,data.wfh(2,:));
-    candidate_infectees_min = get_R(nStrata, dis, NNmin, zs, zs, NNmin, Dmin, 1, 1, 0, 0);
-    
-    Dvec = zeros(nStrata,nStrata,nConfigs);
+    % get low-contact matrices
+    config_min_econ = data.x_econ(:,2)*.95;
+    Dminecon = p2MakeDs(data,NNbar,config_min_econ,data.wfh(2,:));
+    candidate_infectees_econ = get_candidate_infectees(nStrata, dis, NNbar, zs, zs, 0, 0, NNbar, Dminecon);
+    config_min_sch = data.x_schc(:,2)*.95;
+    Dminschc = p2MakeDs(data,NNbar,config_min_sch,data.wfh(2,:));
+    candidate_infectees_schc = get_candidate_infectees(nStrata, dis, NNbar, zs, zs, 0, 0, NNbar, Dminschc);
+    candidate_infectees_min = min(candidate_infectees_schc,candidate_infectees_econ);
+   
     candidate_infectees = zeros(nConfigs,1);
+    Dvec = zeros(nStrata,nStrata,nConfigs);
     for i = 1:nConfigs
         % get matrix per configuration
         Dtemp = p2MakeDs(data,NNvec(:,i),configMat(:,i),data.hw(i,:));
         % store matrix in list
         Dvec(:,:,i) = Dtemp;
-        
-        candidate_infectees(i) = get_R(nStrata, dis, NNvec(:,i), zs, zs,...
-            NNvec(:,i), Dtemp, 1, 1, 0, 0);
+
+        candidate_infectees(i) = get_candidate_infectees(nStrata,dis,NNbar, zs, zs, 0, 0, NNbar, Dtemp);
+%         candidate_infectees(i) = get_R(nStrata, dis, NNbar, zs, zs,...
+%            NNbar, Dtemp, 1, 1, 0, 0);
     end
     candidate_infectees_max = candidate_infectees(1);
-        
+    
     % store amount by which configurations reduce contacts
-    data.rel_mobility = (candidate_infectees_max - candidate_infectees)./(candidate_infectees_max-candidate_infectees_min);
+%     data.rel_mobility = (candidate_infectees_max - candidate_infectees)./(candidate_infectees_max-candidate_infectees_min);
     data.rel_mobility = (candidate_infectees)./(candidate_infectees_max);
     rel_mobility_min = candidate_infectees_min/candidate_infectees_max;
     data.rel_stringency = (1-data.rel_mobility) / max(1-[rel_mobility_min; data.rel_mobility]);
@@ -289,7 +291,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     end
     
     ddk = 10^6*sum(mu.*Hclass,2)/sumNN0;
-    betamod = betamod_wrapped(ddk, p2, data, i);
+    betamod = betamod_wrapped(ddk, data, i);
     
     [p3, p4] = fraction_averted_self_isolating(sum(Iclass,2), sumNN0, p2, tout, i);
     
@@ -393,21 +395,24 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
 
     %% FOI
     
-    foi = get_foi(dis2, hospital_occupancy, p2, data, i,...
+    foi = get_foi(dis2, hospital_occupancy, data, i,...
         Ina,Ins,Inav1,Insv1,Inav2,Insv2,D,NN0);
+    
 
     %% VACCINATION
     
     [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
         get_vax_rates(p2, t, nStrata, R,S,DE, Rv1,Sv1);
 
-%     if t<13
-%         betamod = betamod_wrapped(10^6*sum(dis2.mu.*hospital_occupancy)/sum(NN0), ...
-%             p2, data, i);
-%         Rt = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-%             data.NNvec(:,i),D,dis2.beta,betamod,p3,p4);
-%         disp([i t Rt betamod p3 p4])
-%     end
+    if t<83
+%         betamod = betamod_wrapped(10^6*sum(dis2.mu.*hospital_occupancy)/sum(NN0),p2, data, i);
+%         Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,NN0,data.Dvec(:,:,1),dis2.beta,1,0,0);
+%         Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,NN0,D,dis2.beta,1,0,0);
+%         Rt1mod = get_R(nStrata,dis2,NN0,Sv1,Sv2,NN0,data.Dvec(:,:,1),dis2.beta,1,0,0);
+%         Rt2mod = get_R(nStrata,dis2,NN0,Sv1,Sv2,NN0,D,dis2.beta,1,0,0);
+%         disp([i t Rt1 Rt2 Rt1mod Rt2mod data.rel_mobility(i) Rt2/Rt1 sum(hospital_occupancy)/1e6])
+%         disp([t foi'])
+    end
 
     %% EQUATIONS
 
@@ -513,9 +518,8 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,
     minttvec3 = min(t-(data.tvec(end-1)+7),0);
     minttvec4 = min(t-(data.tvec(end-1)+7),0);
     if ((i==2 && minttvec3==0) || (i==3  && minttvec4==0))       
-        betamod = betamod_wrapped(ddk, p2, data, 3);
-        Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-            data.NNvec(:,3),data.Dvec(:,:,3),dis2.beta,betamod,p3,p4);
+        
+        Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 3);
 %         disp([t Rt1])
         R1flag3 = min(0.95-Rt1,0);
         R1flag4 = min(Rt1-1.2000,0);
@@ -556,9 +560,10 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,
     R2flag = otherval + ival + tval;
     if ival==0 && tval==0
         if otherval~=0
-            betamod = betamod_wrapped(ddk, p2, data, 5);
-            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-                data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+%             betamod = betamod_wrapped(ddk, p2, data, 5);
+%             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
+%                 data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
             R2flag = min(1.00-Rt2,0);
 %             disp([t Rt2])
         end
@@ -584,9 +589,10 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,
     hval = min(p2.hosp_final_threshold - sumH,0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
-        betamod = betamod_wrapped(ddk, p2, data, i);
-        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-            data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+%         betamod = betamod_wrapped(ddk, p2, data, i);
+%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
+%             data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
 %         disp([t/1000 Rt3 betamod p3 p4 sumH ])
@@ -688,7 +694,8 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
         if otherval~=0
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
-            Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+%             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
             R2flag = min(1.00-Rt2,0);
         end
     end
@@ -710,9 +717,10 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     sumH = sum(H + Hv1 + Hv2);
     hval = min(p2.hosp_final_threshold-sumH,0);
     R3flag = tval + hval;
-    if tval==0 && hval==0        
-        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-            data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+    if tval==0 && hval==0     
+        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
+%             data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
 %         doubling_time = dis.generation_time*log(2) /  log(Rt3);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
@@ -787,7 +795,8 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
         if otherval~=0
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
-            Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+%             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
             R2flag = min(1.00-Rt2,0);
         end
     end
@@ -813,8 +822,9 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     hval = min(p2.hosp_final_threshold-sumH,0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
-        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-            data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
+%             data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
 %         disp([t/1000 Rt3 sumH])

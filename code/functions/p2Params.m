@@ -3,7 +3,7 @@
 % dis: struct of pathogen parameters
 % p2: struct of p2 intervention parameters
 % data: struct of general model parameters
-% vaccine_day: 100 or 326, depending on SARS-X vaccine scenario
+% vaccine_day: 100 or 365, depending on SARS-X vaccine scenario
 % bpsv: 0 or 1, depending on BPSV scenario (present or absent)
 
 % dis: struct of pathogen parameters
@@ -64,7 +64,7 @@ p2.final_doubling_time_threshold = 30;
 
 t_vax    = data.t_vax;                      %Vaccine Administration Time
 
-if bpsv==0 && vaccine_day==326
+if bpsv==0 && vaccine_day==365
     vaccination_rate_pc = 0.5/100;
     vaccine_uptake  = .4;
 else
