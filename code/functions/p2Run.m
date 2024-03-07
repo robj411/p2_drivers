@@ -63,6 +63,8 @@ function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
     data.rel_stringency = (1-data.rel_mobility) / max(1-[rel_mobility_min; data.rel_mobility]);
     data.Dvec = Dvec;
     data.strategy = strategy;
+
+    data.basic_foi = Dvec(:,:,1)*(1./NNbar);
     
     [data, returnobject, isequence] = p2SimVax(data, dis, workerConfigMat, p2);
 
