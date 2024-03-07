@@ -11,7 +11,7 @@
 
 % function sd_out = social_distancing(lower_bound,rate,deaths_per_10k,current_drop ) 
 function sd = social_distancing(baseline, death_coef, mandate_coef,...
-                                    deaths_per_mil,rel_mobility, rel_stringency) 
+                                    deaths_per_mil, rel_stringency) 
     
     % same function as in R code where parameters fitted
     sd = 1./(1+death_coef.*deaths_per_mil + mandate_coef.*rel_stringency) .* (1-baseline) + baseline;
