@@ -1,8 +1,8 @@
 % function to combine population and disease parameters to get
 % within-country pathogen parameters
 %
-% dis: struct of pathogen parameters
 % data: struct of general model parameters
+% dis: struct of pathogen parameters
 % R0betafun: the function that computes beta from R0
 %
 % dis: struct of pathogen parameters
@@ -118,16 +118,11 @@ dis.generation_time = log(dis.R0) / (log(2) / dis.Td);
 % % get upper Rs in different configurations
 % configurations = [data.x_elim, data.x_schc, data.x_econ];
 % NNbar                = data.NNs;
-% NNvec                = repmat(NNbar,1,size(configurations,2));
-% % NNvec                = repmat(NNbar(1:nSectors),1,size(configurations,2)).*configurations;
-% % NNworkSum            = sum(NNvec,1);
-% % NNvec(nSectors+1:length(NNbar),:)     = repmat(NNbar(nSectors+1:length(NNbar)),1,size(configurations,2));
-% % NNvec(nSectors+adInd,:)    = sum(NNbar([1:nSectors,nSectors+adInd]))-NNworkSum;
 % R0s = [];
 % zs = zeros(size(data.NNs));
 % for i=1:size(configurations,2)
-%     Dtemp   = p2MakeDs(data,NNvec(:,i),configurations(:,i),data.wfh(1,:));
-%     R0s(i) = get_R(data.nStrata, dis, NNs, zs, zs, dis.beta, 0, 0, 0, data, i, Dtemp);
+%     Dtemp   = p2MakeDs(data,NNbar,configurations(:,i),data.wfh(1,:));
+%     R0s(i) = get_R(data.nStrata, dis, NNbar, zs, zs, dis.beta, 0, 0, 0, data, i, Dtemp);
 % end
 % dis.R0s = R0s;
 

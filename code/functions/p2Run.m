@@ -1,10 +1,10 @@
 % run model
-
+%
+% data: struct of general model parameters
 % dis: struct of pathogen parameters
 % strategy: string specifying which mitigation strategy is followed
 % p2: struct of p2 intervention parameters
-% data: struct of general model parameters
-
+%
 % data: struct of general model parameters
 % returnobject: struct of epi outcomes 
 % isequence: tables of configurations (i values) chosen and times at which
@@ -23,15 +23,15 @@ function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
     nConfigs = length(configuration)/data.nSectors;
 
     NNbar = data.NNs;
-    NNvec = repmat(NNbar,1,nConfigs);
     configMat = reshape(configuration,nSectors,nConfigs);
     workerConfigMat = configMat;
+    zs = zeros(size(data.NNs));
+%     NNvec = repmat(NNbar,1,nConfigs);
 %     NNvec                = repmat(NNbar(1:nSectors),1,int).*workerConfigMat;
 %     NNworkSum            = sum(NNvec,1);
 %     NNvec(nSectors+1:nStrata,:)     = repmat(NNbar(nSectors+1:nStrata),1,int);
 %     NNvec(nSectors+adInd,:)    = sum(NNbar([1:nSectors,nSectors+adInd]))-NNworkSum;
-    data.NNvec = NNvec;
-    zs = zeros(size(data.NNs));
+%     data.NNvec = NNvec;
     
     % get low-contact matrices
     config_min_econ = data.x_econ(:,2)*.95;
@@ -46,7 +46,7 @@ function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
     Dvec = zeros(nStrata,nStrata,nConfigs);
     for i = 1:nConfigs
         % get matrix per configuration
-        Dtemp = p2MakeDs(data,NNvec(:,i),configMat(:,i),data.hw(i,:));
+        Dtemp = p2MakeDs(data,NNbar,configMat(:,i),data.hw(i,:));
         % store matrix in list
         Dvec(:,:,i) = Dtemp;
 
@@ -58,9 +58,9 @@ function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
     
     % store amount by which configurations reduce contacts
 %     data.rel_mobility = (candidate_infectees_max - candidate_infectees)./(candidate_infectees_max-candidate_infectees_min);
-    data.rel_mobility = (candidate_infectees)./(candidate_infectees_max);
+    rel_mobility = (candidate_infectees)./(candidate_infectees_max);
     rel_mobility_min = candidate_infectees_min/candidate_infectees_max;
-    data.rel_stringency = (1-data.rel_mobility) / max(1-[rel_mobility_min; data.rel_mobility]);
+    data.rel_stringency = (1-rel_mobility) / max(1-[rel_mobility_min; rel_mobility]);
     data.Dvec = Dvec;
     data.strategy = strategy;
 
@@ -78,12 +78,11 @@ function [data,returnobject,isequence] = p2SimVax(data, dis, workerConfigMat, p2
     %% PARAMETERS
     nStrata = size(data.NNs,1);
     nSectors = data.nSectors;
-    NNvec = data.NNvec;
-    NNbar = NNvec(:,1);
+    NNbar = data.NNs;
     sumWorkingAge = sum(NNbar([1:nSectors,nSectors+3]));
     compindex = data.compindex;
     nODEs = max(struct2array(compindex));
-    S0 = NNvec(:,1);
+    S0 = NNbar;
     Dvec = data.Dvec;
     
     % initial conditions
@@ -120,12 +119,12 @@ function [data,returnobject,isequence] = p2SimVax(data, dis, workerConfigMat, p2
     while Tout(end)<tend 
 
         Wit               = workerConfigMat(:,i);    
-        NNfeed            = NNvec(:,i);
+        NNfeed            = NNbar;
         NNfeed(NNfeed==0) = 1;
         D                 = Dvec(:,:,i);
 
         %Vaccination Rollout by Sector
-        NNnext              = NNvec(:,i);
+        NNnext              = NNbar;
         NNnext(nSectors+[1,2])    = 1;
         NNnext([1:nSectors,nSectors+3]) = NNnext([1:nSectors,nSectors+3])/sumWorkingAge;
         NNnext(end)         = 1;
@@ -134,7 +133,7 @@ function [data,returnobject,isequence] = p2SimVax(data, dis, workerConfigMat, p2
         isequence = [isequence; [t0 i]];
         
         [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0,inext,still_susc]=...
-         integr8(data,NNfeed,D,i,t0,tend,dis,y0,p2);
+         integr8(data,D,i,t0,tend,dis,y0,p2);
         if inext==0
             tend = tout(end);
         end
@@ -193,7 +192,7 @@ end
 %%
 
 function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,still_susc]=...
-          integr8(data,NN0,D,i,t0,tend,dis,y0,p2)
+          integr8(data,D,i,t0,tend,dis,y0,p2)
       
     %% copy over only required items
     
@@ -202,30 +201,28 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
 %     rundata.nSectors = data.nSectors;
 %     rundata.hw = data.hw; 
 %     rundata.inext = data.inext; 
-%     rundata.NNs = data.NNs; 
-    rundata.NNvec = data.NNvec; 
+    rundata.NNs = data.NNs; 
     rundata.Dvec = data.Dvec;
     rundata.tvec = data.tvec;
     rundata.compindex = data.compindex; 
     rundata.t_import = data.t_import; 
     rundata.imand = data.imand; 
-    rundata.rel_mobility = data.rel_mobility;
     rundata.rel_stringency = data.rel_stringency;
 
     rundata.sd_baseline = data.sd_baseline;
     rundata.sd_death_coef = data.sd_death_coef;
     rundata.sd_mandate_coef = data.sd_mandate_coef;
     
+    NN0 = data.NNs; 
     %% CALL
 
     compindex = data.compindex;
     nStrata = size(NN0,1);
-    fun  = @(t,y)ODEs(rundata,NN0,D,i,t,dis,y,p2);
-    sumNN0 = sum(NN0);
+    fun  = @(t,y)ODEs(rundata,D,i,t,dis,y,p2);
     strategy = data.strategy;
 
     if strcmp(strategy,'Elimination')
-        options = odeset('Events',@(t,y)elimination(t,y,data,sumNN0,nStrata,dis,i,p2));
+        options = odeset('Events',@(t,y)elimination(t,y,data,nStrata,dis,i,p2));
     elseif strcmp(strategy,'Economic Closures') || strcmp(strategy,'School Closures')
         options = odeset('Events',@(t,y)reactive_closures(t,y,data,nStrata,dis,i,p2));
     elseif strcmp(strategy,'No Closures')
@@ -292,6 +289,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
         mu(ii,:)    = dis2.mu;
     end
     
+    sumNN0 = sum(NN0);
     ddk = 10^6*sum(mu.*Hclass,2)/sumNN0;
     betamod = betamod_wrapped(ddk, data, i);
     
@@ -326,8 +324,9 @@ end
 
 %%
 
-function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
+function [f] = ODEs(data,D,i,t,dis,y,p2)
 
+    NN0 = data.NNs;
     nStrata = size(NN0,1);
     y_mat = reshape(y,nStrata,[]); 
 
@@ -398,7 +397,7 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     %% FOI
     
     foi = get_foi(dis2, hospital_occupancy, data, i,...
-        Ina,Ins,Inav1,Insv1,Inav2,Insv2,D,NN0);
+        Ina,Ins,Inav1,Insv1,Inav2,Insv2,D);
     
 
     %% VACCINATION
@@ -409,10 +408,6 @@ function [f] = ODEs(data,NN0,D,i,t,dis,y,p2)
     if t<83
 %         betamod = betamod_wrapped(10^6*sum(dis2.mu.*hospital_occupancy)/sum(NN0),p2, data, i);
 %         Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,NN0,data.Dvec(:,:,1),dis2.beta,1,0,0);
-%         Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,NN0,D,dis2.beta,1,0,0);
-%         Rt1mod = get_R(nStrata,dis2,NN0,Sv1,Sv2,NN0,data.Dvec(:,:,1),dis2.beta,1,0,0);
-%         Rt2mod = get_R(nStrata,dis2,NN0,Sv1,Sv2,NN0,D,dis2.beta,1,0,0);
-%         disp([i t Rt1 Rt2 Rt1mod Rt2mod data.rel_mobility(i) Rt2/Rt1 sum(hospital_occupancy)/1e6])
 %         disp([t foi'])
     end
 
@@ -485,10 +480,11 @@ end
 
 
 
-function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,p2)
+function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     
     y_mat = reshape(y,nStrata,[]);
     compindex = data.compindex;
+    sumN = sum(data.NNs);
     
     S    = y_mat(:,compindex.S_index(1));
     H    = y_mat(:,compindex.H_index(1));
@@ -564,7 +560,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,
         if otherval~=0
 %             betamod = betamod_wrapped(ddk, p2, data, 5);
 %             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-%                 data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+%                 data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
             R2flag = min(1.00-Rt2,0);
 %             disp([t Rt2])
@@ -593,7 +589,7 @@ function [value,isterminal,direction] = elimination(t,y,data,sumN,nStrata,dis,i,
     if ival==0 && tval==0 && hval==0
 %         betamod = betamod_wrapped(ddk, p2, data, i);
 %         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-%             data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+%             data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
@@ -643,13 +639,12 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     Tcap   = t + log(p2.Hmax/occ)/r - 7;
     
     %% isolating
-    sumN = sum(data.NNvec(:,5));
+    sumN = sum(data.NNs);
     [p3, p4] = fraction_averted_self_isolating(sum(sum(y_mat(:,compindex.I_index))), sumN, p2, t, i);
           
     %% distancing
     ddk    = 10^6*sum(dis2.mu.*(H + Hv1 + Hv2))/sumN;
-    betamod = social_distancing(data.sd_baseline, data.sd_death_coef, data.sd_mandate_coef,...
-        ddk, data.rel_mobility(i), data.rel_stringency(i));
+%     betamod = social_distancing(data.sd_baseline, data.sd_death_coef, data.sd_mandate_coef,ddk, data.rel_stringency(i));
      
     %% Event 1: Response Time
     
@@ -697,7 +692,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-%             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+%             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
             R2flag = min(1.00-Rt2,0);
         end
     end
@@ -722,7 +717,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     if tval==0 && hval==0     
         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
 %         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-%             data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+%             data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
 %         doubling_time = dis.generation_time*log(2) /  log(Rt3);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
@@ -763,13 +758,12 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     dis2 = update_vax_dis_parameters(dis, S, Sn, compindex, y_mat);
     
     %% isolating
-    sumN = sum(data.NNvec(:,5));
+    sumN = sum(data.NNs);
     [p3, p4] = fraction_averted_self_isolating(sum(sum(y_mat(:,compindex.I_index))), sumN, p2, t, i);
           
     %% distancing
     ddk    = 10^6*sum(dis2.mu.*(H + Hv1 + Hv2))/sumN;
-    betamod = social_distancing(data.sd_baseline, data.sd_death_coef, data.sd_mandate_coef,...
-        ddk, data.rel_mobility(i), data.rel_stringency(i));
+%     betamod = social_distancing(data.sd_baseline, data.sd_death_coef, data.sd_mandate_coef,ddk, data.rel_stringency(i));
      
 
     %% Event 1: Response Time
@@ -798,7 +792,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-%             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+%             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
             R2flag = min(1.00-Rt2,0);
         end
     end
@@ -826,7 +820,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     if ival==0 && tval==0 && hval==0
         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
 %         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-%             data.NNvec(:,5),data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+%             data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
 %         disp([t/1000 Rt3 sumH])
