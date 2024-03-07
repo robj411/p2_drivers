@@ -1,8 +1,7 @@
 % computes force of infection (foi)
-
+%
 % dis: struct of pathogen parameters
 % hospital_occupancy: number of people in hospital 
-% p2: struct of p2 intervention parameters
 % data: struct of general model parameters
 % mandate: integer corresponding to states of government mandate       
 % Ina: number of unvaccinated infectious not self isolating asymptomatic people
@@ -13,7 +12,7 @@
 % Insv2: number of SARS-X--vaccinated infectious not self isolating symptomatic people
 % D: contact matrix
 % NN0: number of people per stratum
-
+%
 % foi: force of infection, vector
 
 function foi = get_foi(dis, hospital_occupancy, data, mandate,...
@@ -35,7 +34,7 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
     D0 = data.Dvec(:,:,1);
     foi0 = D0*(I./NN0);
     foi1 = D*(I./NN0);
-    sd_so_far = (foi1+1e-10)./(foi0+1e-10);
+    sd_so_far = median((foi1+1e-10)./(foi0+1e-10));
 %     sd = betamod*data.rel_mobility(mandate);
     new_betamod = sd./sd_so_far;
     foi     = phi.*beta.*(new_betamod.*D)*(I./NN0);
