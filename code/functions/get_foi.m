@@ -11,13 +11,13 @@
 % Inav2: number of SARS-X--vaccinated infectious not self isolating asymptomatic people
 % Insv2: number of SARS-X--vaccinated infectious not self isolating symptomatic people
 % D: contact matrix
-% NN0: number of people per stratum
 %
 % foi: force of infection, vector
 
 function foi = get_foi(dis, hospital_occupancy, data, mandate,...
-        Ina,Ins,Inav1,Insv1,Inav2,Insv2,D,NN0)
+        Ina,Ins,Inav1,Insv1,Inav2,Insv2,D)
     
+    NN0 = data.NNs;
     phi = 1 .* dis.rr_infection;  %+data.amp*cos((t-32-data.phi)/(365/2*pi));
 
     sd = betamod_wrapped(10^6*sum(dis.mu.*hospital_occupancy)/sum(NN0), ...
@@ -32,12 +32,13 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
 %     foi     = phi.*beta.*betamod.*(D*(I./NN0));
 
     D0 = data.Dvec(:,:,1);
-    foi0 = D0*(I./NN0);
-    foi1 = D*(I./NN0);
+    Ifrac = I./NN0;
+    foi0 = D0*Ifrac;
+    foi1 = D*Ifrac;
     sd_so_far = median((foi1+1e-10)./(foi0+1e-10));
 %     sd = betamod*data.rel_mobility(mandate);
     new_betamod = sd./sd_so_far;
-    foi     = phi.*beta.*(new_betamod.*D)*(I./NN0);
+    foi     = phi.*beta.*(new_betamod.*D)*Ifrac;
     
 
     
