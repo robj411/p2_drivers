@@ -191,7 +191,7 @@ params[!params%in%colnames(allresults)]
 
 ## negatives ###########################
 
-dispcols <- colnames(allresults)%in%c('Cost','GDP_loss','Deaths','School','igroup','strategy','samplei','Exit_wave','Scen_Exit_wave')
+dispcols <- colnames(allresults)%in%c('Cost','GDP_loss','Deaths','School','igroup','strategy','samplei','Exit_wave','scen_Exit_wave')
 nneg <- 0
 for(vaccination_level in vaccination_levels){
   for(bpsv in bpsv_levels){
