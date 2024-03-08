@@ -161,10 +161,10 @@ leaving a smaller fraction ($`\hat{x}_{i}(t)`$) to contribute to
 production.
 
 ``` math
-\hat{x}_{i}(t)=x_{i}(t) - \left((1-x_{i}(t))A_{1,i}(t)  + (1-x_{i}(t)(1-p_{19,i}))A_{2,i}(t)\right)/W_i
+\hat{x}_{i}(t)=x_{i}(t) - \left((1-x_{i}(t))A_{1,i}(t)  + (1-x_{i}(t)(1-q_i))A_{2,i}(t)\right)/W_i
 ```
 
-where $p_{19,i}$ is the fraction of the sector working from home.
+where $q_i$ is the fraction of the sector working from home.
 $A_{1,i}(t)$ represents worker sickness and death:
 
 $$A_{1,i}(t)=\sum_{v=0}^2\left((1-p_{H,i,v})p_4p_{18}^{(S)}I_{i,v}^{(S)}+p_{H,i,v}p_4I_{i,v}^{(S)}+H_{i,v}+D_{i,v}\right),$$
@@ -254,9 +254,9 @@ pertinent to intra- rather than international modelling.
 ## 3.1 Ordinary differential equations
 
 $$\begin{align}
-\frac{dS_{i,v}}{dt} & = \sum_{u=0}^{v-1}m_{v,i}S_{i,u,v}^{(C)} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
-\frac{dS_{i,u,v}^{(C)}}{dt} & = w_{u,v,i}(t)S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)S_{i,u,v}^{(C)}  \\
-\frac{dE_{i,v}}{dt} & = k_{1,v}(t)\left(S_{i,v}+\sum_{u=v+1}^2S_{i,v,u}^{(C)}\right) - (k_2+k_4)E_{i,v} \\
+\frac{dS_{i,v}}{dt} & = \sum_{u=0}^{v-1}m_{v,i}S_{i,u,v}^{(C)} - \left( k_{1,i,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
+\frac{dS_{i,u,v}^{(C)}}{dt} & = w_{u,v,i}(t)S_{i,u} -\left( k_{1,i,v}(t) + m_{v,i} \right)S_{i,u,v}^{(C)}  \\
+\frac{dE_{i,v}}{dt} & = k_{1,i,v}(t)\left(S_{i,v}+\sum_{u=v+1}^2S_{i,v,u}^{(C)}\right) - (k_2+k_4)E_{i,v} \\
 \frac{dI_{i,v}^{(A)}}{dt} & = k_2E_{i,v} - k_3I_{i,v}^{(A)} \\
 \frac{dI_{i,v}^{(S)}}{dt} & = k_4E_{i,v} - (k_{5,i,v}+k_{6,i,v})I_{i,v}^{(S)} \\
 \frac{dR_{i,v}}{dt} & = k_3I_{i,v}^{(A)} + k_{5,i,v}I_{i,v}^{(S)} + k_{7,i}(t) H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}(t)R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}(t)R_{i,v-1}\\
@@ -286,18 +286,18 @@ Possible transitions between disease states are shown in Figure
 of time $t$, vaccination status $v$, and group identity $i$ (where the
 groups are the 45 sectors and the four age groups).
 
-The rate of infection of susceptible individuals, $k_{1,v}(t)$, is
+The rate of infection of susceptible individuals, $k_{1,i,v}(t)$, is
 defined as
 
 $$\begin{equation}
-k_{1,v}(t) = \eta_{A,v}\rho(t)\beta\left(M(x)\cdot I^{(eff)}(t)\right)
+k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\left(\sum_{j=1}^{z}M_{i,j}(x)\cdot I_j(t)\right)
 \qquad(3.1)
 \end{equation}$$
 
 with
 
 ``` math
- I^{(eff)}(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{v}^{(A)}(t)+(1-p_4(t))I_{v}^{(S)}(t)). 
+ I(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{v}^{(A)}(t)+(1-p_4(t))I_{v}^{(S)}(t)). 
 ```
 
 Here, $\eta_{A,v}$ is the relative probability to be infected given
@@ -391,10 +391,10 @@ susceptible and recovered people, and $w_{1,2,i}(t)$ represents the
 rates of vaccinating BPSV-vaccinated susceptible and recovered people.
 $w_{0,2,i}(t)$ represents the rates of vaccinating people directly with
 the specific vaccine. $m_{1}$ and $m_{2}$ are the rates of
-seroconversion to vaccine-induced immunity, and $k_{12}(t)=k_{1,0}(t)$
-and $k_{19}(t)=k_{1,1}(t)$ are the rates of infection of just-vaccinated
-people, which returns them to the epidemiological pathway of the lower
-vaccination level.
+seroconversion to vaccine-induced immunity, and
+$k_{12,i}(t)=k_{1,i,v=0}(t)$ and $k_{19,i}(t)=k_{1,i,v=1}(t)$ are the
+rates of infection of just-vaccinated people, which returns them to the
+epidemiological pathway of the lower vaccination level.
 
 <div class="figure">
 
@@ -455,7 +455,7 @@ fraction of the age-population represented in group $j$, where $W_{j}$
 is the number of people in group $j$:
 
 ``` math
-M_{ij}(\textbf{1}) = M^{(4)}_{g(i),g(j)}\frac{W_{j}}{P_{g(j)}}
+M_{i,j}(\textbf{1}) = M^{(4)}_{g(i),g(j)}\frac{W_{j}}{P_{g(j)}}
 ```
 
 for $i$ and $j$ including all groups (working and non-working). Each
@@ -471,10 +471,10 @@ contacts that come from workplaces, and workplace-related contacts. From
 these, we get $U(\textbf{1})$ and $V(\textbf{1})$, constructing the
 matrices and normalising.
 
-Matrix U is diagonal and $U_{ii}(\textbf{1})=0$ for $i>N$ (Haw et al.
+Matrix U is diagonal and $U_{i,i}(\textbf{1})=0$ for $i>N$ (Haw et al.
 2022). Consumer-to-worker contacts (matrix $V$) describe contacts
 experienced by workers from consumers per sector. Note that
-$V_{ij}(\textbf{1})=0$ for $i>N$. Matrix $\hat{V}(\textbf{1})$ is the
+$V_{i,j}(\textbf{1})=0$ for $i>N$. Matrix $\hat{V}(\textbf{1})$ is the
 complement of matrix $V(\textbf{1})$, computed by multiplying through by
 population, transposing, and dividing again by population.
 
@@ -496,8 +496,8 @@ estimated separately in two age groups (pre-school age: 0—4; school age:
 school, and values for $g$=0 to 4 years old and $g$=5 to 19 year olds.
 
 Likewise, $T^{(T)}(\textbf{1})$ is also sampled as a fraction of total
-contacts. $T_{ij}^{(T)}(\textbf{1})\geq 0$ for $i=1,...,N$.
-$T_{ij}^{(T)}(\textbf{1})=0$ for $i>N$.
+contacts. $T_{i,j}^{(T)}(\textbf{1})\geq 0$ for $i=1,...,N$.
+$T_{i,j}^{(T)}(\textbf{1})=0$ for $i>N$.
 
 Finally, $T^{(H)}(\textbf{1})$ is sampled as a fraction of
 $T(\textbf{1})- T^{(S)}(\textbf{1}) - T^{(T)}(\textbf{1})$, which leaves
@@ -518,7 +518,7 @@ of closure. $x_{S}$ is the extent to which schools are open, so that the
 number of contacts per person scales superlinearly with school closure.
 
 $$\begin{equation}
-T_{ii}^{(S)}(x)=x_{S}^2T_{ii}^{(S)}(\textbf{1}).
+T_{i,i}^{(S)}(x)=x_{S}^2T_{i,i}^{(S)}(\textbf{1}).
 \qquad(3.2)
 \end{equation}$$
 
@@ -529,7 +529,7 @@ workplace. Again, the value for configuration $x$ is the value for
 $\textbf{1}$ scaled accordingly:
 
 $$\begin{equation}
-T_{ij}^{(T)}(x) = x_{j}(1-q_i)(1-q_j)T_{ij}^{(T)}(\textbf{1}).
+T_{i,j}^{(T)}(x) = x_{j}(1-q_i)(1-q_j)T_{i,j}^{(T)}(\textbf{1}).
 \qquad(3.3)
 \end{equation}$$
 
@@ -565,7 +565,7 @@ where we sum over only the hospitality sectors.
 ### 3.4.2 Matrix $U$: Worker-to-worker contacts
 
 $$\begin{equation}
-U_{ii}(x) = x_{i}(1-q_i)^2U_{ii}(\textbf{1}),
+U_{i,i}(x) = x_{i}(1-q_i)^2U_{i,i}(\textbf{1}),
 \qquad(3.5)
 \end{equation}$$
 
@@ -577,22 +577,22 @@ is, there are fewer contacts per person, but we do not approximate there
 being fewer people having them. This is because the latter is accounted
 for in the movement of people out of the group upon its closure.
 
-$$U_{ii}(x) = x_{i}^2(1-q_i)^2U_{ii}(\textbf{1})$$
+$$U_{i,i}(x) = x_{i}^2(1-q_i)^2U_{i,i}(\textbf{1})$$
 
 ``` math
-U_{ii}(x) = \hat{x}_i^2U_{ii}(\textbf{1}), \quad \hat{x}_i=\max(x_{i}-q_i,0)
+U_{i,i}(x) = \hat{x}_i^2U_{i,i}(\textbf{1}), \quad \hat{x}_i=\max(x_{i}-q_i,0)
 ```
 
 ### 3.4.3 Matrix $V$: Consumer-to-worker contacts
 
 $$\begin{equation}
-V_{ij}(x) = x_{i}(1-q_i)V_{ij}(\textbf{1}),
+V_{i,j}(x) = x_{i}(1-q_i)V_{i,j}(\textbf{1}),
 \qquad(3.6)
 \end{equation}$$
 
 for $j=1,...,N+3$.
 
-Here, there is linear scaling of $V_{ij}(\textbf{1})$ with respect to
+Here, there is linear scaling of $V_{i,j}(\textbf{1})$ with respect to
 working from home, and linear scaling with respect to sector closure,
 which becomes superlinear scaling for sectors as individuals are moved
 out of the compartment, as with matrix $U(x)$.
@@ -703,17 +703,17 @@ points.
 
 ## 3.6 Self isolating
 
-We assume that infectious people who know their status have a
-probability $p_1\sim\mathcal(U)(0,1)$ to self isolate, starting one day
-into their infectious period. We assume constant infectiousness over
-time. Then the amount of infectiousness averted of symptomatic people is
-$p_4=p_1(\gamma_I-\min(1,1/\gamma_I))$, who isolate due to the onset of
-symptoms, which we assume happens concurrently with onset of
-infectiousness. The fraction of asymptomatic cases identified by testing
-is $p_2(t)$. We assume asymptomatic cases have the same probability to
-self isolate and that test results are returned after one day of
+We assume that infectious people who know their status have a compliance
+$p_1\sim\mathcal(U)(0,1)$ with the instruction to self isolate, starting
+one day into their infectious period. We assume constant infectiousness
+over time and that a fraction $p_{19}$ of the symptomatic infectiousness
+is presymptomatic. Then the amount of infectiousness averted of
+symptomatic people is $p_4=p_1(1-p_{19})$, who isolate due to the onset
+of symptoms. The fraction of asymptomatic cases identified by testing is
+$p_2(t)$. We assume asymptomatic cases have the same probability to self
+isolate and that test results are returned after $p_{17}$ days of
 infectiousness. Then the infectiousness that testing averts is
-$p_3(t)=p_1p_2(t)(\gamma_A-\min(1,1/\gamma_A))$.
+$p_3(t)=p_1p_2(t)\min(0,(\gamma_A-p_{17})/\gamma_A)$.
 
 <!-- b0    = 2.197; -->
 <!-- b1    = 0.1838; -->
@@ -2521,15 +2521,15 @@ international travel, we set the maximum openness of the food and
 accommodation services sector to be limited by international tourism as:
 
 ``` math
-x = \min\{\hat{x}, 1+ y(z-1)\}
+x = \min\{\hat{x}, 1+ b(c-1)\}
 ```
 
 where $`\hat{x}`$ is the openness of the sector according to the
-schedule (i.e. the mitigation strategy), $y$ is the proportion of
-tourism that is international, and $z$ is the fraction international
+schedule (i.e. the mitigation strategy), $b$ is the proportion of
+tourism that is international, and $c$ is the fraction international
 tourism reduces to as a consequence of the pandemic. I.e. the tourism
-remaining is the domestic ($1-y$) plus that that comes in from abroad
-($yz$).
+remaining is the domestic ($1-b$) plus that that comes in from abroad
+($bc$).
 
 Therefore, the contribution of the GVA of the food and accommodation
 services sector is limited either by the pandemic, or by the mitigation

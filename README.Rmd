@@ -241,9 +241,9 @@ The value $p_{16}$ represents the effectiveness of remote teaching, which we sam
 ## Ordinary differential equations
 
 \begin{align}
-\frac{dS_{i,v}}{dt} & = \sum_{u=0}^{v-1}m_{v,i}S_{i,u,v}^{(C)} - \left( k_{1,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
-\frac{dS_{i,u,v}^{(C)}}{dt} & = w_{u,v,i}(t)S_{i,u} -\left( k_{1,v}(t) + m_{v,i} \right)S_{i,u,v}^{(C)}  \\
-\frac{dE_{i,v}}{dt} & = k_{1,v}(t)\left(S_{i,v}+\sum_{u=v+1}^2S_{i,v,u}^{(C)}\right) - (k_2+k_4)E_{i,v} \\
+\frac{dS_{i,v}}{dt} & = \sum_{u=0}^{v-1}m_{v,i}S_{i,u,v}^{(C)} - \left( k_{1,i,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
+\frac{dS_{i,u,v}^{(C)}}{dt} & = w_{u,v,i}(t)S_{i,u} -\left( k_{1,i,v}(t) + m_{v,i} \right)S_{i,u,v}^{(C)}  \\
+\frac{dE_{i,v}}{dt} & = k_{1,i,v}(t)\left(S_{i,v}+\sum_{u=v+1}^2S_{i,v,u}^{(C)}\right) - (k_2+k_4)E_{i,v} \\
 \frac{dI_{i,v}^{(A)}}{dt} & = k_2E_{i,v} - k_3I_{i,v}^{(A)} \\
 \frac{dI_{i,v}^{(S)}}{dt} & = k_4E_{i,v} - (k_{5,i,v}+k_{6,i,v})I_{i,v}^{(S)} \\
 \frac{dR_{i,v}}{dt} & = k_3I_{i,v}^{(A)} + k_{5,i,v}I_{i,v}^{(S)} + k_{7,i}(t) H_{i,v} - \sum_{u=v+1}^{2}w_{v,u,i}(t)R_{i,v} + \sum_{u=0}^{v-1}w_{u,v,i}(t)R_{i,v-1}\\
@@ -289,7 +289,7 @@ minimum size=15pt, font=\fontsize{10}{10}\selectfont, node distance=1]
     \node[latent, below=of L1] (I1) {$H_{i,v}$} ; %
     \node[latent, right=of L1] (R) {$R_{i,v}$} ; %
     \node[latent, right=of I1] (D) {$D_{i,v}$} ; %
-    \draw [arrow] (S) -- node [above] {$k_{1,v}(t)$} (E1);
+    \draw [arrow] (S) -- node [above] {$k_{1,i,v}(t)$} (E1);
     \draw [arrow] (E1) -- node [above] {$k_4$} (L1);
     \draw [arrow] (E1) -- node [above] {$k_2$} (L2);
     \draw [arrow] (L1) -- node [left] {$k_{6,i,v}$} (I1);
@@ -304,17 +304,17 @@ minimum size=15pt, font=\fontsize{10}{10}\selectfont, node distance=1]
 
 Possible transitions between disease states are shown in Figure \@ref(fig:statetransitions). Transition rates are functions of time $t$, vaccination status $v$, and group identity $i$ (where the groups are the 45 sectors and the four age groups).
 
-The rate of infection of susceptible individuals, $k_{1,v}(t)$, is defined as
+The rate of infection of susceptible individuals, $k_{1,i,v}(t)$, is defined as
 
 \begin{equation}
-k_{1,v}(t) = \eta_{A,v}\rho(t)\beta\left(M(x)\cdot I^{(eff)}(t)\right)
+k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\left(\sum_{j=1}^{z}M_{i,j}(x)\cdot I_j(t)\right)
 (\#eq:infection)
 \end{equation}
 
 with
 
 ```math
- I^{(eff)}(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{v}^{(A)}(t)+(1-p_4(t))I_{v}^{(S)}(t)). 
+ I(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{v}^{(A)}(t)+(1-p_4(t))I_{v}^{(S)}(t)). 
 ```
 
   Here, $\eta_{A,v}$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of social distancing; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p_3$ and $p_4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{\cdot,\cdot}$ is the vector of number of infectious asymptomatic ($I_{\cdot}^{(A)}$) and symptomatic ($I_{\cdot}^{(S)}$) people who are unvaccinated ($I_{0}^{(\cdot)}$), vaccinated with the BPSV ($I_{1}^{(\cdot)}$), or vaccinated with the specific vaccine ($I_{2}^{(\cdot)}$).
@@ -371,7 +371,7 @@ k_{8,i}(t) = p_{D,i}(t)/\lambda_{H,i}(t)
 
 In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who have received a full schedule of BPSV, and $v=2$ to people who have received a full schedule of the specific vaccine. How we model transitions between vaccination states is shown in Figure \@ref(fig:vaccinetransitions).
 
-$w_{0,1,i}(t)$ represents the rates of BPSV vaccination of unvaccinated susceptible and recovered people, and $w_{1,2,i}(t)$ represents the rates of vaccinating BPSV-vaccinated susceptible and recovered people. $w_{0,2,i}(t)$ represents the rates of vaccinating people directly with the specific vaccine. $m_{1}$ and $m_{2}$ are the rates of seroconversion to vaccine-induced immunity, and $k_{12}(t)=k_{1,0}(t)$ and $k_{19}(t)=k_{1,1}(t)$ are the rates of infection of just-vaccinated people, which returns them to the epidemiological pathway of the lower vaccination level.
+$w_{0,1,i}(t)$ represents the rates of BPSV vaccination of unvaccinated susceptible and recovered people, and $w_{1,2,i}(t)$ represents the rates of vaccinating BPSV-vaccinated susceptible and recovered people. $w_{0,2,i}(t)$ represents the rates of vaccinating people directly with the specific vaccine. $m_{1}$ and $m_{2}$ are the rates of seroconversion to vaccine-induced immunity, and $k_{12,i}(t)=k_{1,i,v=0}(t)$ and $k_{19,i}(t)=k_{1,i,v=1}(t)$ are the rates of infection of just-vaccinated people, which returns them to the epidemiological pathway of the lower vaccination level.
 
 ```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $S^{(C)}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $v$: vaccination status.", fig.ext = 'png',echo=F}
 \usetikzlibrary{shapes}
@@ -399,38 +399,38 @@ below left=5pt and 0pt of #1.south east] %
 \tikzstyle{latent} = [circle,fill=white,draw=black,inner sep=1pt,
 minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
 \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
-\clip (-3, -10) rectangle (8, 1);
+%\clip (-3, -10) rectangle (7, 1);
 \node[latent] (S) {$S_{v=0}$} ; %
-    \node[latent, draw=white,right=of S] (em) {$...$} ; %
+    \node[latent, draw=white,right=of S,xshift=1cm] (em) {$...$} ; %
     \node[latent, right=of em] (R) {$R_{v=0}$} ; %
-    \node[latent, below=of S] (S01) {$S_{0,1}^{(C)}$} ; %
+    \node[latent, below=of S,yshift=-1cm] (S01) {$S_{0,1}^{(C)}$} ; %
     \node[latent, below=of S01] (S1) {$S_{v=1}$} ; %
-    \node[latent, draw=white,right=of S1] (emv) {$...$} ; %
+    \node[latent, draw=white,right=of S1,xshift=1cm] (emv) {$...$} ; %
     \node[latent, right=of emv] (Rv) {$R_{v=1}$} ; %
     \node[latent, below=of S1,yshift=-1cm] (S12) {$S_{1,2}^{(C)}$} ; %
     \node[latent, left=of S12,xshift=.7cm] (S02) {$S_{0,2}^{(C)}$} ; %
     \node[latent, below=of S12] (S2) {$S_{v=2}$} ; %
-    \node[latent, draw=white,right=of S2] (emv2) {$...$} ; %
+    \node[latent, draw=white,right=of S2,xshift=1cm] (emv2) {$...$} ; %
     \node[latent, right=of emv2] (Rv2) {$R_{v=2}$} ; %
-    \draw [arrow] (S) -- node [right] {$w_{0,1}$} (S01);
+    \draw [arrow] (S) -- node [right,yshift=.5cm] {$w_{0,1,i}(t)$} (S01);
     \draw [arrow] (S) -- node [above] {} (em);
     \draw [arrow] (em) -- node [above] {} (R);
-    \draw [arrow] (S01) -- node [below] {$k_{12}$} (em);
-    \draw [arrow] (S02) edge[bend right] node [above,yshift=.5cm] {$k_{12}$} (em);
-    \draw [arrow] (S12) -- node [right] {$k_{19}$} (emv);
+    \draw [arrow] (S01) -- node [right] {$k_{12,i}(t)$} (em);
+    \draw [arrow] (S02) edge[bend right] node [right,yshift=.5cm,xshift=.25cm] {$k_{12,i}(t)$} (em);
+    \draw [arrow] (S12) -- node [right] {$k_{19,i}(t)$} (emv);
     \draw [arrow] (S1) -- node [above] {} (emv);
     \draw [arrow] (emv) -- node [above] {} (Rv);
     % \draw [arrow] (R) edge[bend right] node [above] {$k_{13}$} (S);
     \draw [arrow] (S01) -- node [right] {$m_1$} (S1);
     % \draw [arrow] (Rv) edge[bend right=-30] node [below] {$k_{14}$} (S1);
     % \draw [arrow] (Rv2) edge[bend right=-30] node [below] {$k_{18}$} (S2);
-    \draw [arrow] (S) edge[bend right] node [left] {$w_{0,2}$} (S02);
-    \draw [arrow] (R) edge[bend left] node [right] {$w_{0,2}$} (Rv2);
-    \draw [arrow] (R) -- node [right] {$w_{0,1}$} (Rv);
-    \draw [arrow] (S1) -- node [left] {$w_{1,2}$} (S12);
+    \draw [arrow] (S) edge[bend right] node [left] {$w_{0,2,i}(t)$} (S02);
+    \draw [arrow] (R) edge[bend left] node [right] {$w_{0,2,i}(t)$} (Rv2);
+    \draw [arrow] (R) -- node [left] {$w_{0,1,i}(t)$} (Rv);
+    \draw [arrow] (S1) -- node [left] {$w_{1,2,i}(t)$} (S12);
     \draw [arrow] (S12) -- node [right] {$m_2$} (S2);
     \draw [arrow] (S02) -- node [right] {$m_2$} (S2);
-    \draw [arrow] (Rv) -- node [left] {$w_{1,2}$} (Rv2);
+    \draw [arrow] (Rv) -- node [left] {$w_{1,2,i}(t)$} (Rv2);
     \draw [arrow] (S2) -- node [above] {} (emv2);
     \draw [arrow] (emv2) -- node [above] {} (Rv2);
 \end{tikzpicture}
@@ -464,14 +464,14 @@ P_g=\sum_{a\in g}N_a.
 We get to the matrix $M(\textbf{1})$ by broadcasting the four-by-four matrix to the 49-by-49 one. Contacts from all groups $i$ to working groups $j$ depend on the age group of the group ($`g(i)`$), and the fraction of the age-population represented in group $j$, where $W_{j}$ is the number of people in group $j$:
 
 ```math
-M_{ij}(\textbf{1}) = M^{(4)}_{g(i),g(j)}\frac{W_{j}}{P_{g(j)}}
+M_{i,j}(\textbf{1}) = M^{(4)}_{g(i),g(j)}\frac{W_{j}}{P_{g(j)}}
 ```
 
 for $i$ and $j$ including all groups (working and non-working). Each group $i$ contains people that belong to only one age group $g$. We refer to the age group of the people in group $i$ as $g(i)$. Then $P_{g(j)}$ is the number of people in the age group of group $j$, so $P_{g(j)}=W_{j}$ for age groups 0 to 4, 5 to 19 and 65+, and $P_{g(j)}=\sum_{j\in\{1,...,N,N+3\}}W_{j}$ for ages 20 to 64. 
 
 In setting up a country, we sample values for $M^{(16)}$ (from which we get $`M(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces, and workplace-related contacts. From these, we get $U(\textbf{1})$ and $V(\textbf{1})$, constructing the matrices and normalising. 
 
-Matrix U is diagonal and $U_{ii}(\textbf{1})=0$ for $i>N$ [@Haw2020]. Consumer-to-worker contacts (matrix $V$) describe contacts experienced by workers from consumers per sector. Note that $V_{ij}(\textbf{1})=0$ for $i>N$. Matrix $\hat{V}(\textbf{1})$ is the complement of matrix $V(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
+Matrix U is diagonal and $U_{i,i}(\textbf{1})=0$ for $i>N$ [@Haw2020]. Consumer-to-worker contacts (matrix $V$) describe contacts experienced by workers from consumers per sector. Note that $V_{i,j}(\textbf{1})=0$ for $i>N$. Matrix $\hat{V}(\textbf{1})$ is the complement of matrix $V(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
 
 With $M(\textbf{1})$, $V(\textbf{1})$, $U(\textbf{1})$ and $\hat{V}(\textbf{1})$, we learn $T(\textbf{1})$. 
 
@@ -483,7 +483,7 @@ T(\textbf{1})=T^{(L)} + T^{(S)}(\textbf{1}) + T^{(H)}(\textbf{1}) + T^{(T)}(\tex
 
 Values for $T^{(S)}(\textbf{1})$ come from sampled values representing the fractions of contacts that come from school. School contacts are estimated separately in two age groups (pre-school age: 0-–4; school age: 5-–19): $T^{(S)}(\textbf{1})$ has entries of zero for groups $g$ not in school, and values for $g$=0 to 4 years old and $g$=5 to 19 year olds. 
 
-Likewise, $T^{(T)}(\textbf{1})$ is also sampled as a fraction of total contacts. $T_{ij}^{(T)}(\textbf{1})\geq 0$ for $i=1,...,N$. $T_{ij}^{(T)}(\textbf{1})=0$ for $i>N$.
+Likewise, $T^{(T)}(\textbf{1})$ is also sampled as a fraction of total contacts. $T_{i,j}^{(T)}(\textbf{1})\geq 0$ for $i=1,...,N$. $T_{i,j}^{(T)}(\textbf{1})=0$ for $i>N$.
 
 Finally, $T^{(H)}(\textbf{1})$ is sampled as a fraction of $T(\textbf{1})- T^{(S)}(\textbf{1}) - T^{(T)}(\textbf{1})$, which leaves $T^{(L)}$.
 
@@ -499,7 +499,7 @@ T(x)=T^{(L)} + T^{(S)}(x) + T^{(H)}(x) + T^{(T)}(x).
 School contacts under $x$ are the peacetime values scaled by the extent of closure. $x_{S}$ is the extent to which schools are open, so that the number of contacts per person scales superlinearly with school closure. 
 
 \begin{equation}
-T_{ii}^{(S)}(x)=x_{S}^2T_{ii}^{(S)}(\textbf{1}).
+T_{i,i}^{(S)}(x)=x_{S}^2T_{i,i}^{(S)}(\textbf{1}).
 (\#eq:school)
 \end{equation}
 
@@ -508,7 +508,7 @@ T_{ii}^{(S)}(x)=x_{S}^2T_{ii}^{(S)}(\textbf{1}).
 Matrix  $T^{(T)}$ counts contacts between working people, representing travel. We assume that transport contacts only add to the infection risk if the sector is open and the workers travel to and from their workplace. Again, the value for configuration $x$ is the value for $\textbf{1}$ scaled accordingly:
 
 \begin{equation}
-T_{ij}^{(T)}(x) = x_{j}(1-q_i)(1-q_j)T_{ij}^{(T)}(\textbf{1}).
+T_{i,j}^{(T)}(x) = x_{j}(1-q_i)(1-q_j)T_{i,j}^{(T)}(\textbf{1}).
 (\#eq:travel)
 \end{equation}
 
@@ -541,29 +541,29 @@ where we sum over only the hospitality sectors.
 ### Matrix $U$: Worker-to-worker contacts
 
 \begin{equation}
-U_{ii}(x) = x_{i}(1-q_i)^2U_{ii}(\textbf{1}),
+U_{i,i}(x) = x_{i}(1-q_i)^2U_{i,i}(\textbf{1}),
 (\#eq:worker)
 \end{equation}
 
 for the $i=1,...,N$ working groups, with the number of contacts adjusted according to at-home working ($q_i$) and sector openness ($x_{i}$). As before, there is superlinear scaling of contacts with respect to working from home. There is linear scaling with respect to sector closure: that is, there are fewer contacts per person, but we do not approximate there being fewer people having them. This is because the latter is accounted for in the movement of people out of the group upon its closure. 
 
-$$U_{ii}(x) = x_{i}^2(1-q_i)^2U_{ii}(\textbf{1})$$
+$$U_{i,i}(x) = x_{i}^2(1-q_i)^2U_{i,i}(\textbf{1})$$
 
 ```math
-U_{ii}(x) = \hat{x}_i^2U_{ii}(\textbf{1}), \quad \hat{x}_i=\max(x_{i}-q_i,0)
+U_{i,i}(x) = \hat{x}_i^2U_{i,i}(\textbf{1}), \quad \hat{x}_i=\max(x_{i}-q_i,0)
 ```
 
 
 ### Matrix $V$: Consumer-to-worker contacts
 
 \begin{equation}
-V_{ij}(x) = x_{i}(1-q_i)V_{ij}(\textbf{1}),
+V_{i,j}(x) = x_{i}(1-q_i)V_{i,j}(\textbf{1}),
 (\#eq:ctow)
 \end{equation}
 
 for $j=1,...,N+3$. 
 
-Here, there is linear scaling of $V_{ij}(\textbf{1})$ with respect to working from home, and linear scaling with respect to sector closure, which becomes superlinear scaling for sectors as individuals are moved out of the compartment, as with matrix $U(x)$.
+Here, there is linear scaling of $V_{i,j}(\textbf{1})$ with respect to working from home, and linear scaling with respect to sector closure, which becomes superlinear scaling for sectors as individuals are moved out of the compartment, as with matrix $U(x)$.
 
 
 
