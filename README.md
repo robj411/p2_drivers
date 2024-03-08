@@ -297,7 +297,7 @@ k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\sum_{j=1}^{z}M_{i,j}(x) I_j(t)
 with $z=49$ strata and
 
 ``` math
- I_j(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{j,v}^{(A)}(t)+(1-p_4(t))I_{j,v}^{(S)}(t)). 
+ I_j(t)=\sum_{v=0}^2\left(\epsilon (1-p_3(t))I_{j,v}^{(A)}(t)+(1-p_4(t))I_{j,v}^{(S)}(t)\right). 
 ```
 
 Here, $\eta_{A,v}$ is the relative probability to be infected given

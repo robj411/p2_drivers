@@ -314,7 +314,7 @@ k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\sum_{j=1}^{z}M_{i,j}(x) I_j(t)
 with $z=49$ strata and 
 
 ```math
- I_j(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{j,v}^{(A)}(t)+(1-p_4(t))I_{j,v}^{(S)}(t)). 
+ I_j(t)=\sum_{v=0}^2\left(\epsilon (1-p_3(t))I_{j,v}^{(A)}(t)+(1-p_4(t))I_{j,v}^{(S)}(t)\right). 
 ```
 
   Here, $\eta_{A,v}$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of social distancing; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p_3$ and $p_4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{\cdot,\cdot}$ is the vector of number of infectious asymptomatic ($I_{\cdot}^{(A)}$) and symptomatic ($I_{\cdot}^{(S)}$) people who are unvaccinated ($I_{0}^{(\cdot)}$), vaccinated with the BPSV ($I_{1}^{(\cdot)}$), or vaccinated with the specific vaccine ($I_{2}^{(\cdot)}$).
