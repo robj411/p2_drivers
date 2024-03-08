@@ -290,14 +290,14 @@ The rate of infection of susceptible individuals, $k_{1,i,v}(t)$, is
 defined as
 
 $$\begin{equation}
-k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\left(\sum_{j=1}^{z}M_{i,j}(x)\cdot I_j(t)\right)
+k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\sum_{j=1}^{z}M_{i,j}(x) I_j(t)
 \qquad(3.1)
 \end{equation}$$
 
-with
+with $z=49$ strata and
 
 ``` math
- I(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{v}^{(A)}(t)+(1-p_4(t))I_{v}^{(S)}(t)). 
+ I_j(t)=\sum_{v=0}^2(\epsilon (1-p_3(t))I_{j,v}^{(A)}(t)+(1-p_4(t))I_{j,v}^{(S)}(t)). 
 ```
 
 Here, $\eta_{A,v}$ is the relative probability to be infected given
