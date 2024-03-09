@@ -54,9 +54,12 @@ function CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, contac
 
     vvec = [(sig1+sig2).*onesn;      (dis.g1).*onesn;       g2hweighted.*onesn];
 
-    V    = diag(vvec);
-    V(nStrata+1:2*nStrata,1:nStrata)   = diag(-sig1.*onesn);
-    V(2*nStrata+1:3*nStrata,1:nStrata) = diag(-sig2.*onesn);
+    n = length(vvec);
+    V    = zeros(n); 
+    V(1:n+1:end) = vvec;
+    nmat = eye(nStrata);
+    V(nStrata+1:2*nStrata,1:nStrata)   = -sig1.*nmat;
+    V(2*nStrata+1:3*nStrata,1:nStrata) = -sig2.*nmat;
 
 
     NGM = F/V;
