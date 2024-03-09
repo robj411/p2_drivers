@@ -162,7 +162,6 @@ for(bl in 1:length(bpsv_levels)){
     if(v>1|bl>1){
       
       difftab <- copy(topresults[[1]][[1]])
-      difftab[,keeprow:=NULL]
       # difftab[,strategy:=NULL]
       difftab[,Cost:=Cost-topresults[[bl]][[v]]$Cost]
       difftab[,dYLLs:=dYLLs-topresults[[bl]][[v]]$dYLLs]
@@ -173,7 +172,6 @@ for(bl in 1:length(bpsv_levels)){
       saveRDS(difftab,paste0('results/difftab_',bpsv,'_',vaccination_level,'.Rds'))
       
       pctab <- copy(topresults[[1]][[1]])
-      pctab[,keeprow:=NULL]
       pctab[,strategy:=NULL]
       pctab[,Cost:=(Cost-topresults[[bl]][[v]]$Cost)/Cost]
       pctab[,dYLLs:=(dYLLs-topresults[[bl]][[v]]$dYLLs)/dYLLs]
@@ -191,7 +189,8 @@ params[!params%in%colnames(allresults)]
 
 ## negatives ###########################
 
-dispcols <- colnames(allresults)%in%c('Cost','GDP_loss','Deaths','School','igroup','strategy','samplei','Exit_wave','scen_Exit_wave')
+dispcols <- colnames(allresults)%in%c('Cost','GDP_loss','Deaths','School','igroup',
+                                      'strategy','samplei','Exit_wave','scen_Exit_wave')
 nneg <- 0
 for(vaccination_level in vaccination_levels){
   for(bpsv in bpsv_levels){

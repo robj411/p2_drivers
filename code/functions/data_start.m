@@ -10,7 +10,7 @@ function data = data_start()
     data      = rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
     data.adInd = 3;
     data.nSectors = length(data.B);
-    data.tvec = [0 365*12];
+    data.tvec = [0 365*10];
     data.EdInd    = 41;%education sector index
     data.HospInd  = [32,43,44];%hospitality sector indices
     

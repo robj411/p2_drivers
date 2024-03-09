@@ -466,7 +466,7 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
     f_mat(:,compindex.V_index(2)) = Bdot;
     
     f = reshape(f_mat,[],1);
-    eps10 = eps*1e6;
+    eps10 = eps*1e10;
     f(y<eps10) = max(0,f(y<eps10)); %%! exit wave was lost
 
 end
@@ -557,7 +557,7 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         if otherval~=0 && R_est<1
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-            R2flag = min(1.00-Rt2,0);
+            R2flag = min(0.95-Rt2,0);
 %             disp([t Rt2])
         end
     end
@@ -682,12 +682,12 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     R2flag = otherval + ivals + tval;
     % only check open economy if current R<1
     R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
-    if ivals==0 && tval==0 && R_est<1
+    if ivals==0 && tval==0 && R_est<0.95
         if otherval~=0
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-            R2flag = min(1.00-Rt2,0);
+            R2flag = min(0.95-Rt2,0);
         end
     end
     
@@ -780,6 +780,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     % have reached end of vaccine rollout: otherval = 0
     otherval = min(t-max(p2.tpoints),0);
     R2flag = otherval + ivals + tval;
+    % exit only if vaccines done. no early exit for low Rt.
 %     if ivals==0 && tval==0 
 %         if otherval~=0
 %         % only compute R if R2flag is not already 0 and ivals and tval
@@ -794,13 +795,13 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     direction(3)  = 0;
     isterminal(3) = 1;
     
-    %% Event 6: importation
+    %% Event 4: importation
     
     value(4)      =  min(t-data.t_import,0);
     direction(4)  = 1;
     isterminal(4) = 1;
     
-    %% Event 7: end
+    %% Event 5: end
     % i is 5
     ival = -abs((i-5));
     % t is greater than the end of the vaccine rollout: otherval = 0

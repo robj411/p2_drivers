@@ -549,8 +549,8 @@ tabres <- setDT(difflist)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(rou
                         ),by=.(BPSV,Vaccine,igroup)]
 
 tabres[,igroup:=factor(igroup,levels=c('LLMIC','UMIC','HIC'))]
-
-setorder(tabres,Vaccine,igroup)
+tabres[,Vaccine:=factor(Vaccine,levels=c(365,100))]
+setorder(tabres,BPSV,Vaccine,igroup)
 
 colnames(tabres) <- c('BPSV','Vaccine','Income group','Total value','YLLs','Education','GDP')
 
