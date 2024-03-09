@@ -471,7 +471,7 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
     f_mat(:,compindex.V_index(2)) = Bdot;
     
     f = reshape(f_mat,[],1);
-    eps10 = eps*1e6;
+    eps10 = eps*1e10;
     f(y<eps10) = max(0,f(y<eps10)); %%! exit wave was lost
 
 end
@@ -562,7 +562,7 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
 %             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
 %                 data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-            R2flag = min(1.00-Rt2,0);
+            R2flag = min(0.95-Rt2,0);
 %             disp([t Rt2])
         end
     end
@@ -593,7 +593,7 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
-%         disp([t/1000 Rt3 betamod p3 p4 sumH ])
+        disp([t/1000 Rt3 ])
     end
     value(7)      =  R3flag;
     direction(7)  = 1;
@@ -693,7 +693,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
         % conditions are both met
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
 %             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
-            R2flag = min(1.00-Rt2,0);
+            R2flag = min(0.95-Rt2,0);
         end
     end
     
@@ -793,7 +793,8 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
         % conditions are both met
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
 %             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
-            R2flag = min(1.00-Rt2,0);
+            R2flag = min(0.95-Rt2,0);
+%             disp([t Rt2])
         end
     end
     
@@ -802,13 +803,13 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     direction(3)  = 0;
     isterminal(3) = 1;
     
-    %% Event 6: importation
+    %% Event 4: importation
     
     value(4)      =  min(t-data.t_import,0);
     direction(4)  = 1;
     isterminal(4) = 1;
     
-    %% Event 7: end
+    %% Event 5: end
     % i is 5
     ival = -abs((i-5));
     % t is greater than the end of the vaccine rollout: otherval = 0
@@ -823,7 +824,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
 %             data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - Rt3,0);
-%         disp([t/1000 Rt3 sumH])
+%         disp([t/1000 Rt3 ])
     end
     value(5)      =  R3flag;
     direction(5)  = 1;
