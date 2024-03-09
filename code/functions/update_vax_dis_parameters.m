@@ -45,6 +45,8 @@ function [dis2, V, B, vaccine_pp, booster_pp] = update_vax_dis_parameters(dis, S
     hv2 = dis.hv2 .* booster_pp;
     Ts_v1 = ((1-(1-hv1).*ph).*Tsr)  +((1-hv1).*ph.*Tsh);
     Ts_v2 = ((1-(1-hv2).*ph).*Tsr)  +((1-hv2).*ph.*Tsh);
+    dis2.Ts_v1 = Ts_v1;
+    dis2.Ts_v2 = Ts_v2;
     
     dis2.g2_v1 = (1-(1-hv1).*ph)./Ts_v1;
     dis2.g2_v2 = (1-(1-hv2).*ph)./Ts_v2;
