@@ -423,12 +423,7 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
     Ev1dot=                                  Sv1.*(1-scv1).*foi  -(sig1+sig2).*Ev1;
     Ev2dot=                                  Sv2.*(1-scv2).*foi  -(sig1+sig2).*Ev2;
 
-    Iadot=     sig1.*E     -g1.*Ia;
-    Isdot=     sig2.*E     -(g2+h).*Is;
-    Iav1dot=   sig1.*Ev1   -g1.*Iav1;
-    Isv1dot=   sig2.*Ev1   -(g2_v1+h_v1).*Isv1;
-    Iav2dot=   sig1.*Ev2   -g1.*Iav2;
-    Isv2dot=   sig2.*Ev2   -(g2_v2+h_v2).*Isv2;
+    [Iadot, Isdot, Iav1dot, Isv1dot, Iav2dot, Isv2dot] =  get_Idot(dis2, compindex, y_mat);
 
     Hdot=       h.*Is         -(g3+mu).*H;
     Hv1dot=     h_v1.*Isv1    -(g3+mu).*Hv1;
@@ -508,21 +503,7 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     dis2 = update_hosp_dis_parameters(max(1,sum(hospital_occupancy)), p2, dis2);
     
     %% distancing
-    ddk    = 10^6*sum(dis2.mu.*hospital_occupancy)/sumN;
-        
-    %% Rt values for 3rd config
-    R1flag3 = -1;
-    R1flag4 = -1;
-    minttvec3 = min(t-(data.tvec(end-1)+7),0);
-    minttvec4 = min(t-(data.tvec(end-1)+7),0);
-    if ((i==2 && minttvec3==0) || (i==3  && minttvec4==0))       
-        
-        Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 3);
-%         disp([t Rt1])
-        R1flag3 = min(0.95-Rt1,0);
-        R1flag4 = min(Rt1-1.2000,0);
-    end
-    
+    ddk    = 10^6*sum(dis2.mu.*hospital_occupancy)/sumN;    
     
     %% Event 1: Early Lockdown
     
@@ -538,11 +519,27 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     
     %% Event 3: Reopening
     
+    % Rt values for 3rd config
+    R1flag3 = -1;
+    minttvec3 = min(t-(data.tvec(end-1)+7),0);
+    R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+    if i==2 && minttvec3==0  && R_est<.95
+        Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 3);
+        R1flag3 = min(0.95-Rt1,0);
+    end
+    
     value(3)      = - abs(i-2) + minttvec3 + R1flag3;
     direction(3)  = 0;
     isterminal(3) = 1;
     
     %% Event 4: Relockdown
+    
+%     R1flag4 = -1;
+    minttvec4 = min(t-(data.tvec(end-1)+7),0);
+%     if  (i==3  && minttvec4==0)      
+%         Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 3);
+    R1flag4 = min(R_est-1.2000,0);
+%     end
     
     value(4)      = - abs(i-3) + minttvec4 + R1flag4;
     direction(4)  = 0;
@@ -557,10 +554,8 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     otherval = min(t-max(p2.tpoints),0);
     R2flag = otherval + ival + tval;
     if ival==0 && tval==0
-        if otherval~=0
-%             betamod = betamod_wrapped(ddk, p2, data, 5);
-%             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-%                 data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+        R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+        if otherval~=0 && R_est<1
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
             R2flag = min(1.00-Rt2,0);
 %             disp([t Rt2])
@@ -587,12 +582,10 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     hval = min(p2.hosp_final_threshold - sumH,0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
-%         betamod = betamod_wrapped(ddk, p2, data, i);
-%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-%             data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
-        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+        R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
-        R3flag = min(Rthresh - Rt3,0);
+        R3flag = min(Rthresh - R_est,0);
 %         disp([t/1000 Rt3 betamod p3 p4 sumH ])
     end
     value(7)      =  R3flag;
@@ -687,12 +680,13 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     % rollout: otherval = 0
     otherval = -abs(min(0.025-r,0)*max(0,occ-p2.thl)) + min(t-max(p2.tpoints),0);
     R2flag = otherval + ivals + tval;
-    if ivals==0 && tval==0
+    % only check open economy if current R<1
+    R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+    if ivals==0 && tval==0 && R_est<1
         if otherval~=0
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-%             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
             R2flag = min(1.00-Rt2,0);
         end
     end
@@ -708,19 +702,18 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     isterminal(6) = 1;
     
     %% Event 7: end
-    % t is greater than the end of the vaccine rollout: otherval = 0
+    % t is greater than the end of the vaccine rollout: tval = 0
     tval = min(t-(max(p2.tpoints)+7),0);
     % hval: no patients
     sumH = sum(H + Hv1 + Hv2);
     hval = min(p2.hosp_final_threshold-sumH,0);
     R3flag = tval + hval;
     if tval==0 && hval==0     
-        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-%             data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
-%         doubling_time = dis.generation_time*log(2) /  log(Rt3);
+%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
-        R3flag = min(Rthresh - Rt3,0);
+        R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+        R3flag = min(Rthresh - R_est,0);
+%         disp([Rt3, R_est])
 %         disp([t/1000 Rt3 sumH])
 %         if t<600 
 %             disp([t/100 hval tval r Rt3 Rthresh ])
@@ -787,15 +780,14 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     % have reached end of vaccine rollout: otherval = 0
     otherval = min(t-max(p2.tpoints),0);
     R2flag = otherval + ivals + tval;
-    if ivals==0 && tval==0 
-        if otherval~=0
-        % only compute R if R2flag is not already 0 and ivals and tval
-        % conditions are both met
-            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-%             Rt2    = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
-            R2flag = min(1.00-Rt2,0);
-        end
-    end
+%     if ivals==0 && tval==0 
+%         if otherval~=0
+%         % only compute R if R2flag is not already 0 and ivals and tval
+%         % conditions are both met
+%             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+%             R2flag = min(1.00-Rt2,0);
+%         end
+%     end
     
     value(3)      = R2flag; 
     %measures can be removed at any stage if (Rt<1) or (after end of vaccination campaign)
@@ -818,11 +810,10 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     hval = min(p2.hosp_final_threshold-sumH,0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
-        Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,...
-%             data.NNs,data.Dvec(:,:,5),dis.beta,betamod,p3,p4);
+%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
-        R3flag = min(Rthresh - Rt3,0);
+        R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+        R3flag = min(Rthresh - R_est,0);
 %         disp([t/1000 Rt3 sumH])
     end
     value(5)      =  R3flag;
