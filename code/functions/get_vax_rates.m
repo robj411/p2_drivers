@@ -1,6 +1,6 @@
 % compute current rates of transfer from S and R compartments to V
 % compartments
-
+%
 % p2: struct of p2 intervention parameters
 % t: current time, day 
 % nStrata: number of strata
@@ -9,7 +9,7 @@
 % DE: numbers in died compartment
 % Rv1: numbers in vaccinated recovered compartment
 % Sv1: numbers in vaccinated susceptible compartment
-
+%
 % v1rates: rate of susptible unvaccinated to BPSV 
 % v1rater: rate of recovered unvaccinated to BPSV  
 % v2rates: rate of susptible unvaccinated to SARS-X  

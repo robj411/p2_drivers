@@ -1,5 +1,5 @@
 % load in basic data and make general definitions
-
+%
 % data: struct of general model parameters
 
 function data = data_start()
@@ -26,7 +26,6 @@ function data = data_start()
     
     compindex = struct;
     
-    %%!! need to add Spb - transition to Sb
     compindex.S_index = [1, 8:11,24:25]; % S, Sn, S01, Sv, Sb, S02, S12
     compindex.E_index = [2, 12:13];
     compindex.I_index = [3:4, 14:15,16:17];

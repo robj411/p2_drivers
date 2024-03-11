@@ -1,11 +1,12 @@
-% computes fractions of infectious people self isolating
-
+% computes fractions of infectious people self isolating. Depends on
+% mandate, testing, and symptomaticity.
+%
 % sumI: total number of infectious people
 % sumN: total number of people
 % p2: struct of p2 intervention parameters
 % t: current time (day)
 % mandate: integer corresponding to states of government mandate
-
+%
 % p3: fraction of asymptomatic infectious people's infectiousness averted
 % p4: fraction of symptomatic infectious people's infectiousness averted
 
