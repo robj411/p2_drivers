@@ -254,8 +254,8 @@ pertinent to intra- rather than international modelling.
 ## 3.1 Ordinary differential equations
 
 $$\begin{align}
-\frac{dS_{i,v}}{dt} & = \sum_{u=0}^{v-1}m_{v,i}S_{i,u,v}^{(C)} - \left( k_{1,i,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
-\frac{dS_{i,u,v}^{(C)}}{dt} & = w_{u,v,i}(t)S_{i,u} -\left( k_{1,i,v}(t) + m_{v,i} \right)S_{i,u,v}^{(C)}  \\
+\frac{dS_{i,v}}{dt} & = \sum_{u=0}^{v-1}k_9S_{i,u,v}^{(C)} - \left( k_{1,i,v}(t) + \sum_{u=v+1}^{2}w_{v,u,i}(t) \right)S_{i,v} \\
+\frac{dS_{i,u,v}^{(C)}}{dt} & = w_{u,v,i}(t)S_{i,u} -\left( k_{1,i,v}(t) + k_9 \right)S_{i,u,v}^{(C)}  \\
 \frac{dE_{i,v}}{dt} & = k_{1,i,v}(t)\left(S_{i,v}+\sum_{u=v+1}^2S_{i,v,u}^{(C)}\right) - (k_2+k_4)E_{i,v} \\
 \frac{dI_{i,v}^{(A)}}{dt} & = k_2E_{i,v} - k_3I_{i,v}^{(A)} \\
 \frac{dI_{i,v}^{(S)}}{dt} & = k_4E_{i,v} - (k_{5,i,v}+k_{6,i,v})I_{i,v}^{(S)} \\
@@ -390,11 +390,11 @@ $w_{0,1,i}(t)$ represents the rates of BPSV vaccination of unvaccinated
 susceptible and recovered people, and $w_{1,2,i}(t)$ represents the
 rates of vaccinating BPSV-vaccinated susceptible and recovered people.
 $w_{0,2,i}(t)$ represents the rates of vaccinating people directly with
-the specific vaccine. $m_{1}$ and $m_{2}$ are the rates of
-seroconversion to vaccine-induced immunity, and
-$k_{12,i}(t)=k_{1,i,v=0}(t)$ and $k_{19,i}(t)=k_{1,i,v=1}(t)$ are the
-rates of infection of just-vaccinated people, which returns them to the
-epidemiological pathway of the lower vaccination level.
+the specific vaccine. $k_9$ is the rate of seroconversion to
+vaccine-induced immunity, and $k_{12,i}(t)=k_{1,i,v=0}(t)$ and
+$k_{19,i}(t)=k_{1,i,v=1}(t)$ are the rates of infection of
+just-vaccinated people, which returns them to the epidemiological
+pathway of the lower vaccination level.
 
 <div class="figure">
 
