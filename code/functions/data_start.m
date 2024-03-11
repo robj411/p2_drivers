@@ -27,7 +27,7 @@ function data = data_start()
     compindex = struct;
     
     %%!! need to add Spb - transition to Sb
-    compindex.S_index = [1, 8:11]; % S, Sn, Sp, Sv, Sb
+    compindex.S_index = [1, 8:11,24:25]; % S, Sn, S01, Sv, Sb, S02, S12
     compindex.E_index = [2, 12:13];
     compindex.I_index = [3:4, 14:15,16:17];
 %     Ia=    y_mat(:,compindex.I_index(1));
@@ -37,7 +37,7 @@ function data = data_start()
     compindex.D_index = [7];
     compindex.V_index = [22:23];
     
-    compindex.vaccine = [compindex.S_index(4),...
+    compindex.vaccine = [compindex.S_index(4),compindex.S_index(7),...
         compindex.E_index(2),...
         compindex.I_index(3),...
         compindex.I_index(4),...

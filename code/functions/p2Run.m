@@ -217,6 +217,12 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     %% CALL
 
     compindex = data.compindex;
+    S_index = compindex.S_index;
+    E_index = compindex.E_index;
+    I_index = compindex.I_index;
+    H_index = compindex.H_index;
+    D_index = compindex.D_index;
+    
     nStrata = size(NN0,1);
     fun  = @(t,y)ODEs(rundata,D,i,t,dis,y,p2);
     strategy = data.strategy;
@@ -246,12 +252,12 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
             % keep the same i
             inext = i;
             % move 5 people from S to E
-            current_S = y_mat(:,compindex.S_index(1));
+            current_S = y_mat(:,S_index(1));
             imported = 5/sum(current_S)*current_S;
-            new_E = y_mat(:,compindex.E_index(1)) + imported;
+            new_E = y_mat(:,E_index(1)) + imported;
             new_S = current_S - imported;
-            y_mat(:,compindex.S_index(1)) = new_S;
-            y_mat(:,compindex.E_index(1)) = new_E;
+            y_mat(:,S_index(1)) = new_S;
+            y_mat(:,E_index(1)) = new_E;
             y0new = reshape(y_mat,[],1);
         else %end
             inext = 0;
@@ -264,17 +270,17 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     %% OUTPUT VARIABLES
 
     indices = 1:nStrata;
-    Ia   = yout(:,(compindex.I_index(1)-1)*nStrata + indices);
-    Is   = yout(:,(compindex.I_index(2)-1)*nStrata + indices);
-    Iav1   = yout(:,(compindex.I_index(3)-1)*nStrata + indices);
-    Isv1   = yout(:,(compindex.I_index(4)-1)*nStrata + indices);
-    Iav2   = yout(:,(compindex.I_index(5)-1)*nStrata + indices);
-    Isv2   = yout(:,(compindex.I_index(6)-1)*nStrata + indices);
-    H     = yout(:,(compindex.H_index(1)-1)*nStrata + indices);
-    Hv1     = yout(:,(compindex.H_index(2)-1)*nStrata + indices);
-    Hv2     = yout(:,(compindex.H_index(3)-1)*nStrata + indices);
-    D     = yout(:,(compindex.D_index(1)-1)*nStrata + indices);
-    still_susc = sum(yout(:,(repelem(compindex.S_index([1,3:end]),1,length(indices))-1)*nStrata + repmat(indices,1,length(compindex.S_index)-1)),2);
+    Ia   = yout(:,(I_index(1)-1)*nStrata + indices);
+    Is   = yout(:,(I_index(2)-1)*nStrata + indices);
+    Iav1   = yout(:,(I_index(3)-1)*nStrata + indices);
+    Isv1   = yout(:,(I_index(4)-1)*nStrata + indices);
+    Iav2   = yout(:,(I_index(5)-1)*nStrata + indices);
+    Isv2   = yout(:,(I_index(6)-1)*nStrata + indices);
+    H     = yout(:,(H_index(1)-1)*nStrata + indices);
+    Hv1     = yout(:,(H_index(2)-1)*nStrata + indices);
+    Hv2     = yout(:,(H_index(3)-1)*nStrata + indices);
+    D     = yout(:,(D_index(1)-1)*nStrata + indices);
+    still_susc = sum(yout(:,(repelem(S_index([1,3:end]),1,length(indices))-1)*nStrata + repmat(indices,1,length(S_index)-1)),2);
 
     Iclass   = Ia + Is + Iav1 + Isv1 + Iav2 + Isv2; 
     Hclass   = H + Hv1 + Hv2; 
@@ -308,7 +314,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     
 %     S    = y_mat(:,compindex.S_index(1));
 %     Sn    = y_mat(:,compindex.S_index(2));
-%     Shv1   = y_mat(:,compindex.S_index(3));
+%     S01   = y_mat(:,compindex.S_index(3));
 %     Sv1   = y_mat(:,compindex.S_index(4));
 %     Sv2   = y_mat(:,compindex.S_index(5));
 %     
@@ -333,28 +339,37 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
     %% initial conditions
     
     compindex = data.compindex;
+    S_index = compindex.S_index;
+    E_index = compindex.E_index;
+    I_index = compindex.I_index;
+    H_index = compindex.H_index;
+    R_index = compindex.R_index;
+    D_index = compindex.D_index;
+    V_index = compindex.V_index;
 
-    S =      y_mat(:,compindex.S_index(1));
-    E =      y_mat(:,compindex.E_index(1));
-    Ia =    y_mat(:,compindex.I_index(1));
-    Is =    y_mat(:,compindex.I_index(2));
-    H =      y_mat(:,compindex.H_index(1));
-    R =      y_mat(:,compindex.R_index(1));
-    Sn =     y_mat(:,compindex.S_index(2));
-    Shv1 =   y_mat(:,compindex.S_index(3));
-    Sv1 =    y_mat(:,compindex.S_index(4));
-    Sv2 =    y_mat(:,compindex.S_index(5));
-    Ev1 =    y_mat(:,compindex.E_index(2));
-    Iav1 =    y_mat(:,compindex.I_index(3));
-    Isv1 =    y_mat(:,compindex.I_index(4));
-    Hv1 =    y_mat(:,compindex.H_index(2));
-    Rv1 =    y_mat(:,compindex.R_index(2));
-    Ev2 =    y_mat(:,compindex.E_index(3));
-    Iav2 =    y_mat(:,compindex.I_index(5));
-    Isv2 =    y_mat(:,compindex.I_index(6));
-    Hv2 =    y_mat(:,compindex.H_index(3));
-    Rv2 =    y_mat(:,compindex.R_index(3));
-    DE =    y_mat(:,compindex.D_index(1));
+    S =      y_mat(:,S_index(1));
+    E =      y_mat(:,E_index(1));
+    Ia =    y_mat(:,I_index(1));
+    Is =    y_mat(:,I_index(2));
+    H =      y_mat(:,H_index(1));
+    R =      y_mat(:,R_index(1));
+    Sn =     y_mat(:,S_index(2));
+    S01 =   y_mat(:,S_index(3));
+    Sv1 =    y_mat(:,S_index(4));
+    Sv2 =    y_mat(:,S_index(5));
+    S02 =   y_mat(:,S_index(6));
+    S12 =   y_mat(:,S_index(7));
+    Ev1 =    y_mat(:,E_index(2));
+    Iav1 =    y_mat(:,I_index(3));
+    Isv1 =    y_mat(:,I_index(4));
+    Hv1 =    y_mat(:,H_index(2));
+    Rv1 =    y_mat(:,R_index(2));
+    Ev2 =    y_mat(:,E_index(3));
+    Iav2 =    y_mat(:,I_index(5));
+    Isv2 =    y_mat(:,I_index(6));
+    Hv2 =    y_mat(:,H_index(3));
+    Rv2 =    y_mat(:,R_index(3));
+    DE =    y_mat(:,D_index(1));
     
     %% SELF-ISOLATION
 
@@ -407,21 +422,23 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
 
     if t<83
 %         betamod = betamod_wrapped(10^6*sum(dis2.mu.*hospital_occupancy)/sum(NN0),p2, data, i);
-%         Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,NN0,data.Dvec(:,:,1),dis2.beta,1,0,0);
+%         Rt1 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,NN0,data.Dvec(:,:,1),dis2.beta,1,0,0);
 %         disp([t foi'])
     end
 
     %% EQUATIONS
 
     Sdot=      -v1rates - v2rates      -S.*foi  +nu.*R   ; 
-    Shv1dot=    v1rates               - hrv1*Shv1   -Shv1.*foi;
-    Sv1dot=    -v12rates +              hrv1*Shv1   -Sv1.*(1-scv1).*foi  + nu.*Rv1;  
-    Sv2dot=     v12rates + v2rates     -Sv2.*(1-scv2).*foi  + nu.*Rv2;  
+    S01dot=    v1rates               - hrv1*S01   -S01.*foi;
+    Sv1dot=    -v12rates +              hrv1*S01   -Sv1.*(1-scv1).*foi  + nu.*Rv1;  
     Sndot=      -Sn.*foi    -(v1rates+v2rates).*Sn./S;  
+    S02dot=    v2rates               - hrv1*S02   - S02.*foi;
+    S12dot=    v12rates              - hrv1*S12   - S12.*(1-scv1).*foi;
+    Sv2dot=     hrv1*S02 + hrv1*S12     -Sv2.*(1-scv2).*foi  + nu.*Rv2;  
     
-    Edot=        S.*foi   -(sig1+sig2).*E + Shv1.*foi;%
-    Ev1dot=                                  Sv1.*(1-scv1).*foi  -(sig1+sig2).*Ev1;
-    Ev2dot=                                  Sv2.*(1-scv2).*foi  -(sig1+sig2).*Ev2;
+    Edot=             (S + S01 + S02).*foi  - (sig1+sig2).*E ; 
+    Ev1dot=     (S12 + Sv1).*(1-scv1).*foi  - (sig1+sig2).*Ev1;
+    Ev2dot=             Sv2.*(1-scv2).*foi  - (sig1+sig2).*Ev2;
 
     [Iadot, Isdot, Iav1dot, Isv1dot, Iav2dot, Isv2dot] =  get_Idot(dis2, compindex, y_mat);
 
@@ -435,35 +452,41 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
 
     DEdot=      mu.*H     + mu.*Hv1    + mu.*Hv2   ;  
     
-    Vdot =  - dis.nuv1*V - (mu.*Hv1 + v12rater + v12rates).*vaccine_pp + v1rater + hrv1*Shv1;
-    Bdot =  - dis.nuv2*B - mu.*Hv2.*booster_pp + v2rater + v2rates + v12rater + v12rates;
+    Vdot =  - dis.nuv1*V - ... % decay
+        (mu.*Hv1 + v12rater + hrv1*S12).*vaccine_pp + ... % exit
+        v1rater + hrv1*S01; % entry
+    Bdot =  - dis.nuv2*B - ...% decay
+        mu.*Hv2.*booster_pp + ... % exit
+        v2rater + v12rater + hrv1*S12 + hrv1*S02; % entry
 
     %% OUTPUT
     
     f_mat = zeros(size(y_mat));
-    f_mat(:,compindex.S_index(1)) = Sdot;
-    f_mat(:,compindex.E_index(1)) = Edot;
-    f_mat(:,compindex.I_index(1)) = Iadot;
-    f_mat(:,compindex.I_index(2)) = Isdot;
-    f_mat(:,compindex.H_index(1)) = Hdot;
-    f_mat(:,compindex.R_index(1)) = Rdot;
-    f_mat(:,compindex.S_index(2)) = Sndot;
-    f_mat(:,compindex.S_index(3)) = Shv1dot;
-    f_mat(:,compindex.S_index(4)) = Sv1dot;
-    f_mat(:,compindex.S_index(5)) = Sv2dot;
-    f_mat(:,compindex.E_index(2)) = Ev1dot;
-    f_mat(:,compindex.I_index(3)) = Iav1dot;
-    f_mat(:,compindex.I_index(4)) = Isv1dot;
-    f_mat(:,compindex.H_index(2)) = Hv1dot;
-    f_mat(:,compindex.R_index(2)) = Rv1dot;
-    f_mat(:,compindex.E_index(3)) = Ev2dot;
-    f_mat(:,compindex.I_index(5)) = Iav2dot;
-    f_mat(:,compindex.I_index(6)) = Isv2dot;
-    f_mat(:,compindex.H_index(3)) = Hv2dot;
-    f_mat(:,compindex.R_index(3)) = Rv2dot;
-    f_mat(:,compindex.D_index(1)) = max(DEdot,0);
-    f_mat(:,compindex.V_index(1)) = Vdot;
-    f_mat(:,compindex.V_index(2)) = Bdot;
+    f_mat(:,S_index(1)) = Sdot;
+    f_mat(:,E_index(1)) = Edot;
+    f_mat(:,I_index(1)) = Iadot;
+    f_mat(:,I_index(2)) = Isdot;
+    f_mat(:,H_index(1)) = Hdot;
+    f_mat(:,R_index(1)) = Rdot;
+    f_mat(:,S_index(2)) = Sndot;
+    f_mat(:,S_index(3)) = S01dot;
+    f_mat(:,S_index(4)) = Sv1dot;
+    f_mat(:,S_index(5)) = Sv2dot;
+    f_mat(:,S_index(6)) = S02dot;
+    f_mat(:,S_index(7)) = S12dot;
+    f_mat(:,E_index(2)) = Ev1dot;
+    f_mat(:,I_index(3)) = Iav1dot;
+    f_mat(:,I_index(4)) = Isv1dot;
+    f_mat(:,H_index(2)) = Hv1dot;
+    f_mat(:,R_index(2)) = Rv1dot;
+    f_mat(:,E_index(3)) = Ev2dot;
+    f_mat(:,I_index(5)) = Iav2dot;
+    f_mat(:,I_index(6)) = Isv2dot;
+    f_mat(:,H_index(3)) = Hv2dot;
+    f_mat(:,R_index(3)) = Rv2dot;
+    f_mat(:,D_index(1)) = max(DEdot,0);
+    f_mat(:,V_index(1)) = Vdot;
+    f_mat(:,V_index(2)) = Bdot;
     
     f = reshape(f_mat,[],1);
     eps10 = eps*1e12;
@@ -480,27 +503,33 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     y_mat = reshape(y,nStrata,[]);
     compindex = data.compindex;
     sumN = sum(data.NNs);
+    S_index = compindex.S_index;
+    I_index = compindex.I_index;
+    H_index = compindex.H_index;
     
-    S    = y_mat(:,compindex.S_index(1));
-    H    = y_mat(:,compindex.H_index(1));
-    Hv1    = y_mat(:,compindex.H_index(2));
-    Hv2    = y_mat(:,compindex.H_index(3));
-    Sn   = y_mat(:,compindex.S_index(2));
-    Shv1   = y_mat(:,compindex.S_index(3));
-    Sv1   = y_mat(:,compindex.S_index(4));
-    Sv2   = y_mat(:,compindex.S_index(5));
+    S    = y_mat(:,S_index(1));
+    H    = y_mat(:,H_index(1));
+    Hv1    = y_mat(:,H_index(2));
+    Hv2    = y_mat(:,H_index(3));
+    Sn   = y_mat(:,S_index(2));
+    S01   = y_mat(:,S_index(3));
+    Sv1   = y_mat(:,S_index(4));
+    Sv2   = y_mat(:,S_index(5));
+    S02   = y_mat(:,S_index(6));
+    S12   = y_mat(:,S_index(7));
     
-    occ   = max(1,sum(H+Hv1+Hv2));     
+    hospital_occupancy = H + Hv1 + Hv2;
+    sumH = sum(hospital_occupancy);
+    occ   = max(1,sumH);     
     
     %% isolating
-    [p3, p4] = fraction_averted_self_isolating(sum(sum(y_mat(:,compindex.I_index))), sumN, p2, t, i);
+    [p3, p4] = fraction_averted_self_isolating(sum(sum(y_mat(:,I_index))), sumN, p2, t, i);
     
     %% correct ph for previous infection
     
     dis2 = update_vax_dis_parameters(dis, S, Sn, compindex, y_mat);
      % correct for hosp occupancy
-    hospital_occupancy = H + Hv1 + Hv2;
-    dis2 = update_hosp_dis_parameters(max(1,sum(hospital_occupancy)), p2, dis2);
+    dis2 = update_hosp_dis_parameters(occ, p2, dis2);
     
     %% distancing
     ddk    = 10^6*sum(dis2.mu.*hospital_occupancy)/sumN;    
@@ -524,7 +553,7 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     minttvec3 = min(t-(data.tvec(end-1)+7),0);
     R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
     if i==2 && minttvec3==0  && R_est<.95
-        Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 3);
+        Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3);
         R1flag3 = min(0.95-Rt1,0);
     end
     
@@ -537,7 +566,7 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
 %     R1flag4 = -1;
     minttvec4 = min(t-(data.tvec(end-1)+7),0);
 %     if  (i==3  && minttvec4==0)      
-%         Rt1 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 3);
+%         Rt1 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 3);
     R1flag4 = min(R_est-1.2000,0);
 %     end
     
@@ -555,7 +584,7 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     R2flag = otherval + ival + tval;
     if ival==0 && tval==0
         if otherval~=0 && R_est<.95
-            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+            Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 5);
             R2flag = min(0.95-Rt2,0);
 %             disp([t Rt2])
         end
@@ -577,12 +606,11 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     % t is greater than the end of the vaccine rollout: otherval = 0
     tval = min(t-(max(p2.tpoints)+7),0);
     % hval: no patients
-    sumH = sum(H + Hv1 + Hv2);
     hval = min(p2.hosp_final_threshold - sumH,0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
-%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+%         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R3flag = min(Rthresh - R_est,0);
 %         disp([t/1000 Rt3 betamod p3 p4 sumH ])
@@ -597,19 +625,24 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     
     y_mat = reshape(y,nStrata,[]);
     compindex = data.compindex;
+    S_index = compindex.S_index;
+    I_index = compindex.I_index;
+    H_index = compindex.H_index;
     
-    S    = y_mat(:,compindex.S_index(1));
-    H    = y_mat(:,compindex.H_index(1));
-    Hv1    = y_mat(:,compindex.H_index(2));
-    Hv2    = y_mat(:,compindex.H_index(3));
-    Sn   = y_mat(:,compindex.S_index(2));
-    Shv1   = y_mat(:,compindex.S_index(3));
-    Sv1   = y_mat(:,compindex.S_index(4));
-    Sv2   = y_mat(:,compindex.S_index(5));
+    S    = y_mat(:,S_index(1));
+    H    = y_mat(:,H_index(1));
+    Hv1    = y_mat(:,H_index(2));
+    Hv2    = y_mat(:,H_index(3));
+    Sn   = y_mat(:,S_index(2));
+    S01   = y_mat(:,S_index(3));
+    Sv1   = y_mat(:,S_index(4));
+    Sv2   = y_mat(:,S_index(5));
+    S02   = y_mat(:,S_index(6));
+    S12   = y_mat(:,S_index(7));
     
-    Is   = y_mat(:,compindex.I_index(2));
-    Isv1   = y_mat(:,compindex.I_index(4));
-    Isv2   = y_mat(:,compindex.I_index(6));
+    Is   = y_mat(:,I_index(2));
+    Isv1   = y_mat(:,I_index(4));
+    Isv2   = y_mat(:,I_index(6));
     
     occ   = max(1,sum(H+Hv1+Hv2)); 
     
@@ -632,10 +665,10 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     
     %% isolating
     sumN = sum(data.NNs);
-    [p3, p4] = fraction_averted_self_isolating(sum(sum(y_mat(:,compindex.I_index))), sumN, p2, t, i);
+    [p3, p4] = fraction_averted_self_isolating(sum(sum(y_mat(:,I_index))), sumN, p2, t, i);
           
     %% distancing
-    ddk    = 10^6*sum(dis2.mu.*(H + Hv1 + Hv2))/sumN;
+    ddk    = 10^6*sum(mu.*(H + Hv1 + Hv2))/sumN;
 %     betamod = social_distancing(data.sd_baseline, data.sd_death_coef, data.sd_mandate_coef,ddk, data.rel_stringency(i));
      
     %% Event 1: Response Time
@@ -685,7 +718,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
         if otherval~=0
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
-            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+            Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 5);
             R2flag = min(0.95-Rt2,0);
         end
     end
@@ -708,7 +741,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     hval = min(p2.hosp_final_threshold-sumH,0);
     R3flag = tval + hval;
     if tval==0 && hval==0     
-%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+%         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         R3flag = min(Rthresh - R_est,0);
@@ -733,15 +766,19 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
 
     y_mat = reshape(y,nStrata,[]);
     compindex = data.compindex;
+    S_index = compindex.S_index;
+    H_index = compindex.H_index;
 
-    S    = y_mat(:,compindex.S_index(1));
-    H    = y_mat(:,compindex.H_index(1));
-    Hv1    = y_mat(:,compindex.H_index(2));
-    Hv2    = y_mat(:,compindex.H_index(3));
-    Sn   = y_mat(:,compindex.S_index(2));
-    Shv1   = y_mat(:,compindex.S_index(3));
-    Sv1   = y_mat(:,compindex.S_index(4));
-    Sv2   = y_mat(:,compindex.S_index(5));
+    S    = y_mat(:,S_index(1));
+    H    = y_mat(:,H_index(1));
+    Hv1    = y_mat(:,H_index(2));
+    Hv2    = y_mat(:,H_index(3));
+    Sn   = y_mat(:,S_index(2));
+    S01   = y_mat(:,S_index(3));
+    Sv1   = y_mat(:,S_index(4));
+    Sv2   = y_mat(:,S_index(5));
+    S02   = y_mat(:,S_index(6));
+    S12   = y_mat(:,S_index(7));
     
     occ  = max(1,sum(H+Hv1+Hv2)); 
         
@@ -784,7 +821,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
         if otherval~=0 && R_est<1
         % only compute R if R2flag is not already 0 and ivals and tval
         % conditions are both met
-            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+            Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 5);
             R2flag = min(1.00-Rt2,0);
         end
     end
@@ -810,7 +847,7 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     hval = min(p2.hosp_final_threshold-sumH,0);
     R3flag = ival + tval + hval;
     if ival==0 && tval==0 && hval==0
-%         Rt3 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+%         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         R3flag = min(Rthresh - R_est,0);
