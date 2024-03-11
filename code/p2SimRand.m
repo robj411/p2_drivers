@@ -43,11 +43,6 @@ end
 
 %% countries by disease
 
-% 2: get all countries
-% get covid doubling time
-% 3: get beta and R0, where beta depends on R0
-betas = zeros(nsamples,n_income);
-R0s = zeros(nsamples,n_income);
 for i = 1:nsamples
     dis = synthetic_countries_dis_basis{i};
     for il = 1:n_income
@@ -111,10 +106,19 @@ for il = 1:n_income
                     p2 = synthetic_countries_p2{i,il,vl,bl};
                     try
                         %% run model
-                        [~,returned,iseq] = p2Run(ldata,dis2,strategy,p2);
+                        [~,returned] = p2Run(ldata,dis2,strategy,p2);
         %                         figure('Position', [100 100 400 300]); plot(returned.Tout,returned.Htot)
                         
-                        %% store some numbers
+                        %% outputs: costs
+                        costs    = p2Cost(ldata,dis2,p2,returned);
+                        sec         = nan(1,4);
+                        sec(2)      = sum(costs.value_dYLL); % dylls
+                        sec(3)      = sum(costs.value_SYL); % school
+                        sec(4)      = sum(costs.GDP_lost);  % gdp
+                        sec(1)      = sum(sec(2:4)); % cost
+                        total_deaths = returned.deathtot(end);
+                        
+                        %% store some intermediate values
                         % store final time point
                         endsim = max(returned.Tout);
                         % store time mitigation ends
@@ -124,22 +128,12 @@ for il = 1:n_income
                         % get fraction of deaths that happen after
                         % mitigation ends
                         exitwavefrac = 1-returned.deathtot(exitwave)/returned.deathtot(end);
-%                         disp([ms vl bl i])
-%                         disp([endsim/1000 exitwavefrac ldata.self_isolation_compliance p2.frac_sym_infectiousness_averted p2.frac_presym_infectiousness_averted p2.frac_asym_infectiousness_averted ])
                         % total still susceptible at end of simulation
                         endsusc = returned.Stotal(end)/returned.Stotal(1);
                         % hospital occupancy at response time
                         ht = returned.Htot(find(returned.Tout > p2.Tres,1));
                         
-                        %% costs
-                        costs    = p2Cost(ldata,dis2,p2,returned);
-                        sec         = nan(1,4);
-                        sec(2)      = sum(costs.value_dYLL); % dylls
-                        sec(3)      = sum(costs.value_SYL); % school
-                        sec(4)      = sum(costs.GDP_lost);  % gdp
-                        sec(1)      = sum(sec(2:4)); % cost
-                        total_deaths = returned.deathtot(end);
-                        
+                        %% store inputs
                         gdp = sum(ldata.obj);
                         popsize = sum(ldata.Npop);
                         Npop = [ldata.Npop(1:(length(dis2.ihr)-1)) ; sum(ldata.Npop(length(dis2.ihr):length(ldata.Npop)))];
@@ -177,10 +171,7 @@ for il = 1:n_income
                         disp([il ms vl bl i]);
                     end
                 end   
-%                 disp([il ms vl bl])
-%                 disp(outputs)
-%                 ldata = synthetic_countries{1,il}; 
-%                 disp([ldata.sd_baseline ldata.sd_death_coef ldata.sd_mandate_coef])
+                % write results
                 T = array2table([inputs outputs]);
                 T.Properties.VariableNames = columnnames;
                 writetable(T,strcat('results/VOI_',string(strategy),'_',string(income_level),'_',string(vaccination_levels(vl)),'_',string(bpsv_levels(bl)),'.csv'));

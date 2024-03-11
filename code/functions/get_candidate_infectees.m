@@ -1,17 +1,15 @@
 % get effective reproduction number
-
+%
 % nStrata: number of strata
 % dis: struct of pathogen parameters
 % S: susceptible unvaccinated
 % Sv1: susceptible BPSV-vaccinated
 % Sv2: susceptible SARS-X--vaccinated
-% N: population by stratum
-% contact_matrix: contact matrix
-% beta: rate of infection
-% betamod: scalar that multiplies beta
 % p3: fraction of asymptomatic infectious people's infectiousness averted
 % p4: fraction of symptomatic infectious people's infectiousness averted
-
+% N: population by stratum
+% contact_matrix: contact matrix
+%
 % R: effective reproduction number
 
 function CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, contact_matrix)

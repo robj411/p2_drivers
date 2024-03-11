@@ -1,12 +1,12 @@
 % updates parameters relating to hospitalisation as a function of
 % waning vaccine immunity, and past infection
-
+%
 % dis: struct of pathogen parameters
 % S: number susceptible by stratum
 % Sn: number susceptible and not previously infected or vaccinated by stratum
 % compindex: struct of compartment indices 
 % y_mat: matrix of present values in all compartments
-
+%
 % dis2: updated struct of pathogen parameters
 % V: amount of BPSV in population
 % B: amount of SARS-X vaccine in population

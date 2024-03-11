@@ -7,10 +7,8 @@
 %
 % data: struct of general model parameters
 % returnobject: struct of epi outcomes 
-% isequence: tables of configurations (i values) chosen and times at which
-% they were chosen
 
-function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
+function [data, returnobject] = p2Run(data, dis, strategy, p2)
 
     %% get configurations
     
@@ -66,13 +64,13 @@ function [data, returnobject, isequence] = p2Run(data, dis, strategy, p2)
 
     data.basic_foi = Dvec(:,:,1)*(1./NNbar);
     
-    [data, returnobject, isequence] = p2SimVax(data, dis, workerConfigMat, p2);
+    returnobject = p2SimVax(data, dis, workerConfigMat, p2);
 
 end
 
 %%
 
-function [data,returnobject,isequence] = p2SimVax(data, dis, workerConfigMat, p2)    
+function returnobject = p2SimVax(data, dis, workerConfigMat, p2)    
     
     
     %% PARAMETERS
@@ -186,6 +184,7 @@ function [data,returnobject,isequence] = p2SimVax(data, dis, workerConfigMat, p2
     pout.p3 = p3out;
     pout.p4 = p4out;
     returnobject.selfisolation = pout;
+    returnobject.isequence = isequence;
   
 end
 

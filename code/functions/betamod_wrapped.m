@@ -2,7 +2,6 @@
 % in some circumstances it should be 1, and to impose a lower bound
 %
 % ddk: deaths per 10^6 population at this time point
-% p2: struct of p2 intervention parameters
 % data: struct of general model parameters
 % mandate: integer corresponding to states of government mandate
 %

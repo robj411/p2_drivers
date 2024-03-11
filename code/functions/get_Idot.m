@@ -1,3 +1,17 @@
+% function to estimate rates of change of infectious compartments and growth rate of infections
+%
+% dis2: struct of pathogen parameters
+% compindex: struct of vectors of indices locating compartments
+% y_mat: matrix of current disease states
+%
+% Iadot: rate of change of Ia 
+% Isdot: rate of change of Is
+% Iav1dot: rate of change of Iav1
+% Isv1dot: rate of change of Isv1 
+% Iav2dot: rate of change of Iav2
+% Isv2dot: rate of change of Isv2
+% IdotoverI: growth rate
+
 function [Iadot, Isdot, Iav1dot, Isv1dot, Iav2dot, Isv2dot, IdotoverI] =  get_Idot(dis2, compindex, y_mat)
 
     E_index = compindex.E_index;
