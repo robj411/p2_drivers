@@ -1,15 +1,18 @@
 function [Iadot, Isdot, Iav1dot, Isv1dot, Iav2dot, Isv2dot, IdotoverI] =  get_Idot(dis2, compindex, y_mat)
 
-    E =      y_mat(:,compindex.E_index(1));
-    Ev1 =      y_mat(:,compindex.E_index(2));
-    Ev2 =      y_mat(:,compindex.E_index(3));
+    E_index = compindex.E_index;
+    I_index = compindex.I_index;
+
+    E =      y_mat(:,E_index(1));
+    Ev1 =      y_mat(:,E_index(2));
+    Ev2 =      y_mat(:,E_index(3));
     
-    Ia =    y_mat(:,compindex.I_index(1));
-    Is =    y_mat(:,compindex.I_index(2));
-    Iav1 =    y_mat(:,compindex.I_index(3));
-    Isv1 =    y_mat(:,compindex.I_index(4));
-    Iav2 =    y_mat(:,compindex.I_index(5));
-    Isv2 =    y_mat(:,compindex.I_index(6));
+    Ia =    y_mat(:,I_index(1));
+    Is =    y_mat(:,I_index(2));
+    Iav1 =    y_mat(:,I_index(3));
+    Isv1 =    y_mat(:,I_index(4));
+    Iav2 =    y_mat(:,I_index(5));
+    Isv2 =    y_mat(:,I_index(6));
     
     h    = dis2.h;
     g1   = dis2.g1;
@@ -28,7 +31,7 @@ function [Iadot, Isdot, Iav1dot, Isv1dot, Iav2dot, Isv2dot, IdotoverI] =  get_Id
     Iav2dot=   sig1.*Ev2   -g1.*Iav2;
     Isv2dot=   sig2.*Ev2   -(g2_v2+h_v2).*Isv2;
     
-    I = sum(sum(y_mat(:,compindex.I_index)));
+    I = sum(Ia + Is + Iav1 + Isv1 + Iav2 + Isv2);
     
     Idot = sum(Iadot + Isdot + Iav1dot + Isv1dot + Iav2dot + Isv2dot);
     
