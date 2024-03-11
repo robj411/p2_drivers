@@ -290,11 +290,11 @@ The rate of infection of susceptible individuals, $k_{1,i,v}(t)$, is
 defined as
 
 $$\begin{equation}
-k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\sum_{j=1}^{z}M_{i,j}(x) I_j(t)
+k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\sum_{j=1}^{m}M_{i,j}(x) I_j(t)
 \qquad(3.1)
 \end{equation}$$
 
-with $z=49$ strata and
+with $m=49$ strata and
 
 ``` math
  I_j(t)=\sum_{v=0}^2\left(\epsilon (1-p_3(t))I_{j,v}^{(A)}(t)+(1-p_4(t))I_{j,v}^{(S)}(t)\right). 
@@ -2537,7 +2537,7 @@ measures - whichever is lower.
 
 ### 4.2.3 Loss of international tourists
 
-We model the distribution of $z$ using data from 2020 (Figure
+We model the distribution of $c$ using data from 2020 (Figure
 <a href="#fig:tourismhist">4.2</a>, bottom-right plot). We fit to it a
 log-normal distribution, and find mean value -1.39 and standard
 deviation 0.39 (Figure <a href="#fig:ytd">4.3</a>). We use these values
@@ -2572,24 +2572,24 @@ Figure 4.3: Fit of log-normal distribution to loss-of-tourism data.
 
 ### 4.2.4 Dependence on international tourism
 
-We model $y$ as a function of the share of GDP that comes from the
+We model $b$ as a function of the share of GDP that comes from the
 sector. Note that the data we have for this are biased towards
 high-income countries.
 
 We write
 
-$$y\sim\text{Beta}(\alpha(u),\beta(u))$$
+$$b\sim\text{Beta}(\alpha(u),\beta(u))$$
 
 where $u$ is the fraction of GDP coming from the Food and accommodation
 sector. We learn three parameters $p_5$, $p_6$ and $p_7$ to best fit the
-relationship between $u$ and $y$ in countries we have observations for:
+relationship between $u$ and $b$ in countries we have observations for:
 
 $$p_5 = \alpha(u)+\beta(u)$$
 
 $$p_6u + p_7 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
 
 Here, $p_5$ controls the variance of the distribution and $p_6$ and
-$p_7$ the linear relationship between $u$ and $y$. Using an optimisation
+$p_7$ the linear relationship between $u$ and $b$. Using an optimisation
 routine in R we find $p_5=5.93$, $p_6=3.66$ and $p_7=0.099$. Results are
 shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
 values as inputs for all country models.

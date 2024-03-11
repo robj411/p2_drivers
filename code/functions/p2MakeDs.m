@@ -1,89 +1,90 @@
 % construct contact matrices from components for configurations
-
+%
 % data: struct of general model parameters
 % NN: population by stratum
 % x: economic configuration
 % hw: proportion working from home by stratum
-
+%
 % D: contact matrix
 
-function D = p2MakeDs(data,NN,x,hw)
+function contact_matrix = p2MakeDs(data,NN,x,hw)
 
+%% variables to use
 
 contacts = data.contacts; 
+CM_4 = contacts.C4;
+contact_props = contacts.contact_props;
+hospitality_frac = contacts.hospitality_frac;
 
 w             = x;
-w(data.EdInd) = x(data.EdInd);
+edInd = data.EdInd;
+adInd    = data.adInd; %Adult index
+HospInd = data.HospInd;
 
+workRow = CM_4(adInd,:);
+nSectors       = length(x);%Number of sectors
+nStrata       = length(NN);
+workage_indices = [1:nSectors,nSectors+adInd];
 
-%% COMMUNITY-COMMUNITY MATRIX:
-C4 = contacts.C4;
-contact_props = contacts.contact_props;
+NNrel = NN(workage_indices)/sum(NN(workage_indices));%adult population proportion vector
+NNrepvecweighted = zeros(1,nStrata);
+NNrepvecweighted(workage_indices) = NNrel*contact_props(3);
+NNrepvecweighted(nSectors+[1,2,4]) = contact_props([1,2,4]);
+NNrep = repmat(NNrepvecweighted,nStrata,1);%total population proportion matrix
+NNrea = repmat(NN(1:nSectors)'/sum(NN(1:nSectors)),nSectors,1);%workforce population proportion matrix
 
-%% add contacts to C4
+%% add school and hospitality contacts to CM_4
 
 % start with hospitality
-psub = data.NNs(data.HospInd);
-psub = sum(psub.*x(data.HospInd))/sum(psub);%constant from 0-1, weighted measure of how much sectors are open
-C4 = C4 + psub^2 * contacts.hospitality_frac / (1-contacts.hospitality_frac) * C4;
+hospitality_sectors = NN(HospInd);
+% get weighted average
+hospitality_sectors = sum(hospitality_sectors.*x(HospInd))/sum(hospitality_sectors); % constant from 0 to 1, weighted measure of how much sectors are open
+CM_4 = CM_4 + hospitality_sectors^2 * hospitality_frac / (1-hospitality_frac) * CM_4;
 
 % school
-C4(1,1) = C4(1,1) + w(data.EdInd).^2 * contacts.schoolA1;
-C4(2,2) = C4(2,2) + w(data.EdInd).^2 * contacts.schoolA2;
+CM_4(1,1) = CM_4(1,1) + w(edInd).^2 * contacts.schoolA1;
+CM_4(2,2) = CM_4(2,2) + w(edInd).^2 * contacts.schoolA2;
 
-% hospitality
-% C4(2,:) = C4(2,:) + psub^2 * contacts.hospA2 * contact_props;
-% C4(3,:) = C4(3,:) + psub^2 * contacts.hospA3 * contact_props;
-% C4(4,:) = C4(4,:) + psub^2 * contacts.hospA4 * contact_props;
-
-%%
-
-adInd    = 3;%Adult index
-CworkRow = C4(adInd,:);
-lx       = length(x);%Number of sectors
-ln       = length(NN);
-
-NNrel = NN([1:lx,lx+adInd])/sum(NN([1:lx,lx+adInd]));%adult population proportion vector
-NNrepvecweighted = zeros(1,ln);
-NNrepvecweighted([1:lx,lx+adInd]) = NNrel*contact_props(3);
-NNrepvecweighted(lx+[1,2,4]) = contact_props([1,2,4]);
-NNrep = repmat(NNrepvecweighted,ln,1);%total population proportion matrix
-% NNrep = repmat(NN'/sum(NN),ln,1);%total population proportion matrix
-NNrea = repmat(NN(1:lx)'/sum(NN(1:lx)),lx,1);%workforce population proportion matrix
-
-%Make A:
-matA                    = zeros(ln,ln);
-matA(lx+1:end,lx+1:end) = C4;
-matA(1:lx,lx+1:end)     = repmat(CworkRow,lx,1);
-matA(:,[1:lx,lx+adInd]) = repmat(matA(:,lx+adInd),1,lx+1).*repmat(NNrel',ln,1);
+%% Make community matrix
+community_mat                    = zeros(nStrata,nStrata);
+community_mat(nSectors+1:end,nSectors+1:end) = CM_4;
+community_mat(1:nSectors,nSectors+1:end)     = repmat(workRow,nSectors,1);
+community_mat(:,workage_indices) = repmat(community_mat(:,nSectors+adInd),1,nSectors+1).*repmat(NNrel',nStrata,1);
 
 %Transport:
-matA(1:lx,1:lx)=    matA(1:lx,1:lx)+    repmat(w',lx,1).*repmat(w,1,lx).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,lx,1).*repmat(1-hw',1,lx);%home-working has a compound effect
-mat = repmat(w',lx,1).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,lx,1).*repmat(1-hw',1,lx);
+community_mat(1:nSectors,1:nSectors) = community_mat(1:nSectors,1:nSectors) + ...
+    repmat(w',nSectors,1).*repmat(w,1,nSectors).*contacts.travelA3(1).*NNrea.*repmat(1-hw,nSectors,1).*repmat(1-hw',1,nSectors); % home-working has a compound effect
+% mat = repmat(w',nSectors,1).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,nSectors,1).*repmat(1-hw',1,nSectors);
 
-%% WORKER-WORKER AND COMMUNITY-WORKER MATRICES:
+%% WORKER-WORKER AND COMMUNITY-WORKER MATRICES
 
-%Make B and C:
-valB          = contacts.B;
-valB          = valB.*(1-hw).*(1-hw);%home-working has a compound effect
-valC          = contacts.C;
-valC          = valC.*(1-hw).*(1-hw);
-valB(lx+1:ln) = 0;
-valC(lx+1:ln) = 0;
-x(lx+1:ln)    = 0;
-w(lx+1:ln)    = 0;
-matB          = diag(w.^2.*valB');
-matC          = repmat(x.*w.*valC',1,ln).*NNrep;
+x(nSectors+1:nStrata)    = 0;
+w(nSectors+1:nStrata)    = 0;
+
+% workers
+workerworker_val          = contacts.B;
+workerworker_val          = workerworker_val.*(1-hw).*(1-hw);%home-working has a compound effect
+workerworker_val(nSectors+1:nStrata) = 0;
+workerworker_mat          = diag(w.^2.*workerworker_val');
+
+% customer to worker
+customertoworker_val          = contacts.C;
+customertoworker_val          = customertoworker_val.*(1-hw).*(1-hw);
+customertoworker_val(nSectors+1:nStrata) = 0;
+customertoworker_mat          = repmat(x.*w.*customertoworker_val',1,nStrata).*NNrep;
+
 % move school contacts to students
-teacher_contacts = x(data.EdInd).*valC(data.EdInd);
-matC(data.EdInd,:) = 0.1 * teacher_contacts .* NNrep(data.EdInd,:);
-frac_infant = data.NNs(lx+1)/sum(data.NNs(lx+[1:2]));
-matC(data.EdInd,lx+1) = matC(data.EdInd,lx+1) + 0.9*frac_infant * teacher_contacts;
-matC(data.EdInd,lx+2) = matC(data.EdInd,lx+2) + 0.9*(1-frac_infant) * teacher_contacts;
+frac_infant = NN(nSectors+1)/sum(NN(nSectors+[1:2]));
+teacher_contacts = x(edInd).*customertoworker_val(edInd);
+customertoworker_mat(edInd,:) = 0.1 * teacher_contacts .* NNrep(edInd,:);
+customertoworker_mat(edInd,nSectors+1) = customertoworker_mat(edInd,nSectors+1) + 0.9*frac_infant * teacher_contacts;
+customertoworker_mat(edInd,nSectors+2) = customertoworker_mat(edInd,nSectors+2) + 0.9*(1-frac_infant) * teacher_contacts;
 
-contacts_between_workers_and_customers = matC .* repmat(NN,1,ln);
-Cback = contacts_between_workers_and_customers' ./ repmat(NN,1,ln);
+% get return contacts
+contacts_between_workers_and_customers = customertoworker_mat .* repmat(NN,1,nStrata);
+worker_back = contacts_between_workers_and_customers' ./ repmat(NN,1,nStrata);
 
-D = matA + contacts.workrel*(matB + matC + Cback);
+%% add all together
+contact_matrix = community_mat + contacts.workrel*(workerworker_mat + customertoworker_mat + worker_back);
 
 end

@@ -297,7 +297,7 @@ minimum size=15pt, font=\fontsize{10}{10}\selectfont, node distance=1]
     \draw [arrow] (L2) edge[bend left=10] node [above] (T6) {$k_3$} (R);
     \draw [arrow] (I1) -- node [right] {$k_{7,i}(t)$} (R);
     \draw [arrow] (I1) -- node [above] {$k_{8,i}(t)$} (D);
-   \plate[inner sep=0.25cm, yshift=0.12cm] {plate3} {(S) (L2) (D)} {$i\in\{1,...,z\}; v\in\{0,1,2\}$}; 
+   \plate[inner sep=0.25cm, yshift=0.12cm] {plate3} {(S) (L2) (D)} {$i\in\{1,...,m\}; v\in\{0,1,2\}$}; 
 \end{tikzpicture}
 ```
 
@@ -307,11 +307,11 @@ Possible transitions between disease states are shown in Figure \@ref(fig:statet
 The rate of infection of susceptible individuals, $k_{1,i,v}(t)$, is defined as
 
 \begin{equation}
-k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\sum_{j=1}^{z}M_{i,j}(x) I_j(t)
+k_{1,i,v}(t) = \eta_{A,v}\rho(t)\beta\sum_{j=1}^{m}M_{i,j}(x) I_j(t)
 (\#eq:infection)
 \end{equation}
 
-with $z=49$ strata and 
+with $m=49$ strata and 
 
 ```math
  I_j(t)=\sum_{v=0}^2\left(\epsilon (1-p_3(t))I_{j,v}^{(A)}(t)+(1-p_4(t))I_{j,v}^{(S)}(t)\right). 
@@ -758,7 +758,7 @@ fit <- dlnorm(x, fit_params$estimate['meanlog'], fit_params$estimate['sdlog'])
 
 ### Loss of international tourists
 
-We model the distribution of $z$ using data from 2020 (Figure \@ref(fig:tourismhist), bottom-right plot). We fit to it a log-normal distribution, and find mean value `r round(fit_params$estimate['meanlog'],2)` and standard deviation `r round(fit_params$estimate['sdlog'],2)` (Figure \@ref(fig:ytd)). We use these values as inputs for all country models.
+We model the distribution of $c$ using data from 2020 (Figure \@ref(fig:tourismhist), bottom-right plot). We fit to it a log-normal distribution, and find mean value `r round(fit_params$estimate['meanlog'],2)` and standard deviation `r round(fit_params$estimate['sdlog'],2)` (Figure \@ref(fig:ytd)). We use these values as inputs for all country models.
 
 
 ```{r tourismhist, fig.cap="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector.",fig.height=6, fig.width=9, fig.align="center",echo=F,warning=F,message=F}
@@ -772,7 +772,7 @@ ggplot() + geom_histogram(aes(x=dat,y=..density..),colour='navyblue',fill='grey'
   geom_line(aes(x=x,y=fit),colour='navyblue',size=2) +
   theme_bw(base_size=15) +
   scale_x_continuous(expand=c(0,0)) + 
-  labs(x='Remaining international tourism (z)',y='Density')
+  labs(x='Remaining international tourism (c)',y='Density')
 
 # plot the fit and original distributions
 # plot(x, fit, type="l", ylab="Density",
@@ -789,19 +789,19 @@ ggplot() + geom_histogram(aes(x=dat,y=..density..),colour='navyblue',fill='grey'
 
 ### Dependence on international tourism
 
-We model $y$ as a function of the share of GDP that comes from the sector. Note that the data we have for this are biased towards high-income countries.
+We model $b$ as a function of the share of GDP that comes from the sector. Note that the data we have for this are biased towards high-income countries.
 
 We write 
 
-$$y\sim\text{Beta}(\alpha(u),\beta(u))$$
+$$b\sim\text{Beta}(\alpha(u),\beta(u))$$
 
-where $u$ is the fraction of GDP coming from the Food and accommodation sector. We learn three parameters $p_5$, $p_6$ and $p_7$ to best fit the relationship between $u$ and $y$ in countries we have observations for:
+where $u$ is the fraction of GDP coming from the Food and accommodation sector. We learn three parameters $p_5$, $p_6$ and $p_7$ to best fit the relationship between $u$ and $b$ in countries we have observations for:
 
 $$p_5 = \alpha(u)+\beta(u)$$
 
 $$p_6u + p_7 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
   
-Here, $p_5$ controls the variance of the distribution and $p_6$ and $p_7$ the linear relationship between $u$ and $y$. Using an optimisation routine in R we find $p_5=5.93$, $p_6=3.66$ and $p_7=0.099$. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
+Here, $p_5$ controls the variance of the distribution and $p_6$ and $p_7$ the linear relationship between $u$ and $b$. Using an optimisation routine in R we find $p_5=5.93$, $p_6=3.66$ and $p_7=0.099$. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
 
  ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=60% }
 
