@@ -554,8 +554,7 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     otherval = min(t-max(p2.tpoints),0);
     R2flag = otherval + ival + tval;
     if ival==0 && tval==0
-        R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
-        if otherval~=0 && R_est<1
+        if otherval~=0 && R_est<.95
             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
             R2flag = min(0.95-Rt2,0);
 %             disp([t Rt2])
@@ -780,15 +779,15 @@ function [value,isterminal,direction] = unmitigated(t,y,data,nStrata,dis,i,p2)
     % have reached end of vaccine rollout: otherval = 0
     otherval = min(t-max(p2.tpoints),0);
     R2flag = otherval + ivals + tval;
-    % exit only if vaccines done. no early exit for low Rt.
-%     if ivals==0 && tval==0 
-%         if otherval~=0
-%         % only compute R if R2flag is not already 0 and ivals and tval
-%         % conditions are both met
-%             Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-%             R2flag = min(1.00-Rt2,0);
-%         end
-%     end
+    if ivals==0 && tval==0 
+        R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+        if otherval~=0 && R_est<1
+        % only compute R if R2flag is not already 0 and ivals and tval
+        % conditions are both met
+            Rt2 = get_R(nStrata,dis2,S+Shv1,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+            R2flag = min(1.00-Rt2,0);
+        end
+    end
     
     value(3)      = R2flag; 
     %measures can be removed at any stage if (Rt<1) or (after end of vaccination campaign)
