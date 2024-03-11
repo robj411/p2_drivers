@@ -466,7 +466,7 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
     f_mat(:,compindex.V_index(2)) = Bdot;
     
     f = reshape(f_mat,[],1);
-    eps10 = eps*1e10;
+    eps10 = eps*1e12;
     f(y<eps10) = max(0,f(y<eps10)); %%! exit wave was lost
 
 end
