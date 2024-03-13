@@ -27,7 +27,10 @@ days_per_infectious_day = 2.5;
 days_per_infectious_day_asym = days_per_infectious_day./dis.Tay.*dis.Tsr;
 
 p3 = selfisolation.p3;
-p4 = selfisolation.p4;
+p4 = selfisolation.p4; % does not matter: symptomatic isolate for a fixed number of days based on symptom onset. testing therefore affects their infectiousness but not their time spent at home.
+
+frac_cases_found = p3 / p2.frac_asym_infectiousness_averted;
+frac_isolating = frac_cases_found * self_isolation_compliance; % maybe should not scale by compliance because why do you test if you do not comply?
 
 %% VLYL
 
@@ -51,11 +54,11 @@ students         = data.NNs(Stu);
 %Student Supply
 days_per_infectious_day_sym = days_per_infectious_day./dis.Ts(Stu).*dis.Tsr;
 prob_hosp = dis.ph(Stu).*[1 1-dis.hv1 1-dis.hv2];
-isoasym       = sum(reshape(Iamat(:,Stu,:),[],3),2).* days_per_infectious_day_asym .* p3; 
+isoasym       = sum(reshape(Iamat(:,Stu,:),[],3),2).* days_per_infectious_day_asym .* frac_isolating; 
 
 symstudents = reshape(Ismat(:,Stu,:),[],3);
-sym_no_hosp       = sum(symstudents.*(1-prob_hosp),2).* p4 .* days_per_infectious_day_sym; 
-sym_to_hosp       = sum(symstudents.*prob_hosp,2).* p4 + hospmat(:,Stu) ; 
+sym_no_hosp       = sum(symstudents.*(1-prob_hosp),2).* self_isolation_compliance .* days_per_infectious_day_sym; 
+sym_to_hosp       = sum(symstudents.*prob_hosp,2).* self_isolation_compliance + hospmat(:,Stu) ; 
 % deaths       = deathmat(:,Stu) ; 
 isosym          = sym_no_hosp + sym_to_hosp;% + deaths;%numbers of students
 
@@ -73,7 +76,7 @@ notEd = [1:(data.EdInd-1),(data.EdInd+1):nSectors];
 worker_numbers = data.NNs(notEd);
 
 % labour supply
-isoasym       = sum(Iamat(:,notEd,:),3).* days_per_infectious_day_asym .* p3; 
+isoasym       = sum(Iamat(:,notEd,:),3).* days_per_infectious_day_asym .* frac_isolating; 
 
 days_per_infectious_day_sym = days_per_infectious_day./dis.Ts(notEd).*dis.Tsr;
 prob_hosp = dis.ph(notEd).*[1 1-dis.hv1 1-dis.hv2];
@@ -86,8 +89,8 @@ for i = 1:size(sym_no_hosp_total,1)
         sym_to_hosp_total(i,:,j) = Ismat(i,notEd,j) .* prob_hosp(:,j)';
     end
 end
-sym_no_hosp       = sum(sym_no_hosp_total,3).* p4 .* days_per_infectious_day_sym'; 
-sym_to_hosp       = sum(sym_to_hosp_total,3).* p4 + hospmat(:,notEd) + deathmat(:,notEd) ; 
+sym_no_hosp       = sum(sym_no_hosp_total,3).* self_isolation_compliance .* days_per_infectious_day_sym'; 
+sym_to_hosp       = sum(sym_to_hosp_total,3).* self_isolation_compliance + hospmat(:,notEd) + deathmat(:,notEd) ; 
 % deaths       = deathmat(:,Stu) ; 
 isosym          = sym_no_hosp + sym_to_hosp;% + deaths;%numbers of students
 
