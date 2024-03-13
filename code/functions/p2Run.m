@@ -709,7 +709,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     tval = min(t-(data.tvec(end-1)+0.1),0);
     % (low growth rate OR occupancy is low) AND have reached end of vaccine
     % rollout: otherval = 0
-    otherval = -abs(min(0.025-r,0)*max(0,occ-p2.thl)) + min(t-max(p2.tpoints),0);
+    otherval = -abs(min(0.025-r,0)*max(0,occ-p2.thl)) + min(t-7-max(p2.tpoints),0);
     R2flag = otherval + ivals + tval;
     % only check open economy if current R<1
     R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
@@ -733,13 +733,15 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     isterminal(6) = 1;
     
     %% Event 7: end
+    % mitigation is over
+    ival = -abs((i-5));
     % t is greater than the end of the vaccine rollout: tval = 0
     tval = min(t-(max(p2.tpoints)+7),0);
     % hval: no patients
     sumH = sum(H + Hv1 + Hv2);
     hval = min(p2.hosp_final_threshold-sumH,0);
-    R3flag = tval + hval;
-    if tval==0 && hval==0     
+    R3flag = tval + hval + ival;
+    if tval==0 && hval==0 && ival==0
 %         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
@@ -752,11 +754,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     end
     value(7)      =  R3flag;
     direction(7)  = 1;
-    if i==5
-        isterminal(7) = 1;
-    else
-        isterminal(7) = 0;
-    end
+    isterminal(7) = 1;
     
 end
 
