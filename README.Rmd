@@ -179,13 +179,13 @@ All economic sectors contribute GVA according to the level they are open for pro
 
 where $q_j$ is the fraction of the sector working from home. $A_{1,j}(t)$ represents worker sickness and death:
 
-$$A_{1,j}(t)=\sum_{v=0}^2\left((1-p_{H,j,v})p_4p_{18}^{(S)}I_{j,v}^{s}+p_{H,j,v}p_4I_{j,v}^{s}+H_{j,v}+D_{j,v}\right),$$ 
+$$A_{1,j}(t)=\sum_{v=0}^2\left((1-p_{H}^{j,v})p_1p_{18}^sI_{j,v}^{s}+p_{H}^{j,v}p_1I_{j,v}^{s}+H_{j,v}+D_{j,v}\right),$$ 
 
 and $A_{2,j}(t)$ represents output from asymptomatic self-isolating workers:
 
-$$A_{2,j}(t)=p_3p_{18}^{(A)}I_{j}^{a}.$$ 
+$$A_{2,j}(t)=p_2(t)p_{18}^aI_{j}^{a}.$$ 
 
-$p_{18}$ is the number of days spent in self isolation per day of infectiousness (e.g. suppose the average infectious period is four days and mandatory self-isolation time is ten days, then $p_{18}^{(S)}=2.5$ and $p_{18}^{(A)}=p_{18}^{(S)}\gamma_I/\gamma_A$, where $\gamma_I$ and $\gamma_A$ are expected infectious periods for symptomatic and asymptomatic, respectively). $p_3$ and $p_4$ are the fractions of asymptomatic and symptomatic people self isolating, respectively. Other notations are vaccine status $v$, infectious and asymptomatic $I_{j,v}^{a}$, infectious and symptomatic $I_{j,v}^{s}$, hospitalised $H$, deceased $D$, and probability to be hospitalised $p_H$. 
+$p_{18}$ is the number of days spent in self isolation per day of infectiousness (e.g. suppose the average infectious period is four days and mandatory self-isolation time is ten days, then $p_{18}^s=2.5$ and $p_{18}^a=p_{18}^s\gamma_I/\gamma_A$, where $\gamma_I$ and $\gamma_A$ are expected infectious periods for symptomatic and asymptomatic, respectively). $p_1$ is compliance with the requirement to self isolate and $p_2(t)$ is the fraction of cases identified. Other notations are vaccine status $v$, infectious and asymptomatic $I_{j,v}^{a}$, infectious and symptomatic $I_{j,v}^{s}$, hospitalised $H$, deceased $D$, and probability to be hospitalised $p_H$. 
 
 Then the total output is
 
@@ -212,11 +212,11 @@ where $p_{14}(t)$ is the effective amount of education lost per student at time 
 $$p_{14}(t) = (1-p_{16})(1-x_{\text{ed}}(t)),$$
 $W_{g_{\text{school}}}$ is the total number of students, $p_{16}$ is relative effectiveness of remote education and $x_{\text{ed}}(t)$ is the openness of schools, $B_1(t)$ represents education lost due to student sickness with COVID-19:
 
-$$B_1(t)=\sum_{v=0}^2\left((1-p_{H,j_{\text{school}},v})p_4p_{18}^{(S)}I_{j_{\text{school}},v}^{s}+p_{H,j_{\text{school}},v}p_4I_{j_{\text{school}},v}^{s}+H_{j_{\text{school}},v}\right),$$ 
+$$B_1(t)=\sum_{v=0}^2\left((1-p_{H}^{j_{\text{school}},v})p_1p_{18}^sI_{j_{\text{school}},v}^{s}+p_{H}^{j_{\text{school}},v}p_1I_{j_{\text{school}},v}^{s}+H_{j_{\text{school}},v}\right),$$ 
 
-$p_{18}$ is the number of days spent in self isolation per day of infectiousness (e.g. suppose the average infectious period is four days and mandatory self-isolation time is ten days, then $p_{18}^{(S)}=2.5$ and $p_{18}^{(A)}=p_{18}^{(S)}\gamma_I/\gamma_A$, where $\gamma_I$ and $\gamma_A$ are expected infectious periods for symptomatic and asymptomatic, respectively), and $B_2(t)$ represents education lost due to asymptomatic self isolation (which comes at a cost only when schools are open):
+$p_{18}$ is the number of days spent in self isolation per day of infectiousness (e.g. suppose the average infectious period is four days and mandatory self-isolation time is ten days, then $p_{18}^s=2.5$ and $p_{18}^a=p_{18}^s\gamma_I/\gamma_A$, where $\gamma_I$ and $\gamma_A$ are expected infectious periods for symptomatic and asymptomatic, respectively), and $B_2(t)$ represents education lost due to asymptomatic self isolation (which comes at a cost only when schools are open):
 
-$$B_2(t)=p_3p_{18}^{(A)}I_{j_{\text{school}}}^{a}.$$ 
+$$B_2(t)=p_2(t)p_{18}^aI_{j_{\text{school}}}^{a}.$$ 
 
 For the value of a year of education, we use the method of [@Psacharopoulos2021a]. 
 
@@ -373,7 +373,7 @@ In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who have rece
 
 $k_{10,c_1}^{j,v=0}(t)$ represents the rates of BPSV vaccination of unvaccinated susceptible and recovered people, and $k_{10,c_2}^{j,v=1}(t)$ represents the rates of vaccinating BPSV-vaccinated susceptible and recovered people. $k_{10,c_2}^{j,v=0}(t)$ represents the rates of vaccinating people directly with the specific vaccine. Put more succintly, $k_{10,c_u}^{j,v}(t)$ is the rate to go from vaccine state $v$ to $u$. $k_9$ is the rate of seroconversion to vaccine-induced immunity, and $k_{12}^{j}(t)=k_{1}^{j,v=0}(t)$ and $k_{19}^{j}(t)=k_{1}^{j,v=1}(t)$ are the rates of infection of just-vaccinated people, which returns them to the epidemiological pathway of the lower vaccination level.
 
-```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $S^{c_u},\\, u\\in(1,2)$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status.", fig.ext = 'png',echo=F}
+```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $S^{c_u},\\, u\\in\\{1,2\\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status.", fig.ext = 'png',echo=F}
 \usetikzlibrary{shapes}
 \usetikzlibrary{fit}
 \usetikzlibrary{arrows}
@@ -424,8 +424,8 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
     \draw [arrow] (S01) -- node [right] {$k_9$} (S1);
     % \draw [arrow] (Rv) edge[bend right=-30] node [below] {$k_{14}$} (S1);
     % \draw [arrow] (Rv2) edge[bend right=-30] node [below] {$k_{18}$} (S2);
-    \draw [arrow] (S) edge[bend right] node [left] {$k_{10,c_2}^{j,v=0}(t)$} (S02);
-    \draw [arrow] (R) edge[bend left] node [right] {$k_{10,c_2}^{j,v=0}(t)$} (Rv2);
+    \draw [arrow] (S) edge[bend right] node [left] (ks02) {$k_{10,c_2}^{j,v=0}(t)$} (S02);
+    \draw [arrow] (R) edge[bend left] node [right] (kr02) {$k_{10,c_2}^{j,v=0}(t)$} (Rv2);
     \draw [arrow] (R) -- node [left] {$k_{10,c_1}^{j,v=0}(t)$} (Rv);
     \draw [arrow] (S1) -- node [left] {$k_{10,c_2}^{j,v=1}(t)$} (S12);
     \draw [arrow] (S12) -- node [right] {$k_9$} (S2);
@@ -433,6 +433,7 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
     \draw [arrow] (Rv) -- node [left] {$k_{10,c_2}^{j,v=1}(t)$} (Rv2);
     \draw [arrow] (S2) -- node [above] {} (emv2);
     \draw [arrow] (emv2) -- node [above] {} (Rv2);
+   \plate[inner sep=0.25cm, yshift=0.12cm] {plate3} {(S) (Rv2) (ks02) (kr02)} {$j\in\{1,...,m\}$}; 
 \end{tikzpicture}
 
 ```
