@@ -23,12 +23,13 @@ selfisolation = returnobject.selfisolation;
 
 costs = struct;
 
-days_per_infectious_day = 2.5;
+days_per_infectious_day = 2;
 days_per_infectious_day_asym = days_per_infectious_day./dis.Tay.*dis.Tsr;
 
 p3 = selfisolation.p3;
 p4 = selfisolation.p4; % does not matter: symptomatic isolate for a fixed number of days based on symptom onset. testing therefore affects their infectiousness but not their time spent at home.
 
+self_isolation_compliance = data.self_isolation_compliance;
 frac_cases_found = p3 / p2.frac_asym_infectiousness_averted;
 frac_isolating = frac_cases_found * self_isolation_compliance; % maybe should not scale by compliance because why do you test if you do not comply?
 
@@ -98,11 +99,11 @@ isosym          = sym_no_hosp + sym_to_hosp;% + deaths;%numbers of students
 hw            = homeworkers(:,notEd);
 x             = workers(:,notEd);
 
-worker_presence        = x - ((1-x).*isosym - (1-x.*(1-hw)).*isoasym)./worker_numbers';
+worker_presence        = x - ((1-x).*isosym + (1-x.*(1-hw)).*isoasym)./worker_numbers';
 worker_presence_int     = trapz(t,worker_presence);
 
 GDP_in = sum(worker_presence_int .* data.obj(notEd)');
-max_GDP = (max(t)-min(t))*sum(data.obj);
+max_GDP = (max(t)-min(t))*sum(data.obj(notEd));
 costs.GDP_lost = max_GDP - GDP_in;
 
 
