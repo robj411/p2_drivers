@@ -399,12 +399,12 @@ to the epidemiological pathway of the lower vaccination level.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{c_u},\, u\in(1,2)$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status."  />
+<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{c_u},\, u\in\{1,2\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status."  />
 
 <p class="caption">
 
 Figure 3.2: Vaccine state transitions. $S$: susceptible.
-$S^{c_u},\, u\in(1,2)$: recently vaccinated but has not yet
+$S^{c_u},\, u\in\{1,2\}$: recently vaccinated but has not yet
 seroconverted (i.e. is not protected by most recent vaccination). $R$:
 recovered. $j$: stratum. $v$: initial vaccination status. $u$: final
 vaccination status.

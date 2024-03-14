@@ -373,7 +373,7 @@ In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who have rece
 
 $k_{10,c_1}^{j,v=0}(t)$ represents the rates of BPSV vaccination of unvaccinated susceptible and recovered people, and $k_{10,c_2}^{j,v=1}(t)$ represents the rates of vaccinating BPSV-vaccinated susceptible and recovered people. $k_{10,c_2}^{j,v=0}(t)$ represents the rates of vaccinating people directly with the specific vaccine. Put more succintly, $k_{10,c_u}^{j,v}(t)$ is the rate to go from vaccine state $v$ to $u$. $k_9$ is the rate of seroconversion to vaccine-induced immunity, and $k_{12}^{j}(t)=k_{1}^{j,v=0}(t)$ and $k_{19}^{j}(t)=k_{1}^{j,v=1}(t)$ are the rates of infection of just-vaccinated people, which returns them to the epidemiological pathway of the lower vaccination level.
 
-```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $S^{c_u},\\, u\\in(1,2)$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status.", fig.ext = 'png',echo=F}
+```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $S^{c_u},\\, u\\in\\{1,2\\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status.", fig.ext = 'png',echo=F}
 \usetikzlibrary{shapes}
 \usetikzlibrary{fit}
 \usetikzlibrary{arrows}
@@ -424,8 +424,8 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
     \draw [arrow] (S01) -- node [right] {$k_9$} (S1);
     % \draw [arrow] (Rv) edge[bend right=-30] node [below] {$k_{14}$} (S1);
     % \draw [arrow] (Rv2) edge[bend right=-30] node [below] {$k_{18}$} (S2);
-    \draw [arrow] (S) edge[bend right] node [left] {$k_{10,c_2}^{j,v=0}(t)$} (S02);
-    \draw [arrow] (R) edge[bend left] node [right] {$k_{10,c_2}^{j,v=0}(t)$} (Rv2);
+    \draw [arrow] (S) edge[bend right] node [left] (ks02) {$k_{10,c_2}^{j,v=0}(t)$} (S02);
+    \draw [arrow] (R) edge[bend left] node [right] (kr02) {$k_{10,c_2}^{j,v=0}(t)$} (Rv2);
     \draw [arrow] (R) -- node [left] {$k_{10,c_1}^{j,v=0}(t)$} (Rv);
     \draw [arrow] (S1) -- node [left] {$k_{10,c_2}^{j,v=1}(t)$} (S12);
     \draw [arrow] (S12) -- node [right] {$k_9$} (S2);
@@ -433,6 +433,7 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
     \draw [arrow] (Rv) -- node [left] {$k_{10,c_2}^{j,v=1}(t)$} (Rv2);
     \draw [arrow] (S2) -- node [above] {} (emv2);
     \draw [arrow] (emv2) -- node [above] {} (Rv2);
+   \plate[inner sep=0.25cm, yshift=0.12cm] {plate3} {(S) (Rv2) (ks02) (kr02)} {$j\in\{1,...,m\}$}; 
 \end{tikzpicture}
 
 ```
