@@ -124,7 +124,7 @@ for il = 1:n_income
                         % store final time point
                         endsim = max(returned.Tout);
                         % store time mitigation ends
-                        endmit = iseq(end,1);
+                        endmit = returned.isequence(end,1);
                         % get index of endmit time
                         [~,exitwave] = min(abs(returned.Tout-endmit));
                         % get fraction of deaths that happen after
