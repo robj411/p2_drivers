@@ -115,16 +115,16 @@ bpsv_levels <- c(0,1)
 | From/to | No closures | Light closures | Heavy closures |
 |:----- |:----- |:----- |:----- |
 | **No closures** |  |  | t = response time OR Hospital occupancy > 95% capacity |
-| **Light closures** | (Growth rate < 0.025 OR Hospital occupancy < 25% capacity) AND vaccine rollout complete OR $R(D(\textbf{1}) < 1$) |  | Hospital occupancy > 95% capacity |
-| **Heavy closures** |  | Hospital occupancy < 25% capacity AND t > 7 + response time |  | 
+| **Light closures** | (Growth rate < 0.025 OR Hospital occupancy < 25% capacity) AND vaccine rollout complete OR $R(D(\textbf{1})) < 1$ |  | Hospital occupancy > 95% capacity |
+| **Heavy closures** |  | Hospital occupancy < 25% capacity AND t > 7 + last change time |  | 
 
 Table: (\#tab:rulesreactive) State transition rules for reactive closure strategies
 
 | From/to | No closures | Light closures | Heavy closures |
 |:----- |:----- |:----- |:----- |
 | **No closures** |  |  | t = response time OR Hospital occupancy > 95% capacity |
-| **Light closures** | Vaccine rollout complete OR $R(D(\textbf{1}) < 1$)  |  | Rt > 1.2 |
-| **Heavy closures** | Vaccine rollout complete OR $R(D(\textbf{1}) < 1$)  | Rt < 0.95 AND t > 7 + response time |  | 
+| **Light closures** | Vaccine rollout complete OR $R(D(\textbf{1})) < 1$  |  | $R_t > 1.2$ |
+| **Heavy closures** | Vaccine rollout complete OR $R(D(\textbf{1})) < 1$  | $R(D_{\text{light closure}}) < 0.95$ AND t > 7 + last change time |  | 
 
 Table: (\#tab:ruleselimination) State transition rules for the elimination strategy
 
@@ -627,6 +627,7 @@ eccon <- readxl::read_xlsx('data/6.economic_closures.xlsx',sheet='configurations
 for(j in 2:ncol(eccon)) eccon[,j] <- round(eccon[,j]*100)
 colorder <- c(2,1,2,3,4,5)
 eccon <- eccon[,c(0,colorder)+1]
+colnames(eccon) <- c('Sector',rep(c('Heavy closures','Light closures'),times=3))
 
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. Elimination values are taken from Australia. Lockdown and Economic Closures values are taken from the UK. School Closures values are taken from Indonesia. \\label{tab:eccon}')
