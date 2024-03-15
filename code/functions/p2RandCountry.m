@@ -88,7 +88,7 @@ data.bmi_rr_quantile = bmi_rr_quantile(1,:);
 contacts.B = unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
 contacts.C = unifrnd(max(contacts.C/2-1,0),contacts.C*2+1);
 
-%Npop
+% population by age
 nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
 [~,idx] = sort(CD.average_contacts(nonempind));
 nonempind = nonempind(idx);
@@ -98,7 +98,7 @@ randvalue = table2array(CD(demoindex,cols));
 defivalue = 50*10^6*randvalue'/sum(randvalue);
 data.Npop = defivalue;
 
-%NNs
+% population by stratum
 nonempind = find(~isnan(CD.NNs1) & country_indices);
 randindex = nonempind(randi(numel(nonempind)));
 colNNs = strmatch('NNs', CD.Properties.VariableNames);
@@ -110,7 +110,7 @@ data.NNs  = NNs;
 data.NNs(data.NNs==0) = 1;
 data.nStrata     = size(data.NNs,1);
 
-%CM -- match to pop for now
+% contact matrix -- match to pop for now
 % nonempind = find(~isnan(CD.CMaa) & country_indices);
 % randindex = nonempind(randi(numel(nonempind)));
 randvalue = table2array(CD(demoindex,70:325));
@@ -149,10 +149,10 @@ data.sdb = sample_uniform("sdb",CD,country_indices);
 data.t_vax = 1000; 
 
 %arate = vaccine administration rate
-data.vaccination_rate_pc = unifrnd(0.5,1.5,1,1)/100;
+data.vaccination_rate_pc = 0.01;%unifrnd(0.5,1.5,1,1)/100;
 
 %puptake = population uptake
-data.vaccine_uptake = unifrnd(.4,.8,1,1);
+data.vaccine_uptake = 0.8; %unifrnd(.4,.8,1,1);
 
 %la = life expectancy
 nonempind = find(~isnan(CD.la1) & country_indices);

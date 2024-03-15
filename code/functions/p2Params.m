@@ -64,13 +64,8 @@ p2.final_doubling_time_threshold = 30;
 
 t_vax    = data.t_vax;                      %Vaccine Administration Time
 
-if bpsv==0 && vaccine_day==365
-    vaccination_rate_pc = 0.5/100;
-    vaccine_uptake  = .4;
-else
-    vaccination_rate_pc    = data.vaccination_rate_pc;  %Vaccine Administration Rate
-    vaccine_uptake  = data.vaccine_uptake;                    %Vaccine Uptake
-end
+vaccination_rate_pc    = data.vaccination_rate_pc;  %Vaccine Administration Rate
+vaccine_uptake  = data.vaccine_uptake;                    %Vaccine Uptake
 
 Npop    = data.Npop;
 NNage   = [Npop(1),sum(Npop(2:4)),sum(Npop(5:13)),sum(Npop(14:end))];
