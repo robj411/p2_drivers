@@ -12,7 +12,7 @@ function contact_matrix = p2MakeDs(data,NN,x,hw)
 %% variables to use
 
 contacts = data.contacts; 
-CM_4 = contacts.C4;
+CM_4 = contacts.CM_4;
 contact_props = contacts.contact_props;
 hospitality_frac = contacts.hospitality_frac;
 

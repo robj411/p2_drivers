@@ -125,7 +125,7 @@ CM_4 = max((1-contacts.hospitality_frac) * CM_4, 0);
 
 %% save
 
-contacts.C4 = CM_4;
+contacts.CM_4 = CM_4;
 contacts.contact_props = contact_props;
 
 end
