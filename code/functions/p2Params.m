@@ -1,14 +1,13 @@
 % get parameters that characterise p2 (pandemic preparedness)
-
-% dis: struct of pathogen parameters
-% p2: struct of p2 intervention parameters
+%
 % data: struct of general model parameters
+% dis: struct of pathogen parameters
 % vaccine_day: 100 or 365, depending on SARS-X vaccine scenario
 % bpsv: 0 or 1, depending on BPSV scenario (present or absent)
-
+%
+% data: struct of general model parameters
 % dis: struct of pathogen parameters
 % p2: struct of p2 intervention parameters
-% data: struct of general model parameters
 
 function [data,dis,p2] = p2Params(data,dis,vaccine_day,bpsv)
 
