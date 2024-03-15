@@ -150,7 +150,7 @@ for(bl in 1:length(bpsv_levels)){
     allresults[mincost==T,mean(Cost/GDP),by=.(igroup)]
     
     evalues <- allresults[,mean(Cost/GDP),by=.(igroup,strategy)]
-    topchoices <- evalues[,strategy[which.min(V1)],by=igroup]
+    topchoices <- evalues[,list(strategy[which.min(V1)],round(V1[which.min(V1)]*100)),by=igroup]
     print(topchoices)
     # allresults[,keeprow:=strategy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
     
@@ -171,6 +171,8 @@ for(bl in 1:length(bpsv_levels)){
       
       saveRDS(difftab,paste0('results/difftab_',bpsv,'_',vaccination_level,'.Rds'))
       
+      print(difftab[,round(mean(Cost/GDP*100)),by=.(igroup)])
+      
       pctab <- copy(topresults[[1]][[1]])
       pctab[,strategy:=NULL]
       pctab[,Cost:=(Cost-topresults[[bl]][[v]]$Cost)/Cost]
@@ -189,7 +191,7 @@ params[!params%in%colnames(allresults)]
 
 ## negatives ###########################
 
-dispcols <- colnames(allresults)%in%c('Cost','GDP_loss','Deaths','School','igroup',
+dispcols <- colnames(allresults)%in%c('Cost','GDP_loss','dYLLs','School','igroup',
                                       'strategy','samplei','Exit_wave','scen_Exit_wave')
 nneg <- 0
 for(vaccination_level in vaccination_levels){
