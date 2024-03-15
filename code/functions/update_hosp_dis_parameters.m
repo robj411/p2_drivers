@@ -14,7 +14,7 @@ function dis2 = update_hosp_dis_parameters(occ, p2, dis)
     %% HOSPITAL OCCUPANCY:
     
     Hmax  = p2.Hmax;
-    SHmax = p2.SHmax;
+    SHmax = 2*Hmax;
 
     %% TIME-DEPENDENT DISEASE PARAMETERS:
 

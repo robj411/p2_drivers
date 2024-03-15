@@ -54,7 +54,7 @@ p2.time_to_test = time_to_test;
 p2.Hmax  = data.Hmax*sum(data.Npop)/10^5;   %Hospital Capacity
 p2.thl   = max(1,0.25*p2.Hmax);%lower threshold can't be less than 1 occupant
 p2.Hmax  = max(4*p2.thl,p2.Hmax);
-p2.SHmax = 2*p2.Hmax;
+% p2.SHmax = 2*p2.Hmax;
 
 % stopping criteria
 p2.hosp_final_threshold = 100;
