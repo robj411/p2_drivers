@@ -8,7 +8,7 @@ strategies = {'No Closures','School Closures','Economic Closures','Elimination'}
 vaccination_levels = [365, 100];
 bpsv_levels = [0, 1];
 
-nsamples  = 128;
+nsamples  = 400;
 n_income = numel(income_levels);
 
 synthetic_countries = cell(nsamples,length(income_levels));
