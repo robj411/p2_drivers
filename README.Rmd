@@ -359,7 +359,19 @@ k_{6}^{j,v} = p_{H}^{j,v}/T_{I^s}^{j,v}
 k_{7}^{j}(t) = (1-p_{D}^{j}(t)) / T_{H}^{j}(t)
 ```
 
-  is the rate of recovery of hospitalised patients, where $`p_{D}^{j}(t)=\hat{p}_{D}^{j}f_H(t)`$ is the baseline probability to die given hospitalisation, adjusted by a factor encoding the increase in fatality rate as hospital occupancy increases, $`f_H(t)=\max\{1,1+1.87(H(t)-H_{\text{max}})/H_{\text{max}}\}`$. $T_{H}^j(t) = p_D^j(t)T_{H:D} + (1-p_{D}^{j}(t))T_{H:R}$ is the expected time to be in compartment $H$: $T_{H:D}$ is the expected duration before death and $T_{H:R}$ is the expected duration before recovery. Finally,
+  is the rate of recovery of hospitalised patients, where $`p_{D}^{j}(t)=\hat{p}_{D}^{j}f_H(t)`$ is the baseline probability to die given hospitalisation, adjusted by a factor encoding the increase in fatality rate as hospital occupancy increases:
+  
+```math
+f_H(t)=\max\{1,1+1.87(H_{\text{tot}}(t)-H_{\text{max}})/H_{\text{max}}\},
+```
+
+```math
+H_{\text{tot}}(t) = \sum_{v=0}^2\sum_{j=1}^m H_{j,v}(t).
+```
+
+$$T_{H}^j(t) = p_D^j(t)T_{H:D} + (1-p_{D}^{j}(t))T_{H:R}$$
+
+is the expected time to be in compartment $H$: $T_{H:D}$ is the expected duration before death and $T_{H:R}$ is the expected duration before recovery. Finally,
 
 ```math
 k_{8}^{j}(t) = p_{D}^{j}(t)/T_{H}^{j}(t)
