@@ -3312,62 +3312,62 @@ that numerical superscripts are attached to letters $k$ for rates and
 $p$ for parameters. Where a power is applied to one of these letters,
 the letter will be enclosed in parentheses for clarity.
 
-|      Letter       |                     Script                      |  Subscript   |          Superscript          |
-|:-----------------:|:-----------------------------------------------:|:------------:|:-----------------------------:|
-|        $A$        |                                                 |              |                               |
-|        $B$        |                                                 |              |                               |
-|        $C$        |                   consumption                   |              |                               |
-|        $D$        |                COMPARTMENT: Died                |              |    related to death state     |
-|        $E$        |              COMPARTMENT: Exposed               |              |   related to exposed state    |
-|        $F$        |                                                 |              |                               |
-|        $G$        |                                                 |              |                               |
-|       $GDP$       |                       GDP                       |              |                               |
-|        $H$        |            COMPARTMENT: Hospitalised            |              | related to hospitalised state |
-| $H_{\text{max}}$  |                hospital capacity                |              |                               |
-|        $I$        |                   Infectious                    |              |                               |
-|      $I^{a}$      |      COMPARTMENT: Infectious asymptomatic       |              | related to asymptomatic state |
-|      $I^{s}$      |       COMPARTMENT: Infectious symptomatic       |              | related to symptomatic state  |
-|        $J$        |                                                 | MAX: strata  |                               |
-|        $K$        |             Loss (cost calculation)             |              |                               |
-|        $L$        | number of people by sector (workforce in place) |              |                               |
-| $M^{\text{com}}$  |               CONTACTS: community               |              |                               |
-| $M^{\text{home}}$ |            CONTACTS: community, home            |              |                               |
-|  $M^{\text{CC}}$  |         CONTACTS: community, customers          |              |                               |
-| $M^{\text{trav}}$ |      CONTACTS: community, public transport      |              |                               |
-| $M^{\text{sch}}$  |           CONTACTS: community, school           |              |                               |
-|  $M^{\text{WW}}$  |             CONTACTS: work, workers             |              |                               |
-|  $M^{\text{WC}}$  |       CONTACTS: work, worker to customer        |              |                               |
-|  $M^{\text{CW}}$  |       CONTACTS: work, customer to worker        |              |                               |
-|        $M$        |                 CONTACTS: total                 |              |                               |
-|    $\tilde{M}$    |      Total contacts by five-year age bands      |              |                               |
-|     $\hat{M}$     |      Total contacts by DAEDALUS age groups      |              |                               |
-|        $N$        |           number of people by stratum           |              |                               |
-|    $\tilde{N}$    |     Number of people by five-year age bands     |              |                               |
-|     $\hat{N}$     |     Number of people in DAEDALUS age groups     |              |                               |
-|        $O$        |                        –                        |              |                               |
-|        $P$        |                  (probability)                  |              |                               |
-|        $Q$        |                                                 |              |                               |
-|        $R$        |             COMPARTMENT: Recovered              |              |  related to recovered state   |
-|       $R_0$       |            Basic reproduction number            |              |                               |
-|       $R_t$       |          Effective reproduction number          |              |                               |
-|        $S$        |            COMPARTMENT: Susceptible             | MAX: sectors |                               |
-|      $S^{c}$      |     COMPARTMENT: Susceptible seroconverting     |              |                               |
-|       $T^c$       |     duration from vaccination to protection     |              |                               |
-|       $T^H$       |              duration in hospital               |              |                               |
-|     $T^{H:D}$     |        duration in hospital given death         |              |                               |
-|     $T^{H:R}$     |       duration in hospital given recovery       |              |                               |
-|     $T^{I^a}$     |              duration asymptomatic              |              |                               |
-|     $T^{I^s}$     |              duration symptomatic               |              |                               |
-|    $T^{I^s:H}$    |     duration symptomatic given hospitalised     |              |                               |
-|    $T^{I^s:R}$    |       duration symptomatic given recovery       |              |                               |
-|     $T^{E:I}$     |                  latent period                  |              |                               |
-|        $U$        |                                                 |              |                               |
-|        $V$        |                                                 |              |                               |
-|        $W$        |                                                 |              |                               |
-|        $X$        |                                                 |              |                               |
-|        $Y$        |                       GDP                       |              |                               |
-|       $Y_0$       |                     max GDP                     |              |                               |
-|        $Z$        |                                                 |              |                               |
+|      Letter       |                     Script                      |   Subscript   |          Superscript          |
+|:-----------------:|:-----------------------------------------------:|:-------------:|:-----------------------------:|
+|        $A$        |                                                 |               |                               |
+|        $B$        |                                                 |               |                               |
+|        $C$        |                   consumption                   |               |                               |
+|        $D$        |                COMPARTMENT: Died                |               |    related to death state     |
+|        $E$        |              COMPARTMENT: Exposed               |               |   related to exposed state    |
+|        $F$        |                                                 |               |                               |
+|        $G$        |                                                 |               |                               |
+|       $GDP$       |                       GDP                       |               |                               |
+|        $H$        |            COMPARTMENT: Hospitalised            |               | related to hospitalised state |
+| $H_{\text{max}}$  |                hospital capacity                |               |                               |
+|        $I$        |                   Infectious                    |               |                               |
+|      $I^{a}$      |      COMPARTMENT: Infectious asymptomatic       |               | related to asymptomatic state |
+|      $I^{s}$      |       COMPARTMENT: Infectious symptomatic       |               | related to symptomatic state  |
+|        $J$        |                                                 |  MAX: strata  |                               |
+|        $K$        |             Loss (cost calculation)             |               |                               |
+|        $L$        | number of people by sector (workforce in place) |               |                               |
+| $M^{\text{com}}$  |               CONTACTS: community               |               |                               |
+| $M^{\text{home}}$ |            CONTACTS: community, home            |               |                               |
+|  $M^{\text{CC}}$  |         CONTACTS: community, customers          |               |                               |
+| $M^{\text{trav}}$ |      CONTACTS: community, public transport      |               |                               |
+| $M^{\text{sch}}$  |           CONTACTS: community, school           |               |                               |
+|  $M^{\text{WW}}$  |             CONTACTS: work, workers             |               |                               |
+|  $M^{\text{WC}}$  |       CONTACTS: work, worker to customer        |               |                               |
+|  $M^{\text{CW}}$  |       CONTACTS: work, customer to worker        |               |                               |
+|        $M$        |                 CONTACTS: total                 |               |                               |
+|    $\tilde{M}$    |      Total contacts by five-year age bands      |               |                               |
+|     $\hat{M}$     |      Total contacts by DAEDALUS age groups      |               |                               |
+|        $N$        |           number of people by stratum           |               |                               |
+|    $\tilde{N}$    |     Number of people by five-year age bands     |               |                               |
+|     $\hat{N}$     |     Number of people in DAEDALUS age groups     |               |                               |
+|        $O$        |                        –                        |               |                               |
+|        $P$        |                  (probability)                  |               |                               |
+|        $Q$        |                                                 |               |                               |
+|        $R$        |             COMPARTMENT: Recovered              |               |  related to recovered state   |
+|       $R_0$       |            Basic reproduction number            |               |                               |
+|       $R_t$       |          Effective reproduction number          |               |                               |
+|        $S$        |            COMPARTMENT: Susceptible             | MAX: sectors  |                               |
+|      $S^{c}$      |     COMPARTMENT: Susceptible seroconverting     |               |                               |
+|       $T^c$       |     duration from vaccination to protection     |               |                               |
+|       $T^H$       |              duration in hospital               |               |                               |
+|     $T^{H:D}$     |        duration in hospital given death         |               |                               |
+|     $T^{H:R}$     |       duration in hospital given recovery       |               |                               |
+|     $T^{I^a}$     |              duration asymptomatic              |               |                               |
+|     $T^{I^s}$     |              duration symptomatic               |               |                               |
+|    $T^{I^s:H}$    |     duration symptomatic given hospitalised     |               |                               |
+|    $T^{I^s:R}$    |       duration symptomatic given recovery       |               |                               |
+|     $T^{E:I}$     |                  latent period                  |               |                               |
+|        $U$        |                                                 |               |                               |
+|        $V$        |                                                 | MAX: vaccines |                               |
+|        $W$        |                                                 |               |                               |
+|        $X$        |                                                 |               |                               |
+|        $Y$        |                       GDP                       |  MAX: years   |                               |
+|       $Y_0$       |                     max GDP                     |               |                               |
+|        $Z$        |                                                 |               |                               |
 
 Capital letters
 
@@ -3403,7 +3403,7 @@ Capital letters
 |       $w$       |                                                                            |                                       |                |
 |       $x$       |                              sector openness                               |                                       |                |
 |       $y$       |                                    GVA                                     |              INDEX: year              |                |
-|       $z$       |                                                                            |                                       |                |
+|       $z$       |       fraction of GDP coming from the Food and accommodation sector        |                                       |                |
 
 Lower-case letters
 
