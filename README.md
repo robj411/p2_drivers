@@ -15,10 +15,10 @@
     -   [3.4 Contact rates](#34-contact-rates)
         -   [3.4.1 Matrix $A$: community
             contacts](#341-matrix-a-community-contacts)
-        -   [3.4.2 Matrix $U$: Worker-to-worker
-            contacts](#342-matrix-u-worker-to-worker-contacts)
-        -   [3.4.3 Matrix $V$: Consumer-to-worker
-            contacts](#343-matrix-v-consumer-to-worker-contacts)
+        -   [3.4.2 Matrix $M^{\text{WW}}$: Worker-to-worker
+            contacts](#342-matrix-mtextww-worker-to-worker-contacts)
+        -   [3.4.3 Matrix $M^{\text{CW}}$: Consumer-to-worker
+            contacts](#343-matrix-mtextcw-consumer-to-worker-contacts)
     -   [3.5 Social distancing](#35-social-distancing)
     -   [3.6 Self isolating](#36-self-isolating)
 -   [4 Econ model](#4-econ-model)
@@ -67,19 +67,19 @@
 -   When the doubling time is more than 30 days and there are fewer than
     1,000 people in hospital, the simulation ends.
 
-| From/to            | No closures                                                                                                             | Light closures                                                       | Heavy closures                                            |
-|:-------------------|:------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------|
-| **No closures**    |                                                                                                                         |                                                                      | t = response time OR Hospital occupancy &gt; 95% capacity |
-| **Light closures** | (Growth rate &lt; 0.025 OR Hospital occupancy &lt; 25% capacity) AND vaccine rollout complete OR $R(D(\textbf{1})) < 1$ |                                                                      | Hospital occupancy &gt; 95% capacity                      |
-| **Heavy closures** |                                                                                                                         | Hospital occupancy &lt; 25% capacity AND t &gt; 7 + last change time |                                                           |
+| From/to            | No closures                                                                                                               | Light closures                                                       | Heavy closures                                            |
+|:-------------------|:--------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------|
+| **No closures**    |                                                                                                                           |                                                                      | t = response time OR Hospital occupancy &gt; 95% capacity |
+| **Light closures** | (Growth rate &lt; 0.025 OR Hospital occupancy &lt; 25% capacity) AND vaccine rollout complete OR $R_t(D(\textbf{1})) < 1$ |                                                                      | Hospital occupancy &gt; 95% capacity                      |
+| **Heavy closures** |                                                                                                                           | Hospital occupancy &lt; 25% capacity AND t &gt; 7 + last change time |                                                           |
 
 Table 1.1: State transition rules for reactive closure strategies
 
-| From/to            | No closures                                        | Light closures                                                       | Heavy closures                                            |
-|:-------------------|:---------------------------------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------|
-| **No closures**    |                                                    |                                                                      | t = response time OR Hospital occupancy &gt; 95% capacity |
-| **Light closures** | Vaccine rollout complete OR $R(D(\textbf{1})) < 1$ |                                                                      | $R_t > 1.2$                                               |
-| **Heavy closures** | Vaccine rollout complete OR $R(D(\textbf{1})) < 1$ | $R(D_{\text{light closure}}) < 0.95$ AND t &gt; 7 + last change time |                                                           |
+| From/to            | No closures                                          | Light closures                                                         | Heavy closures                                            |
+|:-------------------|:-----------------------------------------------------|:-----------------------------------------------------------------------|:----------------------------------------------------------|
+| **No closures**    |                                                      |                                                                        | t = response time OR Hospital occupancy &gt; 95% capacity |
+| **Light closures** | Vaccine rollout complete OR $R_t(D(\textbf{1})) < 1$ |                                                                        | $R_t > 1.2$                                               |
+| **Heavy closures** | Vaccine rollout complete OR $R_t(D(\textbf{1})) < 1$ | $R_t(D_{\text{light closure}}) < 0.95$ AND t &gt; 7 + last change time |                                                           |
 
 Table 1.2: State transition rules for the elimination strategy
 
@@ -91,13 +91,13 @@ economic closures. We define the total socio-economic costs TSC of an
 epidemic as the sum of the individual costs:
 
 $$\begin{equation}
-\text{TSC} = L_1\text{VLY} + L_2 + L_3\text{VSY},
+\text{TSC} = K_1\text{VLY} + K_2 + K_3\text{VSY},
 \label{eq:swf}
 \end{equation}$$
 
-where $L_1$ is the number of discounted life years lost and VLY the
-value of a discounted life year; $L_2$ is the lost output over the
-period due to reduced economic activity; and $L_3$ is the number of
+where $K_1$ is the number of discounted life years lost and VLY the
+value of a discounted life year; $K_2$ is the lost output over the
+period due to reduced economic activity; and $K_3$ is the number of
 school years lost and VSY the value of one school year.
 
 ## 2.1 Lost lives
@@ -108,11 +108,11 @@ These are used to estimate the expected number of years of life lost per
 death, and to estimate the value of a life year. We map the remaining
 life expectancy $l_a$ for the GBD age groups $a$ to $l_g$ for the model
 age groups $g$ as a population-weighted average, taking into account the
-size of each age group, $N_a$. For the expected number of life years
-lost per death, we take into account also the probability to die given
-infection, $P(D|I,a)$:
+size of each age group, $\tilde{N}_a$. For the expected number of life
+years lost per death, we take into account also the probability to die
+given infection, $P(D|I,a)$:
 $$l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_al_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; $$
-$$l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_al_a}{\sum_{a\in g}N_a}; $$
+$$l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_al_a}{\sum_{a\in g}\tilde{N}_a}; $$
 
 Expected life years remaining with discounting taken into account can be
 written
@@ -125,7 +125,7 @@ for discount rate $r>0$. The discounted number of years lost given $D_g$
 deaths due to COVID-19 for each age group is
 
 ``` math
-L_1=\sum_gD_g\hat{l}_g^{\text{(death)}}.
+K_1=\sum_gD_g\hat{l}_g^{\text{(death)}}.
 ```
 
 The VLY used by policy makers should reflect the value that members of
@@ -148,37 +148,38 @@ We measure the cost of economic closures in terms of lost gross value
 added (GVA): the GDP generated by an economic configuration is the
 maximum GVA (denoted $y_j$ for each sector $j$) multiplied by the
 respective sector openings, summed over the period. The maximum possible
-GDP (which is with no closures) is $Y_0=\frac{\tau}{365}\sum_{j}y_j$,
-and we use pre-pandemic output to define the maximum possible values.
+GDP (which is with no closures) is
+$Y_0=\frac{\tau}{365}\sum_{j=1}^{m_s}y_j$ for $m_s$ sectors, and we use
+pre-pandemic output to define the maximum possible values.
 
 All economic sectors contribute GVA according to the level they are open
 for production, except for the education sector which contributes its
 maximum possible GVA, $y_{\text{ed}}$. $x_{j}(t)$ is the proportion of
 the workforce contributing to economic production in sector $j$ out of
-the total workforce $W_j$ on day $t$. The workforce can be additionally
+the total workforce $N_j$ on day $t$. The workforce can be additionally
 depleted due to self isolation, sickness, hospitalisation and death,
 leaving a smaller fraction ($`\hat{x}_{j}(t)`$) to contribute to
 production.
 
 ``` math
-\hat{x}_{j}(t)=x_{j}(t) - \left((1-x_{j}(t))p_{22}^{s,j}(t)  + (1-x_{j}(t)(1-q_j))p_{22}^{a,j}(t)\right)/W_j
+\hat{x}_{j}(t)=x_{j}(t) - \left((1-x_{j}(t))p_j^{23}(t)  + (1-x_{j}(t)(1-q_j))p_j^{22}(t)\right)/N_j
 ```
 
 where $q_j$ is the fraction of the sector working from home.
-$p_{22}^{s,j}(t)$ represents worker sickness and death:
+$p_j^{23}(t)$ represents worker sickness and death:
 
-$$p_{22}^{s,j}(t)=\sum_{v=0}^2\left((1-p_{H}^{j,v})p_1p_{18}^sI_{j,v}^{s}+p_{H}^{j,v}p_1I_{j,v}^{s}+H_{j,v}+D_{j,v}\right),$$
+$$p_j^{23}(t)=\sum_{v=0}^{m_v}\left((1-p^H_{j,v})p^1p^{19}I_{j,v}^{s}+p^H_{j,v}p^1I_{j,v}^{s}+H_{j,v}+D_{j,v}\right),$$
 
-and $p_{22}^{a,j}(t)$ represents output from asymptomatic self-isolating
-workers:
+with $m_v=2$ vaccines and $p_j^{22}(t)$ represents output from
+asymptomatic self-isolating workers:
 
-$$p_{22}^{a,j}(t)=p_2(t)p_{18}^aI_{j}^{a}.$$
+$$p_j^{22}(t)=p^2(t)p^{18}I_{j}^{a}.$$
 
 $p_{18}$ is the number of days spent in self isolation per day of
 infectiousness (e.g. suppose the average infectious period is four days
-and mandatory self-isolation time is ten days, then $p_{18}^s=2.5$ and
-$p_{18}^a=p_{18}^sT_{I^s}/T_{I^a:R}$, where $T_{I^s}$ and $T_{I^a:R}$
-are expected infectious periods for symptomatic and asymptomatic,
+and mandatory self-isolation time is ten days, then $p^{19}=2.5$ and
+$p^{18}=p^{19}T_{I^s}/T_{I^a:R}$, where $T_{I^s}$ and $T_{I^a:R}$ are
+expected infectious periods for symptomatic and asymptomatic,
 respectively). $p_1$ is compliance with the requirement to self isolate
 and $p_2(t)$ is the fraction of cases identified. Other notations are
 vaccine status $v$, infectious and asymptomatic $I_{j,v}^{a}$,
@@ -188,56 +189,56 @@ $D$, and probability to be hospitalised $p_H$.
 Then the total output is
 
 ``` math
-Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}y_j\int_{t=0}^{\tau}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
+Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_s}y_j\int_{t=0}^{\tau}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
 ```
 
 and the GDP loss compared to the maximum is
 
-$$L_2=Y_0-Y.$$
+$$K_2=Y_0-Y.$$
 
 ## 2.3 Lost education
 
 The loss due to school closure is
 
-<!-- $$L_3 =  \frac{p_{14} }{365}\left( Tp_{16}W_{g_{\text{school}}}+p_{23}^{a} + (1-p_{16})p_{23}^{s} \right)\text{VSY}$$ -->
+<!-- $$K3 =  \frac{p_{14} }{365}\left( Tp_{16}N_{g_{\text{school}}}+p^{24} + (1-p_{16})p^{25} \right)\text{VSY}$$ -->
 
-$$L_3 =  \frac{1 }{365} \int_{t=0}^{\tau}\left(p_{14}(t)W_{g_{\text{school}}} + (1-p_{14}(t))p_{23}^{s}(t)  +(1-2p_{14}(t))p_{23}^{a}(t)\right)dt,$$
+$$K_3 =  \frac{1 }{365} \int_{t=0}^{\tau}\left(p_{14}(t)N_{g_{\text{school}}} + (1-p_{14}(t))p^{25}(t)  +(1-2p_{14}(t))p^{24}(t)\right)dt,$$
 
-where $p_{14}(t)$ is the effective amount of education lost per student
+where $p^{14}(t)$ is the effective amount of education lost per student
 at time $t$ due to school closure:
-$$p_{14}(t) = (1-p_{16})(1-x_{\text{ed}}(t)),$$ $W_{g_{\text{school}}}$
-is the total number of students, $p_{16}$ is relative effectiveness of
+$$p^{14}(t) = (1-p^{16})(1-x_{\text{ed}}(t)),$$ $N_{g_{\text{school}}}$
+is the total number of students, $p^{16}$ is relative effectiveness of
 remote education and $x_{\text{ed}}(t)$ is the openness of schools,
-$p_{23}^{s}(t)$ represents education lost due to student sickness with
+$p^{25}(t)$ represents education lost due to student sickness with
 COVID-19:
 
-$$p_{23}^{s}(t)=\sum_{v=0}^2\left((1-p_{H}^{j_{\text{school}},v})p_1p_{18}^sI_{j_{\text{school}},v}^{s}+p_{H}^{j_{\text{school}},v}p_1I_{j_{\text{school}},v}^{s}+H_{j_{\text{school}},v}\right),$$
+$$p^{25}(t)=\sum_{v=0}^{m_v}\left((1-p^H_{j_{\text{school}},v})p_1p^{19}I_{j_{\text{school}},v}^{s}+p^H_{j_{\text{school}},v}p_1I_{j_{\text{school}},v}^{s}+H_{j_{\text{school}},v}\right),$$
 
 $p_{18}$ is the number of days spent in self isolation per day of
 infectiousness (e.g. suppose the average infectious period is four days
-and mandatory self-isolation time is ten days, then $p_{18}^s=2.5$ and
-$p_{18}^a=p_{18}^sT_{I^s}/T_{I^a:R}$, where $T_{I^s}$ and $T_{I^a:R}$
-are expected infectious periods for symptomatic and asymptomatic,
-respectively), and $p_{23}^{a}(t)$ represents education lost due to
+and mandatory self-isolation time is ten days, then $p^{19}=2.5$ and
+$p^{18}=p^{19}T_{I^s}/T_{I^a:R}$, where $T_{I^s}$ and $T_{I^a:R}$ are
+expected infectious periods for symptomatic and asymptomatic,
+respectively), and $p^{24}(t)$ represents education lost due to
 asymptomatic self isolation (which comes at a cost only when schools are
 open):
 
-$$p_{23}^{a}(t)=p_2(t)p_{18}^aI_{j_{\text{school}}}^{a}.$$
+$$p^{24}(t)=p^2(t)p^{18}I_{j_{\text{school}}}^{a}.$$
 
 For the value of a year of education, we use the method of
 (Psacharopoulos, Collis, and Patrinos 2021).
 
-$$\text{VSY} =  p_{12}\cdot p_{13}\cdot p_{15}.$$
+$$\text{VSY} =  p^{12}\cdot p^{13}\cdot p^{15}.$$
 
-$p_{12}$ is the present value of lost earnings:
+$p^{12}$ is the present value of lost earnings:
 
-$$p_{12} = \frac{1}{W_{g_{\text{school}}}}\sum_{a\in g_{\text{school}}}N_a\left( \frac{1-(1+r)^{-(n+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
+$$p^{12} = \frac{1}{N_{g_{\text{school}}}}\sum_{a\in g_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
-for discount rate $r=0.03$, number $N_a$ students currently age $a$, and
-expected number of years of work $n=45$. $p_{13}$ is mean annual
-earnings, $p_{15}=0.08$ is the rate of return for one year.
+for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age
+$a$, and expected number of years of work $m_y=45$. $p^{13}$ is mean
+annual earnings, $p^{15}=0.08$ is the rate of return for one year.
 
-The value $p_{16}$ represents the effectiveness of remote teaching,
+The value $p^{16}$ represents the effectiveness of remote teaching,
 which we sample as a standard uniform random variable. We note that no
 strong predictors of effectiveness of remote teaching have been
 identified (Patrinos 2023). We assume that losses are linear in duration
@@ -253,14 +254,14 @@ pertinent to intra- rather than international modelling.
 ## 3.1 Ordinary differential equations
 
 $$\begin{align}
-\frac{dS_{j,v}}{dt} & = \sum_{u=0}^{v-1}k_9S_{j,u}^{c_v} - \left( k_{1}^{j,v}(t) + \sum_{u=v+1}^{2}k_{10,c_u}^{j,v}(t) \right)S_{j,v} \\
-\frac{dS_{j,u}^{c_v}}{dt} & = k_{10,c_v}^{u,j}(t)S_{j,u} -\left( k_{1}^{j,v}(t) + k_9 \right)S_{j,u}^{c_v}  \\
-\frac{dE_{j,v}}{dt} & = k_{1}^{j,v}(t)\left(S_{j,v}+\sum_{u=v+1}^2S_{j,v}^{c_u}\right) - (k_2+k_4)E_{j,v} \\
-\frac{dI_{j,v}^a}{dt} & = k_2E_{j,v} - k_3I_{j,v}^a \\
-\frac{dI_{j,v}^s}{dt} & = k_4E_{j,v} - (k_{5}^{j,v}+k_{6}^{j,v})I_{j,v}^s \\
-\frac{dR_{j,v}}{dt} & = k_3I_{j,v}^a + k_{5}^{j,v}I_{j,v}^s + k_{7}^{j}(t) H_{j,v} - \sum_{u=v+1}^{2}k_{10,c_u}^{j,v}(t)R_{j,v} + \sum_{u=0}^{v-1}k_{10,c_v}^{u,j}(t)R_{j,v-1}\\
-\frac{dH_{j,v}}{dt} & = k_{6}^{j,v}I_{j,v}^s - (k_{7}^{j}(t) + k_{8}^{j}(t)) H_{j,v} \\
-\frac{dD_{j,v}}{dt} & =  k_{8}^{j}(t) H_{j,v}
+\frac{dS_{j,v}}{dt} & = \sum_{u=0}^{v-1}k^9S_{j,u}^{c_v} - \left( k^{1}_{j,v}(t) + \sum_{u=v+1}^{{m_v}}k^{10,c_2}_{j,v}(t) \right)S_{j,v} \\
+\frac{dS_{j,u}^{c_v}}{dt} & = k^{10,c_v}_{u,j}(t)S_{j,u} -\left( k^{1}_{j,v}(t) + k^9 \right)S_{j,u}^{c_v}  \\
+\frac{dE_{j,v}}{dt} & = k^{1}_{j,v}(t)\left(S_{j,v}+\sum_{u=v+1}^2S_{j,v}^{c_u}\right) - (k^2+k^4)E_{j,v} \\
+\frac{dI_{j,v}^a}{dt} & = k^2E_{j,v} - k^3I_{j,v}^a \\
+\frac{dI_{j,v}^s}{dt} & = k^4E_{j,v} - (k^{5}_{j,v}+k^{6}_{j,v})I_{j,v}^s \\
+\frac{dR_{j,v}}{dt} & = k^3I_{j,v}^a + k^{5}_{j,v}I_{j,v}^s + k^{7}_{j}(t) H_{j,v} - \sum_{u=v+1}^{{m_v}}k^{10,c_2}_{j,v}(t)R_{j,v} + \sum_{u=0}^{v-1}k^{10,c_v}_{u,j}(t)R_{j,v-1}\\
+\frac{dH_{j,v}}{dt} & = k^{6}_{j,v}I_{j,v}^s - (k^{7}_{j}(t) + k^{8}_{j}(t)) H_{j,v} \\
+\frac{dD_{j,v}}{dt} & =  k^{8}_{j}(t) H_{j,v}
 \end{align}$$
 
 ## 3.2 Disease state transitions
@@ -285,26 +286,26 @@ Possible transitions between disease states are shown in Figure
 of time $t$, vaccination status $v$, and group identity $j$ (where the
 groups are the 45 sectors and the four age groups).
 
-The rate of infection of susceptible individuals, $k_{1}^{j,v}(t)$, is
+The rate of infection of susceptible individuals, $k^{1}_{j,v}(t)$, is
 defined as
 
 $$\begin{equation}
-k_{1}^{j,v}(t) = \eta_{A}^{v}\rho(t)\beta\sum_{h=1}^{m}M_{j,h}(x) I_h(t)
+k^{1}_{j,v}(t) = \eta^{E}_{v}\rho(t)\beta\sum_{h=1}^{m_j}M_{j,h}(x) I_h(t)
 \qquad(3.1)
 \end{equation}$$
 
-with $m=49$ strata and
+with $m_j=49$ strata and
 
 ``` math
- I_h(t)=\sum_{v=0}^2\left(\epsilon (1-p_3(t))I_{h,v}^{a}(t)+(1-p_4(t))I_{h,v}^{(S)}(t)\right). 
+ I_h(t)=\sum_{v=0}^{m_v}\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
 ```
 
-Here, $\eta_{A,v}$ is the relative probability to be infected given
+Here, $\eta^{E}_{v}$ is the relative probability to be infected given
 vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate
 of infection, $\beta$, which captures the impact of social distancing;
 $M(x)$ is the contact matrix between groups and depends on the economic
 configuration $x$; $\epsilon$ is the reduction in infectiousness from
-asymptomatic relative to symptomatic individuals; $p_3$ and $p_4$ are
+asymptomatic relative to symptomatic individuals; $p^3$ and $p^4$ are
 the proportions of asymptomatic and symptomatic infectiousness averted,
 respectively, due to self isolating; and $I_{h,\cdot}^{\cdot}$ is the
 number of infectious asymptomatic ($I_{h,\cdot}^{a}$) and symptomatic
@@ -313,56 +314,56 @@ vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the
 specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
 
 ``` math
- k_2 = (1-p_S)/T_{E:I} 
+ k^2 = (1-p^{I^S})/T_{E:I} 
 ```
 
-is the rate to asymptomatic infectiousness, where $p_S$ is the
+is the rate to asymptomatic infectiousness, where $p^{I^S}$ is the
 probability to become symptomatic, and $T_{E:I}$ is the expected
 duration of the latent period before the onset of infectiousness;
 
 ``` math
- k_3 = 1/T_{I^a:R}  
+ k^3 = 1/T_{I^a:R}  
 ```
 
 is the rate of recovery from asymptomatic infection;
 
 ``` math
- k_4 = p_S/ T_{E:I}; 
+ k^4 = p^{I^S}/ T_{E:I}; 
 ```
 
 is the rate of symptom onset;
 
 ``` math
-k_{5}^{j,v} =  (1-p_{H}^{j,v}) / T_{I^s}^{j,v}
+k^{5}_{j,v} =  (1-p^H_{j,v}) / T_{I^s}^{j,v}
 ```
 
-is the rate of recovery from symptomatic infection, where $p_{H}^{j,v}$
-is the probability to be hospitalised, and
-$T_{I^s}^{j,v} = p_{H}^{j,v}T_{I^s:H} + (1-p_{H}^{j,v})T_{I^s:R}$ is the
+is the rate of recovery from symptomatic infection, where $p^H_{j,v}$ is
+the probability to be hospitalised, and
+$T_{I^s}^{j,v} = p^H_{j,v}T_{I^s:H} + (1-p^H_{j,v})T_{I^s:R}$ is the
 expected time to be in compartment $I^s$: $T_{I^s:H}$ is the expected
 duration before hospitalisation and $T_{I^s:R}$ is the expected duration
 before recovery.
 
 ``` math
-p_{H}^{j,v}=\eta_{H}^{v}\hat{p}_{H}^{j}
+p^H_{j,v}=\eta^{H}_{v}\tilde{p}^{H}_{j}
 ```
 
-is the baseline probability to be hospitalised ($`\hat{p}_{H}^{j}`$)
+is the baseline probability to be hospitalised ($`\tilde{p}^{H}_{j}`$)
 adjusted by the vaccine effect protecting against hospitalisation
-($`\eta_{H}^{v}`$). Then
+($`\eta^{H}_{v}`$). Then
 
 ``` math
-k_{6}^{j,v} = p_{H}^{j,v}/T_{I^s}^{j,v}
+k^{6}_{j,v} = p^H_{j,v}/T_{I^s}^{j,v}
 ```
 
 is the rate of hospitalisation following symptomatic infection.
 
 ``` math
-k_{7}^{j}(t) = (1-p_{D}^{j}(t)) / T_{H}^{j}(t)
+k^{7}_{j}(t) = (1-p^{D}_{j}(t)) / T_{H}^{j}(t)
 ```
 
 is the rate of recovery of hospitalised patients, where
-$`p_{D}^{j}(t)=\hat{p}_{D}^{j}f_H(t)`$ is the baseline probability to
+$`p^{D}_{j}(t)=\tilde{p}^{D}_{j}f_H(t)`$ is the baseline probability to
 die given hospitalisation, adjusted by a factor encoding the increase in
 fatality rate as hospital occupancy increases:
 
@@ -371,17 +372,17 @@ f_H(t)=\max\{1,1+1.87(H_{\text{tot}}(t)-H_{\text{max}})/H_{\text{max}}\},
 ```
 
 ``` math
-H_{\text{tot}}(t) = \sum_{v=0}^2\sum_{j=1}^m H_{j,v}(t).
+H_{\text{tot}}(t) = \sum_{v=0}^{m_v}\sum_{j=1}^m_j H_{j,v}(t).
 ```
 
-$$T_{H}^j(t) = p_D^j(t)T_{H:D} + (1-p_{D}^{j}(t))T_{H:R}$$
+$$T_{H}^j(t) = p^{D}_j(t)T_{H:D} + (1-p^{D}_{j}(t))T_{H:R}$$
 
 is the expected time to be in compartment $H$: $T_{H:D}$ is the expected
 duration before death and $T_{H:R}$ is the expected duration before
 recovery. Finally,
 
 ``` math
-k_{8}^{j}(t) = p_{D}^{j}(t)/T_{H}^{j}(t)
+k^{8}_{j}(t) = p^{D}_{j}(t)/T_{H}^{j}(t)
 ```
 
 is the rate of death following hospitalisation.
@@ -394,16 +395,16 @@ received a full schedule of the specific vaccine. How we model
 transitions between vaccination states is shown in Figure
 <a href="#fig:vaccinetransitions">3.2</a>.
 
-$k_{10,c_1}^{j,v=0}(t)$ represents the rates of BPSV vaccination of
+$k^{10,c_1}_{j,v=0}(t)$ represents the rates of BPSV vaccination of
 unvaccinated susceptible and recovered people, and
-$k_{10,c_2}^{j,v=1}(t)$ represents the rates of vaccinating
+$k^{10,c_2}_{j,v=1}(t)$ represents the rates of vaccinating
 BPSV-vaccinated susceptible and recovered people.
-$k_{10,c_2}^{j,v=0}(t)$ represents the rates of vaccinating people
+$k^{10,c_2}_{j,v=0}(t)$ represents the rates of vaccinating people
 directly with the specific vaccine. Put more succintly,
-$k_{10,c_u}^{j,v}(t)$ is the rate to go from vaccine state $v$ to $u$.
-$k_9=1/T_c$ is the rate of seroconversion to vaccine-induced immunity,
-and $k_{12}^{j}(t)=k_{1}^{j,v=0}(t)$ and
-$k_{19}^{j}(t)=k_{1}^{j,v=1}(t)$ are the rates of infection of
+$k^{10,c_u}_{j,v}(t)$ is the rate to go from vaccine state $v$ to $u$.
+$k^9=1/T_c$ is the rate of seroconversion to vaccine-induced immunity,
+and $k^{12}_{j}(t)=k^{1}_{j,v=0}(t)$ and
+$k^{19}_{j}(t)=k^{1}_{j,v=1}(t)$ are the rates of infection of
 just-vaccinated people, which returns them to the epidemiological
 pathway of the lower vaccination level.
 
@@ -435,95 +436,101 @@ groups for different reasons:
 -   Customer absence due to sector closure: impact on workers
 -   Customer absence due to sector closure: impact on customers
 
-We construct contact matrix $M(x)$ as the sum of four matrices: $A(x)$
-(community contacts), $U(x)$ (worker-to-worker contacts), $V(x)$
-(consumer-to-worker contacts), and $\hat{V}(x)$ (worker-to-consumer
-contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning
-with a “target matrix,” which the four matrices should add up to, which
-is taken from (Walker et al. 2020). By sampling relevant values, we
-decompose the whole matrix into its component parts. To incorporate
-closures, each matrix is transformed independently, before they are all
-added together again.
+We construct contact matrix $M(x)$ as the sum of four matrices:
+$M^{\text{comm}}(x)$ (community contacts), $M^{\text{WW}}(x)$
+(worker-to-worker contacts), $M^{\text{CW}}(x)$ (consumer-to-worker
+contacts), and $M^{\text{WC}}(x)$ (worker-to-consumer contacts). We
+construct peacetime matrices ($x=\textbf{1}$) beginning with a “target
+matrix,” which the four matrices should add up to, which is taken from
+(Walker et al. 2020). By sampling relevant values, we decompose the
+whole matrix into its component parts. To incorporate closures, each
+matrix is transformed independently, before they are all added together
+again.
 
 Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix
 from (Walker et al. 2020). These are 16-by-16 matrices, $M^{(16)}$, for
 five-year age bands $a$ up to age group 75+. We map the matrix to a
 four-by-four matrix $M^{(4)}$ corresponding to the four age groups $g$
-used in the DAEDALUS model, using population sizes $N_a$:
+used in the DAEDALUS model, using population sizes $\tilde{N}_a$:
 
 ``` math
-M_{gg'}^{(4)} = \frac{\sum_{a\in g}N_{a}\sum_{a'\in g'}M^{(16)}_{a,a'}}{\sum_{a\in g}N_{a}},
+M_{gg'}^{(4)} = \frac{\sum_{a\in g}\tilde{N}_{a}\sum_{a'\in g'}M^{(16)}_{a,a'}}{\sum_{a\in g}\tilde{N}_{a}},
 ```
 
 and $P_g$ to represent the population sizes of the DAEDALUS age groups,
 
 ``` math
-P_g=\sum_{a\in g}N_a.
+P_g=\sum_{a\in g}\tilde{N}_a.
 ```
 
 We get to the matrix $M(\textbf{1})$ by broadcasting the four-by-four
 matrix to the 49-by-49 one. Contacts from all groups $j$ to working
 groups $h$ depend on the age group of the group ($`g(j)`$), and the
-fraction of the age-population represented in group $h$, where $W_{h}$
+fraction of the age-population represented in group $h$, where $N_{h}$
 is the number of people in group $h$:
 
 ``` math
-M_{j,h}(\textbf{1}) = M^{(4)}_{g(j),g(h)}\frac{W_{h}}{P_{g(h)}}
+M_{j,h}(\textbf{1}) = M^{(4)}_{g(j),g(h)}\frac{N_{h}}{\hat{N}_{g(h)}}
 ```
 
 for $j$ and $h$ including all groups (working and non-working). Each
 group $j$ contains people that belong to only one age group $g$. We
 refer to the age group of the people in group $j$ as $g(j)$. Then
-$P_{g(h)}$ is the number of people in the age group of group $h$, so
-$P_{g(h)}=W_{h}$ for age groups 0 to 4, 5 to 19 and 65+, and
-$P_{g(h)}=\sum_{h\in\{1,...,N,N+3\}}W_{h}$ for ages 20 to 64.
+$\hat{N}_{g(h)}$ is the number of people in the age group of group $h$,
+so $\hat{N}_{g(h)}=N_{h}$ for age groups 0 to 4, 5 to 19 and 65+, and
+$\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_s,m_s+3\}}N_{h}$ for ages 20 to 64.
 
 In setting up a country, we sample values for $M^{(16)}$ (from which we
 get $`M(\textbf{1})`$). At the same time, we sample the proportion of
 contacts that come from workplaces, and workplace-related contacts. From
-these, we get $U(\textbf{1})$ and $V(\textbf{1})$, constructing the
-matrices and normalising.
+these, we get $M^{\text{WW}}(\textbf{1})$ and
+$M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising.
 
-Matrix U is diagonal and $U_{j,j}(\textbf{1})=0$ for $j>N$ (Haw et al.
-2022). Consumer-to-worker contacts (matrix $V$) describe contacts
+Matrix $M^{\text{WW}}$ is diagonal and
+$M^{\text{WW}}_{j,j}(\textbf{1})=0$ for $j>m_s$ (Haw et al. 2022).
+Consumer-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts
 experienced by workers from consumers per sector. Note that
-$V_{j,h}(\textbf{1})=0$ for $j>N$. Matrix $\hat{V}(\textbf{1})$ is the
-complement of matrix $V(\textbf{1})$, computed by multiplying through by
+$M^{\text{CW}}_{j,h}(\textbf{1})=0$ for $j>m_s$. Matrix
+$M^{\text{WC}}(\textbf{1})$ is the complement of matrix
+$M^{\text{CW}}(\textbf{1})$, computed by multiplying through by
 population, transposing, and dividing again by population.
 
-With $M(\textbf{1})$, $V(\textbf{1})$, $U(\textbf{1})$ and
-$\hat{V}(\textbf{1})$, we learn $A(\textbf{1})$.
+With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$,
+$M^{\text{WW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn
+$M^{\text{comm}}(\textbf{1})$.
 
 $A$ is decomposed into its constituent parts, representing intra- and
 inter-household interactions ($L$), school interactions ($S$),
 hospitality interactions ($H$) and travel interactions ($T$):
 
 ``` math
-A(\textbf{1})=A^{(L)} + A^{(S)}(\textbf{1}) + A^{(H)}(\textbf{1}) + A^{(T)}(\textbf{1})
+M^{\text{comm}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\text{CC}}(\textbf{1}) + M^{\text{tran}}(\textbf{1})
 ```
 
-Values for $A^{(S)}(\textbf{1})$ come from sampled values representing
-the fractions of contacts that come from school. School contacts are
-estimated separately in two age groups (pre-school age: 0—4; school age:
-5—19): $A^{(S)}(\textbf{1})$ has entries of zero for groups $g$ not in
-school, and values for $g$=0 to 4 years old and $g$=5 to 19 year olds.
+Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values
+representing the fractions of contacts that come from school. School
+contacts are estimated separately in two age groups (pre-school age:
+0—4; school age: 5—19): $M^{\text{sch}}(\textbf{1})$ has entries of zero
+for groups $g$ not in school, and values for $g$=0 to 4 years old and
+$g$=5 to 19 year olds.
 
-Likewise, $A^{(T)}(\textbf{1})$ is also sampled as a fraction of total
-contacts. $A_{j,h}^{(T)}(\textbf{1})\geq 0$ for $j=1,...,N$.
-$A_{j,h}^{(T)}(\textbf{1})=0$ for $j>N$.
+Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of
+total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for
+$j=1,...,m_s$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_s$.
 
-Finally, $A^{(H)}(\textbf{1})$ is sampled as a fraction of
-$A(\textbf{1})- A^{(S)}(\textbf{1}) - A^{(T)}(\textbf{1})$, which leaves
-$A^{(L)}$.
+Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of
+$M^{\text{comm}}(\textbf{1})- M^{\text{sch}}(\textbf{1}) - M^{\text{tran}}(\textbf{1})$,
+which leaves $M^{\text{home}}$.
 
 ### 3.4.1 Matrix $A$: community contacts
 
-We construct $A(x)$ from its constituent parts, representing intra- and
-inter-household interactions ($L$), school interactions ($S$),
-hospitality interactions ($H$) and travel interactions ($T$):
+We construct $M^{\text{comm}}(x)$ from its constituent parts,
+representing intra- and inter-household interactions ($L$), school
+interactions ($S$), hospitality interactions ($H$) and travel
+interactions ($T$):
 
 ``` math
-A(x)=A^{(L)} + A^{(S)}(x) + A^{(H)}(x) + A^{(T)}(x).
+M^{\text{comm}}(x)=M^{\text{home}} + M^{\text{sch}}(x) + M^{\text{CC}}(x) + M^{\text{tran}}(x).
 ```
 
 School contacts under $x$ are the peacetime values scaled by the extent
@@ -531,18 +538,18 @@ of closure. $x_{S}$ is the extent to which schools are open, so that the
 number of contacts per person scales superlinearly with school closure.
 
 $$\begin{equation}
-A_{j,j}^{(S)}(x)=x_{S}^2A_{j,j}^{(S)}(\textbf{1}).
+M_{j,j}^{\text{sch}}(x)=x_{S}^2M_{j,j}^{\text{sch}}(\textbf{1}).
 \qquad(3.2)
 \end{equation}$$
 
-Matrix $A^{(T)}$ counts contacts between working people, representing
-travel. We assume that transport contacts only add to the infection risk
-if the sector is open and the workers travel to and from their
-workplace. Again, the value for configuration $x$ is the value for
+Matrix $M^{\text{tran}}$ counts contacts between working people,
+representing travel. We assume that transport contacts only add to the
+infection risk if the sector is open and the workers travel to and from
+their workplace. Again, the value for configuration $x$ is the value for
 $\textbf{1}$ scaled accordingly:
 
 $$\begin{equation}
-A_{j,h}^{(T)}(x) = x_{h}(1-q_j)(1-q_h)A_{j,h}^{(T)}(\textbf{1}).
+M_{j,h}^{\text{tran}}(x) = x_{h}(1-q_j)(1-q_h)M_{j,h}^{\text{tran}}(\textbf{1}).
 \qquad(3.3)
 \end{equation}$$
 
@@ -558,10 +565,11 @@ in the compartments will be reduced by their sector closure, $x_{j}$.
 This, in combination with the scaled contacts, leads to superlinear
 scaling.
 
-Matrix $A^{(H)}(x)$ gives the contacts made in the hospitality sector:
+Matrix $M^{\text{CC}}(x)$ gives the contacts made in the hospitality
+sector:
 
 $$\begin{equation}
-A^{(H)}(x) = x_{H}^2T^{(H)}(\textbf{1})
+M^{\text{CC}}(x) = x_{H}^2M^{\text{CC}}(\textbf{1})
 \qquad(3.4)
 \end{equation}$$
 
@@ -570,15 +578,15 @@ hospitality sectors are open, so that the number of contacts per person
 scales superlinearly according to closure:
 
 ``` math
-x_{H} = \frac{\sum_jx_{j}W_j}{\sum_jW_j}
+x_{H} = \frac{\sum_jx_{j}N_j}{\sum_jN_j}
 ```
 
 where we sum over only the hospitality sectors.
 
-### 3.4.2 Matrix $U$: Worker-to-worker contacts
+### 3.4.2 Matrix $M^{\text{WW}}$: Worker-to-worker contacts
 
 $$\begin{equation}
-U_{j,j}(x) = x_{j}(1-q_j)^2U_{j,j}(\textbf{1}),
+M^{\text{WW}}_{j,j}(x) = x_{j}(1-q_j)^2M^{\text{WW}}_{j,j}(\textbf{1}),
 \qquad(3.5)
 \end{equation}$$
 
@@ -590,25 +598,25 @@ there are fewer contacts per person, but we do not approximate there
 being fewer people having them. This is because the latter is accounted
 for in the movement of people out of the group upon its closure.
 
-$$U_{j,j}(x) = x_{j}^2(1-q_j)^2U_{j,j}(\textbf{1})$$
+$$M^{\text{WW}}_{j,j}(x) = x_{j}^2(1-q_j)^2M^{\text{WW}}_{j,j}(\textbf{1})$$
 
 ``` math
-U_{j,j}(x) = \hat{x}_j^2U_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0)
+M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0)
 ```
 
-### 3.4.3 Matrix $V$: Consumer-to-worker contacts
+### 3.4.3 Matrix $M^{\text{CW}}$: Consumer-to-worker contacts
 
 $$\begin{equation}
-V_{j,h}(x) = x_{j}(1-q_j)V_{j,h}(\textbf{1}),
+M^{\text{CW}}_{j,h}(x) = x_{j}(1-q_j)M^{\text{CW}}_{j,h}(\textbf{1}),
 \qquad(3.6)
 \end{equation}$$
 
-for $h=1,...,N+3$.
+for $h=1,...,m_s+3$.
 
-Here, there is linear scaling of $V_{j,h}(\textbf{1})$ with respect to
-working from home, and linear scaling with respect to sector closure,
-which becomes superlinear scaling for sectors as individuals are moved
-out of the compartment, as with matrix $U(x)$.
+Here, there is linear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with
+respect to working from home, and linear scaling with respect to sector
+closure, which becomes superlinear scaling for sectors as individuals
+are moved out of the compartment, as with matrix $M^{\text{WW}}(x)$.
 
 ## 3.5 Social distancing
 
@@ -652,30 +660,30 @@ on that date.
 </div>
 
 -   We want to write mobility as a function of mandate and some epi
-    outcome, e.g. deaths: $\rho(t) = (1-p_8)f(d(t),s(t)) + p_8$ where
-    $\rho(t)$ is mobility, $d$ is deaths per million, $s$ is government
-    mandate, and $`0 < p_8 < 1`$ is the baseline.
+    outcome, e.g. deaths: $\rho(t) = (1-p^8)f(d(t),e(t)) + p^8$ where
+    $\rho(t)$ is mobility, $d$ is deaths per million, $e$ is government
+    mandate, and $`0 < p^8 < 1`$ is the baseline.
 -   We want mobility to drop monotonically with both the mandate and the
     epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
 -   We want a maximum mobility of 1 when both the mandate and the epi
     outcome are 0: $f(0,0)=1$.
--   We want mobility to approach $p_8$ when the mandate and the epi
-    outcome become large: $\lim_{x\to 10^6, s\to 1}f(d,s)= 0$.
+-   We want mobility to approach $p^8$ when the mandate and the epi
+    outcome become large: $\lim_{x\to 10^6, e\to 1}f(d,e)= 0$.
 -   We want to allow for the possibility of redundancy between the two
-    variables: $f(0,0)/f(0,s) > f(x,0)/f(d,s)$ and
-    $f(0,0)/f(d,0) > f(0,s)/f(d,s)$ for $d,s>0$.
+    variables: $f(0,0)/f(0,e) > f(x,0)/f(d,e)$ and
+    $f(0,0)/f(d,0) > f(0,e)/f(d,e)$ for $d,e>0$.
 
 A simple model to achieve these criteria is:
-$$f(d,s) = \frac{1}{1+p_9y+p_{10}s}$$ with $p_9, p_{10}>0$.
+$$f(d,e) = \frac{1}{1+p^9y+p^{10}e}$$ with $p^9, p^{10}>0$.
 
 However, we might also want a model that can be parametrised with a
 distribution whose uncertainty covers the whole range of possible
 eventualities. The equivalent model with compounded effects would be
-$$f_1(d,s) = \frac{1}{1+p_9y}\frac{1}{1+p_{10}s}.$$ The equivalent model
-with completely overlapping effects would be
-$$f_2(d,s) = \frac{1}{1+\max(p_9y,p_{10}s)}.$$ Then we could include
+$$f_1(d,e) = \frac{1}{1+p^9 d}\frac{1}{1+p^{10}e}.$$ The equivalent
+model with completely overlapping effects would be
+$$f_2(d,e) = \frac{1}{1+\max(p^9 d,p^{10}e)}.$$ Then we could include
 ‘model uncertainty’ via some parameter $\beta\sim\mathcal{U}(0,1)$,
-defining $$f(d,s) = (f_1(d,s))^{p_{11}}(f_2(d,s))^{(1-p_{11})}.$$
+defining $$f(d,e) = (f_1(d,e))^{p^{11}}(f_2(d,e))^{(1-p^{11})}.$$
 
 <div class="figure">
 
@@ -691,11 +699,11 @@ Figure 3.5: Fit of model to data.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/mobilityposterior.png" alt="Posterior distribution for parameters $p_9$ and $p_8$." width="2096" />
+<img src="README_files/figure-gfm/mobilityposterior.png" alt="Posterior distribution for parameters $p^9$ and $p^8$." width="2096" />
 
 <p class="caption">
 
-Figure 3.6: Posterior distribution for parameters $p_9$ and $p_8$.
+Figure 3.6: Posterior distribution for parameters $p^9$ and $p^8$.
 
 </p>
 
@@ -717,16 +725,16 @@ points.
 ## 3.6 Self isolating
 
 We assume that infectious people who know their status have a compliance
-$p_1\sim\mathcal(U)(0,1)$ with the instruction to self isolate, starting
+$p^1\sim\mathcal(U)(0,1)$ with the instruction to self isolate, starting
 one day into their infectious period. We assume constant infectiousness
-over time and that a fraction $p_{19}$ of the symptomatic infectiousness
+over time and that a fraction $p^{26}$ of the symptomatic infectiousness
 is presymptomatic. Then the amount of infectiousness averted of
-symptomatic people is $p_4=p_1(1-p_{19})$, who isolate due to the onset
+symptomatic people is $p^4=p^1(1-p^{26})$, who isolate due to the onset
 of symptoms. The fraction of asymptomatic cases identified by testing is
-$p_2(t)$. We assume asymptomatic cases have the same probability to self
-isolate and that test results are returned after $p_{17}$ days of
+$p^2(t)$. We assume asymptomatic cases have the same probability to self
+isolate and that test results are returned after $p^{17}$ days of
 infectiousness. Then the infectiousness that testing averts is
-$p_3(t)=p_1p_2(t)\min(0,(T_{I^a:R}-p_{17})/T_{I^a:R})$.
+$p^3(t)=p^1p^2(t)\min(0,(T_{I^a:R}-p^{17})/T_{I^a:R})$.
 
 <!-- b0    = 2.197; -->
 <!-- b1    = 0.1838; -->
@@ -2594,16 +2602,16 @@ We write
 $$b\sim\text{Beta}(\alpha(u),\beta(u))$$
 
 where $u$ is the fraction of GDP coming from the Food and accommodation
-sector. We learn three parameters $p_5$, $p_6$ and $p_7$ to best fit the
+sector. We learn three parameters $p^5$, $p^6$ and $p^7$ to best fit the
 relationship between $u$ and $b$ in countries we have observations for:
 
-$$p_5 = \alpha(u)+\beta(u)$$
+$$p^5 = \alpha(u)+\beta(u)$$
 
-$$p_6u + p_7 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
+$$p^6u + p^7 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
 
-Here, $p_5$ controls the variance of the distribution and $p_6$ and
-$p_7$ the linear relationship between $u$ and $b$. Using an optimisation
-routine in R we find $p_5=5.93$, $p_6=3.66$ and $p_7=0.099$. Results are
+Here, $p^5$ controls the variance of the distribution and $p^6$ and
+$p^7$ the linear relationship between $u$ and $b$. Using an optimisation
+routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are
 shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
 values as inputs for all country models.
 
