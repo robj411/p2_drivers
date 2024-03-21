@@ -315,7 +315,7 @@ Possible transitions between disease states are shown in Figure \@ref(fig:statet
 The rate of infection of susceptible individuals, $`k^{1}_{j,v}(t)`$, is defined as
 
 \begin{equation}
-k_{j,v}^{1}(t) = \eta^{E}_{v}\rho(t)\beta\sum_{h=1}^{m_j}M_{j,h}(x) I_h(t)
+k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_j}M_{j,h}(x) I_h(t)
 (\#eq:infection)
 \end{equation}
 
@@ -325,7 +325,7 @@ with $m_j=49$ strata and
  I_h(t)=\sum_{v=0}^{m_v}\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
 ```
 
-  Here, $\eta^{E}_{v}$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of social distancing; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p^3$ and $p^4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic ($I_{h,\cdot}^{a}$) and symptomatic ($I_{h,\cdot}^{s}$) people who are unvaccinated ($I_{h,v=0}^{\cdot}$), vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
+  Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of social distancing; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p^3$ and $p^4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic ($I_{h,\cdot}^{a}$) and symptomatic ($I_{h,\cdot}^{s}$) people who are unvaccinated ($I_{h,v=0}^{\cdot}$), vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
 
 ```math
  k^2 = (1-p^{I^S})/T_{E:I} 
@@ -374,10 +374,10 @@ f_H(t)=\max\{1,1+1.87(H_{\text{tot}}(t)-H_{\text{max}})/H_{\text{max}}\},
 ```
 
 ```math
-H_{\text{tot}}(t) = \sum_{v=0}^{m_v}\sum_{j=1}^m_j H_{j,v}(t).
+H_{\text{tot}}(t) = \sum_{v=0}^{m_v}\sum_{j=1}^{m_j} H_{j,v}(t).
 ```
 
-$$T_{H}^j(t) = p^{D}_j(t)T_{H:D} + (1-p^{D}_{j}(t))T_{H:R}$$
+$$T_{H}^j(t) = p_j^{D}(t)T_{H:D} + (1-p_{j}^{D}(t))T_{H:R}$$
 
 is the expected time to be in compartment $H$: $T_{H:D}$ is the expected duration before death and $T_{H:R}$ is the expected duration before recovery. Finally,
 
@@ -391,9 +391,9 @@ k^{8}_{j}(t) = p^{D}_{j}(t)/T_{H}^{j}(t)
 
 In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who have received a full schedule of BPSV, and $v=2$ to people who have received a full schedule of the specific vaccine. How we model transitions between vaccination states is shown in Figure \@ref(fig:vaccinetransitions).
 
-$k^{10,c_1}_{j,v=0}(t)$ represents the rates of BPSV vaccination of unvaccinated susceptible and recovered people, and $k^{10,c_2}_{j,v=1}(t)$ represents the rates of vaccinating BPSV-vaccinated susceptible and recovered people. $k^{10,c_2}_{j,v=0}(t)$ represents the rates of vaccinating people directly with the specific vaccine. Put more succintly, $k^{10,c_u}_{j,v}(t)$ is the rate to go from vaccine state $v$ to $u$. $k^9=1/T_c$ is the rate of seroconversion to vaccine-induced immunity, and $k^{12}_{j}(t)=k^{1}_{j,v=0}(t)$ and $k^{19}_{j}(t)=k^{1}_{j,v=1}(t)$ are the rates of infection of just-vaccinated people, which returns them to the epidemiological pathway of the lower vaccination level.
+$`k^{10,c_1}_{j,v=0}(t)`$ represents the rates of BPSV vaccination of unvaccinated susceptible and recovered people, and $`k^{10,c_2}_{j,v=1}(t)`$ represents the rates of vaccinating BPSV-vaccinated susceptible and recovered people. $`k^{10,c_2}_{j,v=0}(t)`$ represents the rates of vaccinating people directly with the specific vaccine. Put more succintly, $`k^{10,c_u}_{j,v}(t)`$ is the rate to go from vaccine state $v$ to $u$. $k^9=1/T_c$ is the rate of seroconversion to vaccine-induced immunity, and $`k^{12}_{j}(t)=k^{1}_{j,v=0}(t)`$ and $`k^{19}_{j}(t)=k^{1}_{j,v=1}(t)`$ are the rates of infection of just-vaccinated people, which returns them to the epidemiological pathway of the lower vaccination level.
 
-```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $S^{c_u},\\, u\\in\\{1,2\\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status.", fig.ext = 'png',echo=F}
+```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $S^{c_u}, u\\in\\{1,2\\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status.", fig.ext = 'png',echo=F}
 \usetikzlibrary{shapes}
 \usetikzlibrary{fit}
 \usetikzlibrary{arrows}
@@ -468,7 +468,7 @@ The configuration $x$ and the proportion of workers working from home $q$ determ
 - Customer absence due to sector closure: impact on workers
 - Customer absence due to sector closure: impact on customers
 
-We construct contact matrix $M(x)$ as the sum of four matrices: $M^{\text{comm}}(x)$ (community contacts), $M^{\text{WW}}(x)$ (worker-to-worker contacts), $M^{\text{CW}}(x)$ (consumer-to-worker contacts), and  $M^{\text{WC}}(x)$ (worker-to-consumer contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning with a "target matrix", which the four matrices should add up to, which is taken from [@Walker2020]. By sampling relevant values, we decompose the whole matrix into its component parts. To incorporate closures, each matrix is transformed independently, before they are all added together again.
+We construct contact matrix $M(x)$ as the sum of four matrices: $M^{\text{com}}(x)$ (community contacts), $M^{\text{WW}}(x)$ (worker-to-worker contacts), $M^{\text{CW}}(x)$ (consumer-to-worker contacts), and  $M^{\text{WC}}(x)$ (worker-to-consumer contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning with a "target matrix", which the four matrices should add up to, which is taken from [@Walker2020]. By sampling relevant values, we decompose the whole matrix into its component parts. To incorporate closures, each matrix is transformed independently, before they are all added together again.
 
 Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix from [@Walker2020]. These are 16-by-16 matrices, $M^{(16)}$, for five-year age bands $a$ up to age group 75+. We map the matrix to a four-by-four matrix $M^{(4)}$ corresponding to the four age groups $g$ used in the DAEDALUS model, using population sizes $\tilde{N}_a$:
 
@@ -488,33 +488,33 @@ We get to the matrix $M(\textbf{1})$ by broadcasting the four-by-four matrix to 
 M_{j,h}(\textbf{1}) = M^{(4)}_{g(j),g(h)}\frac{N_{h}}{\hat{N}_{g(h)}}
 ```
 
-for $j$ and $h$ including all groups (working and non-working). Each group $j$ contains people that belong to only one age group $g$. We refer to the age group of the people in group $j$ as $g(j)$. Then $\hat{N}_{g(h)}$ is the number of people in the age group of group $h$, so $\hat{N}_{g(h)}=N_{h}$ for age groups 0 to 4, 5 to 19 and 65+, and $\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_s,m_s+3\}}N_{h}$ for ages 20 to 64. 
+for $j$ and $h$ including all groups (working and non-working). Each group $j$ contains people that belong to only one age group $g$. We refer to the age group of the people in group $j$ as $g(j)$. Then $\hat{N}_{g(h)}$ is the number of people in the age group of group $h$, so $`\hat{N}_{g(h)}=N_{h}`$ for age groups 0 to 4, 5 to 19 and 65+, and $`\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_s,m_s+3\}}N_{h}`$ for ages 20 to 64. 
 
 In setting up a country, we sample values for $M^{(16)}$ (from which we get $`M(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces, and workplace-related contacts. From these, we get $M^{\text{WW}}(\textbf{1})$ and $M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising. 
 
-Matrix $M^{\text{WW}}$ is diagonal and $M^{\text{WW}}_{j,j}(\textbf{1})=0$ for $j>m_s$ [@Haw2020]. Consumer-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from consumers per sector. Note that $M^{\text{CW}}_{j,h}(\textbf{1})=0$ for $j>m_s$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
+Matrix $M^{\text{WW}}$ is diagonal and $`M^{\text{WW}}_{j,j}(\textbf{1})=0`$ for $j>m_s$ [@Haw2020]. Consumer-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from consumers per sector. Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_s$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
 
-With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$, $M^{\text{WW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn $M^{\text{comm}}(\textbf{1})$. 
+With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$, $M^{\text{WW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn $M^{\text{com}}(\textbf{1})$. 
 
 $A$ is decomposed into its constituent parts, representing intra- and inter-household interactions ($L$), school interactions ($S$), hospitality interactions ($H$) and travel interactions ($T$):
 
 ```math
-M^{\text{comm}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\text{CC}}(\textbf{1}) + M^{\text{tran}}(\textbf{1})
+M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\text{CC}}(\textbf{1}) + M^{\text{tran}}(\textbf{1})
 ```
 
 Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values representing the fractions of contacts that come from school. School contacts are estimated separately in two age groups (pre-school age: 0-–4; school age: 5-–19): $M^{\text{sch}}(\textbf{1})$ has entries of zero for groups $g$ not in school, and values for $g$=0 to 4 years old and $g$=5 to 19 year olds. 
 
 Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for $j=1,...,m_s$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_s$.
 
-Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{comm}}(\textbf{1})- M^{\text{sch}}(\textbf{1}) - M^{\text{tran}}(\textbf{1})$, which leaves $M^{\text{home}}$.
+Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1}) - M^{\text{tran}}(\textbf{1})$, which leaves $M^{\text{home}}$.
 
 
-### Matrix $A$: community contacts
+### Matrix $M^{\text{com}}$: community contacts
 
-We construct $M^{\text{comm}}(x)$ from its constituent parts, representing intra- and inter-household interactions ($L$), school interactions ($S$), hospitality interactions ($H$) and travel interactions ($T$):
+We construct $M^{\text{com}}(x)$ from its constituent parts, representing intra- and inter-household interactions (home), school interactions (sch), hospitality interactions (CC) and travel interactions (tran):
 
 ```math
-M^{\text{comm}}(x)=M^{\text{home}} + M^{\text{sch}}(x) + M^{\text{CC}}(x) + M^{\text{tran}}(x).
+M^{\text{com}}(x)=M^{\text{home}} + M^{\text{sch}}(x) + M^{\text{CC}}(x) + M^{\text{tran}}(x).
 ```
 
 School contacts under $x$ are the peacetime values scaled by the extent of closure. $x_{S}$ is the extent to which schools are open, so that the number of contacts per person scales superlinearly with school closure. 
@@ -562,13 +562,13 @@ where we sum over only the hospitality sectors.
 ### Matrix $M^{\text{WW}}$: Worker-to-worker contacts
 
 \begin{equation}
-M^{\text{WW}}_{j,j}(x) = x_{j}(1-q_j)^2M^{\text{WW}}_{j,j}(\textbf{1}),
+M_{j,j}^{\text{WW}}(x) = x_{j}(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}),
 (\#eq:worker)
 \end{equation}
 
 for the working groups, with the number of contacts adjusted according to at-home working ($q_j$) and sector openness ($x_{j}$). As before, there is superlinear scaling of contacts with respect to working from home. There is linear scaling with respect to sector closure: that is, there are fewer contacts per person, but we do not approximate there being fewer people having them. This is because the latter is accounted for in the movement of people out of the group upon its closure. 
 
-$$M^{\text{WW}}_{j,j}(x) = x_{j}^2(1-q_j)^2M^{\text{WW}}_{j,j}(\textbf{1})$$
+$$M_{j,j}^{\text{WW}}(x) = x_{j}^2(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1})$$
 
 ```math
 M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0)
@@ -578,7 +578,7 @@ M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{
 ### Matrix $M^{\text{CW}}$: Consumer-to-worker contacts
 
 \begin{equation}
-M^{\text{CW}}_{j,h}(x) = x_{j}(1-q_j)M^{\text{CW}}_{j,h}(\textbf{1}),
+M_{j,h}^{\text{CW}}(x) = x_{j}(1-q_j)M_{j,h}^{\text{CW}}(\textbf{1}),
 (\#eq:ctow)
 \end{equation}
 
