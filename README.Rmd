@@ -115,7 +115,7 @@ bpsv_levels <- c(0,1)
 | From/to | No closures | Light closures | Heavy closures |
 |:----- |:----- |:----- |:----- |
 | **No closures** |  |  | t = response time OR Hospital occupancy > 95% capacity |
-| **Light closures** | (Growth rate < 0.025 OR Hospital occupancy < 25% capacity) AND vaccine rollout complete OR $R_t(D(\textbf{1})) < 1$ |  | Hospital occupancy > 95% capacity |
+| **Light closures** | (Growth rate < 0.025 OR Hospital occupancy < 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |  | Hospital occupancy > 95% capacity |
 | **Heavy closures** |  | Hospital occupancy < 25% capacity AND t > 7 + last change time |  | 
 
 Table: (\#tab:rulesreactive) State transition rules for reactive closure strategies
@@ -123,8 +123,8 @@ Table: (\#tab:rulesreactive) State transition rules for reactive closure strateg
 | From/to | No closures | Light closures | Heavy closures |
 |:----- |:----- |:----- |:----- |
 | **No closures** |  |  | t = response time OR Hospital occupancy > 95% capacity |
-| **Light closures** | Vaccine rollout complete OR $R_t(D(\textbf{1})) < 1$  |  | $R_t > 1.2$ |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(D(\textbf{1})) < 1$  | $R_t(D_{\text{light closure}}) < 0.95$ AND t > 7 + last change time |  | 
+| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  |  | $R_t > 1.2$ |
+| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  | $R_t(M_{\text{light closure}}) < 0.95$ AND t > 7 + last change time |  | 
 
 Table: (\#tab:ruleselimination) State transition rules for the elimination strategy
 
