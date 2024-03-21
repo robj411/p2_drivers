@@ -187,7 +187,7 @@ $$p_j^{22}(t)=p^2(t)p^{18}I_{j}^{a}.$$
 $p^{18}$ is the number of days spent in self isolation per day of
 infectiousness (e.g. suppose the average infectious period is four days
 and mandatory self-isolation time is ten days, then $p^{19}=2.5$ and
-$p^{18}=p^{19}T_{I^s}/T_{I^a:R}$, where $T_{I^s}$ and $T_{I^a:R}$ are
+$p^{18}=p^{19}T^{I^s}/T^{I^a:R}$, where $T^{I^s}$ and $T^{I^a:R}$ are
 expected infectious periods for symptomatic and asymptomatic,
 respectively). $p^1$ is compliance with the requirement to self isolate
 and $p^2(t)$ is the fraction of cases identified. Other notations are
@@ -226,7 +226,7 @@ $$p^{25}(t)=\sum_{v=0}^{m_v}\left((1-p^H_{j_{\text{school}},v})p^1p^{19}I_{j_{\t
 $p^{18}$ is the number of days spent in self isolation per day of
 infectiousness (e.g. suppose the average infectious period is four days
 and mandatory self-isolation time is ten days, then $p^{19}=2.5$ and
-$p^{18}=p^{19}T_{I^s}/T_{I^a:R}$, where $T_{I^s}$ and $T_{I^a:R}$ are
+$p^{18}=p^{19}T^{I^s}/T^{I^a:R}$, where $T^{I^s}$ and $T^{I^a:R}$ are
 expected infectious periods for symptomatic and asymptomatic,
 respectively), and $p^{24}(t)$ represents education lost due to
 asymptomatic self isolation (which comes at a cost only when schools are
@@ -323,34 +323,35 @@ vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the
 specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
 
 ``` math
- k^2 = \big(1-p^{I^S}\big)/T_{E:I} 
+ k^2 = \big(1-p^{I^S}\big)/T^{E:I} 
 ```
 
 is the rate to asymptomatic infectiousness, where $p^{I^S}$ is the
-probability to become symptomatic, and $T_{E:I}$ is the expected
-duration of the latent period before the onset of infectiousness;
+probability to become symptomatic given infection, and $T^{E:I}$ is the
+expected duration of the latent period before the onset of
+infectiousness;
 
 ``` math
- k^3 = 1/T_{I^a:R}  
+ k^3 = 1/T^{I^a:R}  
 ```
 
 is the rate of recovery from asymptomatic infection;
 
 ``` math
- k^4 = p^{I^S}/ T_{E:I}; 
+ k^4 = p^{I^S}/ T^{E:I}; 
 ```
 
 is the rate of symptom onset;
 
 ``` math
-k^{5}_{j,v} =  (1-p^H_{j,v}) / T_{I^s}^{j,v}
+k^{5}_{j,v} =  \big(1-p^H_{j,v}\big) / T^{I^s}^{j,v}
 ```
 
 is the rate of recovery from symptomatic infection, where $p^H_{j,v}$ is
-the probability to be hospitalised, and
-$T_{I^s}^{j,v} = p^H_{j,v}T_{I^s:H} + (1-p^H_{j,v})T_{I^s:R}$ is the
-expected time to be in compartment $I^s$: $T_{I^s:H}$ is the expected
-duration before hospitalisation and $T_{I^s:R}$ is the expected duration
+the probability to be hospitalised given symptomatic infection, and
+$T_{j,v}^{I^s} = p^H_{j,v}T^{I^s:H} + (1-p^H_{j,v})T^{I^s:R}$ is the
+expected time to be in compartment $I^s$: $T^{I^s:H}$ is the expected
+duration before hospitalisation and $T^{I^s:R}$ is the expected duration
 before recovery.
 
 ``` math
@@ -362,13 +363,13 @@ adjusted by the vaccine effect protecting against hospitalisation
 ($`\eta^{H}_{v}`$). Then
 
 ``` math
-k^{6}_{j,v} = p^H_{j,v}/T_{I^s}^{j,v}
+k^{6}_{j,v} = p^H_{j,v}/T_{j,v}^{I^s}
 ```
 
 is the rate of hospitalisation following symptomatic infection.
 
 ``` math
-k^{7}_{j}(t) = (1-p^{D}_{j}(t)) / T_{H}^{j}(t)
+k^{7}_{j}(t) = (1-p^{D}_{j}(t)) / T_j^{H}(t)
 ```
 
 is the rate of recovery of hospitalised patients, where
@@ -384,14 +385,14 @@ f_H(t)=\max\{1,1+1.87(H_{\text{tot}}(t)-H_{\text{max}})/H_{\text{max}}\},
 H_{\text{tot}}(t) = \sum_{v=0}^{m_v}\sum_{j=1}^{m_j} H_{j,v}(t).
 ```
 
-$$T_{H}^j(t) = p_j^{D}(t)T_{H:D} + (1-p_{j}^{D}(t))T_{H:R}$$
+$$T_J^{H}(t) = p_j^{D}(t)T^{H:D} + (1-p_{j}^{D}(t))T^{H:R}$$
 
-is the expected time to be in compartment $H$: $T_{H:D}$ is the expected
-duration before death and $T_{H:R}$ is the expected duration before
+is the expected time to be in compartment $H$: $T^{H:D}$ is the expected
+duration before death and $T^{H:R}$ is the expected duration before
 recovery. Finally,
 
 ``` math
-k^{8}_{j}(t) = p^{D}_{j}(t)/T_{H}^{j}(t)
+k^{8}_{j}(t) = p^{D}_{j}(t)/T_j^{H}(t)
 ```
 
 is the rate of death following hospitalisation.
@@ -411,7 +412,7 @@ BPSV-vaccinated susceptible and recovered people.
 $`k^{10,c_2}_{j,v=0}(t)`$ represents the rates of vaccinating people
 directly with the specific vaccine. Put more succintly,
 $`k^{10,c_u}_{j,v}(t)`$ is the rate to go from vaccine state $v$ to $u$.
-$k^9=1/T_c$ is the rate of seroconversion to vaccine-induced immunity,
+$k^9=1/T^c$ is the rate of seroconversion to vaccine-induced immunity,
 and $`k^{12}_{j}(t)=k^{1}_{j,v=0}(t)`$ and
 $`k^{19}_{j}(t)=k^{1}_{j,v=1}(t)`$ are the rates of infection of
 just-vaccinated people, which returns them to the epidemiological
@@ -744,7 +745,7 @@ of symptoms. The fraction of asymptomatic cases identified by testing is
 $p^2(t)$. We assume asymptomatic cases have the same probability to self
 isolate and that test results are returned after $p^{17}$ days of
 infectiousness. Then the infectiousness that testing averts is
-$p^3(t)=p^1p^2(t)\min(0,(T_{I^a:R}-p^{17})/T_{I^a:R})$.
+$p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 
 <!-- b0    = 2.197; -->
 <!-- b1    = 0.1838; -->
