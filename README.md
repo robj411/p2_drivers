@@ -344,7 +344,7 @@ is the rate of recovery from asymptomatic infection;
 is the rate of symptom onset;
 
 ``` math
-k^{5}_{j,v} =  \big(1-p^H_{j,v}\big) / T^{I^s}^{j,v}
+k^{5}_{j,v} =  \big(1-p^H_{j,v}\big) / T_{j,v}^{I^s}
 ```
 
 is the rate of recovery from symptomatic infection, where $p^H_{j,v}$ is
@@ -385,7 +385,7 @@ f_H(t)=\max\{1,1+1.87(H_{\text{tot}}(t)-H_{\text{max}})/H_{\text{max}}\},
 H_{\text{tot}}(t) = \sum_{v=0}^{m_v}\sum_{j=1}^{m_j} H_{j,v}(t).
 ```
 
-$$T_J^{H}(t) = p_j^{D}(t)T^{H:D} + (1-p_{j}^{D}(t))T^{H:R}$$
+$$T_j^{H}(t) = p_j^{D}(t)T^{H:D} + (1-p_{j}^{D}(t))T^{H:R}$$
 
 is the expected time to be in compartment $H$: $T^{H:D}$ is the expected
 duration before death and $T^{H:R}$ is the expected duration before
@@ -467,10 +467,11 @@ used in the DAEDALUS model, using population sizes $\tilde{N}_a$:
 \hat{M}_{gg'} = \frac{\sum_{a\in g}\tilde{N}_{a}\sum_{a'\in g'}\tilde{M}_{a,a'}}{\sum_{a\in g}\tilde{N}_{a}},
 ```
 
-and $P_g$ to represent the population sizes of the DAEDALUS age groups,
+and $\hat{N}_g$ to represent the population sizes of the DAEDALUS age
+groups,
 
 ``` math
-P_g=\sum_{a\in g}\tilde{N}_a.
+\hat{N}_g=\sum_{a\in g}\tilde{N}_a.
 ```
 
 We get to the matrix $M(\textbf{1})$ by broadcasting the four-by-four
@@ -488,8 +489,8 @@ group $j$ contains people that belong to only one age group $g$. We
 refer to the age group of the people in group $j$ as $g(j)$. Then
 $\hat{N}_{g(h)}$ is the number of people in the age group of group $h$,
 so $`\hat{N}_{g(h)}=N_{h}`$ for age groups 0 to 4, 5 to 19 and 65+, and
-$`\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_s,m_s+3\}}N_{h}`$ for ages 20 to
-64.
+$`\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_s,m_s+3\}}N_{h}`$ for age group 20
+to 64.
 
 In setting up a country, we sample values for $\tilde{M}$ (from which we
 get $`M(\textbf{1})`$). At the same time, we sample the proportion of
@@ -510,9 +511,10 @@ With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$,
 $M^{\text{WW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn
 $M^{\text{com}}(\textbf{1})$.
 
-$A$ is decomposed into its constituent parts, representing intra- and
-inter-household interactions ($L$), school interactions ($S$),
-hospitality interactions ($H$) and travel interactions ($T$):
+$M^{\text{com}}(\textbf{1})$ is decomposed into its constituent parts,
+representing intra- and inter-household interactions (home), school
+interactions (sch), hospitality interactions (CC) and public-transport
+interactions (tran):
 
 ``` math
 M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\text{CC}}(\textbf{1}) + M^{\text{tran}}(\textbf{1})
@@ -522,8 +524,8 @@ Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values
 representing the fractions of contacts that come from school. School
 contacts are estimated separately in two age groups (pre-school age:
 0—4; school age: 5—19): $M^{\text{sch}}(\textbf{1})$ has entries of zero
-for groups $g$ not in school, and values for $g$=0 to 4 years old and
-$g$=5 to 19 year olds.
+for groups not in school, and values for 0 to 4 year olds and 5 to 19
+year olds.
 
 Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of
 total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for
@@ -545,11 +547,12 @@ M^{\text{com}}(x)=M^{\text{home}} + M^{\text{sch}}(x) + M^{\text{CC}}(x) + M^{\t
 ```
 
 School contacts under $x$ are the peacetime values scaled by the extent
-of closure. $x_{S}$ is the extent to which schools are open, so that the
-number of contacts per person scales superlinearly with school closure.
+of closure. $x_{\text{ed}}$ is the extent to which schools are open, so
+that the number of contacts per person scales superlinearly with school
+closure.
 
 $$\begin{equation}
-M_{j,j}^{\text{sch}}(x)=x_{S}^2M_{j,j}^{\text{sch}}(\textbf{1}).
+M_{j,j}^{\text{sch}}(x)=x_{\text{ed}}^2M_{j,j}^{\text{sch}}(\textbf{1}).
 \qquad(3.2)
 \end{equation}$$
 
@@ -580,16 +583,16 @@ Matrix $M^{\text{CC}}(x)$ gives the contacts made in the hospitality
 sector:
 
 $$\begin{equation}
-M^{\text{CC}}(x) = x_{H}^2M^{\text{CC}}(\textbf{1})
+M^{\text{CC}}(x) = (p^{27})^2M^{\text{CC}}(\textbf{1})
 \qquad(3.4)
 \end{equation}$$
 
-The value $x_{H}$ is the workforce-weighted average extent to which the
+The value $p^{27}$ is the workforce-weighted average extent to which the
 hospitality sectors are open, so that the number of contacts per person
 scales superlinearly according to closure:
 
 ``` math
-x_{H} = \frac{\sum_jx_{j}N_j}{\sum_jN_j}
+p^{27} = \frac{\sum_jx_{j}N_j}{\sum_jN_j}
 ```
 
 where we sum over only the hospitality sectors.
