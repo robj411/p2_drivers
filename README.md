@@ -112,11 +112,13 @@ account the size of each age group, $`\tilde{N}_a`$. For the expected
 number of life years lost per death, we take into account also the
 probability to die given infection, $P(D|I,a)$:
 
-$$\begin{equation}
+``` math
 l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
-\end{equation}$$
+```
 
-$$l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; $$
+``` math
+l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; 
+```
 
 Expected life years remaining with discounting taken into account can be
 written
@@ -207,13 +209,13 @@ $$K_2=Y_0-Y.$$
 
 The loss due to school closure is
 
-<!-- $$K3 =  \frac{p^{14} }{365}\left( Tp^{16}N_{g_{\text{school}}}+p^{24} + (1-p^{16})p^{25} \right)\text{VSY}$$ -->
+<!-- $$K3 =  \frac{p^{14} }{365}\left( Tp^{16}N_{j_{\text{school}}}+p^{24} + (1-p^{16})p^{25} \right)\text{VSY}$$ -->
 
-$$K_3 =  \frac{1 }{365} \int_{t=0}^{\tau}\left(p^{14}(t)N_{g_{\text{school}}} + (1-p^{14}(t))p^{25}(t)  +(1-2p^{14}(t))p^{24}(t)\right)dt,$$
+$$K_3 =  \frac{1 }{365} \int_{t=0}^{\tau}\left(p^{14}(t)N_{j_{\text{school}}} + (1-p^{14}(t))p^{25}(t)  +(1-2p^{14}(t))p^{24}(t)\right)dt,$$
 
 where $p^{14}(t)$ is the effective amount of education lost per student
 at time $t$ due to school closure:
-$$p^{14}(t) = (1-p^{16})(1-x_{\text{ed}}(t)),$$ $N_{g_{\text{school}}}$
+$$p^{14}(t) = (1-p^{16})(1-x_{\text{ed}}(t)),$$ $N_{j_{\text{school}}}$
 is the total number of students, $p^{16}$ is relative effectiveness of
 remote education and $x_{\text{ed}}(t)$ is the openness of schools,
 $p^{25}(t)$ represents education lost due to student sickness with
@@ -239,7 +241,7 @@ $$\text{VSY} =  p^{12}\cdot p^{13}\cdot p^{15}.$$
 
 $p^{12}$ is the present value of lost earnings:
 
-$$p^{12} = \frac{1}{N_{g_{\text{school}}}}\sum_{a\in g_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
+$$p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
 for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age
 $a$, and expected number of years of work $m_y=45$. $p^{13}$ is mean
@@ -261,12 +263,12 @@ pertinent to intra- rather than international modelling.
 ## 3.1 Ordinary differential equations
 
 $$\begin{align}
-\frac{dS_{j,v}}{dt} & = \sum_{u=0}^{v-1}k^9S_{j,u}^{c_v} - \left( k_{j,v}^{1}(t) + \sum_{u=v+1}^{{m_v}}k_{j,v}^{10,c_2}(t) \right)S_{j,v} \\
-\frac{dS_{j,u}^{c_v}}{dt} & = k_{u,j}^{10,c_v}(t)S_{j,u} -\left( k_{j,v}^{1}(t) + k^9 \right)S_{j,u}^{c_v}  \\
+\frac{dS_{j,v}}{dt} & = \sum_{u=0}^{v-1}k^9S_{j,u}^{c_v} - \left( k_{j,v}^{1}(t) + \sum_{u=v+1}^{{m_v}}k_{j,v}^{10,c_u}(t) \right)S_{j,v} \\
+\frac{dS_{j,u}^{c_v}}{dt} & = k_{j,u}^{10,c_v}(t)S_{j,u} -\left( k_{j,u}^{1}(t) + k^9 \right)S_{j,u}^{c_v}  \\
 \frac{dE_{j,v}}{dt} & = k_{j,v}^{1}(t)\left(S_{j,v}+\sum_{u=v+1}^2S_{j,v}^{c_u}\right) - (k^2+k^4)E_{j,v} \\
 \frac{dI_{j,v}^a}{dt} & = k^2E_{j,v} - k^3I_{j,v}^a \\
 \frac{dI_{j,v}^s}{dt} & = k^4E_{j,v} - (k_{j,v}^{5}+k_{j,v}^{6})I_{j,v}^s \\
-\frac{dR_{j,v}}{dt} & = k^3I_{j,v}^a + k_{j,v}^{5}I_{j,v}^s + k_{j}^{7}(t) H_{j,v} - \sum_{u=v+1}^{{m_v}}k_{j,v}^{10,c_2}(t)R_{j,v} + \sum_{u=0}^{v-1}k_{u,j}^{10,c_v}(t)R_{j,v-1}\\
+\frac{dR_{j,v}}{dt} & = k^3I_{j,v}^a + k_{j,v}^{5}I_{j,v}^s + k_{j}^{7}(t) H_{j,v} - \sum_{u=v+1}^{{m_v}}k_{j,v}^{10,c_u}(t)R_{j,v} + \sum_{u=0}^{v-1}k_{u,j}^{10,c_v}(t)R_{j,v-1}\\
 \frac{dH_{j,v}}{dt} & = k_{j,v}^{6}I_{j,v}^s - (k_{j}^{7}(t) + k_{j}^{8}(t)) H_{j,v} \\
 \frac{dD_{j,v}}{dt} & =  k_{j}^{8}(t) H_{j,v}
 \end{align}$$
@@ -619,7 +621,7 @@ M_{j,h}^{\text{CW}}(x) = x_{j}(1-q_j)M_{j,h}^{\text{CW}}(\textbf{1}),
 \qquad(3.6)
 \end{equation}$$
 
-for $h=1,...,m_s+3$.
+for $h\in\{1,...,m_j\}$.
 
 Here, there is linear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with
 respect to working from home, and linear scaling with respect to sector
