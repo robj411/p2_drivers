@@ -455,13 +455,13 @@ matrix is transformed independently, before they are all added together
 again.
 
 Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix
-from (Walker et al. 2020). These are 16-by-16 matrices, $M^{(16)}$, for
+from (Walker et al. 2020). These are 16-by-16 matrices, $\tilde{M}$, for
 five-year age bands $a$ up to age group 75+. We map the matrix to a
-four-by-four matrix $M^{(4)}$ corresponding to the four age groups $g$
+four-by-four matrix $\hat{M}$ corresponding to the four age groups $g$
 used in the DAEDALUS model, using population sizes $\tilde{N}_a$:
 
 ``` math
-M_{gg'}^{(4)} = \frac{\sum_{a\in g}\tilde{N}_{a}\sum_{a'\in g'}M^{(16)}_{a,a'}}{\sum_{a\in g}\tilde{N}_{a}},
+\hat{M}_{gg'} = \frac{\sum_{a\in g}\tilde{N}_{a}\sum_{a'\in g'}\tilde{M}_{a,a'}}{\sum_{a\in g}\tilde{N}_{a}},
 ```
 
 and $P_g$ to represent the population sizes of the DAEDALUS age groups,
@@ -477,7 +477,7 @@ fraction of the age-population represented in group $h$, where $N_{h}$
 is the number of people in group $h$:
 
 ``` math
-M_{j,h}(\textbf{1}) = M^{(4)}_{g(j),g(h)}\frac{N_{h}}{\hat{N}_{g(h)}}
+M_{j,h}(\textbf{1}) = \hat{M}_{g(j),g(h)}\frac{N_{h}}{\hat{N}_{g(h)}}
 ```
 
 for $j$ and $h$ including all groups (working and non-working). Each
@@ -488,7 +488,7 @@ so $`\hat{N}_{g(h)}=N_{h}`$ for age groups 0 to 4, 5 to 19 and 65+, and
 $`\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_s,m_s+3\}}N_{h}`$ for ages 20 to
 64.
 
-In setting up a country, we sample values for $M^{(16)}$ (from which we
+In setting up a country, we sample values for $\tilde{M}$ (from which we
 get $`M(\textbf{1})`$). At the same time, we sample the proportion of
 contacts that come from workplaces, and workplace-related contacts. From
 these, we get $M^{\text{WW}}(\textbf{1})$ and
