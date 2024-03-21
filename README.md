@@ -2614,24 +2614,24 @@ high-income countries.
 
 We write
 
-$$b\sim\text{Beta}(\alpha(u),\beta(u))$$
+$$b\sim\text{Beta}(\alpha(z),\beta(z))$$
 
-where $u$ is the fraction of GDP coming from the Food and accommodation
+where $z$ is the fraction of GDP coming from the Food and accommodation
 sector. We learn three parameters $p^5$, $p^6$ and $p^7$ to best fit the
-relationship between $u$ and $b$ in countries we have observations for:
+relationship between $z$ and $b$ in countries we have observations for:
 
-$$p^5 = \alpha(u)+\beta(u)$$
+$$p^5 = \alpha(z)+\beta(z)$$
 
-$$p^6u + p^7 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
+$$p^6 z + p^7 = \frac{\alpha(z)}{\alpha(z)+\beta(z)}$$
 
 Here, $p^5$ controls the variance of the distribution and $p^6$ and
-$p^7$ the linear relationship between $u$ and $b$. Using an optimisation
+$p^7$ the linear relationship between $z$ and $b$. Using an optimisation
 routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are
 shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
 values as inputs for all country models.
 
 <figure>
-<img src="figures/sectortourism.png" style="width:60.0%" alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure 4.2)." /><figcaption aria-hidden="true">Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
+<img src="figures/sectortourism.png" style="width:60.0%" alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." /><figcaption aria-hidden="true">Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
 </figure>
 
 ## 4.3 Remote working
@@ -3407,31 +3407,31 @@ Capital letters
 
 Lower-case letters
 
-|   Letter   |              Definition              |  Var.3  |
-|:----------:|:------------------------------------:|:-------:|
-|  $\alpha$  |                                      | tourism |
-|  $\beta$   |          transmission rate           | tourism |
-|  $\gamma$  |                                      |         |
-|  $\delta$  |                                      |         |
-| $\epsilon$ | ratio transmission from asymptomatic |         |
-|  $\zeta$   |                                      |         |
-|   $\eta$   |           vaccine effects            |         |
-|  $\theta$  |                                      |         |
-|  $\iota$   |                                      |         |
-|  $\kappa$  |                                      |         |
-| $\lambda$  |                                      |         |
-|   $\mu$    |                                      |         |
-|   $\nu$    |             growth rate              |         |
-| $\omicron$ |                  –                   |         |
-|   $\pi$    |                                      |         |
-|   $\rho$   |        transmission modifier         |         |
-|  $\sigma$  |                                      |         |
-|   $\tau$   |               max time               |         |
-| $\upsilon$ |                  –                   |         |
-|   $\phi$   |                                      |         |
-|   $\chi$   |                                      |         |
-|   $\psi$   |                                      |         |
-|  $\omega$  |                                      |         |
+|   Letter   |              Definition              |
+|:----------:|:------------------------------------:|
+|  $\alpha$  |                                      |
+|  $\beta$   |          transmission rate           |
+|  $\gamma$  |                                      |
+|  $\delta$  |                                      |
+| $\epsilon$ | ratio transmission from asymptomatic |
+|  $\zeta$   |                                      |
+|   $\eta$   |           vaccine effects            |
+|  $\theta$  |                                      |
+|  $\iota$   |                                      |
+|  $\kappa$  |                                      |
+| $\lambda$  |                                      |
+|   $\mu$    |                                      |
+|   $\nu$    |             growth rate              |
+| $\omicron$ |                  –                   |
+|   $\pi$    |                                      |
+|   $\rho$   |        transmission modifier         |
+|  $\sigma$  |                                      |
+|   $\tau$   |               max time               |
+| $\upsilon$ |                  –                   |
+|   $\phi$   |                                      |
+|   $\chi$   |                                      |
+|   $\psi$   |                                      |
+|  $\omega$  |                                      |
 
 Greek letters
 
@@ -3456,7 +3456,6 @@ Greek letters
 | $k^{17}$ |                                              |
 | $k^{18}$ |                                              |
 | $k^{19}$ |              rate of infection               |
-| $k^{20}$ |                                              |
 
 Rates
 
@@ -3467,7 +3466,6 @@ Rates
 |     $p^H$     |                    Adjusted probability to be hospitalised                    |
 | $\tilde{p}^D$ |                           Basic probability to die                            |
 |     $p^D$     |                          Adjusted probability to die                          |
-|     $NA$      |                                                                               |
 |     $p^1$     |                Compliance with the instruction to self isolate                |
 |     $p^2$     |                    fraction of cases identified by testing                    |
 |     $p^3$     |    proportion of asymptomatic infectiousness averted due to self isolating    |

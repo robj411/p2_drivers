@@ -817,17 +817,17 @@ We model $b$ as a function of the share of GDP that comes from the sector. Note 
 
 We write 
 
-$$b\sim\text{Beta}(\alpha(u),\beta(u))$$
+$$b\sim\text{Beta}(\alpha(z),\beta(z))$$
 
-where $u$ is the fraction of GDP coming from the Food and accommodation sector. We learn three parameters $p^5$, $p^6$ and $p^7$ to best fit the relationship between $u$ and $b$ in countries we have observations for:
+where $z$ is the fraction of GDP coming from the Food and accommodation sector. We learn three parameters $p^5$, $p^6$ and $p^7$ to best fit the relationship between $z$ and $b$ in countries we have observations for:
 
-$$p^5 = \alpha(u)+\beta(u)$$
+$$p^5 = \alpha(z)+\beta(z)$$
 
-$$p^6u + p^7 = \frac{\alpha(u)}{\alpha(u)+\beta(u)}$$
+$$p^6 z + p^7 = \frac{\alpha(z)}{\alpha(z)+\beta(z)}$$
   
-Here, $p^5$ controls the variance of the distribution and $p^6$ and $p^7$ the linear relationship between $u$ and $b$. Using an optimisation routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
+Here, $p^5$ controls the variance of the distribution and $p^6$ and $p^7$ the linear relationship between $z$ and $b$. Using an optimisation routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
 
- ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (u). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=60% }
+ ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=60% }
 
 \newpage
 
