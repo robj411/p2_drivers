@@ -3369,896 +3369,135 @@ the letter will be enclosed in parentheses for clarity.
 |       $Y_0$       |                     max GDP                     |              |                               |
 |        $Z$        |                                                 |              |                               |
 
-legend
+Capital letters
+
+|     Letter      |                                   Script                                   |               Subscript               |  Superscript   |
+|:---------------:|:--------------------------------------------------------------------------:|:-------------------------------------:|:--------------:|
+|       $a$       |                                                                            | INDEX: age index, five-year age bands |  asymptomatic  |
+|       $b$       |                proportion of tourism that is international                 |                                       |                |
+|       $c$       | fraction international tourism reduces to as a consequence of the pandemic |                                       | seroconverting |
+|       $d$       |                             deaths per million                             |                                       |                |
+|       $e$       |                             government mandate                             |                                       |                |
+|   $\text{ed}$   |                                                                            |      education sector (j index)       |                |
+|       $f$       |                       functions: sd, hospitalisation                       |                                       |                |
+|       $g$       |                                                                            | INDEX: age index, DAEDALUS age groups |                |
+|       $h$       |                                                                            |          INDEX: dummy index           |                |
+|       $i$       |                                                                            |                                       | self isolating |
+|       $j$       |                                                                            |         INDEX: stratum index          |                |
+|       $k$       |                           state transition rates                           |                                       |                |
+|       $l$       |                              life expectancy                               |                                       |                |
+|      $m_J$      |                              number of strata                              |                                       |                |
+|      $m_S$      |                             number of sectors                              |                                       |                |
+|      $m_V$      |                             number of vaccines                             |                                       |                |
+|      $m_Y$      |                          number of years in work                           |                                       |                |
+|       $n$       |                                                                            |                                       |                |
+|       $o$       |                                     –                                      |                                       |                |
+|       $p$       |                                 parameters                                 |                                       |                |
+|       $q$       |                       proportions working from home                        |                                       |                |
+|       $r$       |                               discount rate                                |                                       |                |
+|       $s$       |                                                                            |                                       |  symptomatic   |
+| $\text{school}$ |                                                                            |       student strata (j index)        |                |
+|       $t$       |                                 time (day)                                 |                                       |                |
+|       $u$       |                               dummy variable                               |          INDEX: dummy index           |                |
+|       $v$       |                                                                            |       INDEX: vaccination status       |                |
+|       $w$       |                                                                            |                                       |                |
+|       $x$       |                              sector openness                               |                                       |                |
+|       $y$       |                                    GVA                                     |              INDEX: year              |                |
+|       $z$       |                                                                            |                                       |                |
+
+Lower-case letters
+
+|   Letter   |              Definition              |  Var.3  |
+|:----------:|:------------------------------------:|:-------:|
+|  $\alpha$  |                                      | tourism |
+|  $\beta$   |          transmission rate           | tourism |
+|  $\gamma$  |                                      |         |
+|  $\delta$  |                                      |         |
+| $\epsilon$ | ratio transmission from asymptomatic |         |
+|  $\zeta$   |                                      |         |
+|   $\eta$   |           vaccine effects            |         |
+|  $\theta$  |                                      |         |
+|  $\iota$   |                                      |         |
+|  $\kappa$  |                                      |         |
+| $\lambda$  |                                      |         |
+|   $\mu$    |                                      |         |
+|   $\nu$    |             growth rate              |         |
+| $\omicron$ |                  –                   |         |
+|   $\pi$    |                                      |         |
+|   $\rho$   |        transmission modifier         |         |
+|  $\sigma$  |                                      |         |
+|   $\tau$   |               max time               |         |
+| $\upsilon$ |                  –                   |         |
+|   $\phi$   |                                      |         |
+|   $\chi$   |                                      |         |
+|   $\psi$   |                                      |         |
+|  $\omega$  |                                      |         |
+
+Greek letters
+
+|  Letter  |                  Definition                  |
+|:--------:|:--------------------------------------------:|
+|  $k^1$   |              rate of infection               |
+|  $k^2$   |   rate of onset of asymptomatic infection    |
+|  $k^3$   | rate of recovery from asymptomatic infection |
+|  $k^4$   |    rate of onset of symptomatic infection    |
+|  $k^5$   | rate of recovery from symptomatic infection  |
+|  $k^6$   |           rate of hospitalisation            |
+|  $k^7$   |    rate of recovery from hospitalisation     |
+|  $k^8$   |      rate of death from hospitalisation      |
+|  $k^9$   |        rate of vaccine seroconversion        |
+| $k^{10}$ |               vaccination rate               |
+| $k^{11}$ |                                              |
+| $k^{12}$ |              rate of infection               |
+| $k^{13}$ |                                              |
+| $k^{14}$ |                                              |
+| $k^{15}$ |                                              |
+| $k^{16}$ |                                              |
+| $k^{17}$ |                                              |
+| $k^{18}$ |                                              |
+| $k^{19}$ |              rate of infection               |
+| $k^{20}$ |                                              |
+
+Rates
+
+|    Letter     |                                  Definition                                   |
+|:-------------:|:-----------------------------------------------------------------------------:|
+|   $p^{I^S}$   |                         probability to be symptomatic                         |
+| $\tilde{p}^H$ |                     Basic probability to be hospitalised                      |
+|     $p^H$     |                    Adjusted probability to be hospitalised                    |
+| $\tilde{p}^D$ |                           Basic probability to die                            |
+|     $p^D$     |                          Adjusted probability to die                          |
+|     $NA$      |                                                                               |
+|     $p^1$     |                Compliance with the instruction to self isolate                |
+|     $p^2$     |                    fraction of cases identified by testing                    |
+|     $p^3$     |    proportion of asymptomatic infectiousness averted due to self isolating    |
+|     $p^4$     |    proportion of symptomatic infectiousness averted due to self isolating     |
+|     $p^5$     |                               tourism parameter                               |
+|     $p^6$     |                               tourism parameter                               |
+|     $p^7$     |                               tourism parameter                               |
+|     $p^8$     |                               minimum mobility                                |
+|     $p^9$     |                        deaths coefficient for mobility                        |
+|   $p^{10}$    |                       mandate coefficient for mobility                        |
+|   $p^{11}$    |                           mobility mixing parameter                           |
+|   $p^{12}$    |                        present value of lost earnings                         |
+|   $p^{13}$    |                             mean annual earnings                              |
+|   $p^{14}$    |                effective amount of education lost per student                 |
+|   $p^{15}$    |                   rate of return for one year of education                    |
+|   $p^{16}$    |                  relative effectiveness of remote education                   |
+|   $p^{17}$    |         number of days from onset of infectiousness to self isolation         |
+|   $p^{18}$    | number of asymptomatic days spent in self isolation per day of infectiousness |
+|   $p^{19}$    | number of symptomatic days spent in self isolation per day of infectiousness  |
+|   $p^{20}$    |            number of days from onset of symptoms to self isolation            |
+|   $p^{21}$    |                          public transport mode share                          |
+|   $p^{22}$    |                 work absence, asymptomatic (cost calculation)                 |
+|   $p^{23}$    |                 work absence, symptomatic (cost calculation)                  |
+|   $p^{24}$    |                school absence, asymptomatic (cost calculation)                |
+|   $p^{25}$    |                school absence, symptomatic (cost calculation)                 |
+|   $p^{26}$    |         fraction of symptomatic infectiousness that is presymptomatic         |
+|   $p^{27}$    |                             hospitality openness                              |
+
+Parameters
 
-<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<caption>
-
-Table 6.1: legend
-
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-
-Letter
-
-</th>
-<th style="text-align:left;">
-
-Script
-
-</th>
-<th style="text-align:left;">
-
-Subscript
-
-</th>
-<th style="text-align:left;">
-
-Superscript
-
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-
-$A$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$B$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$C$
-
-</td>
-<td style="text-align:left;">
-
-consumption
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$D$
-
-</td>
-<td style="text-align:left;">
-
-COMPARTMENT: Died
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-
-related to death state
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$E$
-
-</td>
-<td style="text-align:left;">
-
-COMPARTMENT: Exposed
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-
-related to exposed state
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$F$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$G$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$GDP$
-
-</td>
-<td style="text-align:left;">
-
-GDP
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$H$
-
-</td>
-<td style="text-align:left;">
-
-COMPARTMENT: Hospitalised
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-
-related to hospitalised state
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$H_{\text{max}}$
-
-</td>
-<td style="text-align:left;">
-
-hospital capacity
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$I$
-
-</td>
-<td style="text-align:left;">
-
-Infectious
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$I^{a}$
-
-</td>
-<td style="text-align:left;">
-
-COMPARTMENT: Infectious asymptomatic
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-
-related to asymptomatic state
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$I^{s}$
-
-</td>
-<td style="text-align:left;">
-
-COMPARTMENT: Infectious symptomatic
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-
-related to symptomatic state
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$J$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-
-MAX: strata
-
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$K$
-
-</td>
-<td style="text-align:left;">
-
-Loss (cost calculation)
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$L$
-
-</td>
-<td style="text-align:left;">
-
-number of people by sector (workforce in place)
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$M^{\text{com}}$
-
-</td>
-<td style="text-align:left;">
-
-CONTACTS: community
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$M^{\text{home}}$
-
-</td>
-<td style="text-align:left;">
-
-CONTACTS: community, home
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$M^{\text{CC}}$
-
-</td>
-<td style="text-align:left;">
-
-CONTACTS: community, customers
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$M^{\text{trav}}$
-
-</td>
-<td style="text-align:left;">
-
-CONTACTS: community, public transport
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$M^{\text{sch}}$
-
-</td>
-<td style="text-align:left;">
-
-CONTACTS: community, school
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$M^{\text{WW}}$
-
-</td>
-<td style="text-align:left;">
-
-CONTACTS: work, workers
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$M^{\text{WC}}$
-
-</td>
-<td style="text-align:left;">
-
-CONTACTS: work, worker to customer
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$M^{\text{CW}}$
-
-</td>
-<td style="text-align:left;">
-
-CONTACTS: work, customer to worker
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$M$
-
-</td>
-<td style="text-align:left;">
-
-CONTACTS: total
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$\tilde{M}$
-
-</td>
-<td style="text-align:left;">
-
-Total contacts by five-year age bands
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$\hat{M}$
-
-</td>
-<td style="text-align:left;">
-
-Total contacts by DAEDALUS age groups
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$N$
-
-</td>
-<td style="text-align:left;">
-
-number of people by stratum
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$\tilde{N}$
-
-</td>
-<td style="text-align:left;">
-
-Number of people by five-year age bands
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$\hat{N}$
-
-</td>
-<td style="text-align:left;">
-
-Number of people in DAEDALUS age groups
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$O$
-
-</td>
-<td style="text-align:left;">
-
-–
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$P$
-
-</td>
-<td style="text-align:left;">
-
-(probability)
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$Q$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$R$
-
-</td>
-<td style="text-align:left;">
-
-COMPARTMENT: Recovered
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-
-related to recovered state
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$R_0$
-
-</td>
-<td style="text-align:left;">
-
-Basic reproduction number
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$R_t$
-
-</td>
-<td style="text-align:left;">
-
-Effective reproduction number
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$S$
-
-</td>
-<td style="text-align:left;">
-
-COMPARTMENT: Susceptible
-
-</td>
-<td style="text-align:left;">
-
-MAX: sectors
-
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$S^{c}$
-
-</td>
-<td style="text-align:left;">
-
-COMPARTMENT: Susceptible seroconverting
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$T^c$
-
-</td>
-<td style="text-align:left;">
-
-duration from vaccination to protection
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$T^H$
-
-</td>
-<td style="text-align:left;">
-
-duration in hospital
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$T^{H:D}$
-
-</td>
-<td style="text-align:left;">
-
-duration in hospital given death
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$T^{H:R}$
-
-</td>
-<td style="text-align:left;">
-
-duration in hospital given recovery
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$T^{I^a}$
-
-</td>
-<td style="text-align:left;">
-
-duration asymptomatic
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$T^{I^s}$
-
-</td>
-<td style="text-align:left;">
-
-duration symptomatic
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$T^{I^s:H}$
-
-</td>
-<td style="text-align:left;">
-
-duration symptomatic given hospitalised
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$T^{I^s:R}$
-
-</td>
-<td style="text-align:left;">
-
-duration symptomatic given recovery
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$T^{E:I}$
-
-</td>
-<td style="text-align:left;">
-
-latent period
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$U$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$V$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$W$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$X$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$Y$
-
-</td>
-<td style="text-align:left;">
-
-GDP
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$Y_0$
-
-</td>
-<td style="text-align:left;">
-
-max GDP
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-$Z$
-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-</tbody>
-</table>
 <div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-Ananthapavan2021" class="csl-entry">

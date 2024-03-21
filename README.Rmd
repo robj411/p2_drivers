@@ -985,13 +985,36 @@ In general in this notation, subscripts are indices, and superscripts are never 
 
 caps <- readODS::read_ods('letter_lookup.ods',sheet = 1)
 caps$Letter <- paste0('$',caps$Letter,'$')
-lg <- 'legend'
+lg <- 'Capital letters'
 cat(pander(caps,caption=lg, missing = ""))
 
-options(knitr.kable.NA = '')
+# options(knitr.kable.NA = '')
+# x <- knitr::kable(caps,escape=F, "html",caption=lg)
+# (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
 
-x <- knitr::kable(caps,escape=F, "html",caption=lg)
-(kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+
+
+lowercase <- readODS::read_ods('letter_lookup.ods',sheet = 2)
+lowercase$Letter <- paste0('$',lowercase$Letter,'$')
+lg <- 'Lower-case letters'
+cat(pander(lowercase,caption=lg, missing = ""))
+
+
+greek <- readODS::read_ods('letter_lookup.ods',sheet = 3)
+greek$Letter <- paste0('$',greek$Letter,'$')
+lg <- 'Greek letters'
+cat(pander(greek,caption=lg, missing = ""))
+
+rates <- readODS::read_ods('letter_lookup.ods',sheet = 4)
+rates$Letter <- paste0('$',rates$Letter,'$')
+lg <- 'Rates'
+cat(pander(rates,caption=lg, missing = ""))
+
+params <- readODS::read_ods('letter_lookup.ods',sheet = 5)
+params$Letter <- paste0('$',params$Letter,'$')
+lg <- 'Parameters'
+cat(pander(params,caption=lg, missing = ""))
+
 
 ```
 
