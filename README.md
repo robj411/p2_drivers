@@ -36,6 +36,7 @@
 -   [5 Parametric distributions](#5-parametric-distributions)
     -   [5.1 Hospital capacity](#51-hospital-capacity)
     -   [5.2 Labour share of GVA](#52-labour-share-of-gva)
+-   [6 Notation](#6-notation)
 
 # 1 Simulation rules
 
@@ -156,9 +157,9 @@ maximum GVA (denoted $y_j$ for each sector $j$) multiplied by the
 respective sector openings, summed over the period ($\tau$ days). The
 maximum possible GDP (which is with no closures) is
 
-$$Y_0=\frac{\tau}{365}\sum_{j=1}^{m_s}y_j$$
+$$Y_0=\frac{\tau}{365}\sum_{j=1}^{m_S}y_j$$
 
-for $m_s$ sectors, and we use pre-pandemic output to define the maximum
+for $m_S$ sectors, and we use pre-pandemic output to define the maximum
 possible values.
 
 All economic sectors contribute GVA according to the level they are open
@@ -177,9 +178,9 @@ production.
 where $q_j$ is the fraction of the sector working from home.
 $p_j^{23}(t)$ represents worker sickness and death:
 
-$$p_j^{23}(t)=\sum_{v=0}^{m_v}\left(\left(1-p^H_{j,v}\right)p^1p^{19}I_{j,v}^{s}+p^H_{j,v}p^1I_{j,v}^{s}+H_{j,v}+D_{j,v}\right),$$
+$$p_j^{23}(t)=\sum_{v=0}^{m_V}\left(\left(1-p^H_{j,v}\right)p^1p^{19}I_{j,v}^{s}+p^H_{j,v}p^1I_{j,v}^{s}+H_{j,v}+D_{j,v}\right),$$
 
-with $m_v=2$ vaccines and $p_j^{22}(t)$ represents output from
+with $m_V=2$ vaccines and $p_j^{22}(t)$ represents output from
 asymptomatic self-isolating workers:
 
 $$p_j^{22}(t)=p^2(t)p^{18}I_{j}^{a}.$$
@@ -198,7 +199,7 @@ $D$, and probability to be hospitalised $p^H$.
 Then the total output is
 
 ``` math
-Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_s}y_j\int_{t=0}^{\tau}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
+Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_S}y_j\int_{t=0}^{\tau}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
 ```
 
 and the GDP loss compared to the maximum is
@@ -221,7 +222,7 @@ remote education and $x_{\text{ed}}(t)$ is the openness of schools,
 $p^{25}(t)$ represents education lost due to student sickness with
 COVID-19:
 
-$$p^{25}(t)=\sum_{v=0}^{m_v}\left((1-p^H_{j_{\text{school}},v})p^1p^{19}I_{j_{\text{school}},v}^{s}+p^H_{j_{\text{school}},v}p^1I_{j_{\text{school}},v}^{s}+H_{j_{\text{school}},v}\right),$$
+$$p^{25}(t)=\sum_{v=0}^{m_V}\left((1-p^H_{j_{\text{school}},v})p^1p^{19}I_{j_{\text{school}},v}^{s}+p^H_{j_{\text{school}},v}p^1I_{j_{\text{school}},v}^{s}+H_{j_{\text{school}},v}\right),$$
 
 $p^{18}$ is the number of days spent in self isolation per day of
 infectiousness (e.g. suppose the average infectious period is four days
@@ -241,10 +242,10 @@ $$\text{VSY} =  p^{12}\cdot p^{13}\cdot p^{15}.$$
 
 $p^{12}$ is the present value of lost earnings:
 
-$$p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
+$$p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_Y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
 for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age
-$a$, and expected number of years of work $m_y=45$. $p^{13}$ is mean
+$a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean
 annual earnings, $p^{15}=0.08$ is the rate of return for one year.
 
 The value $p^{16}$ represents the effectiveness of remote teaching,
@@ -263,12 +264,12 @@ pertinent to intra- rather than international modelling.
 ## 3.1 Ordinary differential equations
 
 $$\begin{align}
-\frac{dS_{j,v}}{dt} & = \sum_{u=0}^{v-1}k^9S_{j,u}^{c_v} - \left( k_{j,v}^{1}(t) + \sum_{u=v+1}^{{m_v}}k_{j,v}^{10,c_u}(t) \right)S_{j,v} \\
+\frac{dS_{j,v}}{dt} & = \sum_{u=0}^{v-1}k^9S_{j,u}^{c_v} - \left( k_{j,v}^{1}(t) + \sum_{u=v+1}^{{m_V}}k_{j,v}^{10,c_u}(t) \right)S_{j,v} \\
 \frac{dS_{j,u}^{c_v}}{dt} & = k_{j,u}^{10,c_v}(t)S_{j,u} -\left( k_{j,u}^{1}(t) + k^9 \right)S_{j,u}^{c_v}  \\
 \frac{dE_{j,v}}{dt} & = k_{j,v}^{1}(t)\left(S_{j,v}+\sum_{u=v+1}^2S_{j,v}^{c_u}\right) - (k^2+k^4)E_{j,v} \\
 \frac{dI_{j,v}^a}{dt} & = k^2E_{j,v} - k^3I_{j,v}^a \\
 \frac{dI_{j,v}^s}{dt} & = k^4E_{j,v} - (k_{j,v}^{5}+k_{j,v}^{6})I_{j,v}^s \\
-\frac{dR_{j,v}}{dt} & = k^3I_{j,v}^a + k_{j,v}^{5}I_{j,v}^s + k_{j}^{7}(t) H_{j,v} - \sum_{u=v+1}^{{m_v}}k_{j,v}^{10,c_u}(t)R_{j,v} + \sum_{u=0}^{v-1}k_{u,j}^{10,c_v}(t)R_{j,v-1}\\
+\frac{dR_{j,v}}{dt} & = k^3I_{j,v}^a + k_{j,v}^{5}I_{j,v}^s + k_{j}^{7}(t) H_{j,v} - \sum_{u=v+1}^{{m_V}}k_{j,v}^{10,c_u}(t)R_{j,v} + \sum_{u=0}^{v-1}k_{u,j}^{10,c_v}(t)R_{j,v-1}\\
 \frac{dH_{j,v}}{dt} & = k_{j,v}^{6}I_{j,v}^s - (k_{j}^{7}(t) + k_{j}^{8}(t)) H_{j,v} \\
 \frac{dD_{j,v}}{dt} & =  k_{j}^{8}(t) H_{j,v}
 \end{align}$$
@@ -299,14 +300,14 @@ The rate of infection of susceptible individuals, $`k^{1}_{j,v}(t)`$, is
 defined as
 
 $$\begin{equation}
-k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_j}M_{j,h}(x) I_h(t)
+k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_J}M_{j,h}(x) I_h(t)
 \qquad(3.1)
 \end{equation}$$
 
-with $m_j=49$ strata and
+with $m_J=49$ strata and
 
 ``` math
- I_h(t)=\sum_{v=0}^{m_v}\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
+ I_h(t)=\sum_{v=0}^{m_V}\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
 ```
 
 Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given
@@ -382,7 +383,7 @@ f_H(t)=\max\{1,1+1.87(H_{\text{tot}}(t)-H_{\text{max}})/H_{\text{max}}\},
 ```
 
 ``` math
-H_{\text{tot}}(t) = \sum_{v=0}^{m_v}\sum_{j=1}^{m_j} H_{j,v}(t).
+H_{\text{tot}}(t) = \sum_{v=0}^{m_V}\sum_{j=1}^{m_J} H_{j,v}(t).
 ```
 
 $$T_j^{H}(t) = p_j^{D}(t)T^{H:D} + (1-p_{j}^{D}(t))T^{H:R}$$
@@ -489,7 +490,7 @@ group $j$ contains people that belong to only one age group $g$. We
 refer to the age group of the people in group $j$ as $g(j)$. Then
 $\hat{N}_{g(h)}$ is the number of people in the age group of group $h$,
 so $`\hat{N}_{g(h)}=N_{h}`$ for age groups 0 to 4, 5 to 19 and 65+, and
-$`\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_s,m_s+3\}}N_{h}`$ for age group 20
+$`\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_S,m_S+3\}}N_{h}`$ for age group 20
 to 64.
 
 In setting up a country, we sample values for $\tilde{M}$ (from which we
@@ -499,10 +500,10 @@ these, we get $M^{\text{WW}}(\textbf{1})$ and
 $M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising.
 
 Matrix $M^{\text{WW}}$ is diagonal and
-$`M^{\text{WW}}_{j,j}(\textbf{1})=0`$ for $j>m_s$ (Haw et al. 2022).
+$`M^{\text{WW}}_{j,j}(\textbf{1})=0`$ for $j>m_S$ (Haw et al. 2022).
 Consumer-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts
 experienced by workers from consumers per sector. Note that
-$`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_s$. Matrix
+$`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix
 $M^{\text{WC}}(\textbf{1})$ is the complement of matrix
 $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by
 population, transposing, and dividing again by population.
@@ -529,7 +530,7 @@ year olds.
 
 Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of
 total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for
-$j=1,...,m_s$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_s$.
+$j=1,...,m_S$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_S$.
 
 Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of
 $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1}) - M^{\text{tran}}(\textbf{1})$,
@@ -625,7 +626,7 @@ M_{j,h}^{\text{CW}}(x) = x_{j}(1-q_j)M_{j,h}^{\text{CW}}(\textbf{1}),
 \qquad(3.6)
 \end{equation}$$
 
-for $h\in\{1,...,m_j\}$.
+for $h\in\{1,...,m_J\}$.
 
 Here, there is linear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with
 respect to working from home, and linear scaling with respect to sector
@@ -3303,6 +3304,961 @@ We model these values with Beta distributions. For LLMICs, we have
 parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18.
 For HICs, we have parameters 7.97 and 6.87.
 
+# 6 Notation
+
+In general in this notation, subscripts are indices, and superscripts
+are never indices but instead define new labels. In particular, note
+that numerical superscripts are attached to letters $k$ for rates and
+$p$ for parameters. Where a power is applied to one of these letters,
+the letter will be enclosed in parentheses for clarity.
+
+|      Letter       |                     Script                      |  Subscript   |          Superscript          |
+|:-----------------:|:-----------------------------------------------:|:------------:|:-----------------------------:|
+|        $A$        |                                                 |              |                               |
+|        $B$        |                                                 |              |                               |
+|        $C$        |                   consumption                   |              |                               |
+|        $D$        |                COMPARTMENT: Died                |              |    related to death state     |
+|        $E$        |              COMPARTMENT: Exposed               |              |   related to exposed state    |
+|        $F$        |                                                 |              |                               |
+|        $G$        |                                                 |              |                               |
+|       $GDP$       |                       GDP                       |              |                               |
+|        $H$        |            COMPARTMENT: Hospitalised            |              | related to hospitalised state |
+| $H_{\text{max}}$  |                hospital capacity                |              |                               |
+|        $I$        |                   Infectious                    |              |                               |
+|      $I^{a}$      |      COMPARTMENT: Infectious asymptomatic       |              | related to asymptomatic state |
+|      $I^{s}$      |       COMPARTMENT: Infectious symptomatic       |              | related to symptomatic state  |
+|        $J$        |                                                 | MAX: strata  |                               |
+|        $K$        |             Loss (cost calculation)             |              |                               |
+|        $L$        | number of people by sector (workforce in place) |              |                               |
+| $M^{\text{com}}$  |               CONTACTS: community               |              |                               |
+| $M^{\text{home}}$ |            CONTACTS: community, home            |              |                               |
+|  $M^{\text{CC}}$  |         CONTACTS: community, customers          |              |                               |
+| $M^{\text{trav}}$ |      CONTACTS: community, public transport      |              |                               |
+| $M^{\text{sch}}$  |           CONTACTS: community, school           |              |                               |
+|  $M^{\text{WW}}$  |             CONTACTS: work, workers             |              |                               |
+|  $M^{\text{WC}}$  |       CONTACTS: work, worker to customer        |              |                               |
+|  $M^{\text{CW}}$  |       CONTACTS: work, customer to worker        |              |                               |
+|        $M$        |                 CONTACTS: total                 |              |                               |
+|    $\tilde{M}$    |      Total contacts by five-year age bands      |              |                               |
+|     $\hat{M}$     |      Total contacts by DAEDALUS age groups      |              |                               |
+|        $N$        |           number of people by stratum           |              |                               |
+|    $\tilde{N}$    |     Number of people by five-year age bands     |              |                               |
+|     $\hat{N}$     |     Number of people in DAEDALUS age groups     |              |                               |
+|        $O$        |                        –                        |              |                               |
+|        $P$        |                  (probability)                  |              |                               |
+|        $Q$        |                                                 |              |                               |
+|        $R$        |             COMPARTMENT: Recovered              |              |  related to recovered state   |
+|       $R_0$       |            Basic reproduction number            |              |                               |
+|       $R_t$       |          Effective reproduction number          |              |                               |
+|        $S$        |            COMPARTMENT: Susceptible             | MAX: sectors |                               |
+|      $S^{c}$      |     COMPARTMENT: Susceptible seroconverting     |              |                               |
+|       $T^c$       |     duration from vaccination to protection     |              |                               |
+|       $T^H$       |              duration in hospital               |              |                               |
+|     $T^{H:D}$     |        duration in hospital given death         |              |                               |
+|     $T^{H:R}$     |       duration in hospital given recovery       |              |                               |
+|     $T^{I^a}$     |              duration asymptomatic              |              |                               |
+|     $T^{I^s}$     |              duration symptomatic               |              |                               |
+|    $T^{I^s:H}$    |     duration symptomatic given hospitalised     |              |                               |
+|    $T^{I^s:R}$    |       duration symptomatic given recovery       |              |                               |
+|     $T^{E:I}$     |                  latent period                  |              |                               |
+|        $U$        |                                                 |              |                               |
+|        $V$        |                                                 |              |                               |
+|        $W$        |                                                 |              |                               |
+|        $X$        |                                                 |              |                               |
+|        $Y$        |                       GDP                       |              |                               |
+|       $Y_0$       |                     max GDP                     |              |                               |
+|        $Z$        |                                                 |              |                               |
+
+legend
+
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+
+Table 6.1: legend
+
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+
+Letter
+
+</th>
+<th style="text-align:left;">
+
+Script
+
+</th>
+<th style="text-align:left;">
+
+Subscript
+
+</th>
+<th style="text-align:left;">
+
+Superscript
+
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+
+$A$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$B$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$C$
+
+</td>
+<td style="text-align:left;">
+
+consumption
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$D$
+
+</td>
+<td style="text-align:left;">
+
+COMPARTMENT: Died
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+
+related to death state
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$E$
+
+</td>
+<td style="text-align:left;">
+
+COMPARTMENT: Exposed
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+
+related to exposed state
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$F$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$G$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$GDP$
+
+</td>
+<td style="text-align:left;">
+
+GDP
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$H$
+
+</td>
+<td style="text-align:left;">
+
+COMPARTMENT: Hospitalised
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+
+related to hospitalised state
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$H_{\text{max}}$
+
+</td>
+<td style="text-align:left;">
+
+hospital capacity
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$I$
+
+</td>
+<td style="text-align:left;">
+
+Infectious
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$I^{a}$
+
+</td>
+<td style="text-align:left;">
+
+COMPARTMENT: Infectious asymptomatic
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+
+related to asymptomatic state
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$I^{s}$
+
+</td>
+<td style="text-align:left;">
+
+COMPARTMENT: Infectious symptomatic
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+
+related to symptomatic state
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$J$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+
+MAX: strata
+
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$K$
+
+</td>
+<td style="text-align:left;">
+
+Loss (cost calculation)
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$L$
+
+</td>
+<td style="text-align:left;">
+
+number of people by sector (workforce in place)
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$M^{\text{com}}$
+
+</td>
+<td style="text-align:left;">
+
+CONTACTS: community
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$M^{\text{home}}$
+
+</td>
+<td style="text-align:left;">
+
+CONTACTS: community, home
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$M^{\text{CC}}$
+
+</td>
+<td style="text-align:left;">
+
+CONTACTS: community, customers
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$M^{\text{trav}}$
+
+</td>
+<td style="text-align:left;">
+
+CONTACTS: community, public transport
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$M^{\text{sch}}$
+
+</td>
+<td style="text-align:left;">
+
+CONTACTS: community, school
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$M^{\text{WW}}$
+
+</td>
+<td style="text-align:left;">
+
+CONTACTS: work, workers
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$M^{\text{WC}}$
+
+</td>
+<td style="text-align:left;">
+
+CONTACTS: work, worker to customer
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$M^{\text{CW}}$
+
+</td>
+<td style="text-align:left;">
+
+CONTACTS: work, customer to worker
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$M$
+
+</td>
+<td style="text-align:left;">
+
+CONTACTS: total
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$\tilde{M}$
+
+</td>
+<td style="text-align:left;">
+
+Total contacts by five-year age bands
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$\hat{M}$
+
+</td>
+<td style="text-align:left;">
+
+Total contacts by DAEDALUS age groups
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$N$
+
+</td>
+<td style="text-align:left;">
+
+number of people by stratum
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$\tilde{N}$
+
+</td>
+<td style="text-align:left;">
+
+Number of people by five-year age bands
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$\hat{N}$
+
+</td>
+<td style="text-align:left;">
+
+Number of people in DAEDALUS age groups
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$O$
+
+</td>
+<td style="text-align:left;">
+
+–
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$P$
+
+</td>
+<td style="text-align:left;">
+
+(probability)
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$Q$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$R$
+
+</td>
+<td style="text-align:left;">
+
+COMPARTMENT: Recovered
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+
+related to recovered state
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$R_0$
+
+</td>
+<td style="text-align:left;">
+
+Basic reproduction number
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$R_t$
+
+</td>
+<td style="text-align:left;">
+
+Effective reproduction number
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$S$
+
+</td>
+<td style="text-align:left;">
+
+COMPARTMENT: Susceptible
+
+</td>
+<td style="text-align:left;">
+
+MAX: sectors
+
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$S^{c}$
+
+</td>
+<td style="text-align:left;">
+
+COMPARTMENT: Susceptible seroconverting
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$T^c$
+
+</td>
+<td style="text-align:left;">
+
+duration from vaccination to protection
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$T^H$
+
+</td>
+<td style="text-align:left;">
+
+duration in hospital
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$T^{H:D}$
+
+</td>
+<td style="text-align:left;">
+
+duration in hospital given death
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$T^{H:R}$
+
+</td>
+<td style="text-align:left;">
+
+duration in hospital given recovery
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$T^{I^a}$
+
+</td>
+<td style="text-align:left;">
+
+duration asymptomatic
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$T^{I^s}$
+
+</td>
+<td style="text-align:left;">
+
+duration symptomatic
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$T^{I^s:H}$
+
+</td>
+<td style="text-align:left;">
+
+duration symptomatic given hospitalised
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$T^{I^s:R}$
+
+</td>
+<td style="text-align:left;">
+
+duration symptomatic given recovery
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$T^{E:I}$
+
+</td>
+<td style="text-align:left;">
+
+latent period
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$U$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$V$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$W$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$X$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$Y$
+
+</td>
+<td style="text-align:left;">
+
+GDP
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$Y_0$
+
+</td>
+<td style="text-align:left;">
+
+max GDP
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+$Z$
+
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+</tbody>
+</table>
 <div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-Ananthapavan2021" class="csl-entry">
