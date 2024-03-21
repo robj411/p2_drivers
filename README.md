@@ -106,17 +106,17 @@ To value lives lost, we make use of the expected remaining life years
 per age group (Global Burden of Disease Collaborative Network 2021).
 These are used to estimate the expected number of years of life lost per
 death, and to estimate the value of a life year. We map the remaining
-life expectancy $l_a$ for the GBD age groups $a$ to $l_g$ for the model
-age groups $g$ as a population-weighted average, taking into account the
-size of each age group, $`\tilde{N}_a`$. For the expected number of life
-years lost per death, we take into account also the probability to die
-given infection, $P(D|I,a)$:
+life expectancy $\tilde{l}_a$ for the GBD age groups $a$ to $l_g$ for
+the model age groups $g$ as a population-weighted average, taking into
+account the size of each age group, $`\tilde{N}_a`$. For the expected
+number of life years lost per death, we take into account also the
+probability to die given infection, $P(D|I,a)$:
 
 $$\begin{equation}
-l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_al_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
+l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
 \end{equation}$$
 
-$$l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_al_a}{\sum_{a\in g}\tilde{N}_a}; $$
+$$l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; $$
 
 Expected life years remaining with discounting taken into account can be
 written
