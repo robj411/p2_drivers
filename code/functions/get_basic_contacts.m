@@ -19,7 +19,7 @@ pop_props = [Npop(1),sum(Npop(2:4)),sum(Npop(5:13)),sum(Npop(14:16))]/sum(Npop);
 %% COMMUNITY-COMMUNITY MATRIX:
 
 CM_16       = contacts.CM;
-CM_164        = [CM_16(:,1),sum(CM_16(:,2:4),2),sum(CM_16(:,5:13),2),sum(CM_16(:,14:16),2)];%sum of the columns
+CM_164        = [CM_16(:,1),sum(CM_16(:,2:4),2),sum(CM_16(:,5:13),2),sum(CM_16(:,14:16),2)]; %sum of the columns
 CM_4        = [CM_164(1,:);
             Npop(2:4)'*CM_164(2:4,:)/sum(Npop(2:4));
             Npop(5:13)'*CM_164(5:13,:)/sum(Npop(5:13));
@@ -31,17 +31,17 @@ contact_props = CM_4(3,:)/sum(CM_4(3,:));
 
 %% indices
 
-adInd    = 3;%Adult index
-nSectors       = length(data.obj);%Number of sectors
+adInd    = data.adInd; %Adult index
+nSectors       = length(data.obj); %Number of sectors
 nStrata       = length(NN);
 workage_indices = [1:nSectors,nSectors+adInd];
 
-NNrel = NN(workage_indices)/sum(NN(workage_indices));%adult population proportion vector
+NNrel = NN(workage_indices)/sum(NN(workage_indices)); %adult population proportion vector
 NNrepvecweighted = zeros(1,nStrata);
 NNrepvecweighted(workage_indices) = NNrel*contact_props(3);
 NNrepvecweighted(nSectors+[1,2,4]) = contact_props([1,2,4]);
-NNrep = repmat(NNrepvecweighted,nStrata,1);%total population proportion matrix
-NNrea = repmat(NN(1:nSectors)'/sum(NN(1:nSectors)),nSectors,1);%workforce population proportion matrix
+NNrep = repmat(NNrepvecweighted,nStrata,1); %total population proportion matrix
+NNrea = repmat(NN(1:nSectors)'/sum(NN(1:nSectors)),nSectors,1); %workforce population proportion matrix
 
 %% WORKER-WORKER AND COMMUNITY-WORKER MATRICES:
 
