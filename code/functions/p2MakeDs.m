@@ -14,7 +14,6 @@ function contact_matrix = p2MakeDs(data,NN,x,hw)
 contacts = data.contacts; 
 CM_4 = contacts.CM_4;
 contact_props = contacts.contact_props;
-hospitality_frac = contacts.hospitality_frac;
 
 w             = x;
 edInd = data.EdInd;
@@ -39,11 +38,11 @@ NNrea = repmat(NN(1:nSectors)'/sum(NN(1:nSectors)),nSectors,1);%workforce popula
 hospitality_sectors = NN(HospInd);
 % get weighted average
 hospitality_sectors = sum(hospitality_sectors.*x(HospInd))/sum(hospitality_sectors); % constant from 0 to 1, weighted measure of how much sectors are open
-CM_4 = CM_4 + hospitality_sectors^2 * hospitality_frac / (1-hospitality_frac) * CM_4;
+CM_4 = CM_4 + hospitality_sectors^2 * contacts.hospitality_contacts;
 
 % school
-CM_4(1,1) = CM_4(1,1) + w(edInd).^2 * contacts.schoolA1;
-CM_4(2,2) = CM_4(2,2) + w(edInd).^2 * contacts.schoolA2;
+CM_4(1,1) = CM_4(1,1) + w(edInd).^2 * contacts.school1;
+CM_4(2,2) = CM_4(2,2) + w(edInd).^2 * contacts.school2;
 
 %% Make community matrix
 community_mat                    = zeros(nStrata,nStrata);
@@ -52,8 +51,8 @@ community_mat(1:nSectors,nSectors+1:end)     = repmat(workRow,nSectors,1);
 community_mat(:,workage_indices) = repmat(community_mat(:,nSectors+adInd),1,nSectors+1).*repmat(NNrel',nStrata,1);
 
 %Transport:
-community_mat(1:nSectors,1:nSectors) = community_mat(1:nSectors,1:nSectors) + ...
-    repmat(w',nSectors,1).*repmat(w,1,nSectors).*contacts.travelA3(1).*NNrea.*repmat(1-hw,nSectors,1).*repmat(1-hw',1,nSectors); % home-working has a compound effect
+% community_mat(1:nSectors,1:nSectors) = community_mat(1:nSectors,1:nSectors) + ...
+%     repmat(w',nSectors,1).*repmat(w,1,nSectors).*contacts.travelA3(1).*NNrea.*repmat(1-hw,nSectors,1).*repmat(1-hw',1,nSectors); % home-working has a compound effect
 % mat = repmat(w',nSectors,1).*   contacts.travelA3(1).*  NNrea.*  repmat(1-hw,nSectors,1).*repmat(1-hw',1,nSectors);
 
 %% WORKER-WORKER AND COMMUNITY-WORKER MATRICES
@@ -85,6 +84,6 @@ contacts_between_workers_and_customers = customertoworker_mat .* repmat(NN,1,nSt
 worker_back = contacts_between_workers_and_customers' ./ repmat(NN,1,nStrata);
 
 %% add all together
-contact_matrix = community_mat + contacts.workrel*(workerworker_mat + customertoworker_mat + worker_back);
+contact_matrix = community_mat + contacts.work_scalar*(workerworker_mat + customertoworker_mat + worker_back);
 
 end

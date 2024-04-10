@@ -1,12 +1,12 @@
 % simulate a random country by drawing from distributions and data
-
+%
 % data: struct of general model parameters
 % CD: table of country data values
 % income_level: string indicating income level (e.g. HIC)
 % country_parameter_distributions: pre-specified, named distributions and
 % parameters
 % social_dist_coefs: table of parameters for social distancing function
-
+%
 % data: struct of general model parameters
 
 function data = p2RandCountry(data,CD,income_level,country_parameter_distributions, social_dist_coefs)
@@ -17,22 +17,28 @@ nSectors = data.nSectors;
 contacts = data.contacts;
 
 %% generate quantiles
+% quantiles for income-level specific values
 internet_coverage_quantile = unifrnd(0,1);
 labsh_quantile = unifrnd(0,1);
 bmi_quantile = unifrnd(0,1);
-Hmax_quantile = unifrnd(0,1);
 pt_quantile = unifrnd(0,1);
-schoolA1_frac_quantile = unifrnd(0,1,1,1);
-schoolA2_frac_quantile = unifrnd(0,1,1,1);
+pupil_teacher_ratio_quantile = unifrnd(0,1);
+Hmax_quantile = unifrnd(0,1);
 remaining_international_tourism_quantile = unifrnd(0,1);
+hospitality1_frac_quantile = unifrnd(0,1);
+hospitality2_frac_quantile = unifrnd(0,1);
+hospitality3_frac_quantile = unifrnd(0,1);
+hospitality4_frac_quantile = unifrnd(0,1);
+school1_frac_quantile = unifrnd(0,1);
+school2_frac_quantile = unifrnd(0,1);
+work_frac_quantile = unifrnd(0,1);
 
 international_tourism_quant = unifrnd(0,1);
-contacts.hospitality_frac = betarnd(10,40,1,1);
 
 data.remote_quantile = internet_coverage_quantile;
 data.response_time_quantile = unifrnd(0,1);
-data.remote_teaching_effectiveness = unifrnd(0,1,1,1);
-data.self_isolation_compliance = unifrnd(0,1,1,1);
+data.remote_teaching_effectiveness = unifrnd(0,1);
+data.self_isolation_compliance = unifrnd(0,1);
 
 sdtab_ncol = size(social_dist_coefs,1);
 randrow = randi([1 sdtab_ncol],1,1);
@@ -54,9 +60,22 @@ for i = 1:size(cpd,1)
     eval([varname, expression]);
 end
 
-contacts.pt = pt;
-contacts.schoolA1_frac = schoolA1_frac;
-contacts.schoolA2_frac = schoolA2_frac;
+% contacts.pt = pt;
+contacts.work_frac = work_frac;
+contacts.school1_frac = school1_frac;
+contacts.school2_frac = school2_frac;
+contacts.hospitality_frac = [hospitality1_frac; hospitality2_frac; hospitality3_frac; hospitality4_frac];
+
+dindices = strmatch('hospitality_age',country_parameter_distributions.parameter_name);
+cpd = country_parameter_distributions(dindices,:);
+contacts.hospitality_age = zeros(3,size(cpd,1));
+for i = 1:size(cpd,1)
+    p3 = cpd.Parameter_1(i);
+    p4 = cpd.Parameter_2(i);
+    contacts.hospitality_age(:,i) = drchrnd([1-p3-p4 p3 p4]*10,1);
+end
+
+
 data.Hmax = Hmax; 
 data.labsh = labsh;
 
@@ -118,7 +137,7 @@ defivalue = reshape(randvalue,16,16);
 contacts.CM   = defivalue;
 
 %workp = number of contacts in workplace
-contacts.workp = sample_uniform("workp",CD,country_indices);
+% contacts.workp = sample_uniform("workp",CD,country_indices);
 
 
 %%
@@ -308,4 +327,14 @@ basic_contact_matrix = p2MakeDs(data,data.NNs,ones(data.nSectors,1),zeros(1,data
 data.contacts.basic_contact_matrix = basic_contact_matrix;
 
 
+end
+
+
+% function to sample dirichlet random variables
+% r: parameter vector
+% n: number of samples
+function r = drchrnd(a,n)
+    p = length(a);
+    r = gamrnd(repmat(a,n,1),1,n,p);
+    r = r ./ repmat(sum(r,2),1,p);
 end

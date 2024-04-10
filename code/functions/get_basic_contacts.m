@@ -27,7 +27,7 @@ CM_4        = [CM_164(1,:);
 N4 = [Npop(1), sum(Npop(2:4)), sum(Npop(5:13)), sum(Npop(14:16))];        
 CMav      = pop_props*sum(CM_4,2);
 contact_props = CM_4(3,:)/sum(CM_4(3,:));
-
+workage_total = sum(CM_4(3,:));
 
 %% indices
 
@@ -65,16 +65,18 @@ customer_to_worker_mat(EdInd,nSectors+2) = customer_to_worker_mat(EdInd,nSectors
 % get total contacts between customers and workers
 contacts_between_workers_and_customers = customer_to_worker_mat .* repmat(NN,1,nStrata);
 % get reciprocal contacts
-worker_to_customer_mat = contacts_between_workers_and_customers' ./ repmat(NN,1,nStrata);
+% worker_to_customer_mat = contacts_between_workers_and_customers' ./ repmat(NN,1,nStrata);
 
 % normalise
-wnorm = dot(sum(workerworker_mat+customer_to_worker_mat+worker_to_customer_mat,2),NN)/sum(NN(workage_indices));
-contacts.workrel = contacts.workp / wnorm;
+% wnorm = dot(sum(workerworker_mat+customer_to_worker_mat+worker_to_customer_mat,2),NN)/sum(NN(workage_indices));
+worker_total = dot(sum(workerworker_mat+customer_to_worker_mat,2),NN)/sum(NN(workage_indices));
+target_work_contacts = contacts.work_frac*workage_total;
+contacts.work_scalar = target_work_contacts / worker_total;
 
-workerworker_mat = contacts.workrel * workerworker_mat;
+workerworker_mat = contacts.work_scalar * workerworker_mat;
 av_worker_contacts = dot(sum(workerworker_mat,2),NN)/sum(NN(workage_indices));
 
-customer_to_worker_mat = contacts.workrel * customer_to_worker_mat;
+customer_to_worker_mat = contacts.work_scalar * customer_to_worker_mat;
 
 % get marginal contacts by age for workers
 rel_mat = NNrel' * customer_to_worker_mat(workage_indices,:);
@@ -89,21 +91,21 @@ c_to_w_distributed = [rel_mat(:,nSectors+1), rel_mat(:,nSectors+2), sum(rel_mat(
 c_to_w_back = c_to_w_distributed*N4(3) ./ N4;
         
 %% get new contact rates
-contacts.schoolA1 = CM_4(1,1) * contacts.schoolA1_frac;
-contacts.schoolA2 = CM_4(2,2) * contacts.schoolA2_frac;
+contacts.school1 = CM_4(1,1) * contacts.school1_frac;
+contacts.school2 = CM_4(2,2) * contacts.school2_frac;
 
 % normalise France values: 18% travel is pt, and pt has 2.5% of contacts,
 % which is 0.555
-contacts.travelA3 =  contacts.pt/0.18*0.025*CMav;
+% contacts.travelA3 =  contacts.pt/0.18*0.025*CMav;
 
 
 %% subtract contacts from C4
 
 % school
-CM_4(1,1) = CM_4(1,1) - contacts.schoolA1;
-CM_4(2,2) = CM_4(2,2) - contacts.schoolA2;
+CM_4(1,1) = CM_4(1,1) - contacts.school1;
+CM_4(2,2) = CM_4(2,2) - contacts.school2;
 % travel and work
-CM_4(3,3) = CM_4(3,3) - contacts.travelA3 * sum(NN(1:nSectors))/sum(NN(workage_indices)) - av_worker_contacts;
+CM_4(3,3) = CM_4(3,3) - av_worker_contacts; %  - contacts.travelA3 * sum(NN(1:nSectors))/sum(NN(workage_indices))
 % customer to worker
 CM_4(3,:) = CM_4(3,:) - c_to_w_distributed;
 % worker to customer
@@ -121,7 +123,11 @@ CM_4(:,3) = CM_4(:,3) - c_to_w_back';
 % C4(4,:) = C4(4,:) - contacts.hospA4 * contact_props;
 
 %%!! too many work contacts to infants
-CM_4 = max((1-contacts.hospitality_frac) * CM_4, 0);
+hospitality_age = contacts.hospitality_age;
+hospitality_age = [hospitality_age(1,:); hospitality_age];
+total_contacts = sum(CM_4,2);
+contacts.hospitality_contacts = repmat(total_contacts .* contacts.hospitality_frac,1,4) .* hospitality_age;
+CM_4 = max(CM_4 - contacts.hospitality_contacts, 0);
 
 %% save
 
