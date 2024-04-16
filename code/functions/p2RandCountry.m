@@ -99,14 +99,17 @@ bmi_sigma= [0.00185 0.00501 0.0168; 0.00155 0.0059 0.0121];
 
 bmi_rr_quantile = repmat(unifrnd(0,1,1,3), 2, 1);
 bmi_rr = norminv(bmi_rr_quantile, bmi.*bmi_gradients + bmi_intercepts, bmi_sigma);
-data.bmi_rr = bmi_rr;
-data.bmi = bmi;
-data.bmi_rr_quantile = bmi_rr_quantile(1,:);
+% data.bmi_rr = bmi_rr;
+% data.bmi = bmi;
+% data.bmi_rr_quantile = bmi_rr_quantile(1,:);
 
-% contacts
+%% contacts
 contacts.B = unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
 contacts.C = unifrnd(max(contacts.C/2-1,0),contacts.C*2+1);
+uk_ptr = 15.87574;
+contacts.C(EdInd) = pupil_teacher_ratio / uk_ptr * contacts.C(EdInd);
 
+%% population
 % population by age
 nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
 [~,idx] = sort(CD.average_contacts(nonempind));
@@ -159,10 +162,10 @@ data.Hres = unifinv(data.response_time_quantile, 1,20);
 data.trate = sample_uniform("trate",CD,country_indices);
 
 %sdl
-data.sdl = sample_uniform("sdl",CD,country_indices);
+% data.sdl = sample_uniform("sdl",CD,country_indices);
 
 %sdb
-data.sdb = sample_uniform("sdb",CD,country_indices);
+% data.sdb = sample_uniform("sdb",CD,country_indices);
 
 %t_vax = time to start vaccine administration
 data.t_vax = 1000; 
@@ -311,9 +314,9 @@ frac_tourism_international = betainv(international_tourism_quant,alpha,beta);
 FAAmax = 1 - frac_tourism_international + frac_tourism_international*remaining_international_tourism;
 data.frac_tourism_international = frac_tourism_international;
 
-data.unmit = ones(size(data.x_elim));
+data.x_unmit = ones(size(data.x_elim));
 %%!! set min to one for now until we can allow for increased tourism
-data.unmit(FAAind) = min(FAAmax,1);
+data.x_unmit(FAAind) = min(FAAmax,1);
 data.x_elim(FAAind) = min(FAAmax,data.x_elim(FAAind));
 data.x_econ(FAAind,:) = min(FAAmax,data.x_econ(FAAind,:));
 data.x_schc(FAAind,:) = min(FAAmax,data.x_schc(FAAind,:));

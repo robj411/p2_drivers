@@ -40,11 +40,11 @@ dis.pd  = [repmat(pdgh(adInd),nSectors,1);pdgh];
 
 dis.rr_infection = 1; % [repmat(data.bmi_rr(1,1),nSectors,1); 1; 1; data.bmi_rr(1,1); data.bmi_rr(2,1)];
 
-dis.ph([1:nSectors, nSectors+adInd]) = data.bmi_rr(1,2) * dis.ph([1:nSectors, nSectors+adInd]);
-dis.pd([1:nSectors, nSectors+adInd]) = data.bmi_rr(1,3) * dis.pd([1:nSectors, nSectors+adInd]);
-
-dis.ph(nSectors + adInd + 1) = data.bmi_rr(2,2) * dis.ph(nSectors + adInd + 1);
-dis.pd(nSectors + adInd + 1) = data.bmi_rr(2,3) * dis.pd(nSectors + adInd + 1);
+% dis.ph([1:nSectors, nSectors+adInd]) = data.bmi_rr(1,2) * dis.ph([1:nSectors, nSectors+adInd]);
+% dis.pd([1:nSectors, nSectors+adInd]) = data.bmi_rr(1,3) * dis.pd([1:nSectors, nSectors+adInd]);
+% 
+% dis.ph(nSectors + adInd + 1) = data.bmi_rr(2,2) * dis.ph(nSectors + adInd + 1);
+% dis.pd(nSectors + adInd + 1) = data.bmi_rr(2,3) * dis.pd(nSectors + adInd + 1);
 
 %Durations
 dis.Ts = ((1-dis.ph).*dis.Tsr)   + (dis.ph.*dis.Tsh);
