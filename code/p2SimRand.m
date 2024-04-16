@@ -8,7 +8,7 @@ strategies = {'No Closures','School Closures','Economic Closures','Elimination'}
 vaccination_levels = [365, 100];
 bpsv_levels = [0, 1];
 
-nsamples  = 400;
+nsamples  = 4;
 n_income = numel(income_levels);
 
 synthetic_countries = cell(nsamples,length(income_levels));
@@ -53,7 +53,28 @@ for i = 1:nsamples
         % get combined country and disease parameters
         dis1 = population_disease_parameters(ldata1,dis,R0_to_beta);
         % sample a response time
-        ldata1.rts = get_response_time(ldata1,dis1,ldata1.Hres);
+        ldata1.response_time = get_response_time(ldata1,dis1,ldata1.Hres);
+        % save temporarily:
+        synthetic_countries_dis{i,il} = dis1;
+        synthetic_countries{i,il}     = ldata1;
+    end
+end
+clear synthetic_countries_dis_basis
+
+%% shuffle response times - does not depend on income level
+origin_countries = randi(length(income_levels),1,nsamples);
+for i = 1:nsamples
+    for il = 1:n_income
+        synthetic_countries{i,il}.response_time = synthetic_countries{i,origin_countries(i)}.response_time;
+    end
+end
+
+%% complete p2, dis and data structs
+
+for i = 1:nsamples
+    for il = 1:n_income
+        dis1 = synthetic_countries_dis{i,il};
+        ldata1 = synthetic_countries{i,il};
         % get p2 parameters: depend on vaccine scenario
         for vl = 1:length(vaccination_levels)
             for bl = 1:length(bpsv_levels)
@@ -65,7 +86,8 @@ for i = 1:nsamples
         synthetic_countries{i,il}     = ldata;
     end
 end
-clear synthetic_countries_dis_basis
+
+
 
 %% set up simulation
 
