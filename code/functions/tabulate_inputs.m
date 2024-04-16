@@ -5,21 +5,19 @@ function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
     [contactname, contactvals] = get_struct_names_vals(ldata.contacts,leavenames);
 
     % dis
-    keepnames = {'CI','beta','Td','generation_time','ps','Tlat','Tay','Tsr','Tsh','Threc','Thd','R0','frac_presymptomatic','ihr','ifr'};
+    keepnames = {'CI','beta','Td','generation_time','ps','Tlat','Tay','Tsr','Tsh','Threc','Thd','R0','frac_presymptomatic','ihr','ifr','hfr'};
     leavenames = setdiff(fieldnames(dis2),keepnames);
     [disname, disvals] = get_struct_names_vals(dis2,leavenames);
 
 
     % p2
-    keepnames = {'Hmax','thl','trate','frac_sym_infectiousness_averted','frac_presym_infectiousness_averted','frac_asym_infectiousness_averted','Tres' };
-    leavenames = setdiff(fieldnames(p2),keepnames);
+    leavenames = {'arate','final_doubling_time_threshold','group_order','hosp_final_threshold','sdb','sdl','t_tit','t_vax2','time_to_test','tpoints'};
     [p2name, p2vals] = get_struct_names_vals(p2,leavenames);
 
 
     % data
-    keepnames = {'remote_quantile','response_time_quantile','remote_teaching_effectiveness','self_isolation_compliance',...
-        'sd_baseline','sd_death_coef','sd_mandate_coef','labsh' ,'NNs','t_import', 'Hres' ,'la' ,'obj','gdp','vly','vsy','frac_tourism_international'};
-    leavenames = setdiff(fieldnames(ldata),keepnames);
+    leavenames = {'EdInd','HospInd','Npop','adInd','compindex','contacts','educationloss_all_students','gdppc','lgh',...
+        'nSectors','nStrata','response_time','t_vax','tvec','x_unmit','vaccination_rate_pc','vaccine_uptake','x_econ','x_elim','x_schc'};
     ldata.obj = ldata.obj/ldata.gdp;
     ldata.vly = ldata.vly/ldata.gdp;
     ldata.vsy = ldata.vsy/ldata.gdp;
