@@ -16,16 +16,17 @@ function [data,dis,p2] = p2Params(data,dis,vaccine_day,bpsv)
 p2 = struct;
 
 % social distancing
-p2.sdl   = data.sdl;                        %Social Distancing Asymptote
-p2.sdb   = data.sdb;                        %Social Distancing Steepness
+% p2.sdl   = data.sdl;                        %Social Distancing Asymptote
+% p2.sdb   = data.sdb;                        %Social Distancing Steepness
 
 % response time and testing start time set by global alert
-p2.Tres = data.rts;
-p2.t_tit = data.rts;
+p2.Tres = data.response_time;
+p2.t_tit = data.response_time;
 
 % testing impacts
 self_isolation_compliance = data.self_isolation_compliance;
 p2.trate = data.trate;                      %Test-Isolate-Trace Rate
+data = rmfield(data,'trate');
 % amount averted by isolating needs to account for discovery rule
 % time taken to test
 time_to_test = 2;
@@ -50,9 +51,10 @@ p2.frac_asym_infectiousness_averted = self_isolation_compliance * min(1,1-time_t
 p2.time_to_test = time_to_test;
 
 % Hospital Capacity
-p2.Hmax  = data.Hmax*sum(data.Npop)/10^5;   %Hospital Capacity
-p2.thl   = max(1,0.25*p2.Hmax);%lower threshold can't be less than 1 occupant
-p2.Hmax  = max(4*p2.thl,p2.Hmax);
+Hmax  = data.Hmax*sum(data.Npop)/10^5;   %Hospital Capacity
+data = rmfield(data,'Hmax');
+p2.hosp_release_trigger   = max(1,0.25*Hmax);%lower threshold can't be less than 1 occupant
+p2.Hmax  = max(4*p2.hosp_release_trigger,Hmax);
 % p2.SHmax = 2*p2.Hmax;
 
 % stopping criteria
