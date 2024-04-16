@@ -339,7 +339,7 @@ meanptrs <- unique(ptrdt[,.(country,iso3c,meanptr)])
 setorder(meanptrs,meanptr)
 # meanptrs <- subset(meanptrs,!is.na(countrycode(country,origin='country.name',destination = 'iso3c')))
 meanptrs$country <- factor(meanptrs$country,levels=meanptrs$country)
-countries <- c('United Kingdom','Switzerland','Netherlands')
+countries <- c('United Kingdom')
 ggplot(meanptrs) + 
   geom_point(aes(x=1:length(country),y=meanptr),colour='navyblue') + 
   coord_flip() + 
@@ -351,7 +351,8 @@ ggplot(meanptrs) +
                      breaks = seq(1,nrow(meanptrs),by=2),
                      labels = meanptrs$country[seq(1,nrow(meanptrs),by=2)],
                      sec.axis = dup_axis(breaks=seq(2,nrow(meanptrs),by=2),labels = meanptrs$country[seq(2,nrow(meanptrs),by=2)])) +
-  theme(axis.text=element_text(size=10))
+  theme(axis.text=element_text(size=10)) -> ptrp
+ggsave(ptrp,filename='data/pupil_teacher_ratio.png',width=8,height=9)
 
 meanptrs <- left_join(meanptrs,incomelevels,by=c('iso3c'="Country.Code"))
 
