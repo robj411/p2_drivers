@@ -697,7 +697,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     
     %% Event 4: Reopening
     
-    value(4)      = abs(i-3) + abs(min(t-(data.tvec(end-1)+7),0)) + max(0,occ-p2.thl);
+    value(4)      = abs(i-3) + abs(min(t-(data.tvec(end-1)+7),0)) + max(0,occ-p2.hosp_release_trigger);
     direction(4)  = -1;
     isterminal(4) = 1;
     
@@ -709,7 +709,7 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     tval = min(t-(data.tvec(end-1)+0.1),0);
     % (low growth rate OR occupancy is low) AND have reached end of vaccine
     % rollout: otherval = 0
-    otherval = -abs(min(0.025-r,0)*max(0,occ-p2.thl)) + min(t-7-max(p2.tpoints),0);
+    otherval = -abs(min(0.025-r,0)*max(0,occ-p2.hosp_release_trigger)) + min(t-7-max(p2.tpoints),0);
     R2flag = otherval + ivals + tval;
     % only check open economy if current R<1
     R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
