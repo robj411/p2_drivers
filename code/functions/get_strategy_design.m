@@ -24,17 +24,17 @@ function [data, configuration] = get_strategy_design(data,strategy,p2)
         data.imand = [2];
         data.inext = [2,2,3,2,5];
     elseif strcmp(strategy,'Economic Closures')
-        configuration      = [ones(1*nSectors,1);data.unmit;data.x_econ(:,2);data.x_econ(:,1);ones(nSectors,1)];
+        configuration      = [ones(1*nSectors,1);data.x_unmit;data.x_econ(:,2);data.x_econ(:,1);ones(nSectors,1)];
         data.hw    = [zeros(1,nSectors);data.wfh(1,:);data.wfh(2,:);data.wfh(1,:);zeros(1,nSectors)];
         data.imand = [3];
         data.inext = [2,3,3,4,5];
     elseif strcmp(strategy,'School Closures')
-        configuration      = [ones(1*nSectors,1);data.unmit;data.x_schc(:,2);data.x_schc(:,1);ones(nSectors,1)];
+        configuration      = [ones(1*nSectors,1);data.x_unmit;data.x_schc(:,2);data.x_schc(:,1);ones(nSectors,1)];
         data.hw    = [zeros(1,nSectors);data.wfh(1,:);data.wfh(2,:);data.wfh(1,:);zeros(1,nSectors)];
         data.imand = [3];
         data.inext = [2,3,3,4,5];
     elseif strcmp(strategy,'No Closures')
-        configuration      = [ones(1*nSectors,1); repmat(data.unmit,3,1); ones(1*nSectors,1)];
+        configuration      = [ones(1*nSectors,1); repmat(data.x_unmit,3,1); ones(1*nSectors,1)];
         data.hw    = [zeros(5,nSectors)];
         data.imand = [10];
         data.inext = [2,2,5];
