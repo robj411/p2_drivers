@@ -107,7 +107,7 @@ bmi_rr = norminv(bmi_rr_quantile, bmi.*bmi_gradients + bmi_intercepts, bmi_sigma
 contacts.B = unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
 contacts.C = unifrnd(max(contacts.C/2-1,0),contacts.C*2+1);
 uk_ptr = 15.87574;
-contacts.C(EdInd) = pupil_teacher_ratio / uk_ptr * contacts.C(EdInd);
+contacts.C(data.EdInd) = pupil_teacher_ratio / uk_ptr * contacts.C(data.EdInd);
 
 %% population
 % population by age
