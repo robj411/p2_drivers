@@ -5,7 +5,7 @@ function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
     [contactname, contactvals] = get_struct_names_vals(ldata.contacts,leavenames);
 
     % dis
-    keepnames = {'CI','beta','Td','generation_time','ps','Tlat','Tay','Tsr','Tsh','Threc','Thd','R0','frac_presymptomatic','ihr','ifr','hfr'};
+    keepnames = {'CI','beta','Td','generation_time','ps','red','Tlat','Tay','Tsr','Tsh','Threc','Thd','R0','frac_presymptomatic','ihr','ifr','hfr'};
     leavenames = setdiff(fieldnames(dis2),keepnames);
     popsize = sum(ldata.Npop);
     Npop = [ldata.Npop(1:(length(dis2.ihr)-1)) ; sum(ldata.Npop(length(dis2.ihr):length(ldata.Npop)))];
