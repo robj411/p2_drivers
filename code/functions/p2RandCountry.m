@@ -104,8 +104,11 @@ bmi_rr = norminv(bmi_rr_quantile, bmi.*bmi_gradients + bmi_intercepts, bmi_sigma
 % data.bmi_rr_quantile = bmi_rr_quantile(1,:);
 
 %% contacts
-contacts.B = unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
-contacts.C = unifrnd(max(contacts.C/2-1,0),contacts.C*2+1);
+sB = size(contacts.B);
+s1 = sB(1);
+s2 = sB(2);
+contacts.B = max((contacts.B+1) .* 2.^unifrnd(-1,1,s1,s2) - 1, 0); %unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
+contacts.C = max((contacts.C+1) .* 2.^unifrnd(-1,1,s1,s2) - 1, 0);
 uk_ptr = 15.87574;
 contacts.C(data.EdInd) = pupil_teacher_ratio / uk_ptr * contacts.C(data.EdInd);
 
@@ -117,8 +120,8 @@ nonempind = nonempind(idx);
 demoindex = nonempind(randi(numel(nonempind)));
 cols = strmatch('Npop', CD.Properties.VariableNames);
 randvalue = table2array(CD(demoindex,cols));
-defivalue = 50*10^6*randvalue'/sum(randvalue);
-data.Npop = defivalue;
+Npop = 50*10^6*randvalue'/sum(randvalue);
+data.Npop = Npop;
 
 % population by stratum
 nonempind = find(~isnan(CD.NNs1) & country_indices);
@@ -126,11 +129,9 @@ randindex = nonempind(randi(numel(nonempind)));
 colNNs = strmatch('NNs', CD.Properties.VariableNames);
 randvalue = table2array(CD(randindex,colNNs));%number of workers by sector in real country
 defivalue = randvalue/sum(table2array(CD(randindex,3+[5:13])));%proportion of adult population by sector in real country
-defivalue = sum(data.Npop(5:13))*defivalue;%number of workers by sector in artificial country
-NNs = [defivalue,data.Npop(1),sum(data.Npop(2:4)),sum(data.Npop(5:13))-sum(defivalue),sum(data.Npop(14:end))]';
-data.NNs  = NNs;
-data.NNs(data.NNs==0) = 1;
-data.nStrata     = size(data.NNs,1);
+total_working_age = sum(Npop(5:13));
+workers_by_sector = total_working_age*defivalue;%number of workers by sector in artificial country
+NNs = [workers_by_sector,Npop(1),total_working_age,sum(total_working_age)-sum(workers_by_sector),sum(Npop(14:end))]';
 
 % contact matrix -- match to pop for now
 % nonempind = find(~isnan(CD.CMaa) & country_indices);
@@ -185,53 +186,42 @@ data.la   = randvalue;
 
 
 %% change sizes of sectors
-% rescale sectors
-% get populations
-% agInd = 1;
-FAAind = 32;
-pointiness = 1000;
-
+% resample larger sectors
 adultindices = [1:nSectors,nSectors+data.adInd];
-workingagepop = sum(data.NNs(adultindices));
 
-adult_props = data.NNs(adultindices)./workingagepop;
+% omit small sectors
+adult_props = NNs(adultindices)./total_working_age;
 small_sectors = find(adult_props<1e-3);
 resample_sectors = setdiff(adultindices, adultindices(small_sectors));
 
-workingagepop2 = sum(data.NNs(resample_sectors));
-adult_props2 = data.NNs(resample_sectors)./workingagepop2;
+workingagepop2 = sum(NNs(resample_sectors));
+adult_props = NNs(resample_sectors)./workingagepop2;
 
-newvals = gamrnd(adult_props2*pointiness,1);
-vals = newvals ./ sum(newvals);
-% min(vals)
-% max(abs(adult_props2 - vals))
-% scatter(adult_props2,vals)
+pointiness = 1000;
+newvals = gamrnd(adult_props*pointiness,1);
+adult_props2 = newvals ./ sum(newvals);
 
-data.NNs(resample_sectors) = workingagepop2 .* vals;
+% rescale food and accommodation services
 
+FAAind = 32;
+if sum(resample_sectors==FAAind)>0
+    origFAA = adult_props2(resample_sectors==FAAind);
+    newFAA = 2^unifrnd(-1,1,1,1) * origFAA;
 
-% agPop = data.NNs(agInd);
-% FAAPop = data.NNs(FAAind);
-% otherindices = setdiff(adultindices,[agInd,FAAind]);
-% 
-% leftoverpop = workingagepop - agPop - FAAPop;
+    adult_props2 = adult_props2*(1 - newFAA)/(1 - origFAA);
+    adult_props2(resample_sectors==FAAind) = newFAA;
+    
+    NNs(resample_sectors) = adult_props2*workingagepop2;
+end
 
-% popindices = find(~isnan(CD.NNs1)&~isnan(CD.Npop1) & country_indices);
-% workers = table2array(CD(popindices,25:69));%number of workers by sector in real country
-% adults = sum(table2array(CD(popindices,8:16)),2);
+data.NNs = NNs;
 
-% minFAAworkers = min(workers(:,FAAind) ./ adults);
-% minagWorkers = min(workers(:,agInd) ./ adults);
-% maxFAAworkers = max(workers(:,FAAind) ./ sum(workers,2));
-% maxagWorkers = max(workers(:,agInd) ./ sum(workers,2));
-% 
-% FAAfrac = unifrnd( minFAAworkers , maxFAAworkers );
-% agFrac = unifrnd( minagWorkers, min(maxagWorkers, 1-FAAfrac) );
-% leftover_frac = 1 - FAAfrac - agFrac;
+%% finish workers by sector
 
-% data.NNs(agInd) = agFrac * workingagepop;
-% data.NNs(FAAind) = FAAfrac * workingagepop;
-% data.NNs(otherindices) = data.NNs(otherindices)./leftoverpop .* workingagepop .* leftover_frac;
+data.NNs  = NNs;
+data.NNs(data.NNs==0) = 1;
+data.nStrata     = size(data.NNs,1);
+
 
 %% obj: income per worker
 nonempind                   = find(~isnan(CD.obj1)&~isnan(CD.NNs1) & country_indices);
@@ -287,7 +277,7 @@ workends = working_years + workstarts;
 % present value
 PV = ((1-(1+discount_rate).^(-workends))/discount_rate - (1-(1+discount_rate).^(-workstarts))/discount_rate)*agefracs;
 
-mean_annual_income = labsh*gdp/workingagepop;
+mean_annual_income = labsh*gdp/total_working_age;
 educationloss_all_students = ...
     PV*mean_annual_income*rate_of_return_one_year*sum(data.Npop(2:4));
 educationloss_per_student = ...
