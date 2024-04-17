@@ -353,10 +353,10 @@ for(bl in 1:length(bpsv_levels)){
         }
         
         voitab <- do.call(rbind,voilist)
-        colnames(voitab) <- c(colnames(sourcemat),names(multisource))
+        colnames(voitab) <- c(names(multisource))
         rownames(voitab) <- paste0(colnames(outcomes),': ',income_level)
         mitab <- do.call(rbind,milist)
-        colnames(mitab) <- c(colnames(sourcemat),names(multisource))
+        colnames(mitab) <- c(names(multisource))
         rownames(mitab) <- paste0(colnames(outcomes),': ',income_level)
         
         ilistvoi[[il]] <- voitab
