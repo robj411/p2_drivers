@@ -14,6 +14,7 @@ ircolumns = cell2mat(cellfun(@(a) strmatch(a, sevenpathogens.Properties.Variable
 
 disparams = sevenpathogens(:,setdiff(1:size(sevenpathogens,2),ircolumns));
 
+% no waning
 disparams.Ti = repmat(365000000,size(disparams,1),1);
 
 sample_struct = struct;
@@ -75,13 +76,16 @@ end
 
 % figure('Position', [100 100 400 300]); hist(param_struct.R0)
 
-% use beta for ps
-thisparam = 'ps';
-samples = disparams.(thisparam);
-pHat = betafit(samples);
-hyper_param_struct.(thisparam) = pHat;
-newparams = betarnd(pHat(1),pHat(2),nsamples,1);
-param_struct.(thisparam) = newparams;
+%% use beta for ps and red, with parameters 5,5
+% thisparam = 'ps';
+% samples = disparams.(thisparam);
+% pHat = betafit(samples);
+% hyper_param_struct.(thisparam) = pHat;
+% newparams = betarnd(pHat(1),pHat(2),nsamples,1);
+newparams = betarnd(5,5,nsamples,1);
+param_struct.ps = newparams;
+newparams = betarnd(5,5,nsamples,1);
+param_struct.red = newparams;
 
 param_struct.frac_presymptomatic = unifrnd(0,1,nsamples,1);
 
