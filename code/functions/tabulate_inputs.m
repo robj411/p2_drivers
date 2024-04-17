@@ -7,11 +7,13 @@ function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
     % dis
     keepnames = {'CI','beta','Td','generation_time','ps','Tlat','Tay','Tsr','Tsh','Threc','Thd','R0','frac_presymptomatic','ihr','ifr','hfr'};
     leavenames = setdiff(fieldnames(dis2),keepnames);
-    dis2.IHR_mean = mean(dis2.ihr);
+    popsize = sum(ldata.Npop);
+    Npop = [ldata.Npop(1:(length(dis2.ihr)-1)) ; sum(ldata.Npop(length(dis2.ihr):length(ldata.Npop)))];
+    dis2.IHR_mean = dis2.ihr * Npop / popsize;
     dis2.IHR_max = max(dis2.ihr);
-    dis2.HFR_mean = mean(dis2.hfr);
+    dis2.HFR_mean = dis2.hfr * Npop / popsize;
     dis2.HFR_max = max(dis2.hfr);
-    dis2.IFR_mean = mean(dis2.ifr);
+    dis2.IFR_mean = dis2.ifr * Npop / popsize;
     dis2.IFR_max = max(dis2.ifr);
     [disname, disvals] = get_struct_names_vals(dis2,leavenames);
 
