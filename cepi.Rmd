@@ -295,7 +295,7 @@ for(i in 1:nvar){
   allresults[,i] = as.numeric(allresults[,i]);
 }
 for(i in (nvar-3):nvar){
-  allresults[,i] = allresults[,i]/allresults$GDP*100;
+  allresults[,i] = allresults[,i]/allresults$gdp*100;
   # allresults[,i] = log(allresults[,i]);
 }
 vioplot <- melt(allresults[,(nvar-3):ncol(allresults)],id.vars=c('strategy','igroup'))
@@ -340,7 +340,7 @@ for(vl in 1:length(vaccination_levels)){
       allresults[,i] = as.numeric(allresults[,i]);
     }
     for(i in (nvar-3):nvar){
-      allresults[,i] = allresults[,i]/allresults$GDP*100;
+      allresults[,i] = allresults[,i]/allresults$gdp*100;
       # allresults[,i] = log(allresults[,i]);
     }
     
@@ -495,11 +495,13 @@ for(vl in 1:length(vaccination_levels)){
       difftab <- as.data.frame(readRDS(paste0('code/results/difftab_',bpsv,'_',vaccination_level,'.Rds')))
       nvar <- which(colnames(difftab)=='GDP_loss')
       for(i in (nvar-3):nvar){
-        difftab[,i] = difftab[,i]/difftab$GDP*100;
+        difftab[,i] = difftab[,i]/difftab$gdp*100;
       }
       difftab$BPSV <- c('No','Yes')[bpsv+1]
       difftab$Vaccine <- vaccination_level
       difftab$scen <- paste0(c('No BPSV','BPSV')[bpsv+1],', ',vaccination_level, ' days')
+      # colnames(difftab)
+      # for (i in colnames(difflist)) if(!i%in%colnames(difftab)) difflist[[i]] <- NULL
       difflist <- rbind(difflist,difftab)
     }
   }
@@ -597,7 +599,7 @@ ggplot(choicestab) +
 ```
 
 
-```{r importtime,fig.cap='Hospital occupancy at time of response.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r importtime,fig.cap='Hospital occupancy at time of response.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 
 ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
   # geom_histogram(colour='white',fill='white') +
@@ -651,9 +653,9 @@ ggplot(iseq) +
 
 ```{r responsetime,fig.cap='Secondary countries: importation time vs. response time. Where importation time is before response time, the epidemic unfolds as in the Origin country, but with an earlier response time. *Future development: there is not a qualitative difference between Origin and Secondary countries. We could therefore remove this label and vary the importation time from 0 to 20, to include the Origin feature. This would also allow for the possibility that a Secondary country with early importation detects, reports and responds earlier than the Origin country.*',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
-ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=Importation_time,y=Response_time)) +
+ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=t_import,y=Tres)) +
   # geom_histogram(colour='white',fill='white') +
-  geom_point(aes(shape=Importation_time>Response_time),size=3,show.legend=F,alpha=.5,colour='navyblue') +
+  geom_point(aes(shape=t_import>Tres),size=3,show.legend=F,alpha=.5,colour='navyblue') +
   # facet_wrap(~factor(bpsv,levels=bpsv_levels),scales='free') +
   theme_bw(base_size = 15) +
   labs(x='Importation time',y='Response time',shape='') +
@@ -674,14 +676,14 @@ allallresults[,vax:=paste0(c('No BPSV, ','BPSV, ')[as.numeric(BPSV=='Yes')+1],va
 allallresults$strategy <- factor(allallresults$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
 
 # ggplot(subset(allallresults,keeprow==T)) + 
-#   geom_density(aes(x=VSY/GDP,colour=strategy,group=strategy),position='identity',alpha=.5,linewidth=1.25) +
+#   geom_density(aes(x=VSY/gdp,colour=strategy,group=strategy),position='identity',alpha=.5,linewidth=1.25) +
 #   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
 #   theme_bw(base_size = 13) +
 #   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
 #         legend.position = 'top') + labs(colour='',x='Value of a school year',y='Density')
 
 keptresults <- subset(allallresults,keeprow==T)
-keptresults[,qVSY:=rank(VSY/GDP)/.N,by=.(igroup,vax)]
+keptresults[,qVSY:=rank(vsy/gdp)/.N,by=.(igroup,vax)]
 
 ggplot(keptresults) + 
   geom_histogram(aes(x=qVSY,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
@@ -706,7 +708,7 @@ ggplot(keptresults) +
 
 
 ggplot(subset(allallresults,keeprow==T)) + 
-  geom_histogram(aes(x=Remote_teaching_effectiveness,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
+  geom_histogram(aes(x=remote_teaching_effectiveness,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
   theme_bw(base_size = 13) +
   scale_x_continuous(expand=c(0,0)) +
@@ -729,8 +731,8 @@ ggplot(subset(allallresults,keeprow==T)) +
 #   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
 #         legend.position = 'top') + labs(colour='',x='Response time minus importation time',y='Density')
 
-keptresults[,qtime:=rank(Response_time-Importation_time)/.N,by=.(igroup,vax)]
-keptresults[,qtime0:=qtime[which.min(abs(Response_time-Importation_time))],by=.(igroup,vax)]
+keptresults[,qtime:=rank(Tres-t_import)/.N,by=.(igroup,vax)]
+keptresults[,qtime0:=qtime[which.min(abs(Tres-t_import))],by=.(igroup,vax)]
 
 ggplot(keptresults) + 
   geom_histogram(aes(x=qtime,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
@@ -832,7 +834,7 @@ nparam <- ncol(voiall)
 voibrks <- c(-1,10,30,50,70,101)
 discxs <- matrix(cut(as.numeric(voiall),breaks=voibrks,labels=1:(length(voibrks)-1)),
                  nrow=nscen,ncol=nparam)
-# xvals <- 1:nparam
+xvals <- 1:nparam
 # shiftx <- which(colnames(voiall)==param_cutoff)
 # xvals[xvals>shiftx] <- xvals[xvals>shiftx] + .1
 yvals <- 1:nscen
@@ -1004,7 +1006,7 @@ ggplot(subset(allallresults,igroup=='UMIC'&strategy=='School Closures'&BPSV=='No
 
 ```
 
-```{r tourismsecgdp,fig.cap='Relationship between the "tourism sector" size and GDP loss for Origin LLMICs with the "No Closures" strategy.',echo=F,warning=F,message=F}
+```{r tourismsecgdp,fig.cap='Relationship between the "tourism sector" size and GDP loss for Origin LLMICs with the "No Closures" strategy.',echo=F,warning=F,message=F,eval=F}
 ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&vaccination_level==365),
        aes(y=GDP_loss,x=rank(Food_sector*100))) +
   geom_point(colour='navyblue') +
@@ -1016,7 +1018,7 @@ ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&v
 
 ```
 
-```{r tourismgdp,fig.cap='Relationship between tourism parameters and GDP loss for LLMICs with the "No Closures" strategy.',echo=F,warning=F,message=F}
+```{r tourismgdp,fig.cap='Relationship between tourism parameters and GDP loss for LLMICs with the "No Closures" strategy.',echo=F,warning=F,message=F,eval=F}
 
 ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&vaccination_level==365)) +
   geom_point(aes(y=International_tourism*100,x=Food_sector*100,colour=GDP_loss)) +
