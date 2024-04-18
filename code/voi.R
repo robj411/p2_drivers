@@ -98,6 +98,7 @@ multisource <- list('Work frac'='work_frac',
                     
                     'Importation time'="t_import",
                     'Probability symptomatic'="ps",
+                    'Asymptomatic infectiousness'="red",
                     "Frac presymptomatic"="frac_presymptomatic",
                     'Latent period'="Tlat",
                     'Asymptomatic period'="Tay",
@@ -110,6 +111,13 @@ multisource <- list('Work frac'='work_frac',
                     "beta"="beta",       
                     'Doubling time'="Td",
                     'Generation time'="generation_time",
+                    'Hosp + Duration + R0'=c('R0','Threc','Hmax'),
+                    'mean IHR + R0'=c('R0','IHR_mean'),
+                    'max IHR + R0'=c('R0','IHR_max'),
+                    'mean IFR + R0'=c('R0','IFR_mean'),
+                    'max IFR + R0'=c('R0','IFR_max'),
+                    'mean HFR + R0'=c('R0','HFR_mean'),
+                    'max HFR + R0'=c('R0','HFR_max'),
                     
                     'Hospital response'="Hres",
                     'Response time'="Tres",
@@ -138,11 +146,7 @@ multisource <- list('Work frac'='work_frac',
                     'Age groups'=c('NNs47','NNs46','NNs49'),
                     'School/work contacts'=c('work_frac','school1_frac','school2_frac'),
                     'Timing'=c('t_import','Tres','Hres','response_time_quantile'),
-                    'Testing'=c('trate',"frac_sym_infectiousness_averted","frac_presym_infectiousness_averted","frac_asym_infectiousness_averted"),
-                    'Hosp + Duration + R0'=c('R0','Threc','Hmax')#,
-                    # 'SD rate + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR'),
-                    # 'SD rate + Hosp + IHR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Hospital_capacity')
-                    #'SD rate + Hosp + IHR + IFR + R0'=c('Social_distancing_rate','R0','Mean_IHR','Mean_IFR','Hospital_capacity')
+                    'Testing'=c('trate',"frac_sym_infectiousness_averted","frac_presym_infectiousness_averted","frac_asym_infectiousness_averted")
                     )
 
 
@@ -159,13 +163,15 @@ for(bl in 1:length(bpsv_levels)){
     vaccination_level <- vaccination_levels[v]
     allresults <- data.frame()
     for (i in 1:length(income_levels)){
+      income_level <- income_levels[i];
+      inputtab <- read.csv(paste0('results/inputs_',income_level,'.csv'),header=T);
       for (k in 1:length(strategies)){
         inp3 <- strategies[k];
-        income_level <- income_levels[i];
-        results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
+        results <- read.csv(paste0('results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
         results$strategy <- inp3
         results$igroup <- income_level
         results$samplei <- 1:nrow(results)
+        results <- cbind(results,inputtab)
         allresults <- rbind(allresults,results)
       }
     }
@@ -250,13 +256,15 @@ for(bl in 1:length(bpsv_levels)){
     vaccination_level <- vaccination_levels[v]
     allresults <- data.frame()
     for (i in 1:length(income_levels)){
+      income_level <- income_levels[i];
+      inputtab <- read.csv(paste0('results/inputs_',income_level,'.csv'),header=T);
       for (k in 1:length(strategies)){
         inp3 <- strategies[k];
-        income_level <- income_levels[i];
-        results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
+        results <- read.csv(paste0('results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
         results$strategy <- inp3
         results$igroup <- income_level
         results$samplei <- 1:nrow(results)
+        results <- cbind(results,inputtab)
         allresults <- rbind(allresults,results)
       }
     }
@@ -315,11 +323,8 @@ for(bl in 1:length(bpsv_levels)){
         firstreultcol <- which(colnames(results)==result_cols[1])
         
         colnames(results) <- gsub('_',' ',colnames(results))
-        colnames(results)[colnames(results)=='Social distancing min'] <- 'Social distancing max'
-        colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
-        colnames(results)[colnames(results)=='Labour share'] <- 'Labour share of GVA'
         
-        sourcemat <- results[,1:(firstreultcol-1)]
+        sourcemat <- results
         
         outcomes <- results[,firstreultcol:(firstreultcol+length(result_cols)-1)]
         for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$gdp
@@ -332,15 +337,6 @@ for(bl in 1:length(bpsv_levels)){
           mi <- c()
           y <- outcomes[,i]
           vary <- var(y) 
-          # for(j in 1:ncol(sourcemat)){
-          #   # model outcome as a function of input(s)
-          #   sourcesj <- sourcemat[,j]
-          #   max_degree <- ifelse(is.vector(sourcesj),1,ncol(sourcesj))
-          #   model <- earth::earth(y ~ sourcesj, degree=min(4,max_degree))
-          #   # compute evppi as percentage
-          #   voi[j] <- (vary - mean((y - model$fitted) ^ 2)) / vary * 100
-          #   mi[j] <- infotheo::mutinformation(infotheo::discretize(sourcesj),infotheo::discretize(y))
-          # }
           for(j in 1:length(sourcelist)){
             sourcesj <- sourcelist[[j]]
             fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
@@ -383,9 +379,10 @@ saveRDS(choicestab,paste0('results/choicestab.Rds'))
 ## income levels separately ####################################
 
 get_voi_mi <- function(inp3,income_level,vaccination_level,bpsv){
-  results <- read.csv(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
-  results <- subset(results,R0>1)
-  print(paste0('results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'))
+  inputtab <- read.csv(paste0('results/inputs_',income_level,'.csv'),header=T);
+  results <- read.csv(paste0('results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
+  results <- cbind(results,inputtab)
+  print(paste0('results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'))
   sourcelist <- list()
   for(src in 1:length(multisource)) {
     sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]],drop=F]
@@ -399,7 +396,7 @@ get_voi_mi <- function(inp3,income_level,vaccination_level,bpsv){
   colnames(results)[colnames(results)=='workp'] <- 'Work contacts'
   colnames(results)[colnames(results)=='Labour share'] <- 'Labour share of GVA'
   
-  sourcemat <- results[,1:(firstreultcol-1)]
+  sourcemat <- results#[,1:(firstreultcol-1)]
   
   outcomes <- results[,firstreultcol:(firstreultcol+length(result_cols)-1)]
   for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$gdp
@@ -412,16 +409,8 @@ get_voi_mi <- function(inp3,income_level,vaccination_level,bpsv){
     mi <- c()
     y <- log(outcomes[,i])
     vary <- var(y) 
-    # for(j in 1:ncol(sourcemat)){
-    #   # model outcome as a function of input(s)
-    #   sourcesj <- sourcemat[,j]
-    #   max_degree <- ifelse(is.vector(sourcesj),1,ncol(sourcesj))
-    #   model <- earth::earth(y ~ sourcesj, degree=min(4,max_degree))
-    #   # compute evppi as percentage
-    #   voi[j] <- (vary - mean((y - model$fitted) ^ 2)) / vary * 100
-    #   mi[j] <- infotheo::mutinformation(infotheo::discretize(sourcesj),infotheo::discretize(y))
-    # }
     for(j in 1:length(sourcelist)){
+      print(paste0(i,' ',names(multisource)[j]))
       sourcesj <- sourcelist[[j]]
       fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
       mi[j] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
@@ -432,10 +421,10 @@ get_voi_mi <- function(inp3,income_level,vaccination_level,bpsv){
     voilist[[i]] <- voi
   }
   voitab <- do.call(rbind,voilist)
-  colnames(voitab) <- c(colnames(sourcemat),names(multisource))
+  colnames(voitab) <- c(names(multisource))
   rownames(voitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3,', ',vaccination_level,', ',bpsv)
   mitab <- do.call(rbind,milist)
-  colnames(mitab) <- c(colnames(sourcemat),names(multisource))
+  colnames(mitab) <- c(names(multisource))
   rownames(mitab) <- paste0(colnames(outcomes),': ',income_level,', ',inp3,', ',vaccination_level,', ',bpsv)
   list(voitab,mitab)
 }
@@ -564,6 +553,7 @@ for(vl in 1:length(vaccination_levels)){
 
 ## log cost share plot ###################################
 
+if(F){
 library(scales)
 ivoioutcomelist <- list()
 for (il in 1:length(income_levels)){
@@ -629,5 +619,5 @@ ggplot(voioutcomes) +
   labs(x='Total cost, % of GDP',y='Relative frequency') +
   theme(legend.position = 'bottom',axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) -> p
 ggsave(p,filename = paste0('logcostshare.pdf'),width=10,height=10)
-
+}
     
