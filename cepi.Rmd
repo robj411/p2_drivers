@@ -7,15 +7,15 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
-  bookdown::html_document2: 
-    toc: true
-    toc_float: true
-    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -280,13 +280,15 @@ result_cols <- c('Cost','dYLLs','School','GDP_loss')
 allresults <- data.frame()
 
 for (i in 1:length(income_levels)){
+    income_level <- income_levels[i];
+    inputtab <- read.csv(paste0('code/results/inputs_',income_level,'.csv'),header=T);
     for (k in 1:length(strategies)){
         inp3 <- strategies[k];
-        income_level <- income_levels[i];
-        results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_365_0.csv'),header=T);
+        results <- read.csv(paste0('code/results/outputs_',inp3,'_',income_level,'_365_0.csv'),header=T);
         results$strategy <- inp3
         results$igroup <- income_level
         results$Deaths <- NULL
+        results$gdp <- inputtab$gdp
         allresults <- rbind(allresults,results)
     }
 }
@@ -324,18 +326,22 @@ for(vl in 1:length(vaccination_levels)){
     allresults <- data.frame()
     
     for (i in 1:length(income_levels)){
+        income_level <- income_levels[i];
+        inputtab <- read.csv(paste0('code/results/inputs_',income_level,'.csv'),header=T);
         for (k in 1:length(strategies)){
             inp3 <- strategies[k];
-            income_level <- income_levels[i];
-            results <- read.csv(paste0('code/results/VOI_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
+            
+            results <- read.csv(paste0('code/results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
             results$Deaths <- NULL
             results$strategy <- inp3
             results$igroup <- income_level
             results$samplei <- 1:nrow(results)
+            results <- cbind(results,inputtab)
             allresults <- rbind(allresults,results)
         }
     }
     nvar <- which(colnames(results)=='GDP_loss')
+    outcomenames <- colnames(results)[ (nvar-3):nvar]
     for(i in 1:nvar){
       allresults[,i] = as.numeric(allresults[,i]);
     }
@@ -344,21 +350,21 @@ for(vl in 1:length(vaccination_levels)){
       # allresults[,i] = log(allresults[,i]);
     }
     
-    vioplot <- melt(allresults[,(nvar-3):(ncol(allresults)-1)],id.vars=c('strategy','igroup'))
+    vioplot <- melt(allresults[,c(outcomenames,'strategy','igroup')],id.vars=c('strategy','igroup'))
     vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
     vioplot$strategy <- factor(vioplot$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
     vioplot$variable <- factor(vioplot$variable,
                                levels=c('Cost','dYLLs','School','GDP_loss'),
                                labels=c('Cost','dYLLs','Education','GDP'))
     
-    p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) + 
-      geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-      facet_grid(variable~strategy, scales="free") + 
-        scale_fill_viridis(discrete=T, name="") +
+    p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=strategy, y=value, x=strategy)) + 
+      geom_violin(position="dodge", scale='width') +
+      facet_grid(variable~igroup, scales="free") + 
+        scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
         theme_bw(base_size = 12)  +
         xlab("") +
         ylab("Percent of GDP") +
-      scale_x_discrete(labels=c('','',''))+ 
+      scale_x_discrete(labels=c('','','',''))+ 
       theme(axis.ticks.x=element_blank(),
             panel.spacing = unit(0.5, "lines"),
             legend.position = 'bottom',
@@ -450,7 +456,7 @@ ggplot(meltmeantab) +
                    alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scen) + 
       theme_bw(base_size=9) +
-        scale_fill_viridis(discrete=T, name="",option='inferno') +
+        scale_fill_viridis(discrete=T, name="") +
       labs(x='',y='Cost, % of GDP',fill='Cost type') +
         theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
               legend.position = 'top') 
@@ -518,9 +524,9 @@ vioplot$variable <- factor(vioplot$variable,
                            levels=c('Cost','dYLLs','School','GDP_loss'),
                            labels=c('Total','YLLs','Education','GDP'))
 
-ggplot(vioplot,aes(fill=igroup, y=value, x=igroup)) + 
-    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
-  facet_grid(scen~variable, scales="free") + 
+ggplot(vioplot,aes(fill=scen, y=value, x=scen)) + 
+    geom_violin(position="dodge",scale='width') +
+  facet_grid(igroup~variable, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
     theme_bw(base_size = 10)  +
     xlab("") +
