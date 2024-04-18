@@ -300,7 +300,7 @@ GDP = sum(data.obj);
 FAAfrac = data.obj(FAAind)/GDP;
 alpha = pointiness * min(sec_to_international * FAAfrac + international_const,1);
 beta = pointiness - alpha;
-frac_tourism_international = betainv(international_tourism_quant,alpha,beta);
+frac_tourism_international = betainv(international_tourism_quant,alpha+1e-2,beta+1e-2);
 FAAmax = 1 - frac_tourism_international + frac_tourism_international*remaining_international_tourism;
 data.frac_tourism_international = frac_tourism_international;
 
