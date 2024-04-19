@@ -178,7 +178,7 @@ $p_j^{23}(t)$ represents worker sickness and death:
 
 $$p_j^{23}(t)=\sum_{v=0}^{m_V}\left(\left(1-p^H_{j,v}\right)p^1p^{19}I_{j,v}^{s}+p^H_{j,v}p^1I_{j,v}^{s}+H_{j,v}+D_{j,v}\right),$$
 
-with $m_V=2$ vaccines and $p_j^{22}(t)$ represents output from
+with $m_V=2$ vaccines and $p_j^{22}(t)$ represents lost output from
 asymptomatic self-isolating workers:
 
 $$p_j^{22}(t)=p^2(t)p^{18}I_{j}^{a}.$$
