@@ -16,23 +16,41 @@ nSectors = data.nSectors;
 
 contacts = data.contacts;
 
-%% generate quantiles
-% quantiles for income-level specific values
-internet_coverage_quantile = unifrnd(0,1);
-labsh_quantile = unifrnd(0,1);
-bmi_quantile = unifrnd(0,1);
-pt_quantile = unifrnd(0,1);
-pupil_teacher_ratio_quantile = unifrnd(0,1);
-Hmax_quantile = unifrnd(0,1);
-remaining_international_tourism_quantile = unifrnd(0,1);
-hospitality1_frac_quantile = unifrnd(0,1);
-hospitality2_frac_quantile = unifrnd(0,1);
-hospitality3_frac_quantile = unifrnd(0,1);
-hospitality4_frac_quantile = unifrnd(0,1);
-school1_frac_quantile = unifrnd(0,1);
-school2_frac_quantile = unifrnd(0,1);
-work_frac_quantile = unifrnd(0,1);
 
+%% values from distributions
+pindices = find(strcmp(country_parameter_distributions.igroup,income_level) | ...
+    strcmp(country_parameter_distributions.igroup,'all') & ...
+    ~strcmp(country_parameter_distributions.distribution,'NA'));
+cpd = country_parameter_distributions(pindices,:);
+for i = 1:size(cpd,1)
+    qname = strcat(cpd.parameter_name{i},'_quantile');
+    qexp = strcat(' = unifrnd(0,1);');
+    eval([qname, qexp]);
+    varname = cpd.parameter_name{i};
+    expression = strcat('=',cpd.distribution{i},'(',...
+        cpd.parameter_name{i},'_quantile,',...
+        num2str(cpd.Parameter_1(i)),',',...
+        num2str(cpd.Parameter_2(i)),');');
+    eval([varname, expression]);
+end
+
+% quantiles for income-level specific values
+% internet_coverage_quantile = unifrnd(0,1);
+% labsh_quantile = unifrnd(0,1);
+% bmi_quantile = unifrnd(0,1);
+% pt_quantile = unifrnd(0,1);
+% pupil_teacher_ratio_quantile = unifrnd(0,1);
+% Hmax_quantile = unifrnd(0,1);
+% remaining_international_tourism_quantile = unifrnd(0,1);
+% hospitality1_frac_quantile = unifrnd(0,1);
+% hospitality2_frac_quantile = unifrnd(0,1);
+% hospitality3_frac_quantile = unifrnd(0,1);
+% hospitality4_frac_quantile = unifrnd(0,1);
+% school1_frac_quantile = unifrnd(0,1);
+% school2_frac_quantile = unifrnd(0,1);
+% work_frac_quantile = unifrnd(0,1);
+
+%% store values
 international_tourism_quant = unifrnd(0,1);
 
 data.remote_quantile = internet_coverage_quantile;
@@ -45,20 +63,6 @@ randrow = randi([1 sdtab_ncol],1,1);
 data.sd_baseline = social_dist_coefs.baseline(randrow);
 data.sd_death_coef = exp(social_dist_coefs.deathcoef(randrow));
 data.sd_mandate_coef = exp(social_dist_coefs.mandatecoef(randrow));
-
-%% values from distributions
-pindices = find(strcmp(country_parameter_distributions.igroup,income_level) | ...
-    strcmp(country_parameter_distributions.igroup,'all') & ...
-    ~strcmp(country_parameter_distributions.distribution,'NA'));
-cpd = country_parameter_distributions(pindices,:);
-for i = 1:size(cpd,1)
-    varname = cpd.parameter_name{i};
-    expression = strcat('=',cpd.distribution{i},'(',...
-        cpd.parameter_name{i},'_quantile,',...
-        num2str(cpd.Parameter_1(i)),',',...
-        num2str(cpd.Parameter_2(i)),');');
-    eval([varname, expression]);
-end
 
 % contacts.pt = pt;
 contacts.work_frac = work_frac;
@@ -79,6 +83,7 @@ end
 data.Hmax = Hmax; 
 data.labsh = labsh;
 
+%% values by sampling
 
 if strcmp(income_level,'LLMIC')
     country_indices = strcmp(CD.igroup,'LIC') | strcmp(CD.igroup,'LMIC');
@@ -88,8 +93,7 @@ elseif strcmp(income_level,'HIC')
     country_indices = strcmp(CD.igroup,'HIC');
 end
 
-%% map to parameters
-% bmi
+%% bmi
 bmi = min(max(25.9,bmi), 29.9);
 % three outcomes (infection, hospitalisation, death)
 % two age groups (20 to 64, 65 plus)
@@ -103,14 +107,6 @@ bmi_rr = norminv(bmi_rr_quantile, bmi.*bmi_gradients + bmi_intercepts, bmi_sigma
 % data.bmi = bmi;
 % data.bmi_rr_quantile = bmi_rr_quantile(1,:);
 
-%% contacts
-sB = size(contacts.B);
-s1 = sB(1);
-s2 = sB(2);
-contacts.B = max((contacts.B+1) .* 2.^unifrnd(-1,1,s1,s2) - 1, 0); %unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
-contacts.C = max((contacts.C+1) .* 2.^unifrnd(-1,1,s1,s2) - 1, 0);
-uk_ptr = 15.87574;
-contacts.C(data.EdInd) = pupil_teacher_ratio / uk_ptr * contacts.C(data.EdInd);
 
 %% population
 % population by age
@@ -122,21 +118,37 @@ cols = strmatch('Npop', CD.Properties.VariableNames);
 randvalue = table2array(CD(demoindex,cols));
 Npop = 50*10^6*randvalue'/sum(randvalue);
 data.Npop = Npop;
+fourages = arrayfun(@(x) sum(Npop(x{1})), data.ageindex);
 
 % population by stratum
+% sample workforce
 nonempind = find(~isnan(CD.NNs1) & country_indices);
 randindex = nonempind(randi(numel(nonempind)));
 colNNs = strmatch('NNs', CD.Properties.VariableNames);
-randvalue = table2array(CD(randindex,colNNs));%number of workers by sector in real country
-defivalue = randvalue/sum(table2array(CD(randindex,3+[5:13])));%proportion of adult population by sector in real country
-total_working_age = sum(Npop(5:13));
-workers_by_sector = total_working_age*defivalue;%number of workers by sector in artificial country
-NNs = [workers_by_sector,Npop(1),total_working_age,sum(total_working_age)-sum(workers_by_sector),sum(Npop(14:end))]';
+sectorworkers = table2array(CD(randindex,colNNs));%number of workers by sector in real country
+% normalise by number working age in sample country
+workagecolnames = strcat("Npop",arrayfun(@num2str, data.ageindex{3}, 'UniformOutput', false));
+workagecols = cell2mat(cellfun(@(a) strmatch(a, CD.Properties.VariableNames),...
+    workagecolnames,'uniform',false));
+sectorworkerfrac = sectorworkers/sum(table2array(CD(randindex,workagecols)));%proportion of adult population by sector in real country
+workers_by_sector = fourages(3)*sectorworkerfrac;%number of workers by sector in artificial country
+% put into daedalus order: workers by sector, then infants, adolescents,
+% non-workers, and retired
+NNs = [workers_by_sector,fourages(1),fourages(2),fourages(3)-sum(workers_by_sector),fourages(4)]';
 
-% contact matrix -- match to pop for now
-% nonempind = find(~isnan(CD.CMaa) & country_indices);
-% randindex = nonempind(randi(numel(nonempind)));
-randvalue = table2array(CD(demoindex,70:325));
+%% contacts
+% workplace
+sectorcontacts = contacts.sectorcontacts.n_cnt;
+sB = size(sectorcontacts);
+s1 = sB(1);
+s2 = sB(2);
+% contacts.B = max((contacts.B+1) .* 2.^unifrnd(-1,1,s1,s2) - 1, 0); %unifrnd(max(contacts.B/2-1,0),contacts.B*2+1);
+contacts.sectorcontacts = max((sectorcontacts+1) .* 2.^unifrnd(-1,1,s1,s2) - 1, 0);
+uk_ptr = 15.87574;
+contacts.sectorcontacts(data.EdInd) = pupil_teacher_ratio / uk_ptr * contacts.sectorcontacts(data.EdInd);
+
+% matrix
+randvalue = table2array(CD(demoindex,strmatch("CM", CD.Properties.VariableNames)'));
 defivalue = reshape(randvalue,16,16);
 contacts.CM   = defivalue;
 
@@ -190,7 +202,7 @@ data.la   = randvalue;
 adultindices = [1:nSectors,nSectors+data.adInd];
 
 % omit small sectors
-adult_props = NNs(adultindices)./total_working_age;
+adult_props = NNs(adultindices)./fourages(3);
 small_sectors = find(adult_props<1e-3);
 resample_sectors = setdiff(adultindices, adultindices(small_sectors));
 
@@ -233,7 +245,7 @@ randvalue                   = table2array(CD(randindex,cols1));%gva by sector in
 defivalue                   = randvalue./table2array(CD(randindex,colNNs));%gva per worker by sector in real country
 defivalue(isnan(defivalue)) = 0;
 defivalue(isinf(defivalue)) = 0;
-defivalue                   = data.NNs(1:45).*defivalue';%gva by sector in artificial country
+defivalue                   = data.NNs(1:nSectors).*defivalue';%gva by sector in artificial country
 %%!! need to check food and accomm gva as % of gdp
 data.obj                    = defivalue;
 
@@ -245,12 +257,14 @@ data.gdp = gdp;
 data.gdppc = gdp/sum(data.Npop);
 
 %vly = value of a life year
-pop_sizes        = [data.Npop(1:17)',sum(data.Npop(18:end))];%length is 18 to match life table
-pop_sizes_4 = [pop_sizes(1);sum(pop_sizes(2:4));sum(pop_sizes(5:13));sum(pop_sizes(14:end))];
-
 % map life expectancy to our age groups
 life_expectancy  = data.la;
-age_map = {1, 2:4, 5:13, 14:length(pop_sizes)};
+lle = length(life_expectancy);
+pop_sizes   = [data.Npop(1:(lle-1))',sum(data.Npop(lle:end))];%length is 18 to match life table
+pop_sizes_4 = fourages;
+
+age_map = data.ageindex;
+age_map{4} = min(age_map{4}):length(pop_sizes);
 life_expectancy_4 = zeros(size(age_map));
 for k = 1:length(life_expectancy_4)
     index = age_map{k};
@@ -268,7 +282,7 @@ data.vly  = discounted_value_of_a_life_year;
 
 %% vsy = value of a school year
 rate_of_return_one_year = 0.08;
-agefracs = data.Npop(2:4)/sum(data.Npop(2:4));
+agefracs = data.Npop(data.ageindex{2})/fourages(2);
 midages = [7 12 17];
 working_years = 45;
 workstarts = 20 - midages;
@@ -277,9 +291,9 @@ workends = working_years + workstarts;
 % present value
 PV = ((1-(1+discount_rate).^(-workends))/discount_rate - (1-(1+discount_rate).^(-workstarts))/discount_rate)*agefracs;
 
-mean_annual_income = labsh*gdp/total_working_age;
+mean_annual_income = labsh*gdp/fourages(3);
 educationloss_all_students = ...
-    PV*mean_annual_income*rate_of_return_one_year*sum(data.Npop(2:4));
+    PV*mean_annual_income*rate_of_return_one_year*fourages(2);
 educationloss_per_student = ...
     PV*mean_annual_income*rate_of_return_one_year;
 
@@ -312,7 +326,7 @@ data.x_econ(FAAind,:) = min(FAAmax,data.x_econ(FAAind,:));
 data.x_schc(FAAind,:) = min(FAAmax,data.x_schc(FAAind,:));
 
 
-%% contacts
+%% generate basic contact components
 
 %Contact Matrix
 data.contacts = get_basic_contacts(data, contacts);
