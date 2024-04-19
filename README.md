@@ -170,7 +170,7 @@ leaving a smaller fraction ($`\hat{x}_{j}(t)`$) to contribute to
 production.
 
 ``` math
-\hat{x}_{j}(t)=x_{j}(t) - \left((x_{j}(t)p_j^{23}(t)  + x_{j}(t)(1-q_j)p_j^{22}(t)\right)/N_j
+\hat{x}_{j}(t)=x_{j}(t)\left(1 - \left(p_j^{23}(t)  + (t)(1-q_j)p_j^{22}(t)\right)/N_j\right)
 ```
 
 where $q_j$ is the fraction of the sector working from home.
