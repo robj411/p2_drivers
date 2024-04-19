@@ -17,14 +17,14 @@ Npop(s16) = sum(Npop(s16:end));
 Npop     = Npop(1:s16);
 ageindex = data.ageindex;
 ageindex{4} = min(ageindex{4}):s16;
-N4 = arrayfun(@(x) sum(Npop(x{1})), ageindex);
-pop_props = N4/sum(Npop);
+Npop4 = data.Npop4;
+pop_props = Npop4/sum(Npop);
 
 
 %% COMMUNITY-COMMUNITY MATRIX:
 
-CM_164        = cell2mat(arrayfun(@(x) sum(CM_16(:,x{1}),2), ageindex, 'UniformOutput', false)); %sum of the columns
-CM_4        = cell2mat(arrayfun(@(x) (Npop(x{1})'*CM_164(x{1},:)/sum(Npop(x{1})))', ageindex, 'UniformOutput', false))';        
+CM_164    = cell2mat(arrayfun(@(x) sum(CM_16(:,x{1}),2), ageindex, 'UniformOutput', false)); %sum of the columns
+CM_4      = cell2mat(arrayfun(@(x) (Npop(x{1})'*CM_164(x{1},:)/sum(Npop(x{1})))', ageindex, 'UniformOutput', false))';        
 CMav      = pop_props*sum(CM_4,2);
 contact_props = CM_4(3,:)/sum(CM_4(3,:));
 workage_total = sum(CM_4(3,:));
@@ -37,11 +37,11 @@ nStrata       = length(NN);
 workage_indices = [1:nSectors,nSectors+adInd];
 
 NNrel = NN(workage_indices)/sum(NN(workage_indices)); %adult population proportion vector
-NNrepvecweighted = zeros(1,nStrata);
-NNrepvecweighted(workage_indices) = NNrel*contact_props(3);
-NNrepvecweighted(nSectors+[1,2,4]) = contact_props([1,2,4]);
-NNrep = repmat(NNrepvecweighted,nStrata,1); %total population proportion matrix
-NNrea = repmat(NN(1:nSectors)'/sum(NN(1:nSectors)),nSectors,1); %workforce population proportion matrix
+% NNrepvecweighted = zeros(1,nStrata);
+% NNrepvecweighted(workage_indices) = NNrel*contact_props(3);
+% NNrepvecweighted(nSectors+[1,2,4]) = contact_props([1,2,4]);
+% NNrep = repmat(NNrepvecweighted,nStrata,1); %total population proportion matrix
+% NNrea = repmat(NN(1:nSectors)'/sum(NN(1:nSectors)),nSectors,1); %workforce population proportion matrix
 
 %% WORKER-WORKER AND COMMUNITY-WORKER MATRICES:
 
@@ -93,7 +93,7 @@ c_to_w_distributed = [rel_mat(:,nSectors+1), rel_mat(:,nSectors+2), sum(rel_mat(
 %     sum(NNrel' * worker_to_customer_mat([1:45,48],:)),...
 %     sum(worker_to_customer_mat(49,:))];
 
-c_to_w_back = c_to_w_distributed*N4(3) ./ N4;
+c_to_w_back = c_to_w_distributed*Npop4(3) ./ Npop4;
         
 %% get new contact rates
 contacts.school1 = CM_4(1,1) * contacts.school1_frac;

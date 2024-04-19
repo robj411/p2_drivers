@@ -13,30 +13,30 @@ function dis = population_disease_parameters(data,dis,R0betafun)
 
 %% INITIAL DISEASE PARAMETERS
 %Population by Age
-nn     = data.Npop';
-nn     = [nn(1:16),sum(nn(17:end))];%last age range for disease is 80+
-nntot  = [nn(1),sum(nn(2:4)),sum(nn(5:13)),sum(nn(14:end))];
-ranges = [1,3,9,4];
-nntot  = repelem(nntot,ranges);
-nnprop = nn./nntot;
-subs   = 1:4;
-subs   = repelem(subs,ranges);
 nSectors = data.nSectors;
 adInd = data.adInd;
+subs0   = 1:4;
+lihr = length(dis.ihr);
+Npop     = data.Npop';
+Npop     = [Npop(1:(lihr-1)),sum(Npop(lihr:end))];%last age range for disease is 80+
 
+ranges = arrayfun(@(x) length(x{1}), data.ageindex);
+Npop4rep  = repelem(data.Npop4',ranges);
+nnprop = Npop./Npop4rep;
+subs   = repelem(subs0,ranges);
 
 %Probabilities
-phgs    = dis.ihr./dis.ps;
-pdgh    = dis.ifr./dis.ihr;
-dis.hfr = pdgh;
-phgs    = accumarray(subs',phgs.*nnprop);
-dis.ph  = [repmat(phgs(adInd),nSectors,1);phgs];
-nnh     = nn.*dis.ihr;
-nnhtot  = [nnh(1),sum(nnh(2:4)),sum(nnh(5:13)),sum(nnh(14:end))];
+probHgivenSym    = dis.ihr./dis.ps;
+probDgivenH    = dis.ifr./dis.ihr;
+dis.hfr = probDgivenH;
+probHgivenSym    = accumarray(subs',probHgivenSym.*nnprop);
+dis.ph  = [repmat(probHgivenSym(adInd),nSectors,1);probHgivenSym];
+nnh     = Npop.*dis.ihr;
+nnhtot  = arrayfun(@(x) sum(nnh(x{1})), data.ageindex); 
 nnhtot  = repelem(nnhtot,ranges);
 nnhprop = nnh./nnhtot;
-pdgh    = accumarray(subs',pdgh.*nnhprop);
-dis.pd  = [repmat(pdgh(adInd),nSectors,1);pdgh];
+probDgivenH    = accumarray(subs',probDgivenH.*nnhprop);
+dis.pd  = [repmat(probDgivenH(adInd),nSectors,1);probDgivenH];
 
 dis.rr_infection = 1; % [repmat(data.bmi_rr(1,1),nSectors,1); 1; 1; data.bmi_rr(1,1); data.bmi_rr(2,1)];
 

@@ -118,7 +118,8 @@ cols = strmatch('Npop', CD.Properties.VariableNames);
 randvalue = table2array(CD(demoindex,cols));
 Npop = 50*10^6*randvalue'/sum(randvalue);
 data.Npop = Npop;
-fourages = arrayfun(@(x) sum(Npop(x{1})), data.ageindex);
+Npop4 = arrayfun(@(x) sum(Npop(x{1})), data.ageindex);
+data.Npop4 = Npop4;
 
 % population by stratum
 % sample workforce
@@ -131,10 +132,10 @@ workagecolnames = strcat("Npop",arrayfun(@num2str, data.ageindex{3}, 'UniformOut
 workagecols = cell2mat(cellfun(@(a) strmatch(a, CD.Properties.VariableNames),...
     workagecolnames,'uniform',false));
 sectorworkerfrac = sectorworkers/sum(table2array(CD(randindex,workagecols)));%proportion of adult population by sector in real country
-workers_by_sector = fourages(3)*sectorworkerfrac;%number of workers by sector in artificial country
+workers_by_sector = Npop4(3)*sectorworkerfrac;%number of workers by sector in artificial country
 % put into daedalus order: workers by sector, then infants, adolescents,
 % non-workers, and retired
-NNs = [workers_by_sector,fourages(1),fourages(2),fourages(3)-sum(workers_by_sector),fourages(4)]';
+NNs = [workers_by_sector,Npop4(1),Npop4(2),Npop4(3)-sum(workers_by_sector),Npop4(4)]';
 
 %% contacts
 % workplace
@@ -202,7 +203,7 @@ data.la   = randvalue;
 adultindices = [1:nSectors,nSectors+data.adInd];
 
 % omit small sectors
-adult_props = NNs(adultindices)./fourages(3);
+adult_props = NNs(adultindices)./Npop4(3);
 small_sectors = find(adult_props<1e-3);
 resample_sectors = setdiff(adultindices, adultindices(small_sectors));
 
@@ -261,7 +262,7 @@ data.gdppc = gdp/sum(data.Npop);
 life_expectancy  = data.la;
 lle = length(life_expectancy);
 pop_sizes   = [data.Npop(1:(lle-1))',sum(data.Npop(lle:end))];%length is 18 to match life table
-pop_sizes_4 = fourages;
+pop_sizes_4 = Npop4;
 
 age_map = data.ageindex;
 age_map{4} = min(age_map{4}):length(pop_sizes);
@@ -282,7 +283,7 @@ data.vly  = discounted_value_of_a_life_year;
 
 %% vsy = value of a school year
 rate_of_return_one_year = 0.08;
-agefracs = data.Npop(data.ageindex{2})/fourages(2);
+agefracs = data.Npop(data.ageindex{2})/Npop4(2);
 midages = [7 12 17];
 working_years = 45;
 workstarts = 20 - midages;
@@ -291,9 +292,9 @@ workends = working_years + workstarts;
 % present value
 PV = ((1-(1+discount_rate).^(-workends))/discount_rate - (1-(1+discount_rate).^(-workstarts))/discount_rate)*agefracs;
 
-mean_annual_income = labsh*gdp/fourages(3);
+mean_annual_income = labsh*gdp/Npop4(3);
 educationloss_all_students = ...
-    PV*mean_annual_income*rate_of_return_one_year*fourages(2);
+    PV*mean_annual_income*rate_of_return_one_year*Npop4(2);
 educationloss_per_student = ...
     PV*mean_annual_income*rate_of_return_one_year;
 

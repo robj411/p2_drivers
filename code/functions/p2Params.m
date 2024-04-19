@@ -69,8 +69,8 @@ vaccination_rate_pc    = data.vaccination_rate_pc;  %Vaccine Administration Rate
 vaccine_uptake  = data.vaccine_uptake;                    %Vaccine Uptake
 
 Npop    = data.Npop;
-NNage   = [Npop(1),sum(Npop(2:4)),sum(Npop(5:13)),sum(Npop(14:end))];
-over14frac = Npop(4)/sum(Npop(2:4));
+Npop4 = data.Npop4;
+over14frac = Npop(4)/sum(Npop4(2));
 
 p2.t_vax2 = p2.Tres + 7 + vaccine_day;  
 
@@ -78,7 +78,7 @@ if bpsv == 1
     t_vax = p2.Tres;
 end
 
-vaccination_rate = vaccination_rate_pc*sum(data.Npop);
+vaccination_rate = vaccination_rate_pc*sum(Npop);
 
 t_vax2 = p2.t_vax2;
 t_bspv = t_vax2 - t_vax;
@@ -87,7 +87,7 @@ uptake  = vaccine_uptake*[0 over14frac 1 1];
 
 
 %Vaccine Administration Rate
-t_ages     = min((uptake.*NNage)/vaccination_rate,Inf);%vaccination_rate may be 0
+t_ages     = min((uptake.*Npop4)/vaccination_rate,Inf);%vaccination_rate may be 0
 
 if bpsv==1
     % if primer starts before booster, there are t_bspv days of primer.
@@ -111,18 +111,27 @@ p2.arate = vaccination_rate;
 
 %% COST PARAMETERS
 
-pop_size         = [data.Npop(1:16)',sum(data.Npop(17:end))];%length is 17 to match ifr
-life_expectancy         = [data.la(1:16),...
-              dot(data.la(17:end),[data.Npop(17),sum(data.Npop(18:end))])/sum(data.Npop(17:end)+1e-10)];
-weighted_ifr       = pop_size.*dis.ifr;
-life_years_lost_per_death         = [dot(life_expectancy(1),weighted_ifr(1))/sum(weighted_ifr(1)),...
-              dot(life_expectancy(2:4),weighted_ifr(2:4))/sum(weighted_ifr(2:4)),...
-              dot(life_expectancy(5:13),weighted_ifr(5:13))/sum(weighted_ifr(5:13)),...
-              dot(life_expectancy(14:end),weighted_ifr(14:end))/sum(weighted_ifr(14:end))];
+% update age groups and indices for number of groups
+lihr = length(dis.ihr);
+Npop     = data.Npop';
+Npop     = [Npop(1:(lihr-1)),sum(Npop(lihr:end))];%last age range for disease is 80+
+ageindex = data.ageindex;
+ageindex{4} = min(ageindex{4}):lihr;
+
+% get life expectancy for age groups
+life_expectancy         = data.la(1:lihr);
+life_expectancy(lihr) = dot(data.la(lihr:end),[data.Npop(lihr),sum(data.Npop((lihr+1):end))]) / sum(data.Npop(lihr:end)+1e-10);
+
+% get population-weighted average ifr
+weighted_ifr       = Npop.*dis.ifr;
+% use weight to compute life expectancy lost per death
+life_years_lost_per_death         = arrayfun(@(x) dot(life_expectancy(x{1}),weighted_ifr(x{1}))/sum(weighted_ifr(x{1})), ageindex);
+% apply discounting
+discount_rate = 0.03;
 discounted_life_years_per_death = zeros(size(life_years_lost_per_death));
 for k = 1:length(life_years_lost_per_death)
-    discounted_life_years_per_death(k) = sum(1./((1+0.03).^[1:life_years_lost_per_death(k)]));
+    discounted_life_years_per_death(k) = sum(1./((1+discount_rate).^[1:life_years_lost_per_death(k)]));
 end  
-data.lgh   = [repmat(discounted_life_years_per_death(3),1,45),discounted_life_years_per_death];
+data.lgh   = [repmat(discounted_life_years_per_death(data.adInd),1,45),discounted_life_years_per_death];
 
 end
