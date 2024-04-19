@@ -540,11 +540,12 @@ olds and 5 to 19 year olds.
 Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of
 $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure
 <a href="#fig:hospfrac">3.8</a>, distributed by age, Figure
-@(fig:conagefrac)), which leaves $M^{\text{home}}$. Community contacts
-in consumption settings includes contacts made on public transport, as
-these contacts are small in number and are most correlated with
-consumption (and not work or school) (Jarvis et al. 2023). (This might
-be because contacts are counted by how many people you talk to.)
+<a href="#fig:conagefrac">3.9</a>), which leaves $M^{\text{home}}$.
+Community contacts in consumption settings includes contacts made on
+public transport, as these contacts are small in number and are most
+correlated with consumption (and not work or school) (Jarvis et al.
+2023). (This might be because contacts are counted by how many people
+you talk to.)
 
 <div class="figure">
 
