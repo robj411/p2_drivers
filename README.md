@@ -541,7 +541,7 @@ $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/school1frac.png" alt="Fraction of contacts made at school for ages 0 to 4." width="1800" />
+<img src="README_files/figure-gfm/school1frac.png" alt="Fraction of contacts made at school for ages 0 to 4." width="50%" />
 
 <p class="caption">
 
@@ -553,7 +553,7 @@ Figure 3.3: Fraction of contacts made at school for ages 0 to 4.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/school2frac.png" alt="Fraction of contacts made at school for ages 0 to 4." width="1800" />
+<img src="README_files/figure-gfm/school2frac.png" alt="Fraction of contacts made at school for ages 0 to 4." width="50%" />
 
 <p class="caption">
 
@@ -565,7 +565,7 @@ Figure 3.4: Fraction of contacts made at school for ages 0 to 4.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/hospfrac.png" alt="Fraction of non-school and non-work contacts made in hospitality settings, by age group." width="1800" />
+<img src="README_files/figure-gfm/hospfrac.png" alt="Fraction of non-school and non-work contacts made in hospitality settings, by age group." width="50%" />
 
 <p class="caption">
 
@@ -662,7 +662,7 @@ transmission, with the reduction in mobility.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/smoothmobility.png" alt="Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over &quot;Retail and recreation&quot;, &quot;Transit stations&quot; and &quot;Workplaces&quot; and smoothed with a spline of 80 knots." width="2809" />
+<img src="README_files/figure-gfm/smoothmobility.png" alt="Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over &quot;Retail and recreation&quot;, &quot;Transit stations&quot; and &quot;Workplaces&quot; and smoothed with a spline of 80 knots." width="50%" />
 
 <p class="caption">
 
@@ -677,7 +677,7 @@ are averaged over “Retail and recreation,” “Transit stations” and
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/mobilitydrop.png" alt="The largest drop in mobility plotted against the stringency on that date." width="3000" />
+<img src="README_files/figure-gfm/mobilitydrop.png" alt="The largest drop in mobility plotted against the stringency on that date." width="50%" />
 
 <p class="caption">
 
@@ -716,7 +716,7 @@ defining $$f(d,e) = (f_1(d,e))^{p^{11}}(f_2(d,e))^{(1-p^{11})}.$$
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/mobilityfitted.png" alt="Fit of model to data." width="2096" />
+<img src="README_files/figure-gfm/mobilityfitted.png" alt="Fit of model to data." width="50%" />
 
 <p class="caption">
 
@@ -728,7 +728,7 @@ Figure 3.8: Fit of model to data.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/mobilityposterior.png" alt="Posterior distribution for parameters $p^9$ and $p^8$." width="2096" />
+<img src="README_files/figure-gfm/mobilityposterior.png" alt="Posterior distribution for parameters $p^9$ and $p^8$." width="50%" />
 
 <p class="caption">
 
@@ -740,7 +740,7 @@ Figure 3.9: Posterior distribution for parameters $p^9$ and $p^8$.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/mobilitycurves.png" alt="Sampled curves for four levels of mitigation. Data shown as points." width="2096" />
+<img src="README_files/figure-gfm/mobilitycurves.png" alt="Sampled curves for four levels of mitigation. Data shown as points." width="50%" />
 
 <p class="caption">
 
@@ -3668,7 +3668,7 @@ Lower-case letters
 | $\lambda$  |                                      |
 |   $\mu$    |                                      |
 |   $\nu$    |             growth rate              |
-| $\omicron$ |                  –                   |
+|    $o$     |                  –                   |
 |   $\pi$    |                                      |
 |   $\rho$   |        transmission modifier         |
 |  $\sigma$  |                                      |

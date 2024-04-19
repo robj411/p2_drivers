@@ -512,15 +512,15 @@ Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values representing th
 
 Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure \@ref(fig:hospfrac)), which leaves $M^{\text{home}}$.
 
-```{r school1frac,fig.cap='Fraction of contacts made at school for ages 0 to 4.', echo=F,message=F,warning=F,fig.width=3}
+```{r school1frac,fig.cap='Fraction of contacts made at school for ages 0 to 4.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/school1frac.png")
 ```
 
-```{r school2frac,fig.cap='Fraction of contacts made at school for ages 0 to 4.', echo=F,message=F,warning=F,fig.width=3}
+```{r school2frac,fig.cap='Fraction of contacts made at school for ages 0 to 4.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/school2frac.png")
 ```
 
-```{r hospfrac,fig.cap='Fraction of non-school and non-work contacts made in hospitality settings, by age group.', echo=F,message=F,warning=F,fig.width=1}
+```{r hospfrac,fig.cap='Fraction of non-school and non-work contacts made in hospitality settings, by age group.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/hospfrac.png")
 ```
 
@@ -605,11 +605,11 @@ Here, there is superlinear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with res
 We parametrise the effects of 'social distancing' in the model using Google's mobility data (Figure \@ref(fig:smoothmobility)). These changes in mobility were consequences of both government mandates and individual's choices. As we cannot separate the two, we consider a range of possibilities, based on the range of mobility changes observed for a given level of stringency (Figure \@ref(fig:mobilitydrop)). In our model, the mandated economic configuration leads to a change in contacts. We associate the reduction in contacts, which translates as a relative reduction in transmission, with the reduction in mobility. 
 
 
-```{r smoothmobility,fig.cap='Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over "Retail and recreation", "Transit stations" and "Workplaces" and smoothed with a spline of 80 knots.', echo=F,message=F,warning=F,fig.width=3}
+```{r smoothmobility,fig.cap='Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over "Retail and recreation", "Transit stations" and "Workplaces" and smoothed with a spline of 80 knots.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/smoothmobility.png")
 ```
 
-```{r mobilitydrop,fig.cap='The largest drop in mobility plotted against the stringency on that date.', echo=F,message=F,warning=F}
+```{r mobilitydrop,fig.cap='The largest drop in mobility plotted against the stringency on that date.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/mobilitydrop.png")
 ```
 
@@ -624,15 +624,15 @@ with $p^9, p^{10}>0$.
 
 However, we might also want a model that can be parametrised with a distribution whose uncertainty covers the whole range of possible eventualities. The equivalent model with compounded effects would be $$f_1(d,e) = \frac{1}{1+p^9 d}\frac{1}{1+p^{10}e}.$$ The equivalent model with completely overlapping effects would be $$f_2(d,e) = \frac{1}{1+\max(p^9 d,p^{10}e)}.$$ Then we could include 'model uncertainty' via some parameter $\beta\sim\mathcal{U}(0,1)$, defining $$f(d,e) = (f_1(d,e))^{p^{11}}(f_2(d,e))^{(1-p^{11})}.$$
 
-```{r mobilityfitted,fig.cap='Fit of model to data.', echo=F,message=F,warning=F}
+```{r mobilityfitted,fig.cap='Fit of model to data.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/mobilityfitted.png")
 ```
 
-```{r mobilityposterior,fig.cap='Posterior distribution for parameters $p^9$ and $p^8$.', echo=F,message=F,warning=F}
+```{r mobilityposterior,fig.cap='Posterior distribution for parameters $p^9$ and $p^8$.',  out.width="50%",echo=F,message=F,warning=F}
 knitr::include_graphics(path = "README_files/figure-gfm/mobilityposterior.png")
 ```
 
-```{r mobilitycurves,fig.cap='Sampled curves for four levels of mitigation. Data shown as points.', echo=F,message=F,warning=F}
+```{r mobilitycurves,fig.cap='Sampled curves for four levels of mitigation. Data shown as points.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/mobilitycurves.png")
 ```
 
