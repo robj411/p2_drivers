@@ -510,8 +510,8 @@ normalising.
 
 Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts
 experienced by workers from the community by sector (Figure
-@(fig:allsector45), distributed by age, Figure @(fig:uksec\_dist\_age)).
-Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix
+@(fig:allsector), distributed by age, Figure @(fig:uksecdistage)). Note
+that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix
 $M^{\text{WC}}(\textbf{1})$ is the complement of matrix
 $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by
 population, transposing, and dividing again by population.
@@ -530,8 +530,8 @@ M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\te
 Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values
 representing the fractions of contacts that come from school. School
 contacts are estimated separately in two age groups (pre-school age: 0—4
-(Figure <a href="#fig:school1frac">3.5</a>); school age: 5—19 (Figure
-<a href="#fig:school2frac">3.6</a>)): $M^{\text{sch}}(\textbf{1})$ has
+(Figure <a href="#fig:school1frac">3.6</a>); school age: 5—19 (Figure
+<a href="#fig:school2frac">3.7</a>)): $M^{\text{sch}}(\textbf{1})$ has
 entries of zero for groups not in school, and values for 0 to 4 year
 olds and 5 to 19 year olds.
 
@@ -539,7 +539,7 @@ olds and 5 to 19 year olds.
 
 Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of
 $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure
-<a href="#fig:hospfrac">3.7</a>, distributed by age, Figure
+<a href="#fig:hospfrac">3.8</a>, distributed by age, Figure
 @(fig:conagefrac)), which leaves $M^{\text{home}}$. Community contacts
 in consumption settings includes contacts made on public transport, as
 these contacts are small in number and are most correlated with
@@ -585,8 +585,8 @@ then SOC-10 then ISIC rev 4 using ONS data.
 
 <p class="caption">
 
-(\#fig:uksec\_dist\_age)Fraction of contacts made at work by age, from
-(Jarvis et al. 2023).
+Figure 3.5: Fraction of contacts made at work by age, from (Jarvis et
+al. 2023).
 
 </p>
 
@@ -598,7 +598,7 @@ then SOC-10 then ISIC rev 4 using ONS data.
 
 <p class="caption">
 
-Figure 3.5: Fraction of contacts made at school for ages 0 to 4, from
+Figure 3.6: Fraction of contacts made at school for ages 0 to 4, from
 (Jarvis et al. 2023).
 
 </p>
@@ -611,7 +611,7 @@ Figure 3.5: Fraction of contacts made at school for ages 0 to 4, from
 
 <p class="caption">
 
-Figure 3.6: Fraction of contacts made at school for ages 5 to 19, from
+Figure 3.7: Fraction of contacts made at school for ages 5 to 19, from
 (Jarvis et al. 2023).
 
 </p>
@@ -624,7 +624,7 @@ Figure 3.6: Fraction of contacts made at school for ages 5 to 19, from
 
 <p class="caption">
 
-Figure 3.7: Fraction of non-school and non-work contacts made in
+Figure 3.8: Fraction of non-school and non-work contacts made in
 hospitality settings, by age group, from (Jarvis et al. 2023).
 
 </p>
@@ -637,7 +637,7 @@ hospitality settings, by age group, from (Jarvis et al. 2023).
 
 <p class="caption">
 
-Figure 3.8: Distribution of non-school and non-work contacts made in
+Figure 3.9: Distribution of non-school and non-work contacts made in
 hospitality settings by age group, from (Jarvis et al. 2023).
 
 </p>
@@ -718,12 +718,12 @@ as the sector moves online and becomes more closed.
 ## 3.5 Social distancing
 
 We parametrise the effects of ‘social distancing’ in the model using
-Google’s mobility data (Figure <a href="#fig:smoothmobility">3.9</a>).
+Google’s mobility data (Figure <a href="#fig:smoothmobility">3.10</a>).
 These changes in mobility were consequences of both government mandates
 and individual’s choices. As we cannot separate the two, we consider a
 range of possibilities, based on the range of mobility changes observed
 for a given level of stringency (Figure
-<a href="#fig:mobilitydrop">3.10</a>). In our model, the mandated
+<a href="#fig:mobilitydrop">3.11</a>). In our model, the mandated
 economic configuration leads to a change in contacts. We associate the
 reduction in contacts, which translates as a relative reduction in
 transmission, with the reduction in mobility.
@@ -734,10 +734,10 @@ transmission, with the reduction in mobility.
 
 <p class="caption">
 
-Figure 3.9: Mobility trajectories in 2020 for all countries, with points
-showing the point at which the largest drop was observed. Trajectories
-are averaged over “Retail and recreation,” “Transit stations” and
-“Workplaces” and smoothed with a spline of 80 knots.
+Figure 3.10: Mobility trajectories in 2020 for all countries, with
+points showing the point at which the largest drop was observed.
+Trajectories are averaged over “Retail and recreation,” “Transit
+stations” and “Workplaces” and smoothed with a spline of 80 knots.
 
 </p>
 
@@ -749,7 +749,7 @@ are averaged over “Retail and recreation,” “Transit stations” and
 
 <p class="caption">
 
-Figure 3.10: The largest drop in mobility plotted against the stringency
+Figure 3.11: The largest drop in mobility plotted against the stringency
 on that date.
 
 </p>
@@ -788,7 +788,7 @@ defining $$f(d,e) = (f_1(d,e))^{p^{11}}(f_2(d,e))^{(1-p^{11})}.$$
 
 <p class="caption">
 
-Figure 3.11: Fit of model to data.
+Figure 3.12: Fit of model to data.
 
 </p>
 
@@ -800,7 +800,7 @@ Figure 3.11: Fit of model to data.
 
 <p class="caption">
 
-Figure 3.12: Posterior distribution for parameters $p^9$ and $p^8$.
+Figure 3.13: Posterior distribution for parameters $p^9$ and $p^8$.
 
 </p>
 
@@ -812,7 +812,7 @@ Figure 3.12: Posterior distribution for parameters $p^9$ and $p^8$.
 
 <p class="caption">
 
-Figure 3.13: Sampled curves for four levels of mitigation. Data shown as
+Figure 3.14: Sampled curves for four levels of mitigation. Data shown as
 points.
 
 </p>

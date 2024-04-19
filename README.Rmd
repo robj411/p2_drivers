@@ -496,7 +496,7 @@ for $j$ and $h$ including all groups (working and non-working). Each group $j$ c
 
 In setting up a country, we sample values for $\tilde{M}$ (from which we get $`M(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces (Figure \@ref(fig:workfrac)), and workplace-related contacts. From these, we get $M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising. 
 
-Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from the community by sector (Figure \@(fig:allsector45), distributed by age, Figure \@(fig:uksec_dist_age)). Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
+Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from the community by sector (Figure \@(fig:allsector), distributed by age, Figure \@(fig:uksecdistage)). Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
 
 With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn $M^{\text{com}}(\textbf{1})$. 
 
@@ -516,11 +516,11 @@ Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{com}}
 knitr::include_graphics(path = "README_files/figure-gfm/workfrac.png")
 ```
 
-```{r allsector45,fig.cap='Number of contacts made at work, from [@Jarvis2023]. Diamonds show average numbers and ranges are 50% quantile intervals. We sample values from half to double the average. Data come from UK, Netherlands and Switzerland, with occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using ONS data.', echo=F,message=F,warning=F, out.width="50%"}
+```{r allsector,fig.cap='Number of contacts made at work, from [@Jarvis2023]. Diamonds show average numbers and ranges are 50% quantile intervals. We sample values from half to double the average. Data come from UK, Netherlands and Switzerland, with occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using ONS data.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/allsector45.png")
 ```
 
-```{r uksec_dist_age,fig.cap='Fraction of contacts made at work by age, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
+```{r uksecdistage,fig.cap='Fraction of contacts made at work by age, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/uksec_dist_age.png")
 ```
 
