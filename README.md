@@ -277,7 +277,7 @@ $$\begin{align}
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status."  />
+<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status." width="50%" />
 
 <p class="caption">
 
@@ -2595,7 +2595,7 @@ as inputs for all country models.
 
 <div class="figure" style="text-align: center">
 
-<img src="README_files/figure-gfm/tourismhist-1.png" alt="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector."  />
+<img src="README_files/figure-gfm/tourismhist-1.png" alt="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector." width="50%" />
 
 <p class="caption">
 
@@ -2645,7 +2645,7 @@ shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
 values as inputs for all country models.
 
 <figure>
-<img src="figures/sectortourism.png" style="width:60.0%" alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." /><figcaption aria-hidden="true">Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
+<img src="figures/sectortourism.png" style="width:40.0%" alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." /><figcaption aria-hidden="true">Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
 </figure>
 
 ## 4.3 Remote working
@@ -3493,7 +3493,7 @@ NA
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/hmax-1.png" alt="Hospital capacity: available beds minus usual occupancy."  />
+<img src="README_files/figure-gfm/hmax-1.png" alt="Hospital capacity: available beds minus usual occupancy." width="50%" />
 
 <p class="caption">
 
@@ -3520,7 +3520,7 @@ labour we use PWT estimates from 2011 (Figure
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/labsh-1.png" alt="Fraction of GVA that goes to labour (PWT, 2011)."  />
+<img src="README_files/figure-gfm/labsh-1.png" alt="Fraction of GVA that goes to labour (PWT, 2011)." width="50%" />
 
 <p class="caption">
 
@@ -3538,7 +3538,7 @@ For HICs, we have parameters 7.97 and 6.87.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaxrate-1.png" alt="Vaccines administered per day, on average, in each country as a percent of population. Data source: fully vaccinated people from OWID (2022)."  />
+<img src="README_files/figure-gfm/vaxrate-1.png" alt="Vaccines administered per day, on average, in each country as a percent of population. Data source: fully vaccinated people from OWID (2022)." width="50%" />
 
 <p class="caption">
 

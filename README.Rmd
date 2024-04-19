@@ -266,7 +266,7 @@ The value $p^{16}$ represents the effectiveness of remote teaching, which we sam
 
 ## Disease state transitions
 
-```{tikz statetransitions, fig.cap = "Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status.", fig.ext = 'png',echo=F,fig.height=3,fig.width=4}
+```{tikz statetransitions, fig.cap = "Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status.", fig.ext = 'png',echo=F, out.width="50%"}
 \usetikzlibrary{shapes}
 \usetikzlibrary{fit}
 \usetikzlibrary{arrows}
@@ -794,7 +794,7 @@ fit <- dlnorm(x, fit_params$estimate['meanlog'], fit_params$estimate['sdlog'])
 We model the distribution of $c$ using data from 2020 (Figure \@ref(fig:tourismhist), bottom-right plot). We fit to it a log-normal distribution, and find mean value `r round(fit_params$estimate['meanlog'],2)` and standard deviation `r round(fit_params$estimate['sdlog'],2)` (Figure \@ref(fig:ytd)). We use these values as inputs for all country models.
 
 
-```{r tourismhist, fig.cap="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector.",fig.height=6, fig.width=9, fig.align="center",echo=F,warning=F,message=F}
+```{r tourismhist, fig.cap="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector.",fig.height=6, fig.width=9, fig.align="center",echo=F,warning=F,message=F, out.width="50%"}
 tourismhist
 ```
 
@@ -805,7 +805,7 @@ ggplot() + geom_histogram(aes(x=dat,y=..density..),colour='navyblue',fill='grey'
   geom_line(aes(x=x,y=fit),colour='navyblue',size=2) +
   theme_bw(base_size=15) +
   scale_x_continuous(expand=c(0,0)) + 
-  labs(x='Remaining international tourism (c)',y='Density')
+  labs(x='Remaining international tourism',y='Density')
 
 # plot the fit and original distributions
 # plot(x, fit, type="l", ylab="Density",
@@ -836,7 +836,7 @@ $$p^6 z + p^7 = \frac{\alpha(z)}{\alpha(z)+\beta(z)}$$
   
 Here, $p^5$ controls the variance of the distribution and $p^6$ and $p^7$ the linear relationship between $z$ and $b$. Using an optimisation routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
 
- ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=60% }
+ ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=40% }
 
 \newpage
 
@@ -893,7 +893,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ## Hospital capacity
 
-```{r hmax,fig.cap='Hospital capacity: available beds minus usual occupancy.',echo=F,warning=F,message=F}
+```{r hmax,fig.cap='Hospital capacity: available beds minus usual occupancy.',echo=F,warning=F,message=F, out.width="50%"}
 
 
 hmaxi <- setDT(read.csv('data/country_data.csv'))
@@ -918,7 +918,7 @@ We estimate the average annual income per working-age adult as the total GVA mul
 
 <!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is `r round(62*3/.9)`% of GDP. For a UMIC, the cost of a lost school year is `r round(22*3/.9)`% of GDP. For an HIC, the cost of a lost school year is `r round(9*3/.9)`% of GDP. -->
 
-```{r labsh,fig.cap='Fraction of GVA that goes to labour (PWT, 2011).',echo=F,warning=F,message=F}
+```{r labsh,fig.cap='Fraction of GVA that goes to labour (PWT, 2011).',echo=F,warning=F,message=F, out.width="50%"}
 
 
 # L = PV Y alpha \gamma S beta
@@ -962,7 +962,7 @@ We model these values with Beta distributions. For LLMICs, we have parameters `r
 
 ## Vaccine administration
 
-```{r vaxrate,fig.cap='Vaccines administered per day, on average, in each country as a percent of population. Data source: fully vaccinated people from OWID (2022).',echo=F,warning=F,message=F}
+```{r vaxrate,fig.cap='Vaccines administered per day, on average, in each country as a percent of population. Data source: fully vaccinated people from OWID (2022).',echo=F,warning=F,message=F, out.width="50%"}
 
 
 ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) + 
