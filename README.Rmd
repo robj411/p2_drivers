@@ -494,9 +494,9 @@ M_{j,h}(\textbf{1}) = \hat{M}_{g(j),g(h)}\frac{N_{h}}{\hat{N}_{g(h)}}
 
 for $j$ and $h$ including all groups (working and non-working). Each group $j$ contains people that belong to only one age group $g$. We refer to the age group of the people in group $j$ as $g(j)$. Then $\hat{N}_{g(h)}$ is the number of people in the age group of group $h$, so $`\hat{N}_{g(h)}=N_{h}`$ for age groups 0 to 4, 5 to 19 and 65+, and $`\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_S,m_S+3\}}N_{h}`$ for age group 20 to 64. 
 
-In setting up a country, we sample values for $\tilde{M}$ (from which we get $`M(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces, and workplace-related contacts. From these, we get $M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising. 
+In setting up a country, we sample values for $\tilde{M}$ (from which we get $`M(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces (Figure \@ref(fig:workfrac)), and workplace-related contacts. From these, we get $M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising. 
 
-Consumer-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from consumers per sector. Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
+Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from the community by sector (Figure \@(fig:allsector45), distributed by age, Figure \@(fig:uksec_dist_age)). Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
 
 With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn $M^{\text{com}}(\textbf{1})$. 
 
@@ -510,18 +510,34 @@ Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values representing th
 
 <!-- Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for $j=1,...,m_S$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_S$. -->
 
-Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure \@ref(fig:hospfrac)), which leaves $M^{\text{home}}$.
+Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure \@ref(fig:hospfrac), distributed by age, Figure \@(fig:conagefrac)), which leaves $M^{\text{home}}$. Community contacts in consumption settings includes contacts made on public transport, as these contacts are small in number and are most correlated with consumption (and not work or school) [@Jarvis2023]. (This might be because contacts are counted by how many people you talk to.)
 
-```{r school1frac,fig.cap='Fraction of contacts made at school for ages 0 to 4.', echo=F,message=F,warning=F, out.width="50%"}
+```{r workfrac,fig.cap='Fraction of contacts made at work, from [@Jarvis2023]. Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%)).', echo=F,message=F,warning=F, out.width="50%"}
+knitr::include_graphics(path = "README_files/figure-gfm/workfrac.png")
+```
+
+```{r allsector45,fig.cap='Number of contacts made at work, from [@Jarvis2023]. Diamonds show average numbers and ranges are 50% quantile intervals. We sample values from half to double the average. Data come from UK, Netherlands and Switzerland, with occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using ONS data.', echo=F,message=F,warning=F, out.width="50%"}
+knitr::include_graphics(path = "README_files/figure-gfm/allsector45.png")
+```
+
+```{r uksec_dist_age,fig.cap='Fraction of contacts made at work by age, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
+knitr::include_graphics(path = "README_files/figure-gfm/uksec_dist_age.png")
+```
+
+```{r school1frac,fig.cap='Fraction of contacts made at school for ages 0 to 4, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/school1frac.png")
 ```
 
-```{r school2frac,fig.cap='Fraction of contacts made at school for ages 0 to 4.', echo=F,message=F,warning=F, out.width="50%"}
+```{r school2frac,fig.cap='Fraction of contacts made at school for ages 5 to 19, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/school2frac.png")
 ```
 
-```{r hospfrac,fig.cap='Fraction of non-school and non-work contacts made in hospitality settings, by age group.', echo=F,message=F,warning=F, out.width="50%"}
+```{r hospfrac,fig.cap='Fraction of non-school and non-work contacts made in hospitality settings, by age group, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/hospfrac.png")
+```
+
+```{r conagefrac,fig.cap='Distribution of non-school and non-work contacts made in hospitality settings by age group, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
+knitr::include_graphics(path = "README_files/figure-gfm/conagefrac.png")
 ```
 
 
@@ -572,7 +588,7 @@ where we sum over only the hospitality sectors.
 
 
 
-### Matrix $M^{\text{CW}}$: Consumer-to-worker contacts
+### Matrix $M^{\text{CW}}$: Community-to-worker contacts
 
 \begin{equation}
 M_{j,h}^{\text{CW}}(x) = (x_{j}(1-q_j))^2M_{j,h}^{\text{CW}}(\textbf{1}),
