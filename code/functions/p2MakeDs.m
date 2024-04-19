@@ -57,33 +57,34 @@ community_mat(:,workage_indices) = repmat(community_mat(:,nSectors+adInd),1,nSec
 
 %% WORKER-WORKER AND COMMUNITY-WORKER MATRICES
 
-x(nSectors+1:nStrata)    = 0;
-w(nSectors+1:nStrata)    = 0;
+effective_openness = x.*(1-hw');
+effective_openness(nSectors+1:nStrata)    = 0;
+effective_openness_mat = repmat(effective_openness.^2,1,nStrata);
+% x(nSectors+1:nStrata)    = 0;
+% w(nSectors+1:nStrata)    = 0;
 
 % workers
-workerworker_val          = contacts.B;
-workerworker_val          = workerworker_val.*(1-hw).*(1-hw);%home-working has a compound effect
-workerworker_val(nSectors+1:nStrata) = 0;
-workerworker_mat          = diag(w.^2.*workerworker_val');
+% workerworker_val          = contacts.B;
+% workerworker_val          = workerworker_val.*(1-hw).*(1-hw);%home-working has a compound effect
+% workerworker_val(nSectors+1:nStrata) = 0;
+% workerworker_mat          = diag(w.^2.*workerworker_val');
 
 % customer to worker
-customertoworker_val          = contacts.C;
-customertoworker_val          = customertoworker_val.*(1-hw).*(1-hw);
-customertoworker_val(nSectors+1:nStrata) = 0;
-customertoworker_mat          = repmat(x.*w.*customertoworker_val',1,nStrata).*NNrep;
+communitytoworker_mat          = contacts.community_to_worker_mat .* effective_openness_mat;
 
 % move school contacts to students
-frac_infant = NN(nSectors+1)/sum(NN(nSectors+[1:2]));
-teacher_contacts = x(edInd).*customertoworker_val(edInd);
-customertoworker_mat(edInd,:) = 0.1 * teacher_contacts .* NNrep(edInd,:);
-customertoworker_mat(edInd,nSectors+1) = customertoworker_mat(edInd,nSectors+1) + 0.9*frac_infant * teacher_contacts;
-customertoworker_mat(edInd,nSectors+2) = customertoworker_mat(edInd,nSectors+2) + 0.9*(1-frac_infant) * teacher_contacts;
+% frac_infant = NN(nSectors+1)/sum(NN(nSectors+[1:2]));
+% teacher_contacts = x(edInd).*communitytoworker_val(edInd);
+% communitytoworker_mat(edInd,:) = 0.1 * teacher_contacts .* NNrep(edInd,:);
+% communitytoworker_mat(edInd,nSectors+1) = communitytoworker_mat(edInd,nSectors+1) + 0.9*frac_infant * teacher_contacts;
+% communitytoworker_mat(edInd,nSectors+2) = communitytoworker_mat(edInd,nSectors+2) + 0.9*(1-frac_infant) * teacher_contacts;
 
 % get return contacts
-contacts_between_workers_and_customers = customertoworker_mat .* repmat(NN,1,nStrata);
-worker_back = contacts_between_workers_and_customers' ./ repmat(NN,1,nStrata);
+communitytoworker_mat = contacts.work_scalar*communitytoworker_mat;
+contacts_between_workers_and_community = communitytoworker_mat .* repmat(NN,1,nStrata);
+worker_back = contacts_between_workers_and_community' ./ repmat(NN,1,nStrata);
 
 %% add all together
-contact_matrix = community_mat + contacts.work_scalar*(workerworker_mat + customertoworker_mat + worker_back);
+contact_matrix = community_mat + communitytoworker_mat + worker_back;
 
 end

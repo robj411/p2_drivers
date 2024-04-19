@@ -9,22 +9,22 @@ function contacts = get_basic_contacts(data, contacts)
 
 
 NN = data.NNs;
+CM_16       = contacts.CM;
+s16 = size(CM_16,1);
 
 Npop     = data.Npop;
-Npop(16) = sum(Npop(16:end));
-Npop     = Npop(1:16);
-pop_props = [Npop(1),sum(Npop(2:4)),sum(Npop(5:13)),sum(Npop(14:16))]/sum(Npop);
+Npop(s16) = sum(Npop(s16:end));
+Npop     = Npop(1:s16);
+ageindex = data.ageindex;
+ageindex{4} = min(ageindex{4}):s16;
+N4 = arrayfun(@(x) sum(Npop(x{1})), ageindex);
+pop_props = N4/sum(Npop);
 
 
 %% COMMUNITY-COMMUNITY MATRIX:
 
-CM_16       = contacts.CM;
-CM_164        = [CM_16(:,1),sum(CM_16(:,2:4),2),sum(CM_16(:,5:13),2),sum(CM_16(:,14:16),2)]; %sum of the columns
-CM_4        = [CM_164(1,:);
-            Npop(2:4)'*CM_164(2:4,:)/sum(Npop(2:4));
-            Npop(5:13)'*CM_164(5:13,:)/sum(Npop(5:13));
-            Npop(14:16)'*CM_164(14:16,:)/sum(Npop(14:16))]; %weighted average of the rows
-N4 = [Npop(1), sum(Npop(2:4)), sum(Npop(5:13)), sum(Npop(14:16))];        
+CM_164        = cell2mat(arrayfun(@(x) sum(CM_16(:,x{1}),2), ageindex, 'UniformOutput', false)); %sum of the columns
+CM_4        = cell2mat(arrayfun(@(x) (Npop(x{1})'*CM_164(x{1},:)/sum(Npop(x{1})))', ageindex, 'UniformOutput', false))';        
 CMav      = pop_props*sum(CM_4,2);
 contact_props = CM_4(3,:)/sum(CM_4(3,:));
 workage_total = sum(CM_4(3,:));
@@ -45,41 +45,46 @@ NNrea = repmat(NN(1:nSectors)'/sum(NN(1:nSectors)),nSectors,1); %workforce popul
 
 %% WORKER-WORKER AND COMMUNITY-WORKER MATRICES:
 
-workerworker_contacts          = contacts.B;
-workerworker_contacts(nSectors+1:nStrata) = 0;
-workerworker_mat          = diag(workerworker_contacts');
+% workerworker_contacts          = contacts.B;
+% workerworker_contacts(nSectors+1:nStrata) = 0;
+% workerworker_mat          = diag(workerworker_contacts');
 
+sectoragedist = zeros(nSectors,nStrata);
+sectoragedist(:,nSectors+[1,2]) = contacts.sectorcontactfracs.under18 * pop_props(1:2)/sum(pop_props(1:2));
+sectoragedist(:,nSectors+4) = contacts.sectorcontactfracs.x65plus;
+sectoragedist(:,workage_indices) = contacts.sectorcontactfracs.workingage * NNrel';
 
-customer_to_worker          = contacts.C;
-customer_to_worker(nSectors+1:nStrata) = 0;
-customer_to_worker_mat          = repmat(customer_to_worker',1,nStrata).*NNrep;
+community_to_worker          = contacts.sectorcontacts;
+community_to_worker_mat          = repmat(community_to_worker,1,nStrata).*sectoragedist;
+community_to_worker_mat(nSectors+1:nStrata,:) = 0;
 
 % move school contacts to students
-EdInd = data.EdInd;
-teacher_contacts = customer_to_worker(EdInd);
-frac_infant = NN(nSectors+1)/sum(NN(nSectors+[1:2]));
-customer_to_worker_mat(EdInd,:) = 0.1 * teacher_contacts .* NNrep(EdInd,:);
-customer_to_worker_mat(EdInd,nSectors+1) = customer_to_worker_mat(EdInd,nSectors+1) + 0.9*frac_infant * teacher_contacts;
-customer_to_worker_mat(EdInd,nSectors+2) = customer_to_worker_mat(EdInd,nSectors+2) + 0.9*(1-frac_infant) * teacher_contacts;
+% EdInd = data.EdInd;
+% teacher_contacts = customer_to_worker(EdInd);
+% frac_infant = NN(nSectors+1)/sum(NN(nSectors+[1:2]));
+% customer_to_worker_mat(EdInd,:) = 0.1 * teacher_contacts .* NNrep(EdInd,:);
+% customer_to_worker_mat(EdInd,nSectors+1) = customer_to_worker_mat(EdInd,nSectors+1) + 0.9*frac_infant * teacher_contacts;
+% customer_to_worker_mat(EdInd,nSectors+2) = customer_to_worker_mat(EdInd,nSectors+2) + 0.9*(1-frac_infant) * teacher_contacts;
 
 % get total contacts between customers and workers
-contacts_between_workers_and_customers = customer_to_worker_mat .* repmat(NN,1,nStrata);
+% contacts_between_workers_and_customers = customer_to_worker_mat .* repmat(NN,1,nStrata);
 % get reciprocal contacts
 % worker_to_customer_mat = contacts_between_workers_and_customers' ./ repmat(NN,1,nStrata);
 
 % normalise
-% wnorm = dot(sum(workerworker_mat+customer_to_worker_mat+worker_to_customer_mat,2),NN)/sum(NN(workage_indices));
-worker_total = dot(sum(workerworker_mat+customer_to_worker_mat,2),NN)/sum(NN(workage_indices));
+% worker_total = dot(sum(workerworker_mat+customer_to_worker_mat,2),NN)/sum(NN(workage_indices));
+worker_total = dot(sum(community_to_worker_mat,2),NN)/sum(NN(workage_indices));
 target_work_contacts = contacts.work_frac*workage_total;
 contacts.work_scalar = target_work_contacts / worker_total;
 
-workerworker_mat = contacts.work_scalar * workerworker_mat;
-av_worker_contacts = dot(sum(workerworker_mat,2),NN)/sum(NN(workage_indices));
+% workerworker_mat = contacts.work_scalar * workerworker_mat;
+% av_worker_contacts = dot(sum(workerworker_mat,2),NN)/sum(NN(workage_indices));
 
-customer_to_worker_mat = contacts.work_scalar * customer_to_worker_mat;
+community_to_worker_mat = contacts.work_scalar * community_to_worker_mat;
+contacts.community_to_worker_mat = community_to_worker_mat;
 
 % get marginal contacts by age for workers
-rel_mat = NNrel' * customer_to_worker_mat(workage_indices,:);
+rel_mat = NNrel' * community_to_worker_mat(workage_indices,:);
 c_to_w_distributed = [rel_mat(:,nSectors+1), rel_mat(:,nSectors+2), sum(rel_mat(:,workage_indices)), rel_mat(:,nSectors+4)];
 
 % worker_to_customer_mat = contacts.workrel * worker_to_customer_mat;
@@ -105,7 +110,7 @@ contacts.school2 = CM_4(2,2) * contacts.school2_frac;
 CM_4(1,1) = CM_4(1,1) - contacts.school1;
 CM_4(2,2) = CM_4(2,2) - contacts.school2;
 % travel and work
-CM_4(3,3) = CM_4(3,3) - av_worker_contacts; %  - contacts.travelA3 * sum(NN(1:nSectors))/sum(NN(workage_indices))
+% CM_4(3,3) = CM_4(3,3) - av_worker_contacts; %  - contacts.travelA3 * sum(NN(1:nSectors))/sum(NN(workage_indices))
 % customer to worker
 CM_4(3,:) = CM_4(3,:) - c_to_w_distributed;
 % worker to customer
@@ -131,6 +136,7 @@ CM_4 = max(CM_4 - contacts.hospitality_contacts, 0);
 
 %% save
 
+contacts = rmfield(contacts,'sectorcontactfracs');
 contacts.CM_4 = CM_4;
 contacts.contact_props = contact_props;
 
