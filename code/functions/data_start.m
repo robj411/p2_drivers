@@ -4,25 +4,30 @@
 
 function data = data_start()
 
-    load('../country_mats/Argentina.mat','data');%loading Argentina, but only keeping country-independent parameters
-    fields    = fieldnames(data);
-    ikeep     = [6,7,8,13,14,16,17,18];
-    data      = rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
+%     load('../country_mats/Argentina.mat','data');%loading Argentina, but only keeping country-independent parameters
+%     fields    = fieldnames(data);
+%     ikeep     = [16,17,18];
+    data      = struct; %rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
+    closurefile = '../data/closures.xlsx';
+    sheets = sheetnames(closurefile);
+    for i = 1:numel(sheets)
+        thissheet = sheets{i};
+        closurei = table2array(readtable(closurefile,'FileType','spreadsheet','Sheet',sheets{i}));
+        data.(thissheet) = closurei;
+    end
+    
     data.adInd = 3;
-    data.nSectors = length(data.B);
+    data.nSectors = length(data.x_elim);
     data.tvec = [0 365*10];
     data.EdInd    = 41;%education sector index
     data.HospInd  = [32,43,44];%hospitality sector indices
     
     contacts = struct;
-    contacts.B = data.B;
-    contacts.C = data.C;
-    data = rmfield(data,'B');
-    data = rmfield(data,'C');
-    data = rmfield(data,'hospA2');
-    data = rmfield(data,'hospA3');
-    data = rmfield(data,'hospA4');
+    contacts.sectorcontacts = readtable('../data/sectorcontacts.csv');
+    contacts.sectorcontactfracs = readtable('../data/sec_contact_dist_UK.csv');
     data.contacts = contacts;
+    
+    data.ageindex = {1,2:4,5:13,14:21};
     
     compindex = struct;
     
