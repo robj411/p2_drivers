@@ -1,7 +1,7 @@
 function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
 
     % contacts
-    leavenames = {'CM','basic_contact_matrix'};
+    leavenames = {'CM','basic_contact_matrix','community_to_worker_mat'};
     [contactname, contactvals] = get_struct_names_vals(ldata.contacts,leavenames);
 
     % dis
@@ -25,7 +25,7 @@ function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
 
     % data
     leavenames = {'EdInd','HospInd','Npop','adInd','compindex','contacts','educationloss_all_students','gdppc','lgh',...
-        'nSectors','nStrata','response_time','t_vax','tvec','x_unmit','vaccination_rate_pc','vaccine_uptake','x_econ','x_elim','x_schc'};
+        'nSectors','nStrata','response_time','t_vax','tvec','x_unmit','vaccination_rate_pc','vaccine_uptake','x_econ','x_elim','x_schc','ageindex'};
     ldata.obj = ldata.obj/ldata.gdp;
     ldata.vly = ldata.vly/ldata.gdp;
     ldata.vsy = ldata.vsy/ldata.gdp;
