@@ -13,10 +13,9 @@
     -   [3.3 Vaccination state
         transitions](#33-vaccination-state-transitions)
     -   [3.4 Contact rates](#34-contact-rates)
-        -   [3.4.1 Matrix $M^{\text{com}}$: community
-            contacts](#341-matrix-mtextcom-community-contacts)
-        -   [3.4.2 Matrix $M^{\text{CW}}$: Community-to-worker
-            contacts](#342-matrix-mtextcw-community-to-worker-contacts)
+        -   [3.4.1 Community contacts](#341-community-contacts)
+        -   [3.4.2 Community-to-worker
+            contacts](#342-community-to-worker-contacts)
     -   [3.5 Social distancing](#35-social-distancing)
     -   [3.6 Self isolating](#36-self-isolating)
 -   [4 Econ model](#4-econ-model)
@@ -510,8 +509,9 @@ normalising.
 
 Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts
 experienced by workers from the community by sector (Figure
-@(fig:allsector), distributed by age, Figure @(fig:uksecdistage)). Note
-that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix
+<a href="#fig:allsector">3.4</a>, distributed by age, Figure
+<a href="#fig:uksecdistage">3.5</a>). Note that
+$`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix
 $M^{\text{WC}}(\textbf{1})$ is the complement of matrix
 $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by
 population, transposing, and dividing again by population.
@@ -644,7 +644,7 @@ hospitality settings by age group, from (Jarvis et al. 2023).
 
 </div>
 
-### 3.4.1 Matrix $M^{\text{com}}$: community contacts
+### 3.4.1 Community contacts
 
 We construct $M^{\text{com}}(x)$ from its constituent parts,
 representing intra- and inter-household interactions (home), school
@@ -690,7 +690,7 @@ p^{27} = \frac{\sum_jx_{j}N_j}{\sum_jN_j}
 
 where we sum over only the hospitality sectors.
 
-### 3.4.2 Matrix $M^{\text{CW}}$: Community-to-worker contacts
+### 3.4.2 Community-to-worker contacts
 
 $$\begin{equation}
 M_{j,h}^{\text{CW}}(x) = (x_{j}(1-q_j))^2M_{j,h}^{\text{CW}}(\textbf{1}),

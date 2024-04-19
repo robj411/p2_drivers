@@ -496,7 +496,7 @@ for $j$ and $h$ including all groups (working and non-working). Each group $j$ c
 
 In setting up a country, we sample values for $\tilde{M}$ (from which we get $`M(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces (Figure \@ref(fig:workfrac)), and workplace-related contacts. From these, we get $M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising. 
 
-Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from the community by sector (Figure \@(fig:allsector), distributed by age, Figure \@(fig:uksecdistage)). Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
+Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from the community by sector (Figure \@ref(fig:allsector), distributed by age, Figure \@ref(fig:uksecdistage)). Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
 
 With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn $M^{\text{com}}(\textbf{1})$. 
 
@@ -541,7 +541,7 @@ knitr::include_graphics(path = "README_files/figure-gfm/conagefrac.png")
 ```
 
 
-### Matrix $M^{\text{com}}$: community contacts
+### Community contacts
 
 We construct $M^{\text{com}}(x)$ from its constituent parts, representing intra- and inter-household interactions (home), school interactions (sch) and hospitality interactions (CC):
 
@@ -588,7 +588,7 @@ where we sum over only the hospitality sectors.
 
 
 
-### Matrix $M^{\text{CW}}$: Community-to-worker contacts
+### Community-to-worker contacts
 
 \begin{equation}
 M_{j,h}^{\text{CW}}(x) = (x_{j}(1-q_j))^2M_{j,h}^{\text{CW}}(\textbf{1}),
