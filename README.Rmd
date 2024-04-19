@@ -470,7 +470,9 @@ The configuration $x$ and the proportion of workers working from home $q$ determ
 - Customer absence due to sector closure: impact on workers
 - Customer absence due to sector closure: impact on customers
 
-We construct contact matrix $M(x)$ as the sum of four matrices: $M^{\text{com}}(x)$ (community contacts), $M^{\text{WW}}(x)$ (worker-to-worker contacts), $M^{\text{CW}}(x)$ (consumer-to-worker contacts), and  $M^{\text{WC}}(x)$ (worker-to-consumer contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning with a "target matrix", which the four matrices should add up to, which is taken from [@Walker2020]. By sampling relevant values, we decompose the whole matrix into its component parts. To incorporate closures, each matrix is transformed independently, before they are all added together again.
+We approach this differently from [@Haw2020]. Instead of contact matrices from [@Prem2021], we use those from [@Walker2020]. Instead of work contacts from [@Beraud2015], we use those from [@Jarvis2023]. [@Haw2020] modelled closures using a combination of moving workers between sector compartments and a non-working compartment, and scaling of contacts. Here, we only use contacts to model closures, and do not move workers out of their compartments. An advantage of this is that workers within sectors retain their infection histories. 
+
+We construct contact matrix $M(x)$ as the sum of three matrices: $M^{\text{com}}(x)$ (community contacts), $M^{\text{CW}}(x)$ (community-to-worker contacts), and  $M^{\text{WC}}(x)$ (worker-to-community contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning with a "target matrix", which the three matrices should add up to, which is taken from [@Walker2020]. By sampling relevant values, we decompose the whole matrix into its component parts. To incorporate closures, each matrix is transformed independently, before they are all added together again.
 
 Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix from [@Walker2020]. These are 16-by-16 matrices, $\tilde{M}$, for five-year age bands $a$ up to age group 75+. We map the matrix to a four-by-four matrix $\hat{M}$ corresponding to the four age groups $g$ used in the DAEDALUS model, using population sizes $\tilde{N}_a$:
 
@@ -492,31 +494,43 @@ M_{j,h}(\textbf{1}) = \hat{M}_{g(j),g(h)}\frac{N_{h}}{\hat{N}_{g(h)}}
 
 for $j$ and $h$ including all groups (working and non-working). Each group $j$ contains people that belong to only one age group $g$. We refer to the age group of the people in group $j$ as $g(j)$. Then $\hat{N}_{g(h)}$ is the number of people in the age group of group $h$, so $`\hat{N}_{g(h)}=N_{h}`$ for age groups 0 to 4, 5 to 19 and 65+, and $`\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_S,m_S+3\}}N_{h}`$ for age group 20 to 64. 
 
-In setting up a country, we sample values for $\tilde{M}$ (from which we get $`M(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces, and workplace-related contacts. From these, we get $M^{\text{WW}}(\textbf{1})$ and $M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising. 
+In setting up a country, we sample values for $\tilde{M}$ (from which we get $`M(\textbf{1})`$). At the same time, we sample the proportion of contacts that come from workplaces, and workplace-related contacts. From these, we get $M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising. 
 
-Matrix $M^{\text{WW}}$ is diagonal and $`M^{\text{WW}}_{j,j}(\textbf{1})=0`$ for $j>m_S$ [@Haw2020]. Consumer-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from consumers per sector. Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
+Consumer-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts experienced by workers from consumers per sector. Note that $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix $M^{\text{WC}}(\textbf{1})$ is the complement of matrix $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by population, transposing, and dividing again by population.
 
-With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$, $M^{\text{WW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn $M^{\text{com}}(\textbf{1})$. 
+With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn $M^{\text{com}}(\textbf{1})$. 
 
-$M^{\text{com}}(\textbf{1})$ is decomposed into its constituent parts, representing intra- and inter-household interactions (home), school interactions (sch), hospitality interactions (CC) and public-transport interactions (tran):
+$M^{\text{com}}(\textbf{1})$ is decomposed into its constituent parts, representing intra- and inter-household interactions (home), school interactions (sch) and hospitality interactions (CC):
 
 ```math
-M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\text{CC}}(\textbf{1}) + M^{\text{tran}}(\textbf{1})
+M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\text{CC}}(\textbf{1}) 
 ```
 
-Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values representing the fractions of contacts that come from school. School contacts are estimated separately in two age groups (pre-school age: 0-–4; school age: 5-–19): $M^{\text{sch}}(\textbf{1})$ has entries of zero for groups not in school, and values for 0 to 4 year olds and 5 to 19 year olds. 
+Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values representing the fractions of contacts that come from school. School contacts are estimated separately in two age groups (pre-school age: 0-–4 (Figure \@ref(fig:school1frac)); school age: 5-–19 (Figure \@ref(fig:school2frac))): $M^{\text{sch}}(\textbf{1})$ has entries of zero for groups not in school, and values for 0 to 4 year olds and 5 to 19 year olds. 
 
-Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for $j=1,...,m_S$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_S$.
+<!-- Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for $j=1,...,m_S$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_S$. -->
 
-Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1}) - M^{\text{tran}}(\textbf{1})$, which leaves $M^{\text{home}}$.
+Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure \@ref(fig:hospfrac)), which leaves $M^{\text{home}}$.
+
+```{r school1frac,fig.cap='Fraction of contacts made at school for ages 0 to 4.', echo=F,message=F,warning=F,fig.width=3}
+knitr::include_graphics(path = "README_files/figure-gfm/school1frac.png")
+```
+
+```{r school2frac,fig.cap='Fraction of contacts made at school for ages 0 to 4.', echo=F,message=F,warning=F,fig.width=3}
+knitr::include_graphics(path = "README_files/figure-gfm/school2frac.png")
+```
+
+```{r hospfrac,fig.cap='Fraction of non-school and non-work contacts made in hospitality settings, by age group.', echo=F,message=F,warning=F,fig.width=1}
+knitr::include_graphics(path = "README_files/figure-gfm/hospfrac.png")
+```
 
 
 ### Matrix $M^{\text{com}}$: community contacts
 
-We construct $M^{\text{com}}(x)$ from its constituent parts, representing intra- and inter-household interactions (home), school interactions (sch), hospitality interactions (CC) and travel interactions (tran):
+We construct $M^{\text{com}}(x)$ from its constituent parts, representing intra- and inter-household interactions (home), school interactions (sch) and hospitality interactions (CC):
 
 ```math
-M^{\text{com}}(x)=M^{\text{home}} + M^{\text{sch}}(x) + M^{\text{CC}}(x) + M^{\text{tran}}(x).
+M^{\text{com}}(x)=M^{\text{home}} + M^{\text{sch}}(x) + M^{\text{CC}}(x).
 ```
 
 School contacts under $x$ are the peacetime values scaled by the extent of closure. $x_{\text{ed}}$ is the extent to which schools are open, so that the number of contacts per person scales superlinearly with school closure. 
@@ -528,16 +542,16 @@ M_{j,j}^{\text{sch}}(x)=x_{\text{ed}}^2M_{j,j}^{\text{sch}}(\textbf{1}).
 
 
 
-Matrix  $M^{\text{tran}}$ counts contacts between working people, representing travel. We assume that transport contacts only add to the infection risk if the sector is open and the workers travel to and from their workplace. Again, the value for configuration $x$ is the value for $\textbf{1}$ scaled accordingly:
+<!-- Matrix  $M^{\text{tran}}$ counts contacts between working people, representing travel. We assume that transport contacts only add to the infection risk if the sector is open and the workers travel to and from their workplace. Again, the value for configuration $x$ is the value for $\textbf{1}$ scaled accordingly: -->
 
-\begin{equation}
-M_{j,h}^{\text{tran}}(x) = x_{h}(1-q_j)(1-q_h)M_{j,h}^{\text{tran}}(\textbf{1}).
-(\#eq:travel)
-\end{equation}
+<!-- \begin{equation} -->
+<!-- M_{j,h}^{\text{tran}}(x) = x_{h}(1-q_j)(1-q_h)M_{j,h}^{\text{tran}}(\textbf{1}). -->
+<!-- (\#eq:travel) -->
+<!-- \end{equation} -->
 
-$q_j$ is the proportion of workers from sector $j$ working from home, and $(1-q_j)(1-q_h)$ scales contacts between workers superlinearly to approximate the reduced transmission between commuting workers: there should be fewer contacts per person on average, and there should be fewer people having these contacts. 
+<!-- $q_j$ is the proportion of workers from sector $j$ working from home, and $(1-q_j)(1-q_h)$ scales contacts between workers superlinearly to approximate the reduced transmission between commuting workers: there should be fewer contacts per person on average, and there should be fewer people having these contacts.  -->
 
-Also in this equation, $x_{h}$ scales the numbers of contacts linearly with respect to sector closure. At the same time, the number of people in the compartments will be reduced by their sector closure, $x_{j}$. This, in combination with the scaled contacts, leads to superlinear scaling.
+<!-- Also in this equation, $x_{h}$ scales the numbers of contacts linearly with respect to sector closure. At the same time, the number of people in the compartments will be reduced by their sector closure, $x_{j}$. This, in combination with the scaled contacts, leads to superlinear scaling. -->
 
 
 
@@ -558,36 +572,31 @@ where we sum over only the hospitality sectors.
 
 
 
-
-
-
-### Matrix $M^{\text{WW}}$: Worker-to-worker contacts
-
-\begin{equation}
-M_{j,j}^{\text{WW}}(x) = x_{j}(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}),
-(\#eq:worker)
-\end{equation}
-
-for the working groups, with the number of contacts adjusted according to at-home working ($q_j$) and sector openness ($x_{j}$). As before, there is superlinear scaling of contacts with respect to working from home. There is linear scaling with respect to sector closure: that is, there are fewer contacts per person, but we do not approximate there being fewer people having them. This is because the latter is accounted for in the movement of people out of the group upon its closure. 
-
-$$M_{j,j}^{\text{WW}}(x) = x_{j}^2(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1})$$
-
-```math
-M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0)
-```
-
-
 ### Matrix $M^{\text{CW}}$: Consumer-to-worker contacts
 
 \begin{equation}
-M_{j,h}^{\text{CW}}(x) = x_{j}(1-q_j)M_{j,h}^{\text{CW}}(\textbf{1}),
+M_{j,h}^{\text{CW}}(x) = (x_{j}(1-q_j))^2M_{j,h}^{\text{CW}}(\textbf{1}),
 (\#eq:ctow)
 \end{equation}
 
 for $h\in\{1,...,m_J\}$. 
 
-Here, there is linear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with respect to working from home, and linear scaling with respect to sector closure, which becomes superlinear scaling for sectors as individuals are moved out of the compartment, as with matrix $M^{\text{WW}}(x)$.
+Here, there is superlinear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with respect to working from home and with respect to sector closure, as both workers and members of the community are absent from the workplace as the sector moves online and becomes more closed.
 
+<!-- ### Matrix $M^{\text{WW}}$: Worker-to-worker contacts -->
+
+<!-- \begin{equation} -->
+<!-- M_{j,j}^{\text{WW}}(x) = x_{j}(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}), -->
+<!-- (\#eq:worker) -->
+<!-- \end{equation} -->
+
+<!-- for the working groups, with the number of contacts adjusted according to at-home working ($q_j$) and sector openness ($x_{j}$). As before, there is superlinear scaling of contacts with respect to working from home. There is linear scaling with respect to sector closure: that is, there are fewer contacts per person, but we do not approximate there being fewer people having them. This is because the latter is accounted for in the movement of people out of the group upon its closure.  -->
+
+<!-- $$M_{j,j}^{\text{WW}}(x) = x_{j}^2(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1})$$ -->
+
+<!-- ```math -->
+<!-- M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0) -->
+<!-- ``` -->
 
 
 

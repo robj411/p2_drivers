@@ -15,10 +15,8 @@
     -   [3.4 Contact rates](#34-contact-rates)
         -   [3.4.1 Matrix $M^{\text{com}}$: community
             contacts](#341-matrix-mtextcom-community-contacts)
-        -   [3.4.2 Matrix $M^{\text{WW}}$: Worker-to-worker
-            contacts](#342-matrix-mtextww-worker-to-worker-contacts)
-        -   [3.4.3 Matrix $M^{\text{CW}}$: Consumer-to-worker
-            contacts](#343-matrix-mtextcw-consumer-to-worker-contacts)
+        -   [3.4.2 Matrix $M^{\text{CW}}$: Consumer-to-worker
+            contacts](#342-matrix-mtextcw-consumer-to-worker-contacts)
     -   [3.5 Social distancing](#35-social-distancing)
     -   [3.6 Self isolating](#36-self-isolating)
 -   [4 Econ model](#4-econ-model)
@@ -448,16 +446,25 @@ groups for different reasons:
 -   Customer absence due to sector closure: impact on workers
 -   Customer absence due to sector closure: impact on customers
 
-We construct contact matrix $M(x)$ as the sum of four matrices:
-$M^{\text{com}}(x)$ (community contacts), $M^{\text{WW}}(x)$
-(worker-to-worker contacts), $M^{\text{CW}}(x)$ (consumer-to-worker
-contacts), and $M^{\text{WC}}(x)$ (worker-to-consumer contacts). We
-construct peacetime matrices ($x=\textbf{1}$) beginning with a “target
-matrix,” which the four matrices should add up to, which is taken from
-(Walker et al. 2020). By sampling relevant values, we decompose the
-whole matrix into its component parts. To incorporate closures, each
-matrix is transformed independently, before they are all added together
-again.
+We approach this differently from (Haw et al. 2022). Instead of contact
+matrices from (Prem et al. 2021), we use those from (Walker et al.
+2020). Instead of work contacts from (Béraud et al. 2015), we use those
+from (Jarvis et al. 2023). (Haw et al. 2022) modelled closures using a
+combination of moving workers between sector compartments and a
+non-working compartment, and scaling of contacts. Here, we only use
+contacts to model closures, and do not move workers out of their
+compartments. An advantage of this is that workers within sectors retain
+their infection histories.
+
+We construct contact matrix $M(x)$ as the sum of three matrices:
+$M^{\text{com}}(x)$ (community contacts), $M^{\text{CW}}(x)$
+(community-to-worker contacts), and $M^{\text{WC}}(x)$
+(worker-to-community contacts). We construct peacetime matrices
+($x=\textbf{1}$) beginning with a “target matrix,” which the three
+matrices should add up to, which is taken from (Walker et al. 2020). By
+sampling relevant values, we decompose the whole matrix into its
+component parts. To incorporate closures, each matrix is transformed
+independently, before they are all added together again.
 
 Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix
 from (Walker et al. 2020). These are 16-by-16 matrices, $\tilde{M}$, for
@@ -497,11 +504,9 @@ to 64.
 In setting up a country, we sample values for $\tilde{M}$ (from which we
 get $`M(\textbf{1})`$). At the same time, we sample the proportion of
 contacts that come from workplaces, and workplace-related contacts. From
-these, we get $M^{\text{WW}}(\textbf{1})$ and
-$M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising.
+these, we get $M^{\text{CW}}(\textbf{1})$, constructing the matrices and
+normalising.
 
-Matrix $M^{\text{WW}}$ is diagonal and
-$`M^{\text{WW}}_{j,j}(\textbf{1})=0`$ for $j>m_S$ (Haw et al. 2022).
 Consumer-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts
 experienced by workers from consumers per sector. Note that
 $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix
@@ -509,43 +514,76 @@ $M^{\text{WC}}(\textbf{1})$ is the complement of matrix
 $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by
 population, transposing, and dividing again by population.
 
-With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$,
-$M^{\text{WW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})$, we learn
-$M^{\text{com}}(\textbf{1})$.
+With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$ and
+$M^{\text{WC}}(\textbf{1})$, we learn $M^{\text{com}}(\textbf{1})$.
 
 $M^{\text{com}}(\textbf{1})$ is decomposed into its constituent parts,
 representing intra- and inter-household interactions (home), school
-interactions (sch), hospitality interactions (CC) and public-transport
-interactions (tran):
+interactions (sch) and hospitality interactions (CC):
 
 ``` math
-M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\text{CC}}(\textbf{1}) + M^{\text{tran}}(\textbf{1})
+M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\text{CC}}(\textbf{1}) 
 ```
 
 Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values
 representing the fractions of contacts that come from school. School
-contacts are estimated separately in two age groups (pre-school age:
-0—4; school age: 5—19): $M^{\text{sch}}(\textbf{1})$ has entries of zero
-for groups not in school, and values for 0 to 4 year olds and 5 to 19
-year olds.
+contacts are estimated separately in two age groups (pre-school age: 0—4
+(Figure <a href="#fig:school1frac">3.3</a>); school age: 5—19 (Figure
+<a href="#fig:school2frac">3.4</a>)): $M^{\text{sch}}(\textbf{1})$ has
+entries of zero for groups not in school, and values for 0 to 4 year
+olds and 5 to 19 year olds.
 
-Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of
-total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for
-$j=1,...,m_S$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_S$.
+<!-- Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for $j=1,...,m_S$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_S$. -->
 
 Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of
-$M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1}) - M^{\text{tran}}(\textbf{1})$,
-which leaves $M^{\text{home}}$.
+$M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure
+<a href="#fig:hospfrac">3.5</a>), which leaves $M^{\text{home}}$.
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/school1frac.png" alt="Fraction of contacts made at school for ages 0 to 4." width="1800" />
+
+<p class="caption">
+
+Figure 3.3: Fraction of contacts made at school for ages 0 to 4.
+
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/school2frac.png" alt="Fraction of contacts made at school for ages 0 to 4." width="1800" />
+
+<p class="caption">
+
+Figure 3.4: Fraction of contacts made at school for ages 0 to 4.
+
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/hospfrac.png" alt="Fraction of non-school and non-work contacts made in hospitality settings, by age group." width="1800" />
+
+<p class="caption">
+
+Figure 3.5: Fraction of non-school and non-work contacts made in
+hospitality settings, by age group.
+
+</p>
+
+</div>
 
 ### 3.4.1 Matrix $M^{\text{com}}$: community contacts
 
 We construct $M^{\text{com}}(x)$ from its constituent parts,
 representing intra- and inter-household interactions (home), school
-interactions (sch), hospitality interactions (CC) and travel
-interactions (tran):
+interactions (sch) and hospitality interactions (CC):
 
 ``` math
-M^{\text{com}}(x)=M^{\text{home}} + M^{\text{sch}}(x) + M^{\text{CC}}(x) + M^{\text{tran}}(x).
+M^{\text{com}}(x)=M^{\text{home}} + M^{\text{sch}}(x) + M^{\text{CC}}(x).
 ```
 
 School contacts under $x$ are the peacetime values scaled by the extent
@@ -558,35 +596,20 @@ M_{j,j}^{\text{sch}}(x)=x_{\text{ed}}^2M_{j,j}^{\text{sch}}(\textbf{1}).
 \qquad(3.2)
 \end{equation}$$
 
-Matrix $M^{\text{tran}}$ counts contacts between working people,
-representing travel. We assume that transport contacts only add to the
-infection risk if the sector is open and the workers travel to and from
-their workplace. Again, the value for configuration $x$ is the value for
-$\textbf{1}$ scaled accordingly:
-
-$$\begin{equation}
-M_{j,h}^{\text{tran}}(x) = x_{h}(1-q_j)(1-q_h)M_{j,h}^{\text{tran}}(\textbf{1}).
-\qquad(3.3)
-\end{equation}$$
-
-$q_j$ is the proportion of workers from sector $j$ working from home,
-and $(1-q_j)(1-q_h)$ scales contacts between workers superlinearly to
-approximate the reduced transmission between commuting workers: there
-should be fewer contacts per person on average, and there should be
-fewer people having these contacts.
-
-Also in this equation, $x_{h}$ scales the numbers of contacts linearly
-with respect to sector closure. At the same time, the number of people
-in the compartments will be reduced by their sector closure, $x_{j}$.
-This, in combination with the scaled contacts, leads to superlinear
-scaling.
+<!-- Matrix  $M^{\text{tran}}$ counts contacts between working people, representing travel. We assume that transport contacts only add to the infection risk if the sector is open and the workers travel to and from their workplace. Again, the value for configuration $x$ is the value for $\textbf{1}$ scaled accordingly: -->
+<!-- \begin{equation} -->
+<!-- M_{j,h}^{\text{tran}}(x) = x_{h}(1-q_j)(1-q_h)M_{j,h}^{\text{tran}}(\textbf{1}). -->
+<!-- (\#eq:travel) -->
+<!-- \end{equation} -->
+<!-- $q_j$ is the proportion of workers from sector $j$ working from home, and $(1-q_j)(1-q_h)$ scales contacts between workers superlinearly to approximate the reduced transmission between commuting workers: there should be fewer contacts per person on average, and there should be fewer people having these contacts.  -->
+<!-- Also in this equation, $x_{h}$ scales the numbers of contacts linearly with respect to sector closure. At the same time, the number of people in the compartments will be reduced by their sector closure, $x_{j}$. This, in combination with the scaled contacts, leads to superlinear scaling. -->
 
 Matrix $M^{\text{CC}}(x)$ gives the contacts made in the hospitality
 sector:
 
 $$\begin{equation}
 M^{\text{CC}}(x) = (p^{27})^2M^{\text{CC}}(\textbf{1})
-\qquad(3.4)
+\qquad(3.3)
 \end{equation}$$
 
 The value $p^{27}$ is the workforce-weighted average extent to which the
@@ -599,50 +622,40 @@ p^{27} = \frac{\sum_jx_{j}N_j}{\sum_jN_j}
 
 where we sum over only the hospitality sectors.
 
-### 3.4.2 Matrix $M^{\text{WW}}$: Worker-to-worker contacts
+### 3.4.2 Matrix $M^{\text{CW}}$: Consumer-to-worker contacts
 
 $$\begin{equation}
-M_{j,j}^{\text{WW}}(x) = x_{j}(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}),
-\qquad(3.5)
-\end{equation}$$
-
-for the working groups, with the number of contacts adjusted according
-to at-home working ($q_j$) and sector openness ($x_{j}$). As before,
-there is superlinear scaling of contacts with respect to working from
-home. There is linear scaling with respect to sector closure: that is,
-there are fewer contacts per person, but we do not approximate there
-being fewer people having them. This is because the latter is accounted
-for in the movement of people out of the group upon its closure.
-
-$$M_{j,j}^{\text{WW}}(x) = x_{j}^2(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1})$$
-
-``` math
-M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0)
-```
-
-### 3.4.3 Matrix $M^{\text{CW}}$: Consumer-to-worker contacts
-
-$$\begin{equation}
-M_{j,h}^{\text{CW}}(x) = x_{j}(1-q_j)M_{j,h}^{\text{CW}}(\textbf{1}),
-\qquad(3.6)
+M_{j,h}^{\text{CW}}(x) = (x_{j}(1-q_j))^2M_{j,h}^{\text{CW}}(\textbf{1}),
+\qquad(3.4)
 \end{equation}$$
 
 for $h\in\{1,...,m_J\}$.
 
-Here, there is linear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with
-respect to working from home, and linear scaling with respect to sector
-closure, which becomes superlinear scaling for sectors as individuals
-are moved out of the compartment, as with matrix $M^{\text{WW}}(x)$.
+Here, there is superlinear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$
+with respect to working from home and with respect to sector closure, as
+both workers and members of the community are absent from the workplace
+as the sector moves online and becomes more closed.
+
+<!-- ### Matrix $M^{\text{WW}}$: Worker-to-worker contacts -->
+<!-- \begin{equation} -->
+<!-- M_{j,j}^{\text{WW}}(x) = x_{j}(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}), -->
+<!-- (\#eq:worker) -->
+<!-- \end{equation} -->
+<!-- for the working groups, with the number of contacts adjusted according to at-home working ($q_j$) and sector openness ($x_{j}$). As before, there is superlinear scaling of contacts with respect to working from home. There is linear scaling with respect to sector closure: that is, there are fewer contacts per person, but we do not approximate there being fewer people having them. This is because the latter is accounted for in the movement of people out of the group upon its closure.  -->
+<!-- $$M_{j,j}^{\text{WW}}(x) = x_{j}^2(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1})$$ -->
+<!-- ```math -->
+<!-- M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0) -->
+<!-- ``` -->
 
 ## 3.5 Social distancing
 
 We parametrise the effects of ‘social distancing’ in the model using
-Google’s mobility data (Figure <a href="#fig:smoothmobility">3.3</a>).
+Google’s mobility data (Figure <a href="#fig:smoothmobility">3.6</a>).
 These changes in mobility were consequences of both government mandates
 and individual’s choices. As we cannot separate the two, we consider a
 range of possibilities, based on the range of mobility changes observed
 for a given level of stringency (Figure
-<a href="#fig:mobilitydrop">3.4</a>). In our model, the mandated
+<a href="#fig:mobilitydrop">3.7</a>). In our model, the mandated
 economic configuration leads to a change in contacts. We associate the
 reduction in contacts, which translates as a relative reduction in
 transmission, with the reduction in mobility.
@@ -653,7 +666,7 @@ transmission, with the reduction in mobility.
 
 <p class="caption">
 
-Figure 3.3: Mobility trajectories in 2020 for all countries, with points
+Figure 3.6: Mobility trajectories in 2020 for all countries, with points
 showing the point at which the largest drop was observed. Trajectories
 are averaged over “Retail and recreation,” “Transit stations” and
 “Workplaces” and smoothed with a spline of 80 knots.
@@ -668,7 +681,7 @@ are averaged over “Retail and recreation,” “Transit stations” and
 
 <p class="caption">
 
-Figure 3.4: The largest drop in mobility plotted against the stringency
+Figure 3.7: The largest drop in mobility plotted against the stringency
 on that date.
 
 </p>
@@ -707,7 +720,7 @@ defining $$f(d,e) = (f_1(d,e))^{p^{11}}(f_2(d,e))^{(1-p^{11})}.$$
 
 <p class="caption">
 
-Figure 3.5: Fit of model to data.
+Figure 3.8: Fit of model to data.
 
 </p>
 
@@ -719,7 +732,7 @@ Figure 3.5: Fit of model to data.
 
 <p class="caption">
 
-Figure 3.6: Posterior distribution for parameters $p^9$ and $p^8$.
+Figure 3.9: Posterior distribution for parameters $p^9$ and $p^8$.
 
 </p>
 
@@ -731,7 +744,7 @@ Figure 3.6: Posterior distribution for parameters $p^9$ and $p^8$.
 
 <p class="caption">
 
-Figure 3.7: Sampled curves for four levels of mitigation. Data shown as
+Figure 3.10: Sampled curves for four levels of mitigation. Data shown as
 points.
 
 </p>
@@ -3044,168 +3057,6 @@ Beta
 <tr>
 <td style="text-align:left;">
 
-Nursery contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-LLMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-1.35
-
-</td>
-<td style="text-align:right;">
-
-1.56
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Nursery contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-UMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-1.51
-
-</td>
-<td style="text-align:right;">
-
-1.21
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Nursery contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-HIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-4.31
-
-</td>
-<td style="text-align:right;">
-
-2.82
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-School contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-LLMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-3.87
-
-</td>
-<td style="text-align:right;">
-
-2.22
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-School contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-UMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-8.23
-
-</td>
-<td style="text-align:right;">
-
-5.77
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-School contacts fraction
-
-</td>
-<td style="text-align:left;">
-
-HIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-7.63
-
-</td>
-<td style="text-align:right;">
-
-3.75
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
 tourism P1+P2
 
 </td>
@@ -3338,6 +3189,303 @@ Gamma
 
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+
+school1 fraction
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+2.14
+
+</td>
+<td style="text-align:right;">
+
+3.38
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+school2 fraction
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+13.23
+
+</td>
+<td style="text-align:right;">
+
+10.85
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+work fraction
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+11.11
+
+</td>
+<td style="text-align:right;">
+
+13.82
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+hospitality1 fraction
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+21.08
+
+</td>
+<td style="text-align:right;">
+
+381.22
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+hospitality2 fraction
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+3.71
+
+</td>
+<td style="text-align:right;">
+
+88.67
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+hospitality3 fraction
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+19.44
+
+</td>
+<td style="text-align:right;">
+
+149.44
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+hospitality4 fraction
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+7.69
+
+</td>
+<td style="text-align:right;">
+
+62.33
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+hospitality age1
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+NA
+
+</td>
+<td style="text-align:right;">
+
+0.63
+
+</td>
+<td style="text-align:right;">
+
+0.09
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+hospitality age2
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+NA
+
+</td>
+<td style="text-align:right;">
+
+0.57
+
+</td>
+<td style="text-align:right;">
+
+0.06
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+hospitality age3
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+NA
+
+</td>
+<td style="text-align:right;">
+
+0.85
+
+</td>
+<td style="text-align:right;">
+
+0.08
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+hospitality age4
+
+</td>
+<td style="text-align:left;">
+
+all
+
+</td>
+<td style="text-align:left;">
+
+NA
+
+</td>
+<td style="text-align:right;">
+
+0.56
+
+</td>
+<td style="text-align:right;">
+
+0.41
+
+</td>
+</tr>
 </tbody>
 </table>
 
@@ -3414,7 +3562,7 @@ the letter will be enclosed in parentheses for clarity.
 |:-----------------:|:-----------------------------------------------:|:-------------:|:-----------------------------:|
 |        $A$        |                                                 |               |                               |
 |        $B$        |                                                 |               |                               |
-|        $C$        |                   consumption                   |               |                               |
+|        $C$        |                   consumption                   |               |     community (contacts)      |
 |        $D$        |                COMPARTMENT: Died                |               |    related to death state     |
 |        $E$        |              COMPARTMENT: Exposed               |               |   related to exposed state    |
 |        $F$        |                                                 |               |                               |
@@ -3461,7 +3609,7 @@ the letter will be enclosed in parentheses for clarity.
 |     $T^{E:I}$     |                  latent period                  |               |                               |
 |        $U$        |                                                 |               |                               |
 |        $V$        |                                                 | MAX: vaccines |                               |
-|        $W$        |                                                 |               |                               |
+|        $W$        |                                                 |               |       worker (contacts)       |
 |        $X$        |                                                 |               |                               |
 |        $Y$        |                       GDP                       |  MAX: years   |                               |
 |       $Y_0$       |                     max GDP                     |               |                               |
@@ -3615,6 +3763,18 @@ Behaviour* 7 (March). <https://doi.org/10.1038/s41562-022-01506-4>.
 
 </div>
 
+<div id="ref-Beraud2015" class="csl-entry">
+
+Béraud, Guillaume, Sabine Kazmercziak, Philippe Beutels, Daniel
+Levy-Bruhl, Xavier Lenne, Nathalie Mielcarek, Yazdan Yazdanpanah, Pierre
+Yves Boëlle, Niel Hens, and Benoit Dervaux. 2015. “<span
+class="nocase">The French connection: The first large population-based
+contact survey in France relevant for the spread of infectious
+diseases</span>.” *PLoS ONE* 10 (7): 1–22.
+<https://doi.org/10.1371/journal.pone.0133203>.
+
+</div>
+
 <div id="ref-Cutler2020" class="csl-entry">
 
 Cutler, David M., and Lawrence H. Summers. 2020. “<span
@@ -3652,6 +3812,16 @@ Science* 2: 223–33. <https://doi.org/10.25561/83928>.
 
 </div>
 
+<div id="ref-Jarvis2023" class="csl-entry">
+
+Jarvis, Christopher I, Pietro Coletti, Jantien A Backer, James D Munday,
+Christel Faes, Philippe Beutels, Christian L. Althaus, et al. 2023.
+“<span class="nocase">Social contact patterns following the COVID-19
+pandemic: a snapshot of post-pandemic behaviour from the CoMix
+study</span>.” *MedRxiv*.
+
+</div>
+
 <div id="ref-Moscoviz2022" class="csl-entry">
 
 Moscoviz, Laura, and David K Evans. 2022. “<span class="nocase">Learning
@@ -3666,6 +3836,17 @@ Center for Global Development.
 Patrinos, Harry Anthony. 2023. “<span class="nocase">The longer students
 were out of school, the less they learned</span>.” *Journal of School
 Choice* 17 (2): 161–75. <https://doi.org/10.1080/15582159.2023.2210941>.
+
+</div>
+
+<div id="ref-Prem2021" class="csl-entry">
+
+Prem, Kiesha, Kevin van Zandvoort, Petra Klepac, Rosalind M. Eggo,
+Nicholas G. Davies, Alex R. Cook, and Mark Jit. 2021. “<span
+class="nocase">Projecting contact matrices in 177 geographical regions:
+An update and comparison with empirical data for the COVID-19
+era</span>.” *PLoS Computational Biology* 17 (7).
+<https://doi.org/10.1371/journal.pcbi.1009098>.
 
 </div>
 
