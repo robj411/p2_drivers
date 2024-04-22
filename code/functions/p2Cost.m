@@ -93,13 +93,14 @@ end
 sym_no_hosp       = sum(sym_no_hosp_total,3).* self_isolation_compliance .* days_per_infectious_day_sym'; 
 sym_to_hosp       = sum(sym_to_hosp_total,3).* self_isolation_compliance + hospmat(:,notEd) + deathmat(:,notEd) ; 
 % deaths       = deathmat(:,Stu) ; 
-isosym          = sym_no_hosp + sym_to_hosp;% + deaths;%numbers of students
+isosym          = sym_no_hosp + sym_to_hosp;% + deaths;
 
 % Labour demand
 hw            = homeworkers(:,notEd);
 x             = workers(:,notEd);
 
-worker_presence        = x - ((1-x).*isosym + (1-x.*(1-hw)).*isoasym)./worker_numbers';
+workers_absent = isosym + (1-hw).*isoasym;
+worker_presence        = x.*(1 - workers_absent./worker_numbers');
 worker_presence_int     = trapz(t,worker_presence);
 
 GDP_in = sum(worker_presence_int .* data.obj(notEd)');
