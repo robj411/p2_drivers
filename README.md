@@ -74,11 +74,11 @@
 
 Table 1.1: State transition rules for reactive closure strategies
 
-| From/to            | No closures                                          | Light closures                                                         | Heavy closures                                            |
-|:-------------------|:-----------------------------------------------------|:-----------------------------------------------------------------------|:----------------------------------------------------------|
-| **No closures**    |                                                      |                                                                        | t = response time OR Hospital occupancy &gt; 95% capacity |
-| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                        | $R_t > 1.2$                                               |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M_{\text{light closure}}) < 0.95$ AND t &gt; 7 + last change time |                                                           |
+| From/to            | No closures                                          | Light closures                                                            | Heavy closures                                            |
+|:-------------------|:-----------------------------------------------------|:--------------------------------------------------------------------------|:----------------------------------------------------------|
+| **No closures**    |                                                      |                                                                           | t = response time OR Hospital occupancy &gt; 95% capacity |
+| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                           | $R_t > 1.2$                                               |
+| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t &gt; 7 + last change time |                                                           |
 
 Table 1.2: State transition rules for the elimination strategy
 

@@ -124,7 +124,7 @@ Table: (\#tab:rulesreactive) State transition rules for reactive closure strateg
 |:----- |:----- |:----- |:----- |
 | **No closures** |  |  | t = response time OR Hospital occupancy > 95% capacity |
 | **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  |  | $R_t > 1.2$ |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  | $R_t(M_{\text{light closure}}) < 0.95$ AND t > 7 + last change time |  | 
+| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t > 7 + last change time |  | 
 
 Table: (\#tab:ruleselimination) State transition rules for the elimination strategy
 
