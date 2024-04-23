@@ -19,9 +19,11 @@ subs0   = 1:4;
 lihr = length(dis.ihr);
 Npop     = data.Npop';
 Npop     = [Npop(1:(lihr-1)),sum(Npop(lihr:end))];%last age range for disease is 80+
+ageindex = data.ageindex;
+ageindex{4} = min(ageindex{4}):lihr;
 
-ranges = arrayfun(@(x) length(x{1}), data.ageindex);
-Npop4rep  = repelem(data.Npop4',ranges);
+ranges = arrayfun(@(x) length(x{1}), ageindex);
+Npop4rep  = repelem(data.Npop4,ranges);
 nnprop = Npop./Npop4rep;
 subs   = repelem(subs0,ranges);
 
@@ -32,7 +34,7 @@ dis.hfr = probDgivenH;
 probHgivenSym    = accumarray(subs',probHgivenSym.*nnprop);
 dis.ph  = [repmat(probHgivenSym(adInd),nSectors,1);probHgivenSym];
 nnh     = Npop.*dis.ihr;
-nnhtot  = arrayfun(@(x) sum(nnh(x{1})), data.ageindex); 
+nnhtot  = arrayfun(@(x) sum(nnh(x{1})), ageindex); 
 nnhtot  = repelem(nnhtot,ranges);
 nnhprop = nnh./nnhtot;
 probDgivenH    = accumarray(subs',probDgivenH.*nnhprop);
