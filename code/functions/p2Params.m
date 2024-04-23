@@ -58,7 +58,7 @@ p2.Hmax  = max(4*p2.hosp_release_trigger,Hmax);
 % p2.SHmax = 2*p2.Hmax;
 
 % stopping criteria
-p2.hosp_final_threshold = 100;
+p2.hosp_final_threshold = 1000;
 p2.final_doubling_time_threshold = 30;
 
 %% Vaccine Uptake
