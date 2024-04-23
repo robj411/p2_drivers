@@ -34,29 +34,13 @@ for i = 1:size(cpd,1)
     eval([varname, expression]);
 end
 
-% quantiles for income-level specific values
-% internet_coverage_quantile = unifrnd(0,1);
-% labsh_quantile = unifrnd(0,1);
-% bmi_quantile = unifrnd(0,1);
-% pt_quantile = unifrnd(0,1);
-% pupil_teacher_ratio_quantile = unifrnd(0,1);
-% Hmax_quantile = unifrnd(0,1);
-% remaining_international_tourism_quantile = unifrnd(0,1);
-% hospitality1_frac_quantile = unifrnd(0,1);
-% hospitality2_frac_quantile = unifrnd(0,1);
-% hospitality3_frac_quantile = unifrnd(0,1);
-% hospitality4_frac_quantile = unifrnd(0,1);
-% school1_frac_quantile = unifrnd(0,1);
-% school2_frac_quantile = unifrnd(0,1);
-% work_frac_quantile = unifrnd(0,1);
-
 %% store values
 international_tourism_quant = unifrnd(0,1);
 
 data.remote_quantile = internet_coverage_quantile;
 data.response_time_quantile = unifrnd(0,1);
 data.remote_teaching_effectiveness = unifrnd(0,1);
-data.self_isolation_compliance = unifrnd(0,1);
+data.self_isolation_compliance = betarnd(5,5);
 
 sdtab_ncol = size(social_dist_coefs,1);
 randrow = randi([1 sdtab_ncol],1,1);
