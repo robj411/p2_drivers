@@ -91,12 +91,7 @@ evppifit <- function (outputs, inputs, pars = NULL, method = NULL, nsim = NULL,
 
 
 
-multisource <- list('Work frac'='work_frac',
-                    'Nursery frac'='school1_frac',
-                    'School frac'='school2_frac',
-                    "Hospitality frac"=c("hospitality_frac1","hospitality_frac2","hospitality_frac3","hospitality_frac4"),
-                    
-                    'Importation time'="t_import",
+multisource <- list('Importation time'="t_import",
                     'Probability symptomatic'="ps",
                     'Asymptomatic infectiousness'="red",
                     "Frac presymptomatic"="frac_presymptomatic",
@@ -133,6 +128,10 @@ multisource <- list('Work frac'='work_frac',
                     "SD death coefficient"="sd_death_coef" ,                    
                     "SD mandate coefficient"="sd_mandate_coef",
                     
+                    'Work frac'='work_frac',
+                    'Nursery frac'='school1_frac',
+                    'School frac'='school2_frac',
+                    "Hospitality frac"=c("hospitality_frac1","hospitality_frac2","hospitality_frac3","hospitality_frac4"),
                     "Remote working"="remote_quantile",
                     "Remote teaching effectiveness"="remote_teaching_effectiveness",     
                     "Labour share"="labsh",
@@ -220,14 +219,28 @@ for(bl in 1:length(bpsv_levels)){
     }
   }
 }
- 
+dim(topresults[[1]][[1]])[1]/3
+plotdur <- list()
+for(i in 1:length(bpsv_levels)){
+  plotdur[[i]] <- copy(topresults[[i]][[1]])
+  plotdur[[i]]$bpsv <- c('No BPSV','BPSV')[i]
+}
+plotdur <- do.call(rbind,plotdur)
+mplotdur <- melt(plotdur[,.(bpsv,igroup,End_mitigation,End_simulation)],measure.vars=c('End_mitigation','End_simulation'))
+ggplot(mplotdur) + geom_density(aes(x=value,y=..density..),fill='darkorange',colour='midnightblue',alpha=.75,linewidth=2) +
+  facet_grid(~factor(variable,labels=c('Mitigation end','Simulation end')),scales='free') +
+  theme_bw(base_size=15) +
+  scale_x_continuous(limits=c(0,NA)) +
+  scale_y_continuous(expand=c(0,NA)) +
+  labs(x='Day',y='Density')
+View(subset(topresults[[1]][[1]],End_simulation>3660))
 
 params <- unlist(multisource)    
 params[!params%in%colnames(allresults)]
 
 ## negatives ###########################
 
-dispcols <- colnames(allresults)%in%c('Cost','GDP_loss','dYLLs','School','igroup',
+dispcols <- c('Cost','GDP_loss','dYLLs','School','igroup','gdp',
                                       'strategy','samplei','Exit_wave','scen_Exit_wave')
 nneg <- 0
 for(vaccination_level in vaccination_levels){
@@ -239,7 +252,7 @@ for(vaccination_level in vaccination_levels){
         subtab <- subset(difftab,igroup==income_level)
         subtab$sample <- 1:nrow(subtab)
         print(income_level)
-        print(subset(subtab,Cost< 0 & !(scen_Exit_wave>(1-1e-2)) )[,..dispcols])
+        print(subset(subtab,Cost/gdp< -.1 & !(scen_Exit_wave>(1-1e-2)) )[,..dispcols])
         nneg <- nneg + nrow(subset(subtab,Cost< 0 ))
       }
     }
