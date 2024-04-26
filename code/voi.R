@@ -192,6 +192,7 @@ for(bl in 1:length(bpsv_levels)){
     ##!! decision under uncertainty, or decision under certainty?
     # topresults[[bl]][[v]] <- subset(allresults,keeprow)
     topresults[[bl]][[v]] <- subset(allresults,mincost)
+    print(dim(topresults[[bl]][[v]]))
     setorder(topresults[[bl]][[v]],igroup,samplei)
     
     if(v>1|bl>1){
@@ -227,13 +228,14 @@ for(i in 1:length(bpsv_levels)){
 }
 plotdur <- do.call(rbind,plotdur)
 mplotdur <- melt(plotdur[,.(bpsv,igroup,End_mitigation,End_simulation)],measure.vars=c('End_mitigation','End_simulation'))
-ggplot(mplotdur) + geom_density(aes(x=value,y=..density..),fill='darkorange',colour='midnightblue',alpha=.75,linewidth=2) +
+ggplot(mplotdur) + geom_density(aes(x=value/365,y=..density..),fill='darkorange',colour='midnightblue',alpha=.75,linewidth=2) +
   facet_grid(~factor(variable,labels=c('Mitigation end','Simulation end')),scales='free') +
   theme_bw(base_size=15) +
   scale_x_continuous(limits=c(0,NA)) +
   scale_y_continuous(expand=c(0,NA)) +
   labs(x='Day',y='Density')
-View(subset(topresults[[1]][[1]],End_simulation>3660))
+View(subset(topresults[[1]][[1]],End_simulation>2000))
+unique(subset(topresults[[1]][[1]],End_simulation>2000)$samplei)
 
 params <- unlist(multisource)    
 params[!params%in%colnames(allresults)]
