@@ -528,6 +528,7 @@ ggplot(vioplot,aes(fill=scen, colour=scen, y=value, x=scen)) +
     geom_violin(position="dodge",scale='width') +
   facet_grid(igroup~variable, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
+    scale_colour_viridis(discrete=T, name="") +
     theme_bw(base_size = 10)  +
     xlab("") +
     ylab("Percent of GDP") +
@@ -538,7 +539,8 @@ ggplot(vioplot,aes(fill=scen, colour=scen, y=value, x=scen)) +
         legend.margin=margin(t=-20))-> p
   # ggsave(p,filename = 'figures/resultsdiff.pdf',width=12,height=10)
   p
-
+  
+  
 
 ```
 
@@ -825,7 +827,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   coord_flip()
 ```
 
-```{r voi,fig.cap='\\footnotesize Value of information for BAU, Origin country.',echo=F,warning=F,message=F,fig.height=10}
+```{r voi,fig.cap='\\footnotesize Value of information for BAU.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('code/results/voi_365_0.Rds')
 rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
@@ -1001,13 +1003,12 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
 To understand the relationship between a parameter and an outcome, e.g. whether the relationship is linear and increasing or decreasing, whether it is nonlinear, whether it is driven by extreme values, they must be plotted against each other. Likewise, a relationship between a parameter pair and an outcome can be plotted, e.g. Figure \@ref(fig:tourismgdp): for middle-income countries in a pre-Alpha SARS-CoV-2 pandemic with the "No Closures" strategy, GDP loss is greatest when both the food and accommodation services GVA as fraction of GDP and international tourism as a fraction of tourism are high.
 
 
-```{r interneted,fig.cap='Relationship between R$_0$ and total costs for Origin UMICs with the "School Closures" strategy.',echo=F,warning=F,message=F}
+```{r interneted,fig.cap='Relationship between R$_0$ and total costs for UMICs with the "School Closures" strategy.',echo=F,warning=F,message=F}
 
 ggplot(subset(allallresults,igroup=='UMIC'&strategy=='School Closures'&BPSV=='No'&vaccination_level==365),aes(x=R0,y=Cost)) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
   labs(x=bquote(R[0]),y='Total socio-economic cost, % of GDP')
-
 
 
 ```
