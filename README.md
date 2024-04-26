@@ -66,19 +66,19 @@
 -   When the doubling time is more than 30 days and there are fewer than
     1,000 people in hospital, the simulation ends.
 
-| From/to            | No closures                                                                                                               | Light closures                                                       | Heavy closures                                            |
-|:-------------------|:--------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------|
-| **No closures**    |                                                                                                                           |                                                                      | t = response time OR Hospital occupancy &gt; 95% capacity |
-| **Light closures** | (Growth rate &lt; 0.025 OR Hospital occupancy &lt; 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                      | Hospital occupancy &gt; 95% capacity                      |
-| **Heavy closures** |                                                                                                                           | Hospital occupancy &lt; 25% capacity AND t &gt; 7 + last change time |                                                           |
+| From/to            | No closures                                                                                                               | Light closures                                                       | Heavy closures                                                  |
+|:-------------------|:--------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------------|
+| **No closures**    |                                                                                                                           |                                                                      | t $\geq$ response time AND Hospital occupancy &gt; 95% capacity |
+| **Light closures** | (Growth rate &lt; 0.025 OR Hospital occupancy &lt; 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                      | Hospital occupancy &gt; 95% capacity                            |
+| **Heavy closures** |                                                                                                                           | Hospital occupancy &lt; 25% capacity AND t &gt; 7 + last change time |                                                                 |
 
 Table 1.1: State transition rules for reactive closure strategies
 
-| From/to            | No closures                                          | Light closures                                                            | Heavy closures                                            |
-|:-------------------|:-----------------------------------------------------|:--------------------------------------------------------------------------|:----------------------------------------------------------|
-| **No closures**    |                                                      |                                                                           | t = response time OR Hospital occupancy &gt; 95% capacity |
-| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                           | $R_t > 1.2$                                               |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t &gt; 7 + last change time |                                                           |
+| From/to            | No closures                                          | Light closures                                                            | Heavy closures                                                 |
+|:-------------------|:-----------------------------------------------------|:--------------------------------------------------------------------------|:---------------------------------------------------------------|
+| **No closures**    |                                                      |                                                                           | t $\geq$ response time OR Hospital occupancy &gt; 95% capacity |
+| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                           | $R_t > 1.2$                                                    |
+| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t &gt; 7 + last change time |                                                                |
 
 Table 1.2: State transition rules for the elimination strategy
 
