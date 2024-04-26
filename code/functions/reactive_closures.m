@@ -38,7 +38,10 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     Isv1   = y_mat(:,I_index(4));
     Isv2   = y_mat(:,I_index(6));
     
-    occ   = max(1,sum(H+Hv1+Hv2)); 
+    
+    hospital_occupancy = H + Hv1 + Hv2;
+    sumH = sum(hospital_occupancy);
+    occ   = max(1,sumH); 
     
     dis2 = update_hosp_dis_parameters(occ, p2, dis);
     
@@ -129,26 +132,28 @@ function [value,isterminal,direction] = reactive_closures(t,y,data,nStrata,dis,i
     
     %% Event 7: end
     % mitigation is over
-    ival = -abs((i-5));
-    % t is greater than the end of the vaccine rollout: tval = 0
-    tval = min(t-(max(p2.tpoints)+7),0) + min(t-(data.tvec(end-1)+7),0);
-    % hval: no patients
-    sumH = sum(H + Hv1 + Hv2);
-    hval = min(p2.hosp_final_threshold-sumH,0);
-    R3flag = tval + hval + ival;
-    if tval==0 && hval==0 && ival==0
+    ival = -abs(i-5);
+    % t is greater than the end of the vaccine rollout and a week since the last changepoint (which was end mitigation): tval = 0
+    tval = min(t-(max([p2.tpoints data.tvec(end-1)])+7),0);
+    % tlong: one month since end mitigation
+    tlong = min(t-(data.tvec(end-1)+365),0);
+    % patient numbers declining
+    hdotval = min(-occdot,0);
+    % hval: few patients
+    hval = min(p2.hosp_final_threshold - sumH,0);
+    % either: more than one year has passed
+    % or: H is low and coming down
+    R3flag = ival + (hval + hdotval + ival + tval);
+    if ival==0 && tlong==0 && R3flag < 0
 %         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-        Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
-        R3flag = min(Rthresh - R_est,0);
-%         disp([Rt3, R_est])
-%         disp([t/1000 Rt3 sumH])
-%         if t<600 
-%             disp([t/100 hval tval r Rt3 Rthresh ])
-%         end
+        doubling_time = log(2)*dis.generation_time/max(R_est-1,1e-5);
+        R3flag = min(doubling_time - p2.final_doubling_time_threshold,0);
+%         disp([t/1000 Rt3 betamod p3 p4 sumH ])
     end
+    
     value(7)      =  R3flag;
-    direction(7)  = 0;
+    direction(7)  = 1;
     isterminal(7) = 1;
     
 end

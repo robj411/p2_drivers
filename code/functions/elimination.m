@@ -34,6 +34,10 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     S02   = y_mat(:,S_index(6));
     S12   = y_mat(:,S_index(7));
     
+    Is   = y_mat(:,I_index(2));
+    Isv1   = y_mat(:,I_index(4));
+    Isv2   = y_mat(:,I_index(6));
+    
     hospital_occupancy = H + Hv1 + Hv2;
     sumH = sum(hospital_occupancy);
     occ   = max(1,sumH);     
@@ -46,6 +50,15 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     dis2 = update_vax_dis_parameters(dis, S, Sn, compindex, y_mat);
      % correct for hosp occupancy
     dis2 = update_hosp_dis_parameters(occ, p2, dis2);
+
+    g3    = dis2.g3;
+    mu    = dis2.mu;
+    
+    Hdot   =         dis2.h.*Is   -(g3+mu).*H;
+    Hv1dot = dis2.h_v1.*Isv1 -(g3+mu).*Hv1;
+    Hv2dot = dis2.h_v2.*Isv2 -(g3+mu).*Hv2;
+    
+    occdot = sum(Hdot+Hv1dot+Hv2dot);
     
     %% distancing
     ddk    = 10^6*sum(dis2.mu.*hospital_occupancy)/sumN;    
@@ -119,18 +132,25 @@ function [value,isterminal,direction] = elimination(t,y,data,nStrata,dis,i,p2)
     %% Event 7: end simulation
     % i is 5
     ival = -abs((i-5));
-    % t is greater than the end of the vaccine rollout: otherval = 0
-    tval = min(t-(max(p2.tpoints)+7),0) + min(t-(data.tvec(end-1)+7),0);
-    % hval: no patients
+    % t is greater than the end of the vaccine rollout and a week since the last changepoint (which was end mitigation): tval = 0
+    tval = min(t-(max([p2.tpoints data.tvec(end-1)])+7),0);
+    % tlong: one month since end mitigation
+    tlong = min(t-(data.tvec(end-1)+365),0);
+    % patient numbers declining
+    hdotval = min(-occdot,0);
+    % hval: few patients
     hval = min(p2.hosp_final_threshold - sumH,0);
-    R3flag = ival + tval + hval;
-    if ival==0 && tval==0 && hval==0
-        R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+    % either: more than one year has passed
+    % or: H is low and coming down
+    R3flag = ival + (hval + hdotval + ival + tval);
+    if ival==0 && tlong==0 && R3flag < 0
 %         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
-        Rthresh = exp(dis.generation_time*log(2) / p2.final_doubling_time_threshold); % R value for which doubling time is 30 days
-        R3flag = min(Rthresh - R_est,0);
+        R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+        doubling_time = log(2)*dis.generation_time/max(R_est-1,1e-5);
+        R3flag = min(doubling_time - p2.final_doubling_time_threshold,0);
 %         disp([t/1000 Rt3 betamod p3 p4 sumH ])
     end
+    
     value(7)      =  R3flag;
     direction(7)  = 1;
     isterminal(7) = 1;
