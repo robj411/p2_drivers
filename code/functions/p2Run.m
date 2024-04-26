@@ -227,11 +227,12 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     strategy = data.strategy;
 
     if strcmp(strategy,'Elimination')
-        options = odeset('Events',@(t,y)elimination(t,y,data,nStrata,dis,i,p2));
+        options = odeset('Events',@(t,y)mitigate(t,y,data,nStrata,dis,i,p2,'Elimination'));
     elseif strcmp(strategy,'Economic Closures') || strcmp(strategy,'School Closures')
-        options = odeset('Events',@(t,y)reactive_closures(t,y,data,nStrata,dis,i,p2));
+        options = odeset('Events',@(t,y)mitigate(t,y,data,nStrata,dis,i,p2,'Reactive closures'));
     elseif strcmp(strategy,'No Closures')
-        options = odeset('Events',@(t,y)unmitigated(t,y,data,nStrata,dis,i,p2));
+        options = odeset('Events',@(t,y)mitigate(t,y,data,nStrata,dis,i,p2,'Unmitigated'));
+
     end
 
     % solve ODEs
