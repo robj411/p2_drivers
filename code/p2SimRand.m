@@ -8,7 +8,7 @@ strategies = {'No Closures','School Closures','Economic Closures','Elimination'}
 vaccination_levels = [365, 100];
 bpsv_levels = [0, 1];
 
-nsamples  = 4;
+nsamples  = 2048;
 n_income = numel(income_levels);
 
 synthetic_countries = cell(nsamples,length(income_levels));
@@ -46,7 +46,8 @@ end
 for i = 1:nsamples
     dis = synthetic_countries_dis_basis{i};
     for il = 1:n_income
-        rng(i);
+        % shuffle countries
+        rng(il+n_income*(i-1));
         income_level = income_levels{il};
         % country data. random samples
         ldata1     = p2RandCountry(data,CD,income_level,country_parameter_distributions,social_dist_coefs);
