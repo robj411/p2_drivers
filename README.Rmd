@@ -638,7 +638,9 @@ knitr::include_graphics(path = "README_files/figure-gfm/mobilitydrop.png")
 A simple model to achieve these criteria is: $$f(d,e) = \frac{1}{1+p^9y+p^{10}e}$$
 with $p^9, p^{10}>0$.
 
-However, we might also want a model that can be parametrised with a distribution whose uncertainty covers the whole range of possible eventualities. The equivalent model with compounded effects would be $$f_1(d,e) = \frac{1}{1+p^9 d}\frac{1}{1+p^{10}e}.$$ The equivalent model with completely overlapping effects would be $$f_2(d,e) = \frac{1}{1+\max(p^9 d,p^{10}e)}.$$ Then we could include 'model uncertainty' via some parameter $\beta\sim\mathcal{U}(0,1)$, defining $$f(d,e) = (f_1(d,e))^{p^{11}}(f_2(d,e))^{(1-p^{11})}.$$
+<!-- However, we might also want a model that can be parametrised with a distribution whose uncertainty covers the whole range of possible eventualities. The equivalent model with compounded effects would be $$f_1(d,e) = \frac{1}{1+p^9 d}\frac{1}{1+p^{10}e}.$$ The equivalent model with completely overlapping effects would be $$f_2(d,e) = \frac{1}{1+\max(p^9 d,p^{10}e)}.$$ Then we could include 'model uncertainty' via some parameter $\beta\sim\mathcal{U}(0,1)$, defining $$f(d,e) = (f_1(d,e))^{p^{11}}(f_2(d,e))^{(1-p^{11})}.$$ -->
+
+The implications of this modelling choice are that two extremes are possible in terms of behaviour under (unseen) circumstances of a severe moment in an outbreak: 1, it is possible that social distancing comes "free" (i.e. that you get the same reduction in transmission with and without closures and, without closures, there is no economic cost); and 2, there is no voluntary social distancing, and behaviour is independent of epidemiological circumstances. This is an assumption commonly made to create the counterfactual in evaluating impacts of vaccine programmes.
 
 ```{r mobilityfitted,fig.cap='Fit of model to data.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/mobilityfitted.png")
