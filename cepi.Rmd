@@ -124,7 +124,7 @@ The objective of the proposed work is to use scenario modelling to help ascertai
 - Education: long-term economic gains of reduced length and severity of closures of educational institutions.
 
 
-We will simulate hypothetical pandemics caused by a SARS virus with a disease profile informed by past epidemics. We will use the integrated epi-econ model DAEDALUS developed in our group for estimating the benefit of pandemic preparedness (P2) [@Haw2020]. We will construct three representative hypothetical countries (low- and lower-middle income, upper-middle income, and high income) using real-world demographic, societal and economic data from 197 countries. Within those, we will construct two types of epidemic: those that emerge within the country (which we label "origin"), and those imported from outside (which we label "secondary"). The nature and stringency of non-pharmaceutical mitigation interventions (NPIs) implemented by policy makers once the emergency strikes is an important unknown that will determine benefits of vaccinations. We will therefore evaluate outcomes for four alternative mitigation strategies ("unmitigated," "adaptive economic closures," "school closures," and "elimination") for each vaccination scenario. The faster vaccines control infections, the earlier NPIs can be relaxed. The reduced need for stringent NPIs constitutes the benefit of the 100 day-mission. However, the types of benefit that countries enjoy depend on the chosen NPI. For example, for an unmitigated strategy, significant benefits accrue in terms of deaths averted; for adaptive economic closures, significant benefits accrue in terms of economic gains. It is unknown what NPIs countries will choose for future emergencies. We select the cost-minimising strategy for each country type and income level, assuming that the policy makers' aim is to maximize societal welfare.   
+We will simulate hypothetical pandemics caused by a SARS virus with a disease profile informed by past epidemics. We will use the integrated epi-econ model DAEDALUS developed in our group for estimating the benefit of pandemic preparedness (P2) [@Haw2020]. We will construct three representative hypothetical countries (low- and lower-middle income, upper-middle income, and high income) using real-world demographic, societal and economic data from 197 countries. Within those, we will construct two types of epidemic: those that emerge within the country (which we label "origin"), and those imported from outside (which we label "secondary"). The nature and stringency of non-pharmaceutical mitigation interventions (NPIs) implemented by policy makers once the emergency strikes is an important unknown that will determine benefits of vaccinations. We will therefore evaluate outcomes for four alternative mitigation strategies ("unmitigated," "adaptive economic closures," "school closures," and "elimination") for each vaccination scenario. The faster vaccines control infections, the earlier NPIs can be relaxed. The reduced need for stringent NPIs constitutes the benefit of the 100 day-mission. However, the types of benefit that countries enjoy depend on the chosen NPI. For example, for an unmitigated policy, significant benefits accrue in terms of deaths averted; for adaptive economic closures, significant benefits accrue in terms of economic gains. It is unknown what NPIs countries will choose for future emergencies. We select the cost-minimising policy for each country type and income level, assuming that the policy makers' aim is to maximize societal welfare.   
 
 We will estimate the value of the programme to each country group as the difference in total societal costs between scenarios with and without accelerated availability of both a SARS-X--specific vaccine and a BPSV. 
 <!-- Table \ref{tab:scenarios} gives an overview over 12 estimated scenarios.  -->
@@ -139,20 +139,20 @@ We will use an extensive modelling framework for COVID-19 that has been develope
 
 ## The integrated economic-epidemiological model
 
-The epidemiological component of the DAEDALUS model consists of seven disease states (susceptible, exposed, asymptomatic infectious, symptomatic infectious, hospitalised, recovered, and died), in triplicate to represent vaccination states. The population is stratified by age (into four age groups: infants, adolescents, working-age adults, and retirement-age adults). The working-age adults are further stratified by sector of work (into 46 groups: 45 sectors according to the OECD classification, and one non-working group). We will use epidemiological parameters expected of a future SARS pandemic, where we use past respiratory pandemics to inform our expectations. Epidemiologically relevant demographic parameters, such as mixing matrices, will be drawn from published estimates [@Beraud2015; @Walker2020]. As far as possible, parameters, assumptions and modelling approaches will be closely aligned with Imperial's SARS-X model that is being developed by Prof Azra Ghani and team for Stage 2 of the technical work for CEPI. 
+The epidemiological component of the DAEDALUS model consists of seven disease states (susceptible, exposed, asymptomatic infectious, symptomatic infectious, hospitalised, recovered, and died), in triplicate to represent vaccination states. The population is stratified by age (into four age groups: infants, adolescents, working-age adults, and retirement-age adults). The working-age adults are further stratified by sector of work (into 46 groups: 45 sectors according to the OECD classification, and one non-working group). We will use epidemiological parameters expected of a future SARS pandemic, where we use past respiratory pandemics to inform our expectations. Epidemiologically relevant demographic parameters, such as mixing matrices, will be drawn from published estimates [@Jarvis2023; @Walker2020]. As far as possible, parameters, assumptions and modelling approaches will be closely aligned with Imperial's SARS-X model that is being developed by Prof Azra Ghani and team for Stage 2 of the technical work for CEPI. 
 
-The economic model takes as input the pre-pandemic Gross Value Added (GVA) per sector of countries, which uses the OECD classification of 45 economic sectors. Both models further take as input the observed economic configurations over 2020. These are the observed combinations of sector closures, i.e. the extent to which each sector was open in each period (month or quarter). This depends on the chosen mitigation strategy. All economic configuration profiles will be based on sectoral GVA profiles observed in 2020 (OECD), where the monthly GVA of a sector relative to its value one year prior is interpreted as the degree to which it was open.
+The economic model takes as input the pre-pandemic Gross Value Added (GVA) per sector of countries, which uses the OECD classification of 45 economic sectors. Both models further take as input the observed economic configurations over 2020. These are the observed combinations of sector closures, i.e. the extent to which each sector was open in each period (month or quarter). This depends on the chosen mitigation policy. All economic configuration profiles will be based on sectoral GVA profiles observed in 2020 (OECD), where the monthly GVA of a sector relative to its value one year prior is interpreted as the degree to which it was open.
 
 A sector is open to a maximum amount of 100%, when its full monthly pre-pandemic GVA value is realised. If a sector is open to 50%, it contributes 50% of its maximum GVA for that period. Sector closures describe the extent of reduction of contacts (and disease transmission) among and between workers and consumers. In the epidemic model, contacts associated with a partially closed sector are scaled down. Observed economic configurations, i.e. sector closures, capture also changes in demand and supply due to infection avoidance of individuals and interruptions in supply chains; we do not attempt to disentangle these from mandated closures. 
 
 ## Mitigation strategies
 
-We will model four mitigation strategies that decision maker may adopt once the novel pathogen has been identified. These are "unmitigated," "adaptive economic closures," "school closures," and "elimination." The strategy defines government-mandated actions. In addition, we model behaviour changes in response to case numbers that impact on transmission.
+We will model four mitigation strategies that decision maker may adopt once the novel pathogen has been identified. These are "unmitigated," "adaptive economic closures," "school closures," and "elimination." The policy defines government-mandated actions. In addition, we model behaviour changes in response to case numbers that impact on transmission.
 - Unmitigated: no aversive actions are taken. 
 - Economic closures: sectors close to a pre-specified economic configuration when hospital occupancy approaches its capacity, and open again once infections have reduced sufficiently. 
 - School closures: schools remain closed at 10% and other economic sectors open and close reactively, as in Economic closures. 
 - Elimination: stringent economic closures are maintained until case numbers can be contained by a testing programme. 
-We will designate the strategy that minimises costs across health, GDP and education to be the mitigation choice for each country type and income level and vaccination scenario. 
+We will designate the policy that minimises costs across health, GDP and education to be the mitigation choice for each country type and income level and vaccination scenario. 
 
 
 ## Countries
@@ -183,13 +183,13 @@ The outcomes of the DAEDALUS model are:
  2. GDP: Short-term economic loss from economic closures and disruptions to demand and labour supply, globally, by country income groups, and by economic sectors;
  3. Education: long-term economic loss from closures of educational institutions, globally and by country income groups.
  
-Numbers of deaths are translated into years of life lost (YLL). This takes into account the life expectancy of each person who dies. YLLs are valued using the value of a statistical life, which we estimate as being 160 times GDP per capita [@Robinson2019].
+Numbers of deaths are translated into discounted years of life lost (dYLL). This takes into account the life expectancy of each person who dies. dYLLs are valued using the value of a statistical life, which we estimate as being 160 times GDP per capita [@Robinson2019].
 
 GDP loss is estimated as the total GDP - the sum of GVA across all sectors, scaled by how open they are across the year - divided by the value of GDP when all sectors are completely open all the time.
 
 Education loss takes into account the extent to which schools are closed, as well as the effectiveness of remote learning. Education loss is valued by taking into consideration life-long earning losses, following [@Psacharopoulos2021a]. 
 
-Taken together, these form the societal cost (SC) of the epidemic in the country, expressed as a percentage of GDP (for the year prior to the pandemic). For each scenario and each country type and income level, we will assume that the social planner chooses the mitigation strategy that minimises the expected SC -- call it the minimum expected SC, or MESC. The value of the 100-day vaccine in each country type and income level will be the MESC of the 100-day vaccine scenario minus the MESC of the baseline scenario. Similarly, the value of the BPSV in each country type and income level will be the MESC of the BPSV scenario minus the MESC of the 100-day vaccine scenario.
+Taken together, these form the societal cost (SC) of the epidemic in the country, expressed as a percentage of GDP (for the year prior to the pandemic). For each scenario and each country type and income level, we will assume that the social planner chooses the mitigation policy that minimises the expected SC -- call it the minimum expected SC, or MESC. The value of the 100-day vaccine in each country type and income level will be the MESC of the 100-day vaccine scenario minus the MESC of the baseline scenario. Similarly, the value of the BPSV in each country type and income level will be the MESC of the BPSV scenario minus the MESC of the 100-day vaccine scenario.
 
 
 
@@ -221,7 +221,7 @@ Table: Previously:
 | **Income level** | HIC  | High-income countries |
 |  | UMIC | Upper-middle--income countries |
 |  | LLMIC | Low- and lower-middle--income countries |
-| **Mitigation strategy** | No closures | Unmitigated pandemic |
+| **Mitigation policy** | No closures | Unmitigated pandemic |
 |  | School closures | Schools close reactively |
 |  | Economic closures | Sectors close reactively |
 |  | Elimination | Contain by testing |
@@ -240,7 +240,7 @@ Table: Proposed:
 | **Income level** | HIC  | High-income countries |
 |  | UMIC | Upper-middle--income countries |
 |  | LLMIC | Low- and lower-middle--income countries |
-| **Mitigation strategy** | No closures | Unmitigated pandemic |
+| **Mitigation policy** | No closures | Unmitigated pandemic |
 |  | School closures | Schools close reactively |
 |  | Economic closures | Sectors close reactively |
 |  | Elimination | Contain by testing |
@@ -264,13 +264,13 @@ We first present results on the outcomes or costs of pandemics for the analysed 
 
 ## Distributions over outcomes
 
-In this section we present the costs of pandemics, by country category, mitigation strategy, vaccination scenario, and for the three costs separately and summed up. For illustration, results for the BAU Origin countries are shown in Figure \@ref(fig:BAUviolinspill); the figures for the other scenarios are in the Appendix (Figures \@ref(fig:BAUviolinsecond) to  \@ref(fig:violin100second)). Because we are varying key characteristics across countries within a category (LLMIC, MIC, or HIC), there is a distribution over costs, which we present with violin plots (e.g. Figure \@ref(fig:BAUviolinspill)). They show the outcomes of 2,048 modelling runs of the same scenario where each run has a different set of randomly drawn parameters. The top row shows projections for total costs across three outcomes, while the 2nd, 3rd and 4th rows show the different types of costs (YLLS, education and GDP losses). Each shape represents a probability distribution: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value projected by any modelling run, after which point the density is 0. The base of the violin is given by the lowest value projected. Plots for all virus profiles are shown in Figures \@ref(fig:BAUviolinspill) to \@ref(fig:violin100second), and mean values and 95\% prediction intervals are given in Table \@ref(tab:tabres).
+In this section we present the costs of pandemics, by country category, mitigation policy, vaccination scenario, and for the three costs separately and summed up. For illustration, results for the BAU Origin countries are shown in Figure \@ref(fig:BAUviolinspill); the figures for the other scenarios are in the Appendix (Figures \@ref(fig:BAUviolinsecond) to  \@ref(fig:violin100second)). Because we are varying key characteristics across countries within a category (LLMIC, MIC, or HIC), there is a distribution over costs, which we present with violin plots (e.g. Figure \@ref(fig:BAUviolinspill)). They show the outcomes of 2,048 modelling runs of the same scenario where each run has a different set of randomly drawn parameters. The top row shows projections for total costs across three outcomes, while the 2nd, 3rd and 4th rows show the different types of costs (dYLLS, education and GDP losses). Each shape represents a probability distribution: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value projected by any modelling run, after which point the density is 0. The base of the violin is given by the lowest value projected. Plots for all virus profiles are shown in Figures \@ref(fig:BAUviolinspill) to \@ref(fig:violin100second), and mean values and 95\% prediction intervals are given in Table \@ref(tab:tabres).
 
 There is high variation in projected costs across modelling runs, for all country types. For some favourable combinations of the randomly drawn parameters (bottom of the violin), costs are just above zero. On the other hand, for a few unfavourable parameter combinations (top of the violin), costs approach 500\% of annual pre-pandemic GDP in Figure \@ref(fig:BAUviolinspill). This area represents extreme adverse outcomes. Our aim in Section \@ref(value-of-information) is to identify which parameters lead to these high-cost outcomes.
 
 <!-- Distributions over costs associated with the first two years of an outbreak of a new SARS-X virus are shown for three income levels and four mitigation strategies. Each shape represents the probability density made up of the sampled values for outcomes: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value sampled, after which point the density is 0. -->
 
-<!-- These distributions show that vulnerability to a pandemic depends on a country's income level together with its mitigation strategy. For example, the elimination strategy appears to have the lowest distribution for overall cost for HICs among all strategies, whereas it appears no lower for UMICs and perhaps higher for LLMICs. This will be because of the factors that vary systematically across countries of different income levels. Likewise, the heavier tails in the distributions for YLLs for HICs is likely due to the age distributions in HICs being heavier in older ages. These cross-country differences are one of the focuses of the development of the model. -->
+<!-- These distributions show that vulnerability to a pandemic depends on a country's income level together with its mitigation policy. For example, the elimination policy appears to have the lowest distribution for overall cost for HICs among all strategies, whereas it appears no lower for UMICs and perhaps higher for LLMICs. This will be because of the factors that vary systematically across countries of different income levels. Likewise, the heavier tails in the distributions for dYLLs for HICs is likely due to the age distributions in HICs being heavier in older ages. These cross-country differences are one of the focuses of the development of the model. -->
 
 ```{r resultsBAU,echo=F,warning=F,message=F}
 
@@ -285,7 +285,7 @@ for (i in 1:length(income_levels)){
     for (k in 1:length(strategies)){
         inp3 <- strategies[k];
         results <- read.csv(paste0('code/results/outputs_',inp3,'_',income_level,'_365_0.csv'),header=T);
-        results$strategy <- inp3
+        results$Policy <- inp3
         results$igroup <- income_level
         results$Deaths <- NULL
         results$gdp <- inputtab$gdp
@@ -300,9 +300,9 @@ for(i in (nvar-3):nvar){
   allresults[,i] = allresults[,i]/allresults$gdp*100;
   # allresults[,i] = log(allresults[,i]);
 }
-vioplot <- melt(allresults[,(nvar-3):ncol(allresults)],id.vars=c('strategy','igroup'))
+vioplot <- melt(allresults[,(nvar-3):ncol(allresults)],id.vars=c('Policy','igroup'))
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
-vioplot$strategy <- factor(vioplot$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
+vioplot$Policy <- factor(vioplot$Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
 vioplot$variable <- factor(vioplot$variable,
                            levels=c('Cost','dYLLs','School','GDP_loss'),
                            labels=c('Cost','dYLLs','Education','GDP'))
@@ -333,7 +333,7 @@ for(vl in 1:length(vaccination_levels)){
             
             results <- read.csv(paste0('code/results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
             results$Deaths <- NULL
-            results$strategy <- inp3
+            results$Policy <- inp3
             results$igroup <- income_level
             results$samplei <- 1:nrow(results)
             results <- cbind(results,inputtab)
@@ -350,14 +350,14 @@ for(vl in 1:length(vaccination_levels)){
       # allresults[,i] = log(allresults[,i]);
     }
     
-    vioplot <- melt(allresults[,c(outcomenames,'strategy','igroup')],id.vars=c('strategy','igroup'))
+    vioplot <- melt(allresults[,c(outcomenames,'Policy','igroup')],id.vars=c('Policy','igroup'))
     vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
-    vioplot$strategy <- factor(vioplot$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
+    vioplot$Policy <- factor(vioplot$Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
     vioplot$variable <- factor(vioplot$variable,
                                levels=c('Cost','dYLLs','School','GDP_loss'),
                                labels=c('Cost','dYLLs','Education','GDP'))
     
-    p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=strategy, y=value, x=strategy)) + 
+    p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=Policy, y=value, x=Policy)) + 
       geom_violin(position="dodge", scale='width') +
       facet_grid(variable~igroup, scales="free") + 
         scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
@@ -383,8 +383,8 @@ for(vl in 1:length(vaccination_levels)){
     meantab <- allresults[,.(deaths=mean(dYLLs),
                             education=mean(School),
                             gdp=mean(GDP_loss),
-                            nmin=sum(mincost)),by=.(strategy,igroup)]
-    meltmean <- reshape2::melt(meantab,id.vars=c('strategy','igroup','nmin'))
+                            nmin=sum(mincost)),by=.(Policy,igroup)]
+    meltmean <- reshape2::melt(meantab,id.vars=c('Policy','igroup','nmin'))
     meltmean$scen <- paste0(vaccination_level,', ',c('No BPSV','BPSV')[bpsv+1])
     meltmeantab <- rbind(meltmeantab,meltmean)
     
@@ -392,10 +392,10 @@ for(vl in 1:length(vaccination_levels)){
                             deaths=paste0(round(mean(dYLLs),1),' (',paste0(round(quantile(dYLLs,c(0.025,0.975)),1),collapse=', '),')'),
                             education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
                             gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
-                            ),by=.(strategy,igroup)]
-    colnames(tabres) <- c('Strategy','Income group','Total costs','YLLs','Education','GDP')
+                            ),by=.(Policy,igroup)]
+    colnames(tabres) <- c('Policy','Income group','Total costs','dYLLs','Education','GDP')
     tabres$`SARS-X vaccine` <- vaccination_level
-    tabres$BPSV <- c('No','Yes')[bpsv+1]
+    tabres$BPSV <- bpsv+1
     tabresall <- rbind(tabresall,tabres)
 
     # write.csv(tabres,paste0('results_',vaccination_level,'_',bpsv,'.csv'),row.names = F)
@@ -408,7 +408,8 @@ for(vl in 1:length(vaccination_levels)){
     # }
   }
 }
-tabresall <- cbind(tabresall[,c(7:8)],tabresall[,-c(7:8)])
+tabresall[,Scenario:=paste0(`SARS-X vaccine`,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(`SARS-X vaccine`,BPSV)]
+tabresall <- cbind(tabresall[,9],tabresall[,-c(7:9)])
 lg <- paste0('Results for all vaccination levels, scenarios and country types. Mean values and 95% prediction intervals. \\label{tab:tabres}')
 if (!knitr::is_html_output(excludes = "markdown")) { 
   cat(pander(tabresall,caption=lg))
@@ -447,12 +448,12 @@ meltmeantab$scen <- factor((meltmeantab$scen),
                                     levels=c('365, No BPSV','365, BPSV',
                                              '100, No BPSV','100, BPSV'))
 setDT(meltmeantab)
-# meltmeantab[,cost:=sum(value),by=.(scen,igroup,strategy)]
+# meltmeantab[,cost:=sum(value),by=.(scen,igroup,Policy)]
 # meltmeantab[,mincost:=cost==min(cost),by=.(scen,igroup)]
 meltmeantab[,mincost:=nmin==max(nmin),by=.(scen,igroup)]
 ggplot(meltmeantab) + 
-      geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
-                   y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP')),
+      geom_bar(aes(x=factor(Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
+                   y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','dYLLs','GDP')),
                    alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scen) + 
       theme_bw(base_size=9) +
@@ -464,8 +465,8 @@ ggplot(meltmeantab) +
 # subset(meltmeantab,igroup=='HIC'&scen=='100, BPSV')
 
 # ggplot(subset(meltmeantab,grepl('Secondary',igroupcountry))) + 
-#       geom_bar(aes(x=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
-#                    y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLLs','GDP')),
+#       geom_bar(aes(x=factor(Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
+#                    y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','dYLLs','GDP')),
 #                    alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
 #   facet_grid(factor(igroupcountry,labels=c('LLMIC','UMIC','HIC'))~factor(scen,levels=c('BAU','100 days','BPSV'))) + 
 #       theme_bw(base_size=15) +
@@ -484,9 +485,9 @@ ggplot(meltmeantab) +
 
 ## Value of vaccination scenarios
 
-Selecting the mitigation strategy that minimises the expected cost for each country type and income level and vaccination scenario, we estimate the value of the vaccines as the difference in costs. These are shown graphically in Figure \@ref(fig:diffviolin) and tabulated in Table \@ref(tab:tabresdiff). The expected value of the 100-day vaccine ranges from  in  countries to  in  countries. The expected value of the BPSV ranges from  in  countries to  in  countries. 
+Selecting the mitigation policy that minimises the expected cost for each country type and income level and vaccination scenario, we estimate the value of the vaccines as the difference in costs. These are shown graphically in Figure \@ref(fig:diffviolin) and tabulated in Table \@ref(tab:tabresdiff). The expected value of the 100-day vaccine ranges from  in  countries to  in  countries. The expected value of the BPSV ranges from  in  countries to  in  countries. 
 
-In some cases, the same mitigation strategy is chosen across scenarios, e.g. Economic Closures are chosen by the HIC for all scenarioss (see Figure \@ref(fig:expectedvaluesbar)). Where the choice is the same in the two vaccination scenarios compared, there are expected benefits across all costs. In other cases, the chosen mitigation strategy changes, e.g. an Origin UmIC chooses Economic Closures with the 100-day vaccine and Unmitigated with BAU. Here, there is a greater gain in expected deaths averted offset by expected losses in education and GDP.
+In some cases, the same mitigation policy is chosen across scenarios, e.g. Economic Closures are chosen by the HIC for all scenarioss (see Figure \@ref(fig:expectedvaluesbar)). Where the choice is the same in the two vaccination scenarios compared, there are expected benefits across all costs. In other cases, the chosen mitigation policy changes, e.g. an Origin UmIC chooses Economic Closures with the 100-day vaccine and Unmitigated with BAU. Here, there is a greater gain in expected deaths averted offset by expected losses in education and GDP.
 
 Finally, note that there are samples with a negative value. These come from unlikely large exit waves that arise when all NPIs are suspended following completion of the vaccine rollout.  
 
@@ -503,7 +504,7 @@ for(vl in 1:length(vaccination_levels)){
       for(i in (nvar-3):nvar){
         difftab[,i] = difftab[,i]/difftab$gdp*100;
       }
-      difftab$BPSV <- c('No','Yes')[bpsv+1]
+      difftab$BPSV <- bpsv+1
       difftab$Vaccine <- vaccination_level
       difftab$scen <- paste0(c('No BPSV','BPSV')[bpsv+1],', ',vaccination_level, ' days')
       # colnames(difftab)
@@ -522,7 +523,7 @@ vioplot <- melt(difflist[,colnames(difflist)%in%c('Cost','dYLLs','School','GDP_l
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
 vioplot$variable <- factor(vioplot$variable,
                            levels=c('Cost','dYLLs','School','GDP_loss'),
-                           labels=c('Total','YLLs','Education','GDP'))
+                           labels=c('Total','dYLLs','Education','GDP'))
 
 ggplot(vioplot,aes(fill=scen, colour=scen, y=value, x=scen)) + 
     geom_violin(position="dodge",scale='width') +
@@ -559,14 +560,18 @@ tabres <- setDT(difflist)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(rou
                         ),by=.(BPSV,Vaccine,igroup)]
 
 tabres[,igroup:=factor(igroup,levels=c('LLMIC','UMIC','HIC'))]
+tabres[,Scenario:=paste0(Vaccine,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(Vaccine,BPSV)]
 tabres[,Vaccine:=factor(Vaccine,levels=c(365,100))]
 setorder(tabres,BPSV,Vaccine,igroup)
-
-colnames(tabres) <- c('BPSV','Vaccine','Income group','Total value','YLLs','Education','GDP')
+colnames(tabres) <- c('BPSV','Vaccine','Income group','Total value','dYLLs','Education','GDP','Scenario')
 
 
 write.csv(tabres,'resultsdiff.csv',row.names = F)
-lg <- 'Value of vaccines as a percent of GDP: expected difference between BAU and 100 days, and between 100 days and BPSV. Mean values and 95% prediction intervals. \\label{tab:tabresdiff}'
+
+tabres <- tabres[,.(Scenario,`Income group`,`Total value`,dYLLs,Education,GDP)]
+# tabres[,Scenario:=paste0(Vaccine,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(BPSV,Vaccine)]
+
+lg <- 'Value of vaccines as a percent of GDP: differences between BAU and scenarios. Mean values and 95% prediction intervals. \\label{tab:tabresdiff}'
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(tabres,caption=lg)
 }else{
@@ -589,18 +594,18 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ## Other visualisations
 
-```{r choicestab,fig.cap='Frequency of mitigation strategy choices.',echo=F,warning=F,message=F,fig.height=4,fig.width=6}
+```{r choicestab,fig.cap='Frequency of mitigation policy choices.',echo=F,warning=F,message=F,fig.height=4,fig.width=6}
 
 choicestab <- readRDS(paste0('code/results/choicestab.Rds'))
 choicestab[,scen:=paste0(c('No BPSV','BPSV')[bpsv+1],', ',vaccination_level,' days')]
 ggplot(choicestab) +  
   geom_bar(aes(x=factor(scen,levels=c('No BPSV, 365 days','BPSV, 365 days','No BPSV, 100 days','BPSV, 100 days')),
                y=N/20.48,
-               fill=factor(strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))),stat='identity') + 
+               fill=factor(policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))),stat='identity') + 
   facet_wrap(~factor(igroup,levels=c('LLMIC','UMIC','HIC'))) + 
   theme_bw(base_size=15) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
-  labs(x='',y='Chosen strategy, % of samples',fill='') +
+  labs(x='',y='Chosen policy, % of samples',fill='') +
   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
         legend.position = 'right') 
 
@@ -609,7 +614,7 @@ ggplot(choicestab) +
 
 ```{r importtime,fig.cap='Hospital occupancy at time of response.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 
-ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
+ggplot(subset(allallresults,Policy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
   # geom_histogram(colour='white',fill='white') +
   geom_density(aes(colour=factor(igroup,levels=c('LLMIC','UMIC','HIC'))),linewidth=2, alpha=0.5) +
   theme_bw(base_size = 15) +
@@ -620,7 +625,7 @@ ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level==365&BPSV=
 
 
 
-```{r iseqec,fig.cap='Closures for HICs under the Economic Closures strategy.',echo=F,warning=F,message=F,fig.height=5,fig.width=7}
+```{r iseqec,fig.cap='Closures for HICs under the Economic Closures policy.',echo=F,warning=F,message=F,fig.height=5,fig.width=7}
 ## iseq ########################
 
 iseq <- setDT(read.csv('code/results/iseq_Economic Closures.csv'))
@@ -639,7 +644,7 @@ ggplot(iseq) +
   theme_bw(base_size = 15) + labs(colour='') + theme(legend.position = 'top')
 ```
 
-```{r iseqelim,fig.cap='Closures for HICs under the Elimination strategy. *Future development: find the most open configuration for "Closed" that will allow Rt to remain below 1.*',echo=F,warning=F,message=F,fig.height=5,fig.width=7}
+```{r iseqelim,fig.cap='Closures for HICs under the Elimination policy. *Future development: find the most open configuration for "Closed" that will allow Rt to remain below 1.*',echo=F,warning=F,message=F,fig.height=5,fig.width=7}
 ## iseq ########################
 
 iseq <- setDT(read.csv('code/results/iseq_Elimination.csv'))
@@ -661,7 +666,7 @@ ggplot(iseq) +
 
 ```{r responsetime,fig.cap='Secondary countries: importation time vs. response time. Where importation time is before response time, the epidemic unfolds as in the Origin country, but with an earlier response time. *Future development: there is not a qualitative difference between Origin and Secondary countries. We could therefore remove this label and vary the importation time from 0 to 20, to include the Origin feature. This would also allow for the possibility that a Secondary country with early importation detects, reports and responds earlier than the Origin country.*',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
-ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=t_import,y=Tres)) +
+ggplot(subset(allallresults,Policy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=t_import,y=Tres)) +
   # geom_histogram(colour='white',fill='white') +
   geom_point(aes(shape=t_import>Tres),size=3,show.legend=F,alpha=.5,colour='navyblue') +
   # facet_wrap(~factor(bpsv,levels=bpsv_levels),scales='free') +
@@ -675,16 +680,16 @@ ggplot(subset(allallresults,strategy=='No Closures'&vaccination_level==365&BPSV=
 
 ```
 
-```{r vsy,fig.cap='The relationship between strategy choice and value of a school year.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r vsy,fig.cap='The relationship between policy choice and value of a school year.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
 setDT(allallresults)
 allallresults[,mincost:=min(Cost),by=.(igroup,vaccination_level,BPSV,samplei)]
 allallresults[,keeprow:=Cost==mincost]
 allallresults[,vax:=paste0(c('No BPSV, ','BPSV, ')[as.numeric(BPSV=='Yes')+1],vaccination_level,' days')]
-allallresults$strategy <- factor(allallresults$strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
+allallresults$Policy <- factor(allallresults$Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
 
 # ggplot(subset(allallresults,keeprow==T)) + 
-#   geom_density(aes(x=VSY/gdp,colour=strategy,group=strategy),position='identity',alpha=.5,linewidth=1.25) +
+#   geom_density(aes(x=VSY/gdp,colour=Policy,group=Policy),position='identity',alpha=.5,linewidth=1.25) +
 #   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
 #   theme_bw(base_size = 13) +
 #   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
@@ -694,7 +699,7 @@ keptresults <- subset(allallresults,keeprow==T)
 keptresults[,qVSY:=rank(vsy/gdp)/.N,by=.(igroup,vax)]
 
 ggplot(keptresults) + 
-  geom_histogram(aes(x=qVSY,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
+  geom_histogram(aes(x=qVSY,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
   theme_bw(base_size = 13) +
   scale_x_continuous(expand=c(0,0)) +
@@ -705,10 +710,10 @@ ggplot(keptresults) +
 
 ```
 
-```{r vsyeffectiveness,fig.cap='The relationship between strategy choice and the effectiveness of remote teaching.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r vsyeffectiveness,fig.cap='The relationship between policy choice and the effectiveness of remote teaching.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
 # ggplot(subset(allallresults,keeprow==T)) + 
-#   geom_density(aes(x=Remote_teaching_effectiveness,colour=strategy,group=strategy),position='identity',alpha=.5,linewidth=1.25) +
+#   geom_density(aes(x=Remote_teaching_effectiveness,colour=Policy,group=Policy),position='identity',alpha=.5,linewidth=1.25) +
 #   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
 #   theme_bw(base_size = 13) +
 #   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
@@ -716,7 +721,7 @@ ggplot(keptresults) +
 
 
 ggplot(subset(allallresults,keeprow==T)) + 
-  geom_histogram(aes(x=remote_teaching_effectiveness,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
+  geom_histogram(aes(x=remote_teaching_effectiveness,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
   theme_bw(base_size = 13) +
   scale_x_continuous(expand=c(0,0)) +
@@ -728,12 +733,12 @@ ggplot(subset(allallresults,keeprow==T)) +
 ```
 
 
-```{r importtoresponse,fig.cap='The relationship between strategy choice and the duration between import time and response time.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r importtoresponse,fig.cap='The relationship between policy choice and the duration between import time and response time.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
 
 # ggplot(subset(allallresults,keeprow==T)) + 
 #   geom_vline(aes(xintercept=0),colour='grey',linewidth=1.2) +
-#   geom_density(aes(x=Response_time-Importation_time,colour=strategy,group=strategy),position='identity',alpha=.5,linewidth=1.25) +
+#   geom_density(aes(x=Response_time-Importation_time,colour=Policy,group=Policy),position='identity',alpha=.5,linewidth=1.25) +
 #   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
 #   theme_bw(base_size = 13) +
 #   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
@@ -743,7 +748,7 @@ keptresults[,qtime:=rank(Tres-t_import)/.N,by=.(igroup,vax)]
 keptresults[,qtime0:=qtime[which.min(abs(Tres-t_import))],by=.(igroup,vax)]
 
 ggplot(keptresults) + 
-  geom_histogram(aes(x=qtime,y=stat(count / sum(count)),fill=strategy,group=strategy),position='fill',bins = 10) +
+  geom_histogram(aes(x=qtime,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
   geom_vline(aes(xintercept=qtime0),colour='grey',linewidth=1.2) +
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
   theme_bw(base_size = 13) +
@@ -769,11 +774,11 @@ The EVPPI for tourism is high, particularly for lower-income countries because t
 
 The next two items on the x axis are parameter groups. First, both sectors. Second, both tourism parameters. The grouping of parameters shows their combined impact on outcomes, which can be greater than the sum of their individual impacts.
 
-The next columns do not correspond to the "independent variables" of interest but might be expected to influence outcomes: fraction of population who are school age, fraction of population who are in the oldest age group, population size, rate of testing, GDP, $R_0$ and maximum hospital capacity. $R_0$ in particular drives a lot of uncertainty in costs, primarily through YLLs. 
+The next columns do not correspond to the "independent variables" of interest but might be expected to influence outcomes: fraction of population who are school age, fraction of population who are in the oldest age group, population size, rate of testing, GDP, $R_0$ and maximum hospital capacity. $R_0$ in particular drives a lot of uncertainty in costs, primarily through dYLLs. 
 
 The final four items on the x axis are groups of variables: both age groups; two social-distancing parameters; hospital capacity, the fraction of the population aged 65 and over, and R$_0$; and testing parameters, response time, and R$_0$. 
 
-Some distributions in Figure \@ref(fig:prealpha) are bimodal. For example, GDP loss under the Economic Closures strategy have peaks in density close to zero and also far from zero, with a low-density region in between. Here, in some samples (low GDP loss), the epidemic was not severe enough to warrant closures. This could be because R$_0$ was low, because hospital capacity was high, or both. Similarly, under the Elimination strategy, there is an area of high density at higher costs where the strategy does not work: due to R$_0$ being high, and/or the capacity to test being low, case numbers are not brought low enough and severe economic closures persist throughout, leading to high GDP loss.
+Some distributions in Figure \@ref(fig:prealpha) are bimodal. For example, GDP loss under the Economic Closures policy have peaks in density close to zero and also far from zero, with a low-density region in between. Here, in some samples (low GDP loss), the epidemic was not severe enough to warrant closures. This could be because R$_0$ was low, because hospital capacity was high, or both. Similarly, under the Elimination policy, there is an area of high density at higher costs where the policy does not work: due to R$_0$ being high, and/or the capacity to test being low, case numbers are not brought low enough and severe economic closures persist throughout, leading to high GDP loss.
 
 These relationships are identified in the value-of-information analyses: the last two columns show value of information for R$_0$, fraction of population aged 65 and over and hospital capacity combined, and R$_0$, testing parameters and social-distancing parameters combined. These variables together explain much of the variance in GDP loss for the Economic Closures and Elimination strategies, respectively.
 
@@ -874,7 +879,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```
 
 
-```{r dvoiBAU,fig.cap='Decision VOI for BAU. Which parameters would enable the decision maker to choose a strategy that minimises expected losses for BAU vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
+```{r dvoiBAU,fig.cap='Decision VOI for BAU. Which parameters would enable the decision maker to choose a policy that minimises expected losses for BAU vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
 voiall <- c()
 for(i in c(365,100)){
   for(j in 0:1){
@@ -922,7 +927,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
   coord_flip()
 ```
 
-```{r dvoi100,fig.cap='Decision VOI for 100 days. Which parameters would enable the decision maker to choose a strategy that minimises expected losses for 100-day vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
+```{r dvoi100,fig.cap='Decision VOI for 100 days. Which parameters would enable the decision maker to choose a policy that minimises expected losses for 100-day vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
 
 voiall <- readRDS('code/results/decisionvoi100_0.Rds')*100
 rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
@@ -1000,12 +1005,12 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
 
 \newpage
 
-To understand the relationship between a parameter and an outcome, e.g. whether the relationship is linear and increasing or decreasing, whether it is nonlinear, whether it is driven by extreme values, they must be plotted against each other. Likewise, a relationship between a parameter pair and an outcome can be plotted, e.g. Figure \@ref(fig:tourismgdp): for middle-income countries in a pre-Alpha SARS-CoV-2 pandemic with the "No Closures" strategy, GDP loss is greatest when both the food and accommodation services GVA as fraction of GDP and international tourism as a fraction of tourism are high.
+To understand the relationship between a parameter and an outcome, e.g. whether the relationship is linear and increasing or decreasing, whether it is nonlinear, whether it is driven by extreme values, they must be plotted against each other. Likewise, a relationship between a parameter pair and an outcome can be plotted, e.g. Figure \@ref(fig:tourismgdp): for middle-income countries in a pre-Alpha SARS-CoV-2 pandemic with the "No Closures" policy, GDP loss is greatest when both the food and accommodation services GVA as fraction of GDP and international tourism as a fraction of tourism are high.
 
 
-```{r interneted,fig.cap='Relationship between R$_0$ and total costs for UMICs with the "School Closures" strategy.',echo=F,warning=F,message=F}
+```{r interneted,fig.cap='Relationship between R$_0$ and total costs for UMICs with the "School Closures" policy.',echo=F,warning=F,message=F}
 
-ggplot(subset(allallresults,igroup=='UMIC'&strategy=='School Closures'&BPSV=='No'&vaccination_level==365),aes(x=R0,y=Cost)) +
+ggplot(subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&BPSV=='No'&vaccination_level==365),aes(x=R0,y=Cost)) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
   labs(x=bquote(R[0]),y='Total socio-economic cost, % of GDP')
@@ -1013,21 +1018,21 @@ ggplot(subset(allallresults,igroup=='UMIC'&strategy=='School Closures'&BPSV=='No
 
 ```
 
-```{r tourismsecgdp,fig.cap='Relationship between the "tourism sector" size and GDP loss for Origin LLMICs with the "No Closures" strategy.',echo=F,warning=F,message=F,eval=F}
-ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&vaccination_level==365),
+```{r tourismsecgdp,fig.cap='Relationship between the "tourism sector" size and GDP loss for Origin LLMICs with the "No Closures" policy.',echo=F,warning=F,message=F,eval=F}
+ggplot(subset(allallresults,igroup=='LLMIC'&Policy=='No Closures'&BPSV=='No'&vaccination_level==365),
        aes(y=GDP_loss,x=rank(Food_sector*100))) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
   labs(x='Food and accommodation services GVA as % of GDP',y='GDP loss, %')
 
-# with(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&vaccination_level==365),plot(Food_sector,rank(Food_sector)))
+# with(subset(allallresults,igroup=='LLMIC'&Policy=='No Closures'&BPSV=='No'&vaccination_level==365),plot(Food_sector,rank(Food_sector)))
 
 ```
 
-```{r tourismgdp,fig.cap='Relationship between tourism parameters and GDP loss for LLMICs with the "No Closures" strategy.',echo=F,warning=F,message=F,eval=F}
+```{r tourismgdp,fig.cap='Relationship between tourism parameters and GDP loss for LLMICs with the "No Closures" policy.',echo=F,warning=F,message=F,eval=F}
 
-ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&vaccination_level==365)) +
+ggplot(subset(allallresults,igroup=='LLMIC'&Policy=='No Closures'&BPSV=='No'&vaccination_level==365)) +
   geom_point(aes(y=International_tourism*100,x=Food_sector*100,colour=GDP_loss)) +
   theme_bw(base_size=15) +
   labs(x='Food and accommodation services GVA as % of GDP',y='Percent of tourism that is international',colour='GDP loss, %')
@@ -1042,7 +1047,7 @@ ggplot(subset(allallresults,igroup=='LLMIC'&strategy=='No Closures'&BPSV=='No'&v
 
 Using simulation modelling, we have projected distributions of epidemic losses -- of life, GDP, and education -- for seven pathogenic profiles, four stylised mitigation strategies, and three levels of country income. We assessed what the impact is of four economic variables in our model: fraction of GDP from the agriculture sector, fraction of GDP from the food and accommodation services sector, fraction of tourism that comes from abroad, and internet coverage. 
 
-We found that the tourism-related variables impacted GDP loss for the No Closure strategy, which is because GDP losses will be suffered only in this sector when there is no mandated closure. This means the GDP loss will depend on the extent to which the economy is depending on this sector. We found that Education losses depend to some extent on internet coverage, because our model assumes that internet access can be used to mitigate losses by enabling remote learning. We found little effect of the size of the agricultural sector.
+We found that the tourism-related variables impacted GDP loss for the No Closure policy, which is because GDP losses will be suffered only in this sector when there is no mandated closure. This means the GDP loss will depend on the extent to which the economy is depending on this sector. We found that Education losses depend to some extent on internet coverage, because our model assumes that internet access can be used to mitigate losses by enabling remote learning. We found little effect of the size of the agricultural sector.
 
 In parallel, we present a selection of other model parameters, including those related to demography (e.g. the fraction of the population who are of school age), to the economy (e.g. GDP), to the health system (e.g. hospital capacity), to the pandemic response (e.g. the rate of testing), and to the pathogen (e.g. the basic reproductive number, R$_0$). We found that these variables -- in combinations up to four -- account for much of the variability in outcomes. 
 

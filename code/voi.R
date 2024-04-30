@@ -168,7 +168,7 @@ for(bl in 1:length(bpsv_levels)){
       for (k in 1:length(strategies)){
         inp3 <- strategies[k];
         results <- read.csv(paste0('results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
-        results$strategy <- inp3
+        results$policy <- inp3
         results$igroup <- income_level
         results$samplei <- 1:nrow(results)
         results <- cbind(results,inputtab)
@@ -178,16 +178,16 @@ for(bl in 1:length(bpsv_levels)){
     setDT(allresults)
     allresults[,Costrnd:=Cost*(1+runif(nrow(allresults))*1e-8)]
     allresults[,mincost:=Costrnd==min(Costrnd),by=.(igroup,samplei)]
-    choices <- allresults[,.(N=sum(mincost)),by=.(igroup,strategy)]
+    choices <- allresults[,.(N=sum(mincost)),by=.(igroup,policy)]
     choices$vaccination_level <- vaccination_level
     choices$bpsv <- bpsv
     choicestab <- rbind(choicestab,choices)
     allresults[mincost==T,mean(Cost/gdp),by=.(igroup)]
     
-    evalues <- allresults[,mean(Cost/gdp),by=.(igroup,strategy)]
-    topchoices <- evalues[,list(strategy[which.min(V1)],round(V1[which.min(V1)]*100)),by=igroup]
+    evalues <- allresults[,mean(Cost/gdp),by=.(igroup,policy)]
+    topchoices <- evalues[,list(policy[which.min(V1)],round(V1[which.min(V1)]*100)),by=igroup]
     print(topchoices)
-    # allresults[,keeprow:=strategy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
+    # allresults[,keeprow:=policy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
     
     ##!! decision under uncertainty, or decision under certainty?
     # topresults[[bl]][[v]] <- subset(allresults,keeprow)
@@ -198,7 +198,7 @@ for(bl in 1:length(bpsv_levels)){
     if(v>1|bl>1){
       
       difftab <- copy(topresults[[1]][[1]])
-      # difftab[,strategy:=NULL]
+      # difftab[,policy:=NULL]
       difftab[,Cost:=Cost-topresults[[bl]][[v]]$Cost]
       difftab[,dYLLs:=dYLLs-topresults[[bl]][[v]]$dYLLs]
       difftab[,School:=School-topresults[[bl]][[v]]$School]
@@ -210,7 +210,7 @@ for(bl in 1:length(bpsv_levels)){
       print(difftab[,round(mean(Cost/gdp*100)),by=.(igroup)])
       
       pctab <- copy(topresults[[1]][[1]])
-      pctab[,strategy:=NULL]
+      pctab[,policy:=NULL]
       pctab[,Cost:=(Cost-topresults[[bl]][[v]]$Cost)/Cost]
       pctab[,dYLLs:=(dYLLs-topresults[[bl]][[v]]$dYLLs)/dYLLs]
       pctab[,School:=(School-topresults[[bl]][[v]]$School)/School]
@@ -234,7 +234,6 @@ ggplot(mplotdur) + geom_density(aes(x=value/365,y=..density..),fill='darkorange'
   scale_x_continuous(limits=c(0,NA)) +
   scale_y_continuous(expand=c(0,NA)) +
   labs(x='Day',y='Density')
-View(subset(topresults[[1]][[1]],End_simulation>2000))
 unique(subset(topresults[[1]][[1]],End_simulation>2000)$samplei)
 
 params <- unlist(multisource)    
@@ -243,7 +242,7 @@ params[!params%in%colnames(allresults)]
 ## negatives ###########################
 
 dispcols <- c('Cost','GDP_loss','dYLLs','School','igroup','gdp',
-                                      'strategy','samplei','Exit_wave','scen_Exit_wave')
+                                      'policy','samplei','Exit_wave','scen_Exit_wave')
 nneg <- 0
 for(vaccination_level in vaccination_levels){
   for(bpsv in bpsv_levels){
@@ -277,7 +276,7 @@ for(bl in 1:length(bpsv_levels)){
       for (k in 1:length(strategies)){
         inp3 <- strategies[k];
         results <- read.csv(paste0('results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
-        results$strategy <- inp3
+        results$policy <- inp3
         results$igroup <- income_level
         results$samplei <- 1:nrow(results)
         results <- cbind(results,inputtab)
@@ -287,16 +286,16 @@ for(bl in 1:length(bpsv_levels)){
     setDT(allresults)
     allresults[,Costrnd:=Cost*(1+runif(nrow(allresults))*1e-8)]
     allresults[,mincost:=Costrnd==min(Costrnd),by=.(igroup,samplei)]
-    choices <- allresults[,.(N=sum(mincost)),by=.(igroup,strategy)]
+    choices <- allresults[,.(N=sum(mincost)),by=.(igroup,policy)]
     choices$vaccination_level <- vaccination_level
     choices$bpsv <- bpsv
     choicestab <- rbind(choicestab,choices)
     allresults[mincost==T,mean(Cost/gdp),by=.(igroup)]
     
-    evalues <- allresults[,mean(Cost/gdp),by=.(igroup,strategy)]
-    topchoices <- evalues[,strategy[which.min(V1)],by=igroup]
+    evalues <- allresults[,mean(Cost/gdp),by=.(igroup,policy)]
+    topchoices <- evalues[,policy[which.min(V1)],by=igroup]
     print(topchoices)
-    allresults[,keeprow:=strategy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
+    allresults[,keeprow:=policy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
     
     ##!! decision under uncertainty, or decision under certainty?
     # topresults[[bl]][[v]] <- subset(allresults,keeprow)
@@ -307,7 +306,7 @@ for(bl in 1:length(bpsv_levels)){
       
       difftab <- copy(topresults[[bl]][[v]])
       difftab[,keeprow:=NULL]
-      difftab[,strategy:=NULL]
+      difftab[,policy:=NULL]
       difftab[,Cost:=-Cost+topresults[[1]][[1]]$Cost]
       difftab[,dYLLs:=-dYLLs+topresults[[1]][[1]]$dYLLs]
       difftab[,School:=-School+topresults[[1]][[1]]$School]
@@ -317,7 +316,7 @@ for(bl in 1:length(bpsv_levels)){
       
       pctab <- copy(topresults[[bl]][[v]])
       pctab[,keeprow:=NULL]
-      pctab[,strategy:=NULL]
+      pctab[,policy:=NULL]
       pctab[,Cost:=(-Cost+topresults[[1]][[1]]$Cost)/Cost]
       pctab[,dYLLs:=(-dYLLs+topresults[[1]][[1]]$dYLLs)/dYLLs]
       pctab[,School:=(-School+topresults[[1]][[1]]$School)/School]
@@ -603,15 +602,15 @@ for (il in 1:length(income_levels)){
     
     # meltedres <- reshape2::melt((outcomes[,2:4]),value.name = 'value',measure.vars=c('School','dYLLs','GDP_loss'))
     meltbarplt$Income_group <- income_level
-    meltbarplt$Strategy <- inp3
+    meltbarplt$Policy <- inp3
     voioutcomelist[[ks]] <- meltbarplt
   }
   ivoioutcomelist[[il]] <- do.call(rbind,voioutcomelist)
 }
 voioutcomes <- do.call(rbind,ivoioutcomelist)
 voioutcomes$Income_group <- factor(voioutcomes$Income_group,levels=c('LLMIC','MIC','HIC'))
-voioutcomes$Strategy <- factor(voioutcomes$Strategy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
-voioutcomes$variable <- factor(voioutcomes$variable,levels=c('School','dYLLs','GDP_loss'),labels=c('Education','YLLs','GDP'))
+voioutcomes$Policy <- factor(voioutcomes$Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
+voioutcomes$variable <- factor(voioutcomes$variable,levels=c('School','dYLLs','GDP_loss'),labels=c('Education','dYLLs','GDP'))
 
 ggplot(voioutcomes) + 
   annotate(geom = "rect",xmin = 10,xmax = 10^1.5,ymin = -Inf,ymax = +Inf,alpha = 0.2) +
@@ -623,7 +622,7 @@ ggplot(voioutcomes) +
   # geom_vline(aes(xintercept=1000),colour='grey',size=1.5) +
   geom_bar(aes(x=10^midpoint,y=value,fill=variable),stat="identity") +
   # geom_histogram(aes(x=value,colour=variable,fill=variable,y=..density..),alpha=.7)+#,position='identity') +
-  facet_grid(Strategy~Income_group,scales='free_y') +
+  facet_grid(Policy~Income_group,scales='free_y') +
   scale_fill_viridis(discrete=T, name="",option='inferno') +
   scale_colour_viridis(discrete=T, name="",option='inferno') +
   scale_x_continuous(trans = log10_trans(),
