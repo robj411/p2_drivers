@@ -80,13 +80,13 @@ Table 1.1: State transition rules for reactive closure strategies
 | **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                           | $R_t > 1.2$                                                    |
 | **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t &gt; 7 + last change time |                                                                |
 
-Table 1.2: State transition rules for the elimination strategy
+Table 1.2: State transition rules for the elimination policy
 
 # 2 Socio-economic costs
 
 We assign monetary values to YLLs and to years of education in order to
-add health and education costs of mitigation strategies to the costs of
-economic closures. We define the total socio-economic costs TSC of an
+add health and education costs of sector-closure policies to the costs
+of economic closures. We define the total socio-economic costs TSC of an
 epidemic as the sum of the individual costs:
 
 $$\begin{equation}
@@ -2648,15 +2648,15 @@ x = \min\{\hat{x}, 1+ b(c-1)\}
 ```
 
 where $`\hat{x}`$ is the openness of the sector according to the
-schedule (i.e. the mitigation strategy), $b$ is the proportion of
+schedule (i.e. the sector-closure policy), $b$ is the proportion of
 tourism that is international, and $c$ is the fraction international
 tourism reduces to as a consequence of the pandemic. I.e. the tourism
 remaining is the domestic ($1-b$) plus that that comes in from abroad
 ($bc$).
 
 Therefore, the contribution of the GVA of the food and accommodation
-services sector is limited either by the pandemic, or by the mitigation
-measures - whichever is lower.
+services sector is limited either by the pandemic, or by the
+sector-closure policy - whichever is lower.
 
 ### 4.2.3 Loss of international tourists
 
