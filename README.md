@@ -84,17 +84,17 @@ Table 1.2: State transition rules for the elimination policy
 
 # 2 Socio-economic costs
 
-We assign monetary values to YLLs and to years of education in order to
+We assign monetary values to dYLLs and to years of education in order to
 add health and education costs of sector-closure policies to the costs
 of economic closures. We define the total socio-economic costs TSC of an
 epidemic as the sum of the individual costs:
 
 $$\begin{equation}
-\text{TSC} = K_1\text{VLY} + K_2 + K_3\text{VSY},
+\text{TSC} = K_1\text{VdLY} + K_2 + K_3\text{VSY},
 \label{eq:swf}
 \end{equation}$$
 
-where $K_1$ is the number of discounted life years lost and VLY the
+where $K_1$ is the number of discounted life years lost and VdLY the
 value of a discounted life year; $K_2$ is the lost GDP over the period
 due to reduced economic activity; and $K_3$ is the number of school
 years lost and VSY the value of one school year.
@@ -133,18 +133,18 @@ deaths due to COVID-19 for each age group is
 K_1=\sum_gD_g\hat{l}_g^{\text{(death)}}.
 ```
 
-The VLY used by policy makers should reflect the value that members of
+The VdLY used by policy makers should reflect the value that members of
 the society place on reductions of their own mortality. We rely on the
 intrinsic rather than instrumental interpretation of the valuation of
 life (Cutler and Summers 2020), and we use existing estimates of the
-value of a statistical life (VSL) to estimate VLY. We interpret the VSL
+value of a statistical life (VSL) to estimate VdLY. We interpret the VSL
 as a population-weighted average (Ananthapavan et al. 2021; Robinson,
 Sullivan, and Shogren 2021), where each age group has a VSL defined by
 the number of expected life years remaining, and where each discounted
 year has the same value:
 
 $$\begin{equation}
-\text{VSL}=\frac{\sum_gN_g\hat{l}_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
+\text{VSL}=\frac{\sum_gN_g\hat{l}_g^{\text{(life)}}}{\sum_gN_g}\text{VdLY}.
 \end{equation}$$
 
 ## 2.2 Lost economic activity
