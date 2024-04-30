@@ -1,4 +1,4 @@
-100-day mission: Model description
+DAEDALUS for CEPI’s 100-day mission: code and model description
 ================
 
 -   [1 Simulation rules](#1-simulation-rules)

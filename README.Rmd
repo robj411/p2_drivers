@@ -1,5 +1,5 @@
 ---
-title: "100-day mission: Model description"
+title: "DAEDALUS for CEPI's 100-day mission: code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   bookdown::github_document2:
