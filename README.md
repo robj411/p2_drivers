@@ -784,6 +784,8 @@ without closures and, without closures, there is no economic cost); and
 2, there is no voluntary social distancing, and behaviour is independent
 of epidemiological circumstances. This is an assumption commonly made to
 create the counterfactual in evaluating impacts of vaccine programmes.
+This is a very large source of uncertainty, and we expect it to be
+identified as such in value-of-information analyses.
 
 <div class="figure">
 
