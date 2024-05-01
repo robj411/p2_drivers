@@ -118,7 +118,7 @@ bpsv_levels <- c(0,1)
 | **Light closures** | (Growth rate < 0.025 OR Hospital occupancy < 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |  | Hospital occupancy > 95% capacity |
 | **Heavy closures** |  | Hospital occupancy < 25% capacity AND t > 7 + last change time |  | 
 
-Table: (\#tab:rulesreactive) State transition rules for reactive closure strategies
+Table: (\#tab:rulesreactive) State transition rules for reactive closure strategies. See Table \@ref(tab:eccon) for details of closures.
 
 | From/to | No closures | Light closures | Heavy closures |
 |:----- |:----- |:----- |:----- |
@@ -126,7 +126,7 @@ Table: (\#tab:rulesreactive) State transition rules for reactive closure strateg
 | **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  |  | $R_t > 1.2$ |
 | **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t > 7 + last change time |  | 
 
-Table: (\#tab:ruleselimination) State transition rules for the elimination policy
+Table: (\#tab:ruleselimination) State transition rules for the elimination policy. See Table \@ref(tab:eccon) for details of closures.
 
 # Socio-economic costs
 
@@ -393,7 +393,7 @@ k^{8}_{j}(t) = p^{D}_{j}(t)/T_j^{H}(t)
 
 In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who have received a full schedule of BPSV, and $v=2$ to people who have received a full schedule of the specific vaccine. How we model transitions between vaccination states is shown in Figure \@ref(fig:vaccinetransitions).
 
-$`k^{10,c_1}_{j,v=0}(t)`$ represents the rates of BPSV vaccination of unvaccinated susceptible and recovered people, and $`k^{10,c_2}_{j,v=1}(t)`$ represents the rates of vaccinating BPSV-vaccinated susceptible and recovered people. $`k^{10,c_2}_{j,v=0}(t)`$ represents the rates of vaccinating people directly with the specific vaccine. Put more succintly, $`k^{10,c_u}_{j,v}(t)`$ is the rate to go from vaccine state $v$ to $u$. $k^9=1/T^c$ is the rate of seroconversion to vaccine-induced immunity, and $`k^{12}_{j}(t)=k^{1}_{j,v=0}(t)`$ and $`k^{19}_{j}(t)=k^{1}_{j,v=1}(t)`$ are the rates of infection of just-vaccinated people, which returns them to the epidemiological pathway of the lower vaccination level.
+$`k^{10,c_1}_{j,v=0}(t)`$ represents the rates of BPSV vaccination of unvaccinated susceptible and recovered people, and $`k^{10,c_2}_{j,v=1}(t)`$ represents the rates of vaccinating BPSV-vaccinated susceptible and recovered people. $`k^{10,c_2}_{j,v=0}(t)`$ represents the rates of vaccinating people directly with the specific vaccine. Put more succinctly, $`k^{10,c_u}_{j,v}(t)`$ is the rate to go from vaccine state $v$ to $u$. $k^9=1/T^c$ is the rate of seroconversion to vaccine-induced immunity, and $`k^{12}_{j}(t)=k^{1}_{j,v=0}(t)`$ and $`k^{19}_{j}(t)=k^{1}_{j,v=1}(t)`$ are the rates of infection of just-vaccinated people, which returns them to the epidemiological pathway of the lower vaccination level.
 
 ```{tikz vaccinetransitions, fig.cap = "Vaccine state transitions. $S$: susceptible. $S^{c_u}, u\\in\\{1,2\\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status.", fig.ext = 'png',echo=F}
 \usetikzlibrary{shapes}
@@ -670,7 +670,7 @@ We assume that infectious people who know their status have a compliance $p^1\si
 
 ## Configurations
 
-```{r eccon,tab.cap='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. Elimination values are taken from Australia. Lockdown and Economic Closures values are taken from the UK. School Closures values are taken from Indonesia. ',echo=F,warning=F,message=F}
+```{r eccon,tab.cap='Economic configurations used to implement sector-closure policies. Values are the openness of the sector expressed as a percentage. Elimination values are taken from Australia; Economic Closures values are taken from the UK; School Closures values are taken from Indonesia, with data from OECD. Heavy closures are implemented in response to the epidemic. Thereafter, the level of closure is mandated in response to the state of the epidemic, reverting between states as necessary.',echo=F,warning=F,message=F}
 
 eccon <- readxl::read_xlsx('data/6.economic_closures.xlsx',sheet='configurations')
 for(j in 2:ncol(eccon)) eccon[,j] <- round(eccon[,j]*100)
@@ -702,9 +702,9 @@ As there is no "tourism" sector in the 45-sector classification we are using, to
 
 ```{r pairs, fig.cap="Correlations between tourism-related data. First: https://www.unwto.org/tourism-statistics/key-tourism-statistics. Second to fourth: https://www.unwto.org/tourism-data/international-tourism-and-covid-19. Fifth to seventh: OECD.",fig.height=7, fig.align="center",echo=F,warning=F,message=F}
 
-data <- readODS::read.ods('data/tourism.ods')[[1]]
-colnames(data) <- data[1,]
-data <- data[-1,]
+data <- as.data.frame(readODS::read_ods('data/tourism.ods'))
+# colnames(data) <- data[1,]
+# data <- data[-1,]
 for(j in 2:ncol(data)) data[,j] <- as.numeric(data[,j])
 
 
@@ -777,15 +777,15 @@ Therefore, the contribution of the GVA of the food and accommodation services se
 ```{r ,echo=F,warning=F,message=F}
 
 
-ytd <- readODS::read.ods('data/tourism.ods')[[2]]
+ytd <- as.data.frame(readODS::read_ods('data/tourism.ods',sheet=2))
 
-colnames(ytd) <- ytd[1,]
-ytd <- ytd[-1,]
+# colnames(ytd) <- ytd[1,]
+# ytd <- ytd[-1,]
 for(i in 2:ncol(ytd)) ytd[,i] <- as.numeric(ytd[,i])
 
 
-meltytd <- melt(ytd,id.vars='Country')
-meltdata <- melt(data[,c(1:5)],id.vars='Country')
+meltytd <- melt(setDT(ytd),id.vars='Country')
+meltdata <- reshape2::melt(data[,c(1:5)],id.vars='Country')
 tourismhist <- ggplot() + 
   geom_histogram(data=meltytd,aes(x=value),colour='navyblue',fill='navyblue',bins=30) + 
   geom_histogram(data=meltdata,aes(x=value),colour='white',fill='grey',bins=30) + 

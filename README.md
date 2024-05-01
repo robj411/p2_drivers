@@ -72,7 +72,9 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 | **Light closures** | (Growth rate &lt; 0.025 OR Hospital occupancy &lt; 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                      | Hospital occupancy &gt; 95% capacity                            |
 | **Heavy closures** |                                                                                                                           | Hospital occupancy &lt; 25% capacity AND t &gt; 7 + last change time |                                                                 |
 
-Table 1.1: State transition rules for reactive closure strategies
+<span id="tab:rulesreactive"></span>Table 1.1: State transition rules
+for reactive closure strategies. See Table <a href="#tab:eccon">4.1</a>
+for details of closures.
 
 | From/to            | No closures                                          | Light closures                                                            | Heavy closures                                                 |
 |:-------------------|:-----------------------------------------------------|:--------------------------------------------------------------------------|:---------------------------------------------------------------|
@@ -80,7 +82,9 @@ Table 1.1: State transition rules for reactive closure strategies
 | **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                           | $R_t > 1.2$                                                    |
 | **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t &gt; 7 + last change time |                                                                |
 
-Table 1.2: State transition rules for the elimination policy
+<span id="tab:ruleselimination"></span>Table 1.2: State transition rules
+for the elimination policy. See Table <a href="#tab:eccon">4.1</a> for
+details of closures.
 
 # 2 Socio-economic costs
 
@@ -280,10 +284,10 @@ $$\begin{align}
 
 <p class="caption">
 
-Figure 3.1: Disease state transitions. $S$: susceptible. $E$: exposed.
-$I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$:
-hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination
-status.
+<span id="fig:statetransitions"></span>Figure 3.1: Disease state
+transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic
+infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$:
+recovered. $D$: died. $j$: stratum. $v$: vaccination status.
 
 </p>
 
@@ -409,7 +413,7 @@ unvaccinated susceptible and recovered people, and
 $`k^{10,c_2}_{j,v=1}(t)`$ represents the rates of vaccinating
 BPSV-vaccinated susceptible and recovered people.
 $`k^{10,c_2}_{j,v=0}(t)`$ represents the rates of vaccinating people
-directly with the specific vaccine. Put more succintly,
+directly with the specific vaccine. Put more succinctly,
 $`k^{10,c_u}_{j,v}(t)`$ is the rate to go from vaccine state $v$ to $u$.
 $k^9=1/T^c$ is the rate of seroconversion to vaccine-induced immunity,
 and $`k^{12}_{j}(t)=k^{1}_{j,v=0}(t)`$ and
@@ -423,11 +427,11 @@ pathway of the lower vaccination level.
 
 <p class="caption">
 
-Figure 3.2: Vaccine state transitions. $S$: susceptible.
-$S^{c_u}, u\in\{1,2\}$: recently vaccinated but has not yet
-seroconverted (i.e. is not protected by most recent vaccination). $R$:
-recovered. $j$: stratum. $v$: initial vaccination status. $u$: final
-vaccination status.
+<span id="fig:vaccinetransitions"></span>Figure 3.2: Vaccine state
+transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently
+vaccinated but has not yet seroconverted (i.e. is not protected by most
+recent vaccination). $R$: recovered. $j$: stratum. $v$: initial
+vaccination status. $u$: final vaccination status.
 
 </p>
 
@@ -553,12 +557,12 @@ you talk to.)
 
 <p class="caption">
 
-Figure 3.3: Fraction of contacts made at work, from (Jarvis et al.
-2023). Extrapolated from three countries (UK, Belgium, Netherlands),
-whose values are all close to 40%, using time-use survey results for
-fraction of time spent at work (OECD, last updated December 2023, 33
-countries, with values ranging from 12 to 25% (and the three reference
-countries have values 16 to 18%)).
+<span id="fig:workfrac"></span>Figure 3.3: Fraction of contacts made at
+work, from (Jarvis et al. 2023). Extrapolated from three countries (UK,
+Belgium, Netherlands), whose values are all close to 40%, using time-use
+survey results for fraction of time spent at work (OECD, last updated
+December 2023, 33 countries, with values ranging from 12 to 25% (and the
+three reference countries have values 16 to 18%)).
 
 </p>
 
@@ -570,11 +574,12 @@ countries have values 16 to 18%)).
 
 <p class="caption">
 
-Figure 3.4: Number of contacts made at work, from (Jarvis et al. 2023).
-Diamonds show average numbers and ranges are 50% quantile intervals. We
-sample values from half to double the average. Data come from UK,
-Netherlands and Switzerland, with occupation ISCO-88 mapped to ISCO-08
-then SOC-10 then ISIC rev 4 using ONS data.
+<span id="fig:allsector"></span>Figure 3.4: Number of contacts made at
+work, from (Jarvis et al. 2023). Diamonds show average numbers and
+ranges are 50% quantile intervals. We sample values from half to double
+the average. Data come from UK, Netherlands and Switzerland, with
+occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using
+ONS data.
 
 </p>
 
@@ -586,8 +591,8 @@ then SOC-10 then ISIC rev 4 using ONS data.
 
 <p class="caption">
 
-Figure 3.5: Fraction of contacts made at work by age, from (Jarvis et
-al. 2023).
+<span id="fig:uksecdistage"></span>Figure 3.5: Fraction of contacts made
+at work by age, from (Jarvis et al. 2023).
 
 </p>
 
@@ -599,8 +604,8 @@ al. 2023).
 
 <p class="caption">
 
-Figure 3.6: Fraction of contacts made at school for ages 0 to 4, from
-(Jarvis et al. 2023).
+<span id="fig:school1frac"></span>Figure 3.6: Fraction of contacts made
+at school for ages 0 to 4, from (Jarvis et al. 2023).
 
 </p>
 
@@ -612,8 +617,8 @@ Figure 3.6: Fraction of contacts made at school for ages 0 to 4, from
 
 <p class="caption">
 
-Figure 3.7: Fraction of contacts made at school for ages 5 to 19, from
-(Jarvis et al. 2023).
+<span id="fig:school2frac"></span>Figure 3.7: Fraction of contacts made
+at school for ages 5 to 19, from (Jarvis et al. 2023).
 
 </p>
 
@@ -625,8 +630,9 @@ Figure 3.7: Fraction of contacts made at school for ages 5 to 19, from
 
 <p class="caption">
 
-Figure 3.8: Fraction of non-school and non-work contacts made in
-hospitality settings, by age group, from (Jarvis et al. 2023).
+<span id="fig:hospfrac"></span>Figure 3.8: Fraction of non-school and
+non-work contacts made in hospitality settings, by age group, from
+(Jarvis et al. 2023).
 
 </p>
 
@@ -638,8 +644,9 @@ hospitality settings, by age group, from (Jarvis et al. 2023).
 
 <p class="caption">
 
-Figure 3.9: Distribution of non-school and non-work contacts made in
-hospitality settings by age group, from (Jarvis et al. 2023).
+<span id="fig:conagefrac"></span>Figure 3.9: Distribution of non-school
+and non-work contacts made in hospitality settings by age group, from
+(Jarvis et al. 2023).
 
 </p>
 
@@ -735,10 +742,11 @@ transmission, with the reduction in mobility.
 
 <p class="caption">
 
-Figure 3.10: Mobility trajectories in 2020 for all countries, with
-points showing the point at which the largest drop was observed.
-Trajectories are averaged over “Retail and recreation,” “Transit
-stations” and “Workplaces” and smoothed with a spline of 80 knots.
+<span id="fig:smoothmobility"></span>Figure 3.10: Mobility trajectories
+in 2020 for all countries, with points showing the point at which the
+largest drop was observed. Trajectories are averaged over “Retail and
+recreation,” “Transit stations” and “Workplaces” and smoothed with a
+spline of 80 knots.
 
 </p>
 
@@ -750,8 +758,8 @@ stations” and “Workplaces” and smoothed with a spline of 80 knots.
 
 <p class="caption">
 
-Figure 3.11: The largest drop in mobility plotted against the stringency
-on that date.
+<span id="fig:mobilitydrop"></span>Figure 3.11: The largest drop in
+mobility plotted against the stringency on that date.
 
 </p>
 
@@ -793,7 +801,7 @@ identified as such in value-of-information analyses.
 
 <p class="caption">
 
-Figure 3.12: Fit of model to data.
+<span id="fig:mobilityfitted"></span>Figure 3.12: Fit of model to data.
 
 </p>
 
@@ -805,7 +813,8 @@ Figure 3.12: Fit of model to data.
 
 <p class="caption">
 
-Figure 3.13: Posterior distribution for parameters $p^9$ and $p^8$.
+<span id="fig:mobilityposterior"></span>Figure 3.13: Posterior
+distribution for parameters $p^9$ and $p^8$.
 
 </p>
 
@@ -817,8 +826,8 @@ Figure 3.13: Posterior distribution for parameters $p^9$ and $p^8$.
 
 <p class="caption">
 
-Figure 3.14: Sampled curves for four levels of mitigation. Data shown as
-points.
+<span id="fig:mobilitycurves"></span>Figure 3.14: Sampled curves for
+four levels of mitigation. Data shown as points.
 
 </p>
 
@@ -852,10 +861,11 @@ $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
 
-Table 4.1: Economic configurations used to implement strategies. Values
-are the openness of the sector expressed as a percentage. Elimination
-values are taken from Australia. Lockdown and Economic Closures values
-are taken from the UK. School Closures values are taken from Indonesia.
+<span id="tab:eccon"></span>Table 4.1: Economic configurations used to
+implement strategies. Values are the openness of the sector expressed as
+a percentage. Elimination values are taken from Australia. Lockdown and
+Economic Closures values are taken from the UK. School Closures values
+are taken from Indonesia.
 
 </caption>
 <thead>
@@ -2617,7 +2627,8 @@ little correlation with tourism in terms of % of GDP. (See Figure
 
 <p class="caption">
 
-Figure 4.1: Correlations between tourism-related data. First:
+<span id="fig:pairs"></span>Figure 4.1: Correlations between
+tourism-related data. First:
 <https://www.unwto.org/tourism-statistics/key-tourism-statistics>.
 Second to fourth:
 <https://www.unwto.org/tourism-data/international-tourism-and-covid-19>.
@@ -2672,7 +2683,8 @@ as inputs for all country models.
 
 <p class="caption">
 
-Figure 4.2: Distributions of tourism-related data from
+<span id="fig:tourismhist"></span>Figure 4.2: Distributions of
+tourism-related data from
 <https://www.unwto.org/tourism-data/international-tourism-and-covid-19>.
 In grey are the subset of countries for which we have GVA data by
 sector.
@@ -2687,7 +2699,8 @@ sector.
 
 <p class="caption">
 
-Figure 4.3: Fit of log-normal distribution to loss-of-tourism data.
+<span id="fig:ytd"></span>Figure 4.3: Fit of log-normal distribution to
+loss-of-tourism data.
 
 </p>
 
@@ -2718,7 +2731,7 @@ shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
 values as inputs for all country models.
 
 <figure>
-<img src="figures/sectortourism.png" style="width:40.0%" alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." /><figcaption aria-hidden="true">Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
+<img src="figures/sectortourism.png" style="width:40.0%" alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." /><figcaption aria-hidden="true"><span id="fig:sectortourism"></span>Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
 </figure>
 
 ## 4.3 Remote working
@@ -2743,7 +2756,7 @@ values in all sectors. We:
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 
-Table 5.1: Parameter distributions.
+<span id="tab:paramdist"></span>Table 5.1: Parameter distributions.
 
 </caption>
 <thead>
@@ -3570,7 +3583,8 @@ NA
 
 <p class="caption">
 
-Figure 5.1: Hospital capacity: available beds minus usual occupancy.
+<span id="fig:hmax"></span>Figure 5.1: Hospital capacity: available beds
+minus usual occupancy.
 
 </p>
 
@@ -3597,7 +3611,8 @@ labour we use PWT estimates from 2011 (Figure
 
 <p class="caption">
 
-Figure 5.2: Fraction of GVA that goes to labour (PWT, 2011).
+<span id="fig:labsh"></span>Figure 5.2: Fraction of GVA that goes to
+labour (PWT, 2011).
 
 </p>
 
@@ -3615,9 +3630,9 @@ For HICs, we have parameters 7.97 and 6.87.
 
 <p class="caption">
 
-Figure 5.3: Vaccines administered per day, on average, in each country
-as a percent of population. Data source: fully vaccinated people from
-OWID (2022).
+<span id="fig:vaxrate"></span>Figure 5.3: Vaccines administered per day,
+on average, in each country as a percent of population. Data source:
+fully vaccinated people from OWID (2022).
 
 </p>
 
