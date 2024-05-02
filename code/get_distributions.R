@@ -5,6 +5,7 @@ library(ggplot2)
 library(wbstats)
 library(dplyr)
 library(haven)
+library(squire)
 
 setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
 countrydatafile <- 'data/country_data.csv'
@@ -242,19 +243,19 @@ schoolA1_distributions <- data.frame(parameter_name='schoolA1_frac',
 ## international tourism ###################
 print('international tourism')
 
-data <- readODS::read.ods('data/tourism.ods')[[1]]
-colnames(data) <- data[1,]
-data <- data[-1,]
+data <- as.data.frame(readODS::read_ods('data/tourism.ods',sheet=1))
+# colnames(data) <- data[1,]
+# data <- data[-1,]
 for(i in 2:ncol(data)) data[,i] <- as.numeric(data[,i])
 
 
 data$`International tourism as a share of GDP` <- data$`Tourism as a share of GDP (%)`/100 * data$`International tourism as share of total tourism (%)`
 
 
-ytd <- readODS::read.ods('data/tourism.ods')[[2]]
+ytd <- as.data.frame(readODS::read_ods('data/tourism.ods',sheet=2))
 
-colnames(ytd) <- ytd[1,]
-ytd <- ytd[-1,]
+# colnames(ytd) <- ytd[1,]
+# ytd <- ytd[-1,]
 for(i in 2:ncol(ytd)) ytd[,i] <- as.numeric(ytd[,i])
 
 
@@ -318,6 +319,36 @@ sec_to_international <- data.frame(parameter_name='sec_to_international',
                                    `Parameter 1`=betaparams[1],
                                    `Parameter 2`=betaparams[2])
 
+
+
+## gdp to gni ppp #############################
+print('gdp to gni ppp')
+
+indicators <- wb_indicators()
+indicators[grepl('GNI',indicators$indicator)&grepl('PPP',indicators$indicator),]
+indicators[grepl('GDP',indicators$indicator)&grepl('current',indicators$indicator)&grepl('\\$',indicators$indicator),]
+
+gdpdata <- setDT(wb_data("NY.GDP.MKTP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+gnipppdata <- setDT(wb_data("NY.GNP.MKTP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.MKTP.CD)],gnipppdata[,.(iso3c,country,date,NY.GNP.MKTP.PP.CD)],by=c('iso3c','country','date'))
+joineddata <- subset(joineddata,!is.na(NY.GNP.MKTP.PP.CD)&!is.na(NY.GDP.MKTP.CD))
+joineddata[,mostrecent:=max(date),by=country]
+joineddata <- subset(joineddata,date==mostrecent)
+joineddata[,gdp_to_gnippp:=NY.GNP.MKTP.PP.CD/NY.GDP.MKTP.CD]
+joineddata <- left_join(joineddata,setDT(incomelevels)[,.(Country.Code,IncomeGroup)],by=c('iso3c'="Country.Code"))
+ggplot(joineddata) + geom_histogram(aes(x=gdp_to_gnippp,fill=IncomeGroup),position='dodge') 
+
+hic <- fitdistr(subset(joineddata,!is.na(gdp_to_gnippp)&IncomeGroup=='High income')$gdp_to_gnippp,"gamma")
+umic <- fitdistr(subset(joineddata,!is.na(gdp_to_gnippp)&IncomeGroup%in%c('Upper middle income'))$gdp_to_gnippp,"gamma")
+llmic <- fitdistr(subset(joineddata,!is.na(gdp_to_gnippp)&IncomeGroup%in%c('Lower middle income','Low income'))$gdp_to_gnippp,"gamma")
+
+gdp_to_gnippp_distributions <- data.frame(parameter_name='gdp_to_gnippp',
+                                igroup=c('LLMIC','UMIC','HIC'),
+                                distribution='gaminv',
+                                `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape']]),
+                                `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['rate']]))
+
+
 ## pupil to teacher ratio ###################
 print('pupil to teacher ratio')
 
@@ -378,6 +409,7 @@ source('../cmix_post_pandemic/r/rj_script.R')
 (parameter_distributions <- rbind(internet_distributions,
                                  tourism_distribution,
                                  labsh_distributions,
+                                 gdp_to_gnippp_distributions,
                                  Hmax_distributions,
                                  bmi_distributions,
                                  pt_distributions,
