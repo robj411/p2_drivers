@@ -346,7 +346,7 @@ gdp_to_gnippp_distributions <- data.frame(parameter_name='gdp_to_gnippp',
                                 igroup=c('LLMIC','UMIC','HIC'),
                                 distribution='gaminv',
                                 `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape']]),
-                                `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['rate']]))
+                                `Parameter 2`=sapply(list(llmic,umic,hic),function(x)1/x$estimate[['rate']]))
 
 
 ## pupil to teacher ratio ###################
@@ -395,7 +395,7 @@ ptr_distributions <- data.frame(parameter_name='pupil_teacher_ratio',
                                 igroup=c('LLMIC','UMIC','HIC'),
                                 distribution='gaminv',
                                 `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape']]),
-                                `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['rate']]))
+                                `Parameter 2`=sapply(list(llmic,umic,hic),function(x)1/x$estimate[['rate']]))
 
 
 
