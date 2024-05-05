@@ -239,6 +239,21 @@ unique(subset(topresults[[1]][[1]],End_simulation>2000)$samplei)
 params <- unlist(multisource)    
 params[!params%in%colnames(allresults)]
 
+endhosp <- list()
+for(j in 1:length(vaccination_levels)){
+  endhosp[[j]] <- list()
+  for(i in 1:length(bpsv_levels)){
+    endhosp[[j]][[i]] <- copy(topresults[[i]][[j]])
+    endhosp[[j]][[i]]$bpsv <- c('No BPSV','BPSV')[i]
+  }
+  endhosp[[j]] <- do.call(rbind,endhosp[[j]])
+  endhosp[[j]]$sarsx <- c(365,100)[j]
+}
+endhosp <- do.call(rbind,endhosp)
+dcast(endhosp,formula=igroup+samplei~bpsv+sarsx,value.var='End_hosp')
+
+unique(subset(endhosp,End_hosp>1000)[,.(igroup,policy,samplei)])
+
 ## negatives ###########################
 
 dispcols <- c('Cost','GDP_loss','dYLLs','School','igroup','gdp',
@@ -427,10 +442,15 @@ get_voi_mi <- function(inp3,income_level,vaccination_level,bpsv){
     for(j in 1:length(sourcelist)){
       print(paste0(i,' ',names(multisource)[j]))
       sourcesj <- sourcelist[[j]]
-      fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
-      mi[j] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
-      # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
-      voi[j] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
+      tryCatch({
+        fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj),method='gam')
+        mi[j] <- infotheo::mutinformation(infotheo::discretize(fittedvalues),infotheo::discretize(y))
+        # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
+        voi[j] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
+      },error = function(cond) {
+        mi[j] <- voi[j] <- 0
+        # NA
+      })
     }
     milist[[i]] <- mi
     voilist[[i]] <- voi
