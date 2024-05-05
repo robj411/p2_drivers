@@ -127,11 +127,11 @@ weighted_ifr       = Npop.*dis.ifr;
 % use weight to compute life expectancy lost per death
 life_years_lost_per_death         = arrayfun(@(x) dot(life_expectancy(x{1}),weighted_ifr(x{1}))/sum(weighted_ifr(x{1})), ageindex);
 % apply discounting
-discount_rate = 0.03;
-discounted_life_years_per_death = zeros(size(life_years_lost_per_death));
-for k = 1:length(life_years_lost_per_death)
-    discounted_life_years_per_death(k) = sum(1./((1+discount_rate).^[1:life_years_lost_per_death(k)]));
-end  
-data.lgh   = [repmat(discounted_life_years_per_death(data.adInd),1,45),discounted_life_years_per_death];
+% discount_rate = 0.03;
+% discounted_life_years_per_death = zeros(size(life_years_lost_per_death));
+% for k = 1:length(life_years_lost_per_death)
+%     discounted_life_years_per_death(k) = sum(1./((1+discount_rate).^[1:life_years_lost_per_death(k)]));
+% end  
+data.lgh   = [repmat(life_years_lost_per_death(data.adInd),1,45),life_years_lost_per_death];
 
 end

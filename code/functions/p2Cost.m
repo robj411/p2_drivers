@@ -108,32 +108,4 @@ max_GDP = (max(t)-min(t))*sum(data.obj(notEd));
 costs.GDP_lost = max_GDP - GDP_in;
 
 
-%% IMPC
-
-% tstart       = min(p2.Tres,data.tvec(2));%response time or late lockdown time
-% w            = g(:,1+notEd);
-% if sum(w(end,:))==44;    
-%     tend     = data.tvec(end-1);%lifting time or simulation end time
-% else
-%     tend     = data.tvec(end);
-%     error('Implementation Cost Error!');
-% end
-% betamod      = g(:,1+2*lx+6*ln+1);
-% hospts       = min(sum(g(:,(1+2*lx+3*ln+1):(1+2*lx+4*ln)),2),p2.Hmax);
-% vaxxed       = sum(g(:,(1+2*lx+5*ln+1):(1+2*lx+6*ln)),2);%number of people vaccinated
-% units        = [max(0,tend-tstart),...
-%                 data.trate*sum(data.Npop/10^5)*max(0,tend-p2.t_tit),...
-%                 sum(data.Npop)*trapz(t,1-betamod),...
-%                 trapz(t,hospts),...
-%                 2*vaxxed(end)];
-% impcost      = data.pppf*(data.impcost(:,1)' + units.*data.impcost(:,2)');
-% cost(11,1:5) = impcost;
-% 
-% cunits                = [cumtrapz(t,(tstart<t)&(t<tend)),...
-%                          data.trate*sum(data.Npop/10^5)*cumtrapz(t,(p2.t_tit<t)&(t<tend)),...
-%                          sum(data.Npop)*cumtrapz(t,1-betamod),...
-%                          cumtrapz(t,hospts),...
-%                          2*vaxxed];
-% ccost_t(:,4*ln+[1:5]) = data.pppf*(data.impcost(:,1)' + cunits.*data.impcost(:,2)');
-
 end
