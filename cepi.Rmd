@@ -696,7 +696,7 @@ allallresults$Policy <- factor(allallresults$Policy,levels=c('No Closures','Scho
 #         legend.position = 'top') + labs(colour='',x='Value of a school year',y='Density')
 
 keptresults <- subset(allallresults,keeprow==T)
-keptresults[,qVSY:=rank(vsy/gdp)/.N,by=.(igroup,vax)]
+keptresults[,qVSY:=rank(vsy)/.N,by=.(igroup,vax)]
 
 ggplot(keptresults) + 
   geom_histogram(aes(x=qVSY,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
@@ -757,6 +757,23 @@ ggplot(keptresults) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
         legend.position = 'top') + labs(fill='',x='Response time minus importation time (quantile)',y='Proportion')
+
+```
+
+
+```{r vly,fig.cap='The relationship between policy choice and value of a life year.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+
+keptresults[,qVLY:=rank(vly)/.N,by=.(igroup,vax)]
+
+ggplot(keptresults) + 
+  geom_histogram(aes(x=qVLY,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  theme_bw(base_size = 13) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+        legend.position = 'top') + labs(fill='',x='Value of a life year (quantile)',y='Proportion')
 
 ```
 
