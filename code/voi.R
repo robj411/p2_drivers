@@ -204,6 +204,7 @@ for(bl in 1:length(bpsv_levels)){
       difftab[,School:=School-topresults[[bl]][[v]]$School]
       difftab[,GDP_loss:=GDP_loss-topresults[[bl]][[v]]$GDP_loss]
       difftab[,scen_Exit_wave:=topresults[[bl]][[v]]$Exit_wave]
+      difftab[,scen_Mitigated_deaths:=topresults[[bl]][[v]]$Mitigated_deaths]
       
       saveRDS(difftab,paste0('results/difftab_',bpsv,'_',vaccination_level,'.Rds'))
       
@@ -268,7 +269,7 @@ for(vaccination_level in vaccination_levels){
         subtab <- subset(difftab,igroup==income_level)
         subtab$sample <- 1:nrow(subtab)
         print(income_level)
-        print(subset(subtab,Cost/gdp< -.1 & !(scen_Exit_wave>(1-1e-2)) )[,..dispcols])
+        print(subset(subtab,Cost/gdp< -.05 & scen_Mitigated_deaths > Mitigated_deaths )[,..dispcols])
         nneg <- nneg + nrow(subset(subtab,Cost< 0 ))
       }
     }
