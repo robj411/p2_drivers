@@ -37,11 +37,13 @@ end
 %% store values
 international_tourism_quant = unifrnd(0,1);
 
+data.gdp_to_gnippp = gdp_to_gnippp;
 data.remote_quantile = internet_coverage_quantile;
 data.response_time_quantile = unifrnd(0,1);
 data.remote_teaching_effectiveness = unifrnd(0,1);
 data.self_isolation_compliance = betarnd(5,5);
 
+% social distancing parameters taken from table of saved samples
 sdtab_ncol = size(social_dist_coefs,1);
 randrow = randi([1 sdtab_ncol],1,1);
 data.sd_baseline = social_dist_coefs.baseline(randrow);
@@ -261,9 +263,15 @@ for k = 1:length(life_expectancy_4)
     discounted_life_expectancy(k) = sum(1./((1+discount_rate).^(1:life_expectancy_4(k))));
 end 
 
-vsl       = 160*gdp/sum(pop_sizes);
-discounted_value_of_a_life_year = vsl/(dot(discounted_life_expectancy,pop_sizes_4)/sum(pop_sizes_4));
-data.vly  = discounted_value_of_a_life_year;
+vsl_usa = 10.9; % global fund % everything is in millions
+gdp_usa = 21.38e6; % everything is in millions
+usa_pop = sum(table2array(CD(strcmp(CD.country,'United States'),find(strcmp(CD.Properties.VariableNames,'Npop1')):find(strcmp(CD.Properties.VariableNames,'Npop21')))));
+gdp_pc_usa = gdp_usa/usa_pop;
+vsl_gdp_elasticity = unifrnd(.8,1.2); % 1.5: global fund. 1.6: stephen rash %0.8:12: erik lamontagne
+gni_pc_ppp = gdp_to_gnippp*gdp/sum(Npop);
+vsl       = max(vsl_usa * (gni_pc_ppp/gdp_pc_usa)^vsl_gdp_elasticity, 20*gni_pc_ppp); %robinson 2019
+value_of_a_life_year = vsl/(dot(life_expectancy_4,pop_sizes_4)/sum(pop_sizes_4));
+data.vly  = value_of_a_life_year;
 
 %% vsy = value of a school year
 rate_of_return_one_year = 0.08;

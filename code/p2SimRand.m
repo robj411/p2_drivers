@@ -114,7 +114,7 @@ end
 
 %% set up simulation
 
-outputcolumnnames = {'End_mitigation','End_simulation', 'Remaining_susceptible','End_hosp','Exit_wave',...
+outputcolumnnames = {'Mitigated_deaths','End_mitigation','End_simulation', 'Remaining_susceptible','End_hosp','Exit_wave',...
     'Deaths','Cost','dYLLs','School','GDP_loss'};
 columnnames = [outputcolumnnames ];
 outputs   = zeros(nsamples,length(outputcolumnnames));
@@ -155,7 +155,8 @@ for il = 1:n_income
                         [~,exitwave] = min(abs(returned.Tout-endmit));
                         % get fraction of deaths that happen after
                         % mitigation ends
-                        exitwavefrac = 1-returned.deathtot(exitwave)/returned.deathtot(end);
+                        mitdeaths = returned.deathtot(exitwave);
+                        exitwavefrac = 1-mitdeaths/returned.deathtot(end);
                         % number in hospital at end
                         endhosp = returned.Htot(end);
                         % total still susceptible at end of simulation
@@ -164,7 +165,7 @@ for il = 1:n_income
                         ht = returned.Htot(find(returned.Tout > p2.Tres,1));
                         
                         %% store outputs
-                        outputs(i,:) = [endmit endsim endsusc endhosp exitwavefrac total_deaths sec];
+                        outputs(i,:) = [mitdeaths endmit endsim endsusc endhosp exitwavefrac total_deaths sec];
                         
                         if any(sec<0)
                             disp(strcat(string(strategy),'_',string(income_level),'_',string(vaccination_levels(vl)),'_',string(bpsv_levels(bl)),'_',string(i),' 0'))

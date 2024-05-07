@@ -185,8 +185,8 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     %% Event 7: end
     % mitigation is over
     ival = -abs(i-5);
-    % t is greater than the end of the vaccine rollout and a week since the last changepoint (which was end mitigation): tval = 0
-    tval = min(t-(max([p2.tpoints data.tvec(end-1)])+7),0);
+    % t is one month greater than the end of the vaccine rollout and a week since the last changepoint (which was end mitigation): tval = 0
+    tval = min(t-(max([p2.tpoints data.tvec(end-1)])+30),0);
     % tlong: one year since end mitigation
     tlong = min(t-(data.tvec(end-1)+365),0);
     % patient numbers declining
