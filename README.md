@@ -1,86 +1,86 @@
 DAEDALUS for CEPI’s 100-day mission: code and model description
 ================
 
--   [1 Simulation rules](#1-simulation-rules)
--   [2 Socio-economic costs](#2-socio-economic-costs)
-    -   [2.1 Lost lives](#21-lost-lives)
-    -   [2.2 Lost economic activity](#22-lost-economic-activity)
-    -   [2.3 Lost education](#23-lost-education)
--   [3 Epi model](#3-epi-model)
-    -   [3.1 Ordinary differential
-        equations](#31-ordinary-differential-equations)
-    -   [3.2 Disease state transitions](#32-disease-state-transitions)
-    -   [3.3 Vaccination state
-        transitions](#33-vaccination-state-transitions)
-    -   [3.4 Contact rates](#34-contact-rates)
-        -   [3.4.1 Community contacts](#341-community-contacts)
-        -   [3.4.2 Community-to-worker
-            contacts](#342-community-to-worker-contacts)
-    -   [3.5 Social distancing](#35-social-distancing)
-    -   [3.6 Self isolating](#36-self-isolating)
--   [4 Econ model](#4-econ-model)
-    -   [4.1 Configurations](#41-configurations)
-    -   [4.2 Impact of tourism](#42-impact-of-tourism)
-        -   [4.2.1 Food and accommodation services
-            sector](#421-food-and-accommodation-services-sector)
-        -   [4.2.2 Sector shrinkage as a result of the
-            pandemic](#422-sector-shrinkage-as-a-result-of-the-pandemic)
-        -   [4.2.3 Loss of international
-            tourists](#423-loss-of-international-tourists)
-        -   [4.2.4 Dependence on international
-            tourism](#424-dependence-on-international-tourism)
-    -   [4.3 Remote working](#43-remote-working)
--   [5 Parametric distributions](#5-parametric-distributions)
-    -   [5.1 Hospital capacity](#51-hospital-capacity)
-    -   [5.2 Labour share of GVA](#52-labour-share-of-gva)
-    -   [5.3 Vaccine administration](#53-vaccine-administration)
--   [6 Notation](#6-notation)
+- [1 Simulation rules](#1-simulation-rules)
+- [2 Socio-economic costs](#2-socio-economic-costs)
+  - [2.1 Lost lives](#21-lost-lives)
+  - [2.2 Lost economic activity](#22-lost-economic-activity)
+  - [2.3 Lost education](#23-lost-education)
+- [3 Epi model](#3-epi-model)
+  - [3.1 Ordinary differential
+    equations](#31-ordinary-differential-equations)
+  - [3.2 Disease state transitions](#32-disease-state-transitions)
+  - [3.3 Vaccination state
+    transitions](#33-vaccination-state-transitions)
+  - [3.4 Contact rates](#34-contact-rates)
+    - [3.4.1 Community contacts](#341-community-contacts)
+    - [3.4.2 Community-to-worker
+      contacts](#342-community-to-worker-contacts)
+  - [3.5 Social distancing](#35-social-distancing)
+  - [3.6 Self isolating](#36-self-isolating)
+- [4 Econ model](#4-econ-model)
+  - [4.1 Configurations](#41-configurations)
+  - [4.2 Impact of tourism](#42-impact-of-tourism)
+    - [4.2.1 Food and accommodation services
+      sector](#421-food-and-accommodation-services-sector)
+    - [4.2.2 Sector shrinkage as a result of the
+      pandemic](#422-sector-shrinkage-as-a-result-of-the-pandemic)
+    - [4.2.3 Loss of international
+      tourists](#423-loss-of-international-tourists)
+    - [4.2.4 Dependence on international
+      tourism](#424-dependence-on-international-tourism)
+  - [4.3 Remote working](#43-remote-working)
+- [5 Parametric distributions](#5-parametric-distributions)
+  - [5.1 Hospital capacity](#51-hospital-capacity)
+  - [5.2 Labour share of GVA](#52-labour-share-of-gva)
+  - [5.3 Vaccine administration](#53-vaccine-administration)
+- [6 Notation](#6-notation)
 
 # 1 Simulation rules
 
--   Countries are instantiated with two random variables: the response
-    time, and their importation time
--   The response time is the time at which the reporting country reports
-    having seen X hospital cases, where X is a random number between 1
-    and 20
--   The importation time is a random number between 0 and 20 days, where
-    0 days would be equivalent to the spillover, or origin, country
--   The simulation starts at the minimum between the response time and
-    the importation time
--   At the response time, the BPSV, if present, is given to people aged
-    65 and older; testing begins; social distancing begins; economic
-    closures, if in use, are implemented
--   At the importation time, five people are moved from compartment S to
-    compartment E
--   If closures are being implemented, the rules in Tables
-    <a href="#tab:rulesreactive">1.1</a> and
-    <a href="#tab:ruleselimination">1.2</a> are followed
--   The SARS-X–specific vaccine is rolled out starting on day 107 or 372
-    after the response time, depending on the investment assumption
--   All people aged 15 and over are eligible for vaccination, and we
-    assume 80% take it up
--   Distribution rate increases linearly to a maximum of 1% of the
-    population per day, at which is stays until 80% coverage is reached
--   When vaccine rollout is complete, closures, testing and social
-    distancing end
--   When the doubling time is more than 30 days and there are fewer than
-    1,000 people in hospital, the simulation ends.
+- Countries are instantiated with two random variables: the response
+  time, and their importation time
+- The response time is the time at which the reporting country reports
+  having seen X hospital cases, where X is a random number between 1 and
+  20
+- The importation time is a random number between 0 and 20 days, where 0
+  days would be equivalent to the spillover, or origin, country
+- The simulation starts at the minimum between the response time and the
+  importation time
+- At the response time, the BPSV, if present, is given to people aged 65
+  and older; testing begins; social distancing begins; economic
+  closures, if in use, are implemented
+- At the importation time, five people are moved from compartment S to
+  compartment E
+- If closures are being implemented, the rules in Tables
+  <a href="#tab:rulesreactive">1.1</a> and
+  <a href="#tab:ruleselimination">1.2</a> are followed
+- The SARS-X–specific vaccine is rolled out starting on day 107 or 372
+  after the response time, depending on the investment assumption
+- All people aged 15 and over are eligible for vaccination, and we
+  assume 80% take it up
+- Distribution rate increases linearly to a maximum of 1% of the
+  population per day, at which is stays until 80% coverage is reached
+- When vaccine rollout is complete, closures, testing and social
+  distancing end
+- When the doubling time is more than 30 days and there are fewer than
+  1,000 people in hospital, the simulation ends.
 
-| From/to            | No closures                                                                                                               | Light closures                                                       | Heavy closures                                                  |
-|:-------------------|:--------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------------|
-| **No closures**    |                                                                                                                           |                                                                      | t $\geq$ response time AND Hospital occupancy &gt; 95% capacity |
-| **Light closures** | (Growth rate &lt; 0.025 OR Hospital occupancy &lt; 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                      | Hospital occupancy &gt; 95% capacity                            |
-| **Heavy closures** |                                                                                                                           | Hospital occupancy &lt; 25% capacity AND t &gt; 7 + last change time |                                                                 |
+| From/to            | No closures                                                                                                           | Light closures                                                   | Heavy closures                                                |
+|:-------------------|:----------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------|:--------------------------------------------------------------|
+| **No closures**    |                                                                                                                       |                                                                  | t $\geq$ response time AND Hospital occupancy \> 95% capacity |
+| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                  | Hospital occupancy \> 95% capacity                            |
+| **Heavy closures** |                                                                                                                       | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |                                                               |
 
 <span id="tab:rulesreactive"></span>Table 1.1: State transition rules
 for reactive closure strategies. See Table <a href="#tab:eccon">4.1</a>
 for details of closures.
 
-| From/to            | No closures                                          | Light closures                                                            | Heavy closures                                                 |
-|:-------------------|:-----------------------------------------------------|:--------------------------------------------------------------------------|:---------------------------------------------------------------|
-| **No closures**    |                                                      |                                                                           | t $\geq$ response time OR Hospital occupancy &gt; 95% capacity |
-| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                           | $R_t > 1.2$                                                    |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t &gt; 7 + last change time |                                                                |
+| From/to            | No closures                                          | Light closures                                                          | Heavy closures                                               |
+|:-------------------|:-----------------------------------------------------|:------------------------------------------------------------------------|:-------------------------------------------------------------|
+| **No closures**    |                                                      |                                                                         | t $\geq$ response time OR Hospital occupancy \> 95% capacity |
+| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                         | $R_t > 1.2$                                                  |
+| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t \> 7 + last change time |                                                              |
 
 <span id="tab:ruleselimination"></span>Table 1.2: State transition rules
 for the elimination policy. See Table <a href="#tab:eccon">4.1</a> for
@@ -88,20 +88,20 @@ details of closures.
 
 # 2 Socio-economic costs
 
-We assign monetary values to dYLLs and to years of education in order to
+We assign monetary values to YLLs and to years of education in order to
 add health and education costs of sector-closure policies to the costs
 of economic closures. We define the total socio-economic costs TSC of an
 epidemic as the sum of the individual costs:
 
 $$\begin{equation}
-\text{TSC} = K_1\text{VdLY} + K_2 + K_3\text{VSY},
+\text{TSC} = K_1\text{VLY} + K_2 + K_3\text{VSY},
 \label{eq:swf}
 \end{equation}$$
 
-where $K_1$ is the number of discounted life years lost and VdLY the
-value of a discounted life year; $K_2$ is the lost GDP over the period
-due to reduced economic activity; and $K_3$ is the number of school
-years lost and VSY the value of one school year.
+where $K_1$ is the number of discounted life years lost and VLY the
+value of a life year; $K_2$ is the lost GDP over the period due to
+reduced economic activity; and $K_3$ is the number of school years lost
+and VSY the value of one school year.
 
 ## 2.1 Lost lives
 
@@ -123,33 +123,31 @@ l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N
 l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; 
 ```
 
-Expected life years remaining with discounting taken into account can be
-written
+The number of years lost given $D_g$ deaths due to COVID-19 for each age
+group is
 
 ``` math
-\hat{l}_g=\sum_{y=1}^{l_g}\frac{1}{(1+r)^{y}}
+K_1=\sum_gD_gl_g^{\text{(death)}}.
 ```
 
-for discount rate $r>0$. The discounted number of years lost given $D_g$
-deaths due to COVID-19 for each age group is
-
-``` math
-K_1=\sum_gD_g\hat{l}_g^{\text{(death)}}.
-```
-
-The VdLY used by policy makers should reflect the value that members of
+The VLY used by policy makers should reflect the value that members of
 the society place on reductions of their own mortality. We rely on the
 intrinsic rather than instrumental interpretation of the valuation of
 life (Cutler and Summers 2020), and we use existing estimates of the
-value of a statistical life (VSL) to estimate VdLY. We interpret the VSL
+value of a statistical life (VSL) to estimate VLY. We interpret the VSL
 as a population-weighted average (Ananthapavan et al. 2021; Robinson,
 Sullivan, and Shogren 2021), where each age group has a VSL defined by
-the number of expected life years remaining, and where each discounted
-year has the same value:
+the number of expected life years remaining, and where each year has the
+same value:
 
 $$\begin{equation}
-\text{VSL}=\frac{\sum_gN_g\hat{l}_g^{\text{(life)}}}{\sum_gN_g}\text{VdLY}.
+\text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VdLY}.
 \end{equation}$$
+
+Following The Global Fund (2022), “In this way, we made a choice to
+value deaths proportionally to the remaining life expectancy associated
+with the counterfactual of that death (how long they would live if they
+had not died)”.
 
 ## 2.2 Lost economic activity
 
@@ -443,11 +441,11 @@ The configuration $x$ and the proportion of workers working from home
 $q$ determine the scaling of exposure to infection between different
 groups for different reasons:
 
--   Worker absence due to sector closure
--   Worker absence due to working from home
--   Student absence due to school closure
--   Customer absence due to sector closure: impact on workers
--   Customer absence due to sector closure: impact on customers
+- Worker absence due to sector closure
+- Worker absence due to working from home
+- Student absence due to school closure
+- Customer absence due to sector closure: impact on workers
+- Customer absence due to sector closure: impact on customers
 
 We approach this differently from (Haw et al. 2022). Instead of contact
 matrices from (Prem et al. 2021), we use those from (Walker et al.
@@ -463,7 +461,7 @@ We construct contact matrix $M(x)$ as the sum of three matrices:
 $M^{\text{com}}(x)$ (community contacts), $M^{\text{CW}}(x)$
 (community-to-worker contacts), and $M^{\text{WC}}(x)$
 (worker-to-community contacts). We construct peacetime matrices
-($x=\textbf{1}$) beginning with a “target matrix,” which the three
+($x=\textbf{1}$) beginning with a “target matrix”, which the three
 matrices should add up to, which is taken from (Walker et al. 2020). By
 sampling relevant values, we decompose the whole matrix into its
 component parts. To incorporate closures, each matrix is transformed
@@ -745,7 +743,7 @@ transmission, with the reduction in mobility.
 <span id="fig:smoothmobility"></span>Figure 3.10: Mobility trajectories
 in 2020 for all countries, with points showing the point at which the
 largest drop was observed. Trajectories are averaged over “Retail and
-recreation,” “Transit stations” and “Workplaces” and smoothed with a
+recreation”, “Transit stations” and “Workplaces” and smoothed with a
 spline of 80 knots.
 
 </p>
@@ -765,19 +763,19 @@ mobility plotted against the stringency on that date.
 
 </div>
 
--   We want to write mobility as a function of mandate and some epi
-    outcome, e.g. deaths: $\rho(t) = (1-p^8)f(d(t),e(t)) + p^8$ where
-    $\rho(t)$ is mobility, $d$ is deaths per million, $e$ is government
-    mandate, and $`0 < p^8 < 1`$ is the baseline.
--   We want mobility to drop monotonically with both the mandate and the
-    epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
--   We want a maximum mobility of 1 when both the mandate and the epi
-    outcome are 0: $f(0,0)=1$.
--   We want mobility to approach $p^8$ when the mandate and the epi
-    outcome become large: $\lim_{x\to 10^6, e\to 1}f(d,e)= 0$.
--   We want to allow for the possibility of redundancy between the two
-    variables: $f(0,0)/f(0,e) > f(x,0)/f(d,e)$ and
-    $f(0,0)/f(d,0) > f(0,e)/f(d,e)$ for $d,e>0$.
+- We want to write mobility as a function of mandate and some epi
+  outcome, e.g. deaths: $\rho(t) = (1-p^8)f(d(t),e(t)) + p^8$ where
+  $\rho(t)$ is mobility, $d$ is deaths per million, $e$ is government
+  mandate, and $`0 < p^8 < 1`$ is the baseline.
+- We want mobility to drop monotonically with both the mandate and the
+  epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
+- We want a maximum mobility of 1 when both the mandate and the epi
+  outcome are 0: $f(0,0)=1$.
+- We want mobility to approach $p^8$ when the mandate and the epi
+  outcome become large: $\lim_{x\to 10^6, e\to 1}f(d,e)= 0$.
+- We want to allow for the possibility of redundancy between the two
+  variables: $f(0,0)/f(0,e) > f(x,0)/f(d,e)$ and
+  $f(0,0)/f(d,0) > f(0,e)/f(d,e)$ for $d,e>0$.
 
 A simple model to achieve these criteria is:
 $$f(d,e) = \frac{1}{1+p^9y+p^{10}e}$$ with $p^9, p^{10}>0$.
@@ -2731,7 +2729,14 @@ shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
 values as inputs for all country models.
 
 <figure>
-<img src="figures/sectortourism.png" style="width:40.0%" alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." /><figcaption aria-hidden="true"><span id="fig:sectortourism"></span>Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
+<img src="figures/sectortourism.png" style="width:40.0%"
+alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." />
+<figcaption aria-hidden="true"><span
+id="fig:sectortourism"></span>Figure 4.4: Predicting the percentage of
+tourism that comes from abroad as a function of the size of the sector.
+Each row represents a beta distribution whose mean is determined by the
+size of the sector (z). Blue points show the data we have available
+(grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
 </figure>
 
 ## 4.3 Remote working
@@ -2742,12 +2747,11 @@ We assume that the value we sample within the range is related to
 internet infrastructure, so that a low value in one sector implies low
 values in all sectors. We:
 
--   take the subset of countries in the income group (LLMIC / UMIC /
-    HIC);
--   take the minimum of the lower bounds by sector (5%);
--   take the maximum of the upper bounds by sector (95%);
--   sample from a uniform distribution between these bounds, taking the
-    same quantile for each sector.
+- take the subset of countries in the income group (LLMIC / UMIC / HIC);
+- take the minimum of the lower bounds by sector (5%);
+- take the maximum of the upper bounds by sector (95%);
+- sample from a uniform distribution between these bounds, taking the
+  same quantile for each sector.
 
 <!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 1.78 and  3.11. For UMICs, we have parameters 14.32 and  6.44. For HICs, we have parameters 9.57 and  1.39. -->
 
@@ -2975,6 +2979,87 @@ Beta
 <td style="text-align:right;">
 
 6.87
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+gdp to gnippp
+
+</td>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+Gamma
+
+</td>
+<td style="text-align:right;">
+
+10.75
+
+</td>
+<td style="text-align:right;">
+
+0.26
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+gdp to gnippp
+
+</td>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+Gamma
+
+</td>
+<td style="text-align:right;">
+
+16.27
+
+</td>
+<td style="text-align:right;">
+
+0.14
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+gdp to gnippp
+
+</td>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+Gamma
+
+</td>
+<td style="text-align:right;">
+
+11.10
+
+</td>
+<td style="text-align:right;">
+
+0.13
 
 </td>
 </tr>
@@ -3217,7 +3302,7 @@ Gamma
 </td>
 <td style="text-align:right;">
 
-0.32
+3.11
 
 </td>
 </tr>
@@ -3244,7 +3329,7 @@ Gamma
 </td>
 <td style="text-align:right;">
 
-0.82
+1.22
 
 </td>
 </tr>
@@ -3271,7 +3356,7 @@ Gamma
 </td>
 <td style="text-align:right;">
 
-1.17
+0.86
 
 </td>
 </tr>
@@ -3347,12 +3432,12 @@ Beta
 </td>
 <td style="text-align:right;">
 
-11.11
+11.23
 
 </td>
 <td style="text-align:right;">
 
-13.82
+13.90
 
 </td>
 </tr>
@@ -3830,7 +3915,8 @@ Rates
 
 Parameters
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
 
 <div id="ref-Ananthapavan2021" class="csl-entry">
 
@@ -3839,6 +3925,18 @@ Ananthapavan, Jaithri, Marj Moodie, Andrew J. Milat, and Rob Carter.
 statistical life’ estimates for Australia</span>.” *International
 Journal of Environmental Research and Public Health* 18 (11).
 <https://doi.org/10.3390/ijerph18116168>.
+
+</div>
+
+<div id="ref-Beraud2015" class="csl-entry">
+
+Béraud, Guillaume, Sabine Kazmercziak, Philippe Beutels, Daniel
+Levy-Bruhl, Xavier Lenne, Nathalie Mielcarek, Yazdan Yazdanpanah, Pierre
+Yves Boëlle, Niel Hens, and Benoit Dervaux. 2015.
+“<span class="nocase">The French connection: The first large
+population-based contact survey in France relevant for the spread of
+infectious diseases</span>.” *PLoS ONE* 10 (7): 1–22.
+<https://doi.org/10.1371/journal.pone.0133203>.
 
 </div>
 
@@ -3851,22 +3949,10 @@ Behaviour* 7 (March). <https://doi.org/10.1038/s41562-022-01506-4>.
 
 </div>
 
-<div id="ref-Beraud2015" class="csl-entry">
-
-Béraud, Guillaume, Sabine Kazmercziak, Philippe Beutels, Daniel
-Levy-Bruhl, Xavier Lenne, Nathalie Mielcarek, Yazdan Yazdanpanah, Pierre
-Yves Boëlle, Niel Hens, and Benoit Dervaux. 2015. “<span
-class="nocase">The French connection: The first large population-based
-contact survey in France relevant for the spread of infectious
-diseases</span>.” *PLoS ONE* 10 (7): 1–22.
-<https://doi.org/10.1371/journal.pone.0133203>.
-
-</div>
-
 <div id="ref-Cutler2020" class="csl-entry">
 
-Cutler, David M., and Lawrence H. Summers. 2020. “<span
-class="nocase">The COVID-19 pandemic and the \$16 trillion
+Cutler, David M., and Lawrence H. Summers. 2020.
+“<span class="nocase">The COVID-19 pandemic and the \$16 trillion
 virus</span>.” *JAMA* 324 (15). <https://doi.org/10.1257/pol.20170046>.
 
 </div>
@@ -3874,10 +3960,10 @@ virus</span>.” *JAMA* 324 (15). <https://doi.org/10.1257/pol.20170046>.
 <div id="ref-GlobalBurdenofDiseaseCollaborativeNetwork2021"
 class="csl-entry">
 
-Global Burden of Disease Collaborative Network. 2021. “<span
-class="nocase">Global Burden of Disease Study 2019 (GBD 2019) Reference
-Life Table</span>.” Seattle, United States of America: Institute for
-Health Metrics; Evaluation (IHME).
+Global Burden of Disease Collaborative Network. 2021.
+“<span class="nocase">Global Burden of Disease Study 2019 (GBD 2019)
+Reference Life Table</span>.” Seattle, United States of America:
+Institute for Health Metrics; Evaluation (IHME).
 
 </div>
 
@@ -3893,10 +3979,10 @@ countries</span>.” *European Economic Review* 133: 103679.
 <div id="ref-Haw2020" class="csl-entry">
 
 Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo
-Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. “<span
-class="nocase">Optimizing social and economic activity while containing
-SARS-CoV-2 transmission using DAEDALUS</span>.” *Nature Computational
-Science* 2: 223–33. <https://doi.org/10.25561/83928>.
+Pianella, Rob Johnson, Sumali Bajaj, et al. 2022.
+“<span class="nocase">Optimizing social and economic activity while
+containing SARS-CoV-2 transmission using DAEDALUS</span>.” *Nature
+Computational Science* 2: 223–33. <https://doi.org/10.25561/83928>.
 
 </div>
 
@@ -3930,9 +4016,9 @@ Choice* 17 (2): 161–75. <https://doi.org/10.1080/15582159.2023.2210941>.
 <div id="ref-Prem2021" class="csl-entry">
 
 Prem, Kiesha, Kevin van Zandvoort, Petra Klepac, Rosalind M. Eggo,
-Nicholas G. Davies, Alex R. Cook, and Mark Jit. 2021. “<span
-class="nocase">Projecting contact matrices in 177 geographical regions:
-An update and comparison with empirical data for the COVID-19
+Nicholas G. Davies, Alex R. Cook, and Mark Jit. 2021.
+“<span class="nocase">Projecting contact matrices in 177 geographical
+regions: An update and comparison with empirical data for the COVID-19
 era</span>.” *PLoS Computational Biology* 17 (7).
 <https://doi.org/10.1371/journal.pcbi.1009098>.
 
@@ -3940,18 +4026,26 @@ era</span>.” *PLoS Computational Biology* 17 (7).
 
 <div id="ref-Psacharopoulos2021a" class="csl-entry">
 
-Psacharopoulos, George, Victoria; Collis, and Patrinos. 2021. “<span
-class="nocase">The COVID-19 Cost of School Closures in Earnings and
-Income across the World</span>.” *Comparative Education Review* 65 (2).
+Psacharopoulos, George, Victoria; Collis, and Patrinos. 2021.
+“<span class="nocase">The COVID-19 Cost of School Closures in Earnings
+and Income across the World</span>.” *Comparative Education Review* 65
+(2).
 
 </div>
 
 <div id="ref-Robinson2021" class="csl-entry">
 
-Robinson, Lisa A., Ryan Sullivan, and Jason F. Shogren. 2021. “<span
-class="nocase">Do the benefits of COVID-19 policies exceed the costs?
-Exploring uncertainties in the age–VSL relationship</span>.” *Risk
-Analysis* 41 (5): 761–70. <https://doi.org/10.1111/risa.13561>.
+Robinson, Lisa A., Ryan Sullivan, and Jason F. Shogren. 2021.
+“<span class="nocase">Do the benefits of COVID-19 policies exceed the
+costs? Exploring uncertainties in the age–VSL relationship</span>.”
+*Risk Analysis* 41 (5): 761–70. <https://doi.org/10.1111/risa.13561>.
+
+</div>
+
+<div id="ref-TheGlobalFund2022" class="csl-entry">
+
+The Global Fund. 2022. “<span class="nocase">Fight for What Counts
+Investment Case</span>,” 1–4.
 
 </div>
 
