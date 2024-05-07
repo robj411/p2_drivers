@@ -328,14 +328,18 @@ indicators <- wb_indicators()
 indicators[grepl('GNI',indicators$indicator)&grepl('PPP',indicators$indicator),]
 indicators[grepl('GDP',indicators$indicator)&grepl('current',indicators$indicator)&grepl('\\$',indicators$indicator),]
 
-gdpdata <- setDT(wb_data("NY.GDP.MKTP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
-gnipppdata <- setDT(wb_data("NY.GNP.MKTP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
-joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.MKTP.CD)],gnipppdata[,.(iso3c,country,date,NY.GNP.MKTP.PP.CD)],by=c('iso3c','country','date'))
-joineddata <- subset(joineddata,!is.na(NY.GNP.MKTP.PP.CD)&!is.na(NY.GDP.MKTP.CD))
+gdpdata <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+gnipppdata <- setDT(wb_data("NY.GNP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata[,.(iso3c,country,date,NY.GNP.PCAP.PP.CD)],by=c('iso3c','country','date'))
+joineddata <- subset(joineddata,!is.na(NY.GNP.PCAP.PP.CD)&!is.na(NY.GDP.PCAP.CD))
 joineddata[,mostrecent:=max(date),by=country]
 joineddata <- subset(joineddata,date==mostrecent)
-joineddata[,gdp_to_gnippp:=NY.GNP.MKTP.PP.CD/NY.GDP.MKTP.CD]
+joineddata[,gdp_to_gnippp:=NY.GNP.PCAP.PP.CD/NY.GDP.PCAP.CD]
 joineddata <- left_join(joineddata,setDT(incomelevels)[,.(Country.Code,IncomeGroup)],by=c('iso3c'="Country.Code"))
+
+ggplot(joineddata) + geom_point(aes(x=NY.GDP.PCAP.CD,y=gdp_to_gnippp,colour=IncomeGroup)) + theme_bw(base_size = 15) +
+  labs(x='GDP pc',y='GDP pc PPP / GDP pc',colour='')
+
 ggplot(joineddata) + geom_histogram(aes(x=gdp_to_gnippp,fill=IncomeGroup),position='dodge') 
 
 hic <- fitdistr(subset(joineddata,!is.na(gdp_to_gnippp)&IncomeGroup=='High income')$gdp_to_gnippp,"gamma")
@@ -343,10 +347,10 @@ umic <- fitdistr(subset(joineddata,!is.na(gdp_to_gnippp)&IncomeGroup%in%c('Upper
 llmic <- fitdistr(subset(joineddata,!is.na(gdp_to_gnippp)&IncomeGroup%in%c('Lower middle income','Low income'))$gdp_to_gnippp,"gamma")
 
 gdp_to_gnippp_distributions <- data.frame(parameter_name='gdp_to_gnippp',
-                                igroup=c('LLMIC','UMIC','HIC'),
-                                distribution='gaminv',
-                                `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape']]),
-                                `Parameter 2`=sapply(list(llmic,umic,hic),function(x)1/x$estimate[['rate']]))
+                                          igroup=c('LLMIC','UMIC','HIC'),
+                                          distribution='gaminv',
+                                          `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape']]),
+                                          `Parameter 2`=sapply(list(llmic,umic,hic),function(x)1/x$estimate[['rate']]))
 
 
 ## pupil to teacher ratio ###################
@@ -397,6 +401,7 @@ ptr_distributions <- data.frame(parameter_name='pupil_teacher_ratio',
                                 `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape']]),
                                 `Parameter 2`=sapply(list(llmic,umic,hic),function(x)1/x$estimate[['rate']]))
 
+ggplot(meanptrs) + geom_histogram(aes(x=meanptr,fill=IncomeGroup),position='dodge') 
 
 
 ## contacts #########################
@@ -425,3 +430,13 @@ source('../cmix_post_pandemic/r/rj_script.R')
 
 setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
 write.csv(parameter_distributions,'data/parameter_distributions.csv',row.names = F)
+
+
+x <- seq(0.01,1.1,0.001)
+ggplot() + geom_line(aes(x=x,y=x^c(.2,-.2)[as.numeric(x>.24)+1])) + theme_bw(base_size = 15) + 
+  labs(x='GNI pc ppp relative to USA',y='VSL/GNI relative to USA') + 
+  geom_hline(yintercept=1,col='grey')
+
+ggplot(joineddata) + geom_point(aes(x=NY.GDP.PCAP.CD,y=gdp_to_gnippp,colour=IncomeGroup)) + theme_bw(base_size = 15) +
+  labs(x='GDP pc',y='GDP pc PPP / GDP pc',colour='')
+
