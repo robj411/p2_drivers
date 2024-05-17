@@ -102,6 +102,7 @@ multisource <- list('Importation time'="t_import",
                     'Time to discharge'="Threc",
                     'Time to death'="Thd",
                     "R0"="R0",                               
+                    "R0 + seed size"=c("R0",'seedsize'),                               
                     "Candidate infectees"="CI",                               
                     "beta"="beta",       
                     'Doubling time'="Td",
@@ -128,25 +129,25 @@ multisource <- list('Importation time'="t_import",
                     "SD death coefficient"="sd_death_coef" ,                    
                     "SD mandate coefficient"="sd_mandate_coef",
                     
-                    'Work frac'='work_frac',
-                    'Nursery frac'='school1_frac',
-                    'School frac'='school2_frac',
-                    "Hospitality frac"=c("hospitality_frac1","hospitality_frac2","hospitality_frac3","hospitality_frac4"),
-                    "Remote working"="remote_quantile",
-                    "Remote teaching effectiveness"="remote_teaching_effectiveness",     
-                    "Labour share"="labsh",
-                    'VSY'="vsy",
-                    'VLY'="vly",
                     'GDP'="gdp" ,                              
                     'International tourism'="frac_tourism_international",
-                    
                     'Tourism'=c('frac_tourism_international','obj32'), #Food_sector
+                    "Labour share"="labsh",
+                    "Remote teaching effectiveness"="remote_teaching_effectiveness",     
+                    'VSY'="vsy",
+                    'VLY'="vly",
                     'Valuations'=c('vly','vsy'),
                     'Education factors'=c('NNs47','vsy'),
                     'Age groups'=c('NNs47','NNs46','NNs49'),
+                    "Remote working"="remote_quantile",
+                    'Work frac'='work_frac',
+                    'Nursery frac'='school1_frac',
+                    'School frac'='school2_frac',
                     'School/work contacts'=c('work_frac','school1_frac','school2_frac'),
+                    "Hospitality frac"=c("hospitality_frac1","hospitality_frac2","hospitality_frac3","hospitality_frac4"),
                     'Timing'=c('t_import','Tres','Hres','response_time_quantile'),
-                    'Testing'=c('trate',"frac_sym_infectiousness_averted","frac_presym_infectiousness_averted","frac_asym_infectiousness_averted")
+                    'Testing'=c('trate',"frac_sym_infectiousness_averted","frac_presym_infectiousness_averted","frac_asym_infectiousness_averted"),
+                    'Seed size'='seedsize'
                     )
 
 
@@ -410,10 +411,11 @@ saveRDS(choicestab,paste0('results/choicestab.Rds'))
 ## income levels separately ####################################
 
 get_voi_mi <- function(inp3,income_level,vaccination_level,bpsv){
-  inputtab <- read.csv(paste0('results/inputs_',income_level,'.csv'),header=T);
-  results <- read.csv(paste0('results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
-  results <- cbind(results,inputtab)
   print(paste0('results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'))
+  pth <- 'C:/Users/rj411/OneDrive - Imperial College London/p2_drivers/code/results/'
+  inputtab <- read.csv(paste0(pth,'inputs_',income_level,'.csv'),header=T);
+  results <- read.csv(paste0(pth,'outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
+  results <- cbind(results,inputtab)
   sourcelist <- list()
   for(src in 1:length(multisource)) {
     sourcelist[[src]] <- results[,colnames(results)%in%multisource[[src]],drop=F]

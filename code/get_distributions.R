@@ -6,6 +6,7 @@ library(wbstats)
 library(dplyr)
 library(haven)
 library(squire)
+library("cowplot")
 
 setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
 countrydatafile <- 'data/country_data.csv'
@@ -431,12 +432,173 @@ source('../cmix_post_pandemic/r/rj_script.R')
 setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
 write.csv(parameter_distributions,'data/parameter_distributions.csv',row.names = F)
 
+#######################################
 
 x <- seq(0.01,1.1,0.001)
-ggplot() + geom_line(aes(x=x,y=x^c(.2,-.2)[as.numeric(x>.24)+1])) + theme_bw(base_size = 15) + 
+ggplot() + geom_line(aes(x=x,y=x^c(.2,0,-.2)[as.numeric(x>.07)+as.numeric(x>.24)+1])) + theme_bw(base_size = 15) + 
   labs(x='GNI pc ppp relative to USA',y='VSL/GNI relative to USA') + 
   geom_hline(yintercept=1,col='grey')
 
 ggplot(joineddata) + geom_point(aes(x=NY.GDP.PCAP.CD,y=gdp_to_gnippp,colour=IncomeGroup)) + theme_bw(base_size = 15) +
   labs(x='GDP pc',y='GDP pc PPP / GDP pc',colour='')
+ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(gdp_to_gnippp*NY.GDP.PCAP.CD/77950)^1.2))) + 
+  geom_point(aes(colour=IncomeGroup)) + theme_bw(base_size = 15) +
+  labs(x='GDP pc',y='VSL(GDPppp), e=1.5',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
+summary(glm(log((gdp_to_gnippp*NY.GDP.PCAP.CD)^1.25)~log(NY.GDP.PCAP.CD)+offset(log(NY.GDP.PCAP.CD)),data=joineddata))
 
+p11 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(NY.GDP.PCAP.CD/77950)^1.))) + 
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 15) +
+  labs(x='GDP pc',y='VSL(GDP), e=1',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
+p12 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(gdp_to_gnippp*NY.GDP.PCAP.CD/77950)^1.))) + 
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 15) +
+  labs(x='GDP pc',y='VSL(GDPppp), e=1',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
+p21 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(NY.GDP.PCAP.CD/77950)^1.6))) + 
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 15) +
+  labs(x='GDP pc',y='VSL(GDP), e=1.6',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
+p22 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(gdp_to_gnippp*NY.GDP.PCAP.CD/77950)^1.6))) + 
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 15) +
+  labs(x='GDP pc',y='VSL(GDPppp), e=1.6',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
+
+
+plot_grid(p11,p21,p12,p22,ncol = 2, nrow = 2)
+
+
+
+gdpdata <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+gnipppdata <- setDT(wb_data("NY.GDP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata[,.(iso3c,country,date,NY.GDP.PCAP.PP.CD)],by=c('iso3c','country','date'))
+joineddata <- subset(joineddata,!is.na(NY.GDP.PCAP.PP.CD)&!is.na(NY.GDP.PCAP.CD))
+joineddata[,mostrecent:=max(date),by=country]
+joineddata <- subset(joineddata,date==mostrecent)
+joineddata[,gdp_to_gnippp:=NY.GDP.PCAP.PP.CD/NY.GDP.PCAP.CD]
+joineddata <- left_join(joineddata,setDT(incomelevels)[,.(Country.Code,IncomeGroup)],by=c('iso3c'="Country.Code"))
+
+
+joineddata[,gnippp:=gdp_to_gnippp*NY.GDP.PCAP.CD]
+usagdppc <- with(subset(joineddata,iso3c=='USA'),NY.GDP.PCAP.CD)
+yint <- with(subset(joineddata,iso3c=='USA'),(10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.)/NY.GDP.PCAP.CD)
+joineddata[,minvsl:=20*NY.GDP.PCAP.CD]
+joineddata[,basicvsl:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.),by=iso3c]
+joineddata[,vsle:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.5),by=iso3c]
+joineddata[,vslpppe:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.5),by=iso3c]
+joineddata[,vslppp:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.),by=iso3c]
+
+p11 <- ggplot(joineddata,aes(x=NY.GDP.PCAP.CD,y=basicvsl/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title='MER, e=1',colour='') 
+p12 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vslppp/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title='PPP, e=1',colour='') 
+p21 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vsle/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title='MER, e=1.5',colour='') 
+p22 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vslpppe/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title='PPP, e=1.5',colour='') 
+
+
+plot_grid(p11,p21,p12,p22,ncol = 2, nrow = 2)
+
+
+
+
+wb_data("NY.GNP.PCAP.PP.CD",country = "China", start_date = 1995, end_date = 2006)
+wb_data("NY.GNP.PCAP.PP.CD",country = "Czech Republic", start_date = 1995, end_date = 2006)
+wb_data("NY.GNP.PCAP.CD",country = "Czech Republic", start_date = 1995, end_date = 2006)
+wb_data("NY.GNP.PCAP.PP.CD",country = "India", start_date = 2005, end_date = 2006)
+wb_data("NY.GNP.PCAP.CD",country = "India", start_date = 2005, end_date = 2006)
+wb_data("NY.GNP.PCAP.PP.CD",country = "Malaysia", start_date = 1999, end_date = 2006)
+wb_data("NY.GNP.PCAP.CD",country = "Malaysia", start_date = 1999, end_date = 2006)
+wb_data("NY.GNP.PCAP.PP.CD",country = "Mexico", start_date = 2002, end_date = 2006)
+wb_data("NY.GNP.PCAP.CD",country = "Mexico", start_date = 2002, end_date = 2006)
+wb_data("NY.GNP.PCAP.PP.CD",country = "Mongolia", start_date = 2010, end_date = 2010)
+wb_data("NY.GNP.PCAP.CD",country = "Mongolia", start_date = 2010, end_date = 2010)
+wb_data("NY.GNP.PCAP.CD",country = "Sudan", start_date = 2013, end_date = 2013)
+wb_data("NY.GNP.PCAP.PP.CD",country = "Sudan", start_date = 2013, end_date = 2013)
+wb_data("NY.GNP.PCAP.CD",country = "Thailand", start_date = 2003, end_date = 2011)
+wb_data("NY.GNP.PCAP.PP.CD",country = "Thailand", start_date = 2003, end_date = 2011)
+wb_data("NY.GNP.PCAP.PP.CD",country = "Tunisia", start_date = 2002, end_date = 2002)
+wb_data("NY.GNP.PCAP.CD",country = "Tunisia", start_date = 2002, end_date = 2002)
+wb_data("NY.GNP.PCAP.PP.CD",country = "Turkey", start_date = 2012, end_date = 2012)
+wb_data("NY.GNP.PCAP.CD",country = "Turkey", start_date = 2012, end_date = 2012)
+
+
+
+plot(log(c(717,4729,34127)),c(1,.9,.8))
+plot((c(717,4729,34127)),c(1.2,1.2,.8))
+
+
+
+
+
+library(BayesTools)
+require(runjags)
+require(rjags)
+
+p1 <- prior(distribution = "normal", parameters = list(mean = 0, sd = 1))
+p2 <- prior(distribution = "normal", parameters = list(mean = 0, sd = 1))#, truncation = list(0, Inf))
+p3 <- prior(distribution = "normal", parameters = list(mean = 0, sd = .1), truncation = list(0, Inf))
+p4 <- prior(distribution = "normal", parameters = list(mean = 10, sd = 5), truncation = list(0, Inf))
+
+
+# get some data
+with(subset(joineddata,IncomeGroup%in%c('Low income','Lower middle income','Upper middle income')),median(NY.GDP.PCAP.CD))
+with(data,plot(log(income),elasticity,col=c('red','blue')[ppp+1]))
+medianincomes <- c(717,4729,34127,3078,22737,3747.419)
+data <- list(
+  income = medianincomes[c(rep(1:3,3),4,5,6)],
+  ppp = c(rep(1,6),rep(0,5),1),
+  elasticity = c(seq(1,0.8,-.1), 1.2,1.2,.8, rep(1,3), 1,.85,1.6),
+  N = 12
+)
+
+## create and fit models
+# define priors
+priors_list1 <- list(mu1 = p1, 
+                     mu2 = p1,
+                     sd1 = p3,
+                     intercept = p1,
+                     pppintercept = p1)
+
+mean(log(data$income))
+mean(data$elasticity)
+ggplot(as.data.frame(data),aes(x=log(income),y=elasticity,colour=as.factor(ppp))) + geom_point() + geom_smooth(method=lm,se=F)
+
+# define likelihood for the data
+model_syntax <-
+  "model{
+    mincome = mean(log(income))
+    melast = mean(elasticity)
+    for(i in 1:N){
+      grad[i] = ppp[i]*mu1 + mu2
+      coef[i] = log(income[i])*grad[i] 
+      elasticity[i] ~ dnorm(intercept + pppintercept*ppp[i] + (coef[i]),sd1)
+    }
+  }"
+
+# fit the models
+fit1 <- JAGS_fit(model_syntax, data, priors_list1, seed = 1,thin = 10, 
+                 add_parameters = c('coef'))
+
+allsamples <- as.data.frame(do.call(rbind,fit1$mcmc))
+plot(allsamples$mu2,type='l')
+pairs(with(allsamples,cbind(intercept,pppintercept,mu1,mu2,sd1)))
+
+(smm <- summary(fit1))
+indices <- grepl('coef',rownames(smm))
+data$predmedian <- smm[indices,2]
+data$predl95 <- smm[indices,1]
+data$predu95 <- smm[indices,3]
+# minmob$predmean <- smm[indices,4]
+plot(data$elasticity,data$predmedian)
+
+
+summary(lm(elasticity~log(income)*ppp,data=as.data.frame(data)))
