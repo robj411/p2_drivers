@@ -42,6 +42,7 @@ data.remote_quantile = internet_coverage_quantile;
 data.response_time_quantile = unifrnd(0,1);
 data.remote_teaching_effectiveness = unifrnd(0,1);
 data.self_isolation_compliance = betarnd(5,5);
+data.seedsize = unifrnd(4,8);
 
 % social distancing parameters taken from table of saved samples
 sdtab_ncol = size(social_dist_coefs,1);
@@ -268,7 +269,26 @@ gdp_usa = 21.38e6; % everything is in millions
 usa_pop = sum(table2array(CD(strcmp(CD.country,'United States'),find(strcmp(CD.Properties.VariableNames,'Npop1')):find(strcmp(CD.Properties.VariableNames,'Npop21')))));
 gdp_pc_usa = gdp_usa/usa_pop;
 vsl_gdp_elasticity = unifrnd(.8,1.2); % 1.5: global fund. 1.6: stephen rash %0.8:12: erik lamontagne
+vsl_method = randi([1 4]);
+if vsl_method > 2
+    gdp_to_gnippp = 1;
+end
 gni_pc_ppp = gdp_to_gnippp*gdp/sum(Npop);
+if vsl_method > 2
+    if gni_pc_ppp < 8809/1e6
+        vsl_gdp_elasticity = 1;
+    else
+        vsl_gdp_elasticity = unifrnd(0.85,1);
+    end
+end
+if vsl_method < 3
+    if strcmp('LLMIC',income_level) | strcmp('UMIC',income_level)
+        vsl_gdp_elasticity = unifrnd(0.9,1.2);
+    else
+        vsl_gdp_elasticity = 0.8;
+    end
+end
+        
 vsl       = max(vsl_usa * (gni_pc_ppp/gdp_pc_usa)^vsl_gdp_elasticity, 20*gni_pc_ppp); %robinson 2019
 value_of_a_life_year = vsl/(dot(life_expectancy_4,pop_sizes_4)/sum(pop_sizes_4));
 data.vly  = value_of_a_life_year;
