@@ -206,6 +206,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     rundata.compindex = data.compindex; 
     rundata.t_import = data.t_import; 
     rundata.imand = data.imand; 
+    rundata.seedsize = data.seedsize; 
     rundata.rel_stringency = data.rel_stringency;
 %     disp(data.rel_stringency')
     rundata.sd_baseline = data.sd_baseline;
