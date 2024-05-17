@@ -35,6 +35,16 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
     sd = betamod_wrapped(10^6*sum(dis.mu.*hospital_occupancy)/sum(NN0), ...
         data, mandate);
     
+    %% seed
+    seed = 10^(-data.seedsize);
+    if (data.imand==2 && ... % elimination strategy
+        mandate < 5 && mandate > 1 || ... % using closures
+        data.imand==3 && ... % reactive closure strategy
+        mandate == 3) && ... % currently in closures
+        sum(I) ~= 0 % importation has occurred
+        seed = 0;
+    end
+    
     %% correct for mandate
     
     contact_matrix_open = data.Dvec(:,:,1);
@@ -45,6 +55,24 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
     new_betamod = sd./sd_so_far;
     
     %% foi
-    foi     = phi.*beta.*(new_betamod.*contact_matrix)*Ifrac;
+    foi     = phi.*beta.*(new_betamod.*contact_matrix)*Ifrac + seed;
     
 end
+
+
+
+%    1.0e+06 *
+% 
+%     5.1020    5.0655    0.0013    0.0352
+% 
+%    1.0e+06 *
+% 
+%     2.1066    1.4589    0.5434    0.1043
+% 
+%    1.0e+06 *
+% 
+%     2.2122    1.4921    0.2785    0.4416
+% 
+%    1.0e+06 *
+% 
+%     2.8117    1.4903    0.6004    0.7211
