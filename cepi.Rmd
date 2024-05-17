@@ -7,15 +7,15 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
-  bookdown::html_document2: 
-    toc: true
-    toc_float: true
-    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -357,10 +357,11 @@ for(vl in 1:length(vaccination_levels)){
                                levels=c('Cost','dYLLs','School','GDP_loss'),
                                labels=c('Cost','dYLLs','Education','GDP'))
     
-    p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=Policy, y=value, x=Policy)) + 
+    p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=Policy,colour=Policy, y=value, x=Policy)) + 
       geom_violin(position="dodge", scale='width') +
       facet_grid(variable~igroup, scales="free") + 
         scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
+        scale_colour_viridis(discrete=T, name="",option='inferno',direction=-1) +
         theme_bw(base_size = 12)  +
         xlab("") +
         ylab("Percent of GDP") +
@@ -604,10 +605,11 @@ ggplot(choicestab) +
                fill=factor(policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))),stat='identity') + 
   facet_wrap(~factor(igroup,levels=c('LLMIC','UMIC','HIC'))) + 
   theme_bw(base_size=15) +
+  scale_y_continuous(expand=c(0,0)) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
   labs(x='',y='Chosen policy, % of samples',fill='') +
   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
-        legend.position = 'right') 
+        legend.position = 'left') 
 
 ```
 
@@ -774,6 +776,23 @@ ggplot(keptresults) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
         legend.position = 'top') + labs(fill='',x='Value of a life year (quantile)',y='Proportion')
+
+```
+
+
+```{r seed,fig.cap='The relationship between policy choice and the size of the seed.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+
+keptresults[,qseedsize:=-seedsize,by=.(igroup,vax)]
+
+ggplot(keptresults) + 
+  geom_histogram(aes(x=qseedsize,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  theme_bw(base_size = 13) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+        legend.position = 'top') + labs(fill='',x='Size of the seed (log base 10)',y='Proportion')
 
 ```
 
@@ -1025,13 +1044,20 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(mibrks)-1),labels=milbs))
 To understand the relationship between a parameter and an outcome, e.g. whether the relationship is linear and increasing or decreasing, whether it is nonlinear, whether it is driven by extreme values, they must be plotted against each other. Likewise, a relationship between a parameter pair and an outcome can be plotted, e.g. Figure \@ref(fig:tourismgdp): for middle-income countries in a pre-Alpha SARS-CoV-2 pandemic with the "No Closures" policy, GDP loss is greatest when both the food and accommodation services GVA as fraction of GDP and international tourism as a fraction of tourism are high.
 
 
-```{r interneted,fig.cap='Relationship between R$_0$ and total costs for UMICs with the "School Closures" policy.',echo=F,warning=F,message=F}
+```{r R0cost,fig.cap='Relationship between R$_0$ and total costs for UMICs with the "School Closures" policy.',echo=F,warning=F,message=F}
 
-ggplot(subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&BPSV=='No'&vaccination_level==365),aes(x=R0,y=Cost)) +
+ggsave(ggplot(subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&BPSV=='No'&vaccination_level==365),aes(x=R0,y=Cost)) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
-  labs(x=bquote(R[0]),y='Total socio-economic cost, % of GDP')
+  labs(x=bquote(R[0]),y='Total socio-economic cost, % of GDP'),filename='R0cost365.png')
 
+set100 <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&BPSV=='No'&vaccination_level==100)
+set365 <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&BPSV=='No'&vaccination_level==365)
+set365$averted <- set365$Cost - set100$Cost
+ggsave(ggplot(set365,aes(x=R0,y=averted)) +
+  geom_point(colour='navyblue') +
+  theme_bw(base_size=15) + 
+  labs(x=bquote(R[0]),y='Total socio-economic saving, % of GDP'),filename='R0saving.png',width=10,height=6)
 
 ```
 
