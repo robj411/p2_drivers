@@ -136,6 +136,7 @@ s2 = sB(2);
 contacts.sectorcontacts = max((sectorcontacts+1) .* 2.^unifrnd(-1,1,s1,s2) - 1, 0);
 uk_ptr = 15.87574;
 contacts.sectorcontacts(data.EdInd) = pupil_teacher_ratio / uk_ptr * contacts.sectorcontacts(data.EdInd);
+data.pupil_teacher_ratio = pupil_teacher_ratio;
 
 % matrix
 randvalue = table2array(CD(demoindex,strmatch("CM", CD.Properties.VariableNames)'));
