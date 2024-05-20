@@ -52,7 +52,6 @@ data.sd_death_coef = exp(social_dist_coefs.deathcoef(randrow));
 data.sd_mandate_coef = exp(social_dist_coefs.mandatecoef(randrow));
 
 % contacts.pt = pt;
-contacts.work_frac = work_frac;
 contacts.school1_frac = school1_frac;
 contacts.school2_frac = school2_frac;
 contacts.hospitality_frac = [hospitality1_frac; hospitality2_frac; hospitality3_frac; hospitality4_frac];
@@ -124,6 +123,9 @@ workers_by_sector = Npop4(3)*sectorworkerfrac;%number of workers by sector in ar
 % non-workers, and retired
 NNs = [workers_by_sector,Npop4(1),Npop4(2),Npop4(3)-sum(workers_by_sector),Npop4(4)]';
 
+% work contact fraction should not exceed worker fraction
+contacts.work_frac = min(work_frac, sum(workers_by_sector)/Npop4(3));
+
 %% contacts
 % workplace
 sectorcontacts = contacts.sectorcontacts.n_cnt;
@@ -172,7 +174,7 @@ data.trate = sample_uniform("trate",CD,country_indices);
 data.t_vax = 1000; 
 
 %arate = vaccine administration rate
-data.vaccination_rate_pc = 0.01;%unifrnd(0.5,1.5,1,1)/100;
+data.vaccination_rate_pc = 0.005;%unifrnd(0.5,1.5,1,1)/100;
 
 %puptake = population uptake
 data.vaccine_uptake = 0.8; %unifrnd(.4,.8,1,1);
