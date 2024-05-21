@@ -16,6 +16,7 @@ nSectors = data.nSectors;
 
 contacts = data.contacts;
 
+colnames = CD.Properties.VariableNames;
 
 %% values from distributions
 pindices = find(strcmp(country_parameter_distributions.igroup,income_level) | ...
@@ -100,7 +101,7 @@ nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
 [~,idx] = sort(CD.average_contacts(nonempind));
 nonempind = nonempind(idx);
 demoindex = nonempind(randi(numel(nonempind)));
-cols = strmatch('Npop', CD.Properties.VariableNames);
+cols = strmatch('Npop', colnames);
 randvalue = table2array(CD(demoindex,cols));
 Npop = 50*10^6*randvalue'/sum(randvalue);
 data.Npop = Npop;
@@ -110,21 +111,42 @@ data.Npop4 = Npop4;
 % population by stratum
 % sample workforce
 nonempind = find(~isnan(CD.NNs1) & country_indices);
-randindex = nonempind(randi(numel(nonempind)));
-colNNs = strmatch('NNs', CD.Properties.VariableNames);
-sectorworkers = table2array(CD(randindex,colNNs));%number of workers by sector in real country
-% normalise by number working age in sample country
+colNNs = strmatch('NNs', colnames);
+alloptions = table2array(CD(nonempind,colNNs));
+
 workagecolnames = strcat("Npop",arrayfun(@num2str, data.ageindex{3}, 'UniformOutput', false));
-workagecols = cell2mat(cellfun(@(a) strmatch(a, CD.Properties.VariableNames),...
+workagecols = cell2mat(cellfun(@(a) strmatch(a, colnames),...
     workagecolnames,'uniform',false));
-sectorworkerfrac = sectorworkers/sum(table2array(CD(randindex,workagecols)));%proportion of adult population by sector in real country
+workageadults = sum(table2array(CD(nonempind,workagecols)),2);
+employmentrates = sum(alloptions,2)./workageadults;
+
+[emp, emp_order] = sort(employmentrates);
+sortedoptions = alloptions(emp_order,:);
+
+% correlation between workforce in place and contacts from work
+mu  = zeros(1,2);   
+rho = [1 .8; .8 1];
+Z = mvnrnd(mu, rho, 1); %Generate multivariate corralated random number
+U = normcdf(Z,0,1);     %Compute the CDF
+
+rowindex = ceil(U(2)*(length(emp)-1) + unifrnd(0,1));
+
+sectorworkers = sortedoptions(rowindex,:);%number of workers by sector in real country
+% normalise by number working age in sample country
+sectorworkerfrac = sectorworkers/workageadults(emp_order(rowindex));%proportion of adult population by sector in real country
 workers_by_sector = Npop4(3)*sectorworkerfrac;%number of workers by sector in artificial country
 % put into daedalus order: workers by sector, then infants, adolescents,
 % non-workers, and retired
 NNs = [workers_by_sector,Npop4(1),Npop4(2),Npop4(3)-sum(workers_by_sector),Npop4(4)]';
 
+
+wfindex = find(strcmp(country_parameter_distributions.parameter_name,'work_frac'));
+cpd = country_parameter_distributions(wfindex,:);
+
+work_frac = betainv(U(1),cpd.Parameter_1,cpd.Parameter_2);
 % work contact fraction should not exceed worker fraction
 contacts.work_frac = min(work_frac, sum(workers_by_sector)/Npop4(3));
+
 
 %% contacts
 % workplace
@@ -139,7 +161,7 @@ contacts.sectorcontacts(data.EdInd) = pupil_teacher_ratio / uk_ptr * contacts.se
 data.pupil_teacher_ratio = pupil_teacher_ratio;
 
 % matrix
-randvalue = table2array(CD(demoindex,strmatch("CM", CD.Properties.VariableNames)'));
+randvalue = table2array(CD(demoindex,strmatch("CM", colnames)'));
 defivalue = reshape(randvalue,16,16);
 contacts.CM   = defivalue;
 
@@ -151,8 +173,8 @@ contacts.CM   = defivalue;
 %wfh = work from home
 
 nonempind = find(~isnan(CD.wfhl1) & country_indices);
-mins = min(table2array(CD(nonempind,strmatch('wfhl', CD.Properties.VariableNames))));
-maxs = max(table2array(CD(nonempind,strmatch('wfhu', CD.Properties.VariableNames))));
+mins = min(table2array(CD(nonempind,strmatch('wfhl', colnames))));
+maxs = max(table2array(CD(nonempind,strmatch('wfhu', colnames))));
 newprop = unifinv(internet_coverage_quantile,mins,maxs);
 data.wfh  = [newprop; newprop];
 
@@ -182,7 +204,7 @@ data.vaccine_uptake = 0.8; %unifrnd(.4,.8,1,1);
 
 %la = life expectancy
 nonempind = find(~isnan(CD.la1) & country_indices);
-cols = strmatch('la', CD.Properties.VariableNames);
+cols = strmatch('la', colnames);
 randindex = nonempind(randi(numel(nonempind)));
 randvalue = table2array(CD(randindex,cols));
 data.la   = randvalue;
@@ -224,6 +246,7 @@ data.NNs = NNs;
 data.NNs  = NNs;
 data.NNs(data.NNs==0) = 1;
 data.nStrata     = size(data.NNs,1);
+data.employmentrate = sum(data.NNs(1:nSectors))/Npop4(3);
 
 
 %% obj: income per worker
@@ -231,7 +254,7 @@ nonempind                   = find(~isnan(CD.obj1)&~isnan(CD.NNs1) & country_ind
 randindex                   = nonempind(randi(numel(nonempind)));
 % weights = CD.popsum(nonempind)/sum(CD.popsum(nonempind));
 % randindex = randsample(nonempind,1,true,weights);
-cols1 = strmatch('obj', CD.Properties.VariableNames);
+cols1 = strmatch('obj', colnames);
 randvalue                   = table2array(CD(randindex,cols1));%gva by sector in real country
 defivalue                   = randvalue./table2array(CD(randindex,colNNs));%gva per worker by sector in real country
 defivalue(isnan(defivalue)) = 0;
@@ -269,7 +292,7 @@ end
 
 vsl_usa = 10.9; % global fund % everything is in millions
 gdp_usa = 21.38e6; % everything is in millions
-usa_pop = sum(table2array(CD(strcmp(CD.country,'United States'),find(strcmp(CD.Properties.VariableNames,'Npop1')):find(strcmp(CD.Properties.VariableNames,'Npop21')))));
+usa_pop = sum(table2array(CD(strcmp(CD.country,'United States'),find(strcmp(colnames,'Npop1')):find(strcmp(colnames,'Npop21')))));
 gdp_pc_usa = gdp_usa/usa_pop;
 vsl_gdp_elasticity = unifrnd(.8,1.2); % 1.5: global fund. 1.6: stephen rash %0.8:12: erik lamontagne
 vsl_method = randi([1 4]);
