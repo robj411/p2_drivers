@@ -89,6 +89,24 @@ Hmax_distributions <- data.frame(parameter_name='Hmax',
                                   `Parameter 2`=sapply(list(llmic,umic,hic),function(x)1/x$estimate[['rate']]))
 
 
+## workforce in place ##########################
+print('workforce in place')
+
+workerNs <- grepl('NNs',colnames(p2data))
+workerNpop <- colnames(p2data)%in%paste0('Npop',5:13)
+fits <- list()
+for(igp in 1:3){
+  igroupdata <- subset(p2data,igroup%in%list(c('LMIC','LIC'),'UMIC','HIC')[[igp]])
+  workersinplace <- apply(igroupdata[,workerNs],1,sum)
+  workeragetotal <- apply(igroupdata[,workerNpop],1,sum)
+  fits[[igp]] <- fitdistr(na.omit(workersinplace/workeragetotal),"beta",start=list(shape1=1,shape2=1))
+}
+workforce_in_place <- data.frame(parameter_name='workforce_in_place',
+                               igroup=c('LLMIC','UMIC','HIC'),
+                               distribution='betainv',
+                               `Parameter 1`=sapply(fits,function(x)x$estimate[['shape1']]),
+                               `Parameter 2`=sapply(fits,function(x)x$estimate[['shape2']]))
+
 ## public transport ###################
 print('public transport')
 
@@ -426,7 +444,8 @@ source('../cmix_post_pandemic/r/rj_script.R')
                                  school2_distributions,
                                  work_frac_distributions,
                                  hospitality_frac_distributions,
-                                 hospitality_age_distributions
+                                 hospitality_age_distributions,
+                                 workforce_in_place
                                  ))
 
 setwd('~/projects/DAEDALUS/Daedalus-P2-Dashboard/')

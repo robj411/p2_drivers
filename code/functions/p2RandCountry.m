@@ -120,20 +120,19 @@ workagecols = cell2mat(cellfun(@(a) strmatch(a, colnames),...
 workageadults = sum(table2array(CD(nonempind,workagecols)),2);
 employmentrates = sum(alloptions,2)./workageadults;
 
-[emp, emp_order] = sort(employmentrates);
-sortedoptions = alloptions(emp_order,:);
-
 % correlation between workforce in place and contacts from work
-mu  = zeros(1,2);   
-rho = [1 .8; .8 1];
-Z = mvnrnd(mu, rho, 1); %Generate multivariate corralated random number
+Z = mvnrnd([0 0], [1 .8; .8 1], 1); %Generate multivariate corralated random number
 U = normcdf(Z,0,1);     %Compute the CDF
 
-rowindex = ceil(U(2)*(length(emp)-1) + unifrnd(0,1));
+wipindex = find(strcmp(country_parameter_distributions.parameter_name,'workforce_in_place'));
+cpd = country_parameter_distributions(wipindex,:);
+emp = betainv(U(2),cpd.Parameter_1,cpd.Parameter_2); %sort(employmentrates);
+% rowindex = ceil(U(2)*(length(emp)-1) + unifrnd(0,1));
 
-sectorworkers = sortedoptions(rowindex,:);%number of workers by sector in real country
+randindex = randi(numel(nonempind));
+sectorworkers = alloptions(randindex,:);%number of workers by sector in real country
 % normalise by number working age in sample country
-sectorworkerfrac = sectorworkers/workageadults(emp_order(rowindex));%proportion of adult population by sector in real country
+sectorworkerfrac = sectorworkers/sum(sectorworkers)*emp;%proportion of adult population by sector in real country
 workers_by_sector = Npop4(3)*sectorworkerfrac;%number of workers by sector in artificial country
 % put into daedalus order: workers by sector, then infants, adolescents,
 % non-workers, and retired

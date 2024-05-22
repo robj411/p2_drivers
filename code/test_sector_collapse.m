@@ -82,31 +82,30 @@ for i = 1:nsamples
     end
 end
 
-    scatter(CI_cell{il}(:,1)./CI_cell{il}(:,2),CI_cell{il}(:,7),'.')
-    scatter((CI_cell{il}(:,3)),CI_cell{il}(:,5),'.')
-colcol = 7;
-y = (CI_cell{il}(:,1))./CI_cell{il}(:,2);
+scatter(CI_cell{il}(:,1)./CI_cell{il}(:,2),CI_cell{il}(:,7),'.')
+scatter((CI_cell{il}(:,3)),CI_cell{il}(:,5),'.')
+colcol = 3;
+
 for il = 1:n_income
+    y = (CI_cell{il}(:,1))./CI_cell{il}(:,2);
     figure;
     tiledlayout(3,3,"Padding","tight")
     nexttile
     histogram(CI_cell{il}(:,5))
     xlabel('Employment')
     nexttile
-    scatter(CI_cell{il}(:,4),CI_cell{il}(:,5),'.','CData',CI_cell{il}(:,colcol))
+    scatter(CI_cell{il}(:,3),CI_cell{il}(:,5),'.','CData',CI_cell{il}(:,colcol))
     nexttile
     scatter(y,CI_cell{il}(:,5),'.','CData',CI_cell{il}(:,colcol))
     nexttile(5)
-    histogram(CI_cell{il}(:,4))
-    xlabel('Variance')
+    histogram(CI_cell{il}(:,3))
+    xlabel('Work frac')
     nexttile(6)
-    scatter(y,CI_cell{il}(:,4),'.','CData',CI_cell{il}(:,colcol))
-    ylim([0,100])
+    scatter(y,CI_cell{il}(:,3),'.','CData',CI_cell{il}(:,colcol))
     nexttile(9)
     histogram(y)
     xlabel('Ratio')
     saveas(gcf,sprintf('../figures/sector_collapse_%s',string(income_levels(il))),'jpg');
-
 end
 
 

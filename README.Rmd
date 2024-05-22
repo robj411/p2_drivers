@@ -195,7 +195,7 @@ $p^{18}$ is the number of days spent in self isolation per day of infectiousness
 
 Then the total GDP is
 
-``` math
+```math
 Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_S}y_j\int_{t=0}^{\tau}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
 ```
 
