@@ -8,7 +8,7 @@ library(haven)
 library(squire)
 library("cowplot")
 
-setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
+setwd('~/projects/DAEDALUS/Daedalus-P2-Dashboard/')
 countrydatafile <- 'data/country_data.csv'
 incomelevels <- read.csv('data/Metadata_Country_API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv')
 colnames(incomelevels)[1] <- 'Country.Code'
@@ -92,8 +92,8 @@ Hmax_distributions <- data.frame(parameter_name='Hmax',
 ## public transport ###################
 print('public transport')
 
-modeshare <- setDT(readxl::read_xlsx('~/overflow_dropbox/DAEDALUS/data/mode_shares.xlsx',sheet=2,skip = 1))
-modeshare2 <- setDT(readxl::read_xlsx('~/overflow_dropbox/DAEDALUS/data/mode_shares.xlsx',sheet=3,skip = 1))
+modeshare <- setDT(readxl::read_xlsx('~/projects/DAEDALUS/data/mode_shares.xlsx',sheet=2,skip = 1))
+modeshare2 <- setDT(readxl::read_xlsx('~/projects/DAEDALUS/data/mode_shares.xlsx',sheet=3,skip = 1))
 
 modeshare[,pt:=(`Bus/Coach`+Rail)/(`Bus/Coach`+Rail+`Passenger Car`)]
 modeshare2[,pt:=(`Public transport (coach, bus, rail)`)/(`Public transport (coach, bus, rail)`+`Passenger Car`)]
@@ -429,7 +429,7 @@ source('../cmix_post_pandemic/r/rj_script.R')
                                  hospitality_age_distributions
                                  ))
 
-setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/')
+setwd('~/projects/DAEDALUS/Daedalus-P2-Dashboard/')
 write.csv(parameter_distributions,'data/parameter_distributions.csv',row.names = F)
 
 #######################################

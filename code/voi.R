@@ -13,7 +13,7 @@ cl <- makeCluster(4)
 registerDoParallel(cl)
 
 if(Sys.info()[['sysname']]=='Linux'){
-  setwd('~/overflow_dropbox/DAEDALUS/Daedalus-P2-Dashboard/code')
+  setwd('~/projects/DAEDALUS/Daedalus-P2-Dashboard/code')
 }else{
   setwd('C:/Users/rj411/OneDrive - Imperial College London/p2_drivers/code')
 }
