@@ -115,7 +115,7 @@ end
 %% set up simulation
 
 outputcolumnnames = {'Mitigated_deaths','End_mitigation','End_simulation', 'Remaining_susceptible','End_hosp','Exit_wave',...
-    'Deaths','Cost','dYLLs','School','GDP_loss'};
+    'Deaths','Cost','YLL','School','GDP_loss'};
 columnnames = [outputcolumnnames ];
 outputs   = zeros(nsamples,length(outputcolumnnames));
 
