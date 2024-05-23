@@ -826,6 +826,7 @@ These relationships are identified in the value-of-information analyses: the las
 param_cutoff <- c('Remote quantile','Time to death')
 
 voiall <- readRDS('code/results/voidiff_0_100.Rds')
+rownames(voiall) <- gsub('dYLLs:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('Deaths:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 rownames(voiall) <- gsub('Cost:','Value:',rownames(voiall))
@@ -873,6 +874,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```{r voi,fig.cap='\\footnotesize Value of information for BAU.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('code/results/voi_365_0.Rds')
+rownames(voiall) <- gsub('dYLLs:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('Deaths:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
@@ -927,6 +929,8 @@ for(i in c(365,100)){
     voiall <- rbind(voiall,newtab)
   }
 }
+rownames(voiall) <- gsub('dYLLs:','YLL:',rownames(voiall))
+
 # voiall <- readRDS('code/results/decisionvoi365_0.Rds')*100
 
 fullnames <- rownames(voiall)
@@ -968,6 +972,8 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
 ```{r dvoi100,fig.cap='Decision VOI for 100 days. Which parameters would enable the decision maker to choose a policy that minimises expected losses for 100-day vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
 
 voiall <- readRDS('code/results/decisionvoi100_0.Rds')*100
+rownames(voiall) <- gsub('dYLLs:','YLL:',rownames(voiall))
+
 rownames(voiall) <- gsub('Deaths:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
@@ -1007,6 +1013,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
 ```{r mi,fig.cap='Mutual information (MI) for BAU.',eval=T,echo=F,warning=F,message=F,fig.height=12,eval=F}
 
 voiall <- readRDS('code/results/mi.Rds')
+rownames(voiall) <- gsub('dYLLs:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('Deaths:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
