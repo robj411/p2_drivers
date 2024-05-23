@@ -98,12 +98,21 @@ ifrs = table2array(sevenpathogens(:,ircolumns(1:17,2)));
 hfrs = ifrs./ihrs;
 
 maxihrs = max(ihrs');
+maxifrs = max(ifrs');
 %%!! is the last val
 maxhfrs = hfrs(:,end); %max(hfrs(hfrs<1)');
+% repeat non-covid outcomes
+% maxihrs = [maxihrs maxihrs];
+% maxhfrs = [maxhfrs; maxhfrs];
+
+offdiag = corr(maxihrs',maxhfrs);
+
+Z = mvnrnd([0 0], [1 offdiag; offdiag 1], nsamples); %Generate multivariate corralated random number
+U = normcdf(Z,0,1);     %Compute the CDF
 
 pHat = betafit(maxihrs);
-pHat = pHat./min(1,min(pHat));
-maxihr = betarnd(pHat(1),pHat(2),nsamples,1);
+pHat = pHat./min(.5,min(pHat));
+maxihr = betainv(U(:,1),pHat(1),pHat(2));
 %%!! ihr cannot exceed probability symptomatic
 while(sum(maxihr>param_struct.ps)>0)
     resample = find(maxihr>param_struct.ps);
@@ -112,10 +121,12 @@ while(sum(maxihr>param_struct.ps)>0)
 end
 
 pHat = betafit(maxhfrs);
+pHat = pHat./min(.5,min(pHat));
 %%!! max val = 1
-maxhfr = betarnd(pHat(1),pHat(2),nsamples,1);
+maxhfr = betainv(U(:,2),pHat(1),pHat(2));
 % maxhfr = unifrnd(0,1,nsamples,1);
-
+% figure; hist(maxhfr.*maxihr)
+% mean(maxhfr.*maxihr)
 
 ihrrr = exp(table2array(readtable('../data/ihrrr.csv')));
 hfrrr = exp(table2array(readtable('../data/hfrrr.csv')));
