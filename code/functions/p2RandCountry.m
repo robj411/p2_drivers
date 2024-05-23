@@ -317,6 +317,7 @@ end
 vsl       = max(vsl_usa * (gni_pc_ppp/gdp_pc_usa)^vsl_gdp_elasticity, 20*gni_pc_ppp); %robinson 2019
 value_of_a_life_year = vsl/(dot(life_expectancy_4,pop_sizes_4)/sum(pop_sizes_4));
 data.vly  = value_of_a_life_year;
+data.vsl  = vsl;
 
 %% vsy = value of a school year
 rate_of_return_one_year = 0.08;
