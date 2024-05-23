@@ -133,6 +133,7 @@ multisource <- list('Importation time'="t_import",
                     'International tourism'="frac_tourism_international",
                     'Tourism'=c('frac_tourism_international','obj32'), #Food_sector
                     "Labour share"="labsh",
+                    "Employment rate"='employmentrate',
                     "Remote teaching effectiveness"="remote_teaching_effectiveness",     
                     'VSY'="vsy",
                     'VLY'="vly",

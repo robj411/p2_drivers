@@ -117,14 +117,14 @@ alloptions = table2array(CD(nonempind,colNNs));
 workagecolnames = strcat("Npop",arrayfun(@num2str, data.ageindex{3}, 'UniformOutput', false));
 workagecols = cell2mat(cellfun(@(a) strmatch(a, colnames),...
     workagecolnames,'uniform',false));
-workageadults = sum(table2array(CD(nonempind,workagecols)),2);
-employmentrates = sum(alloptions,2)./workageadults;
+% workageadults = sum(table2array(CD(nonempind,workagecols)),2);
+% employmentrates = sum(alloptions,2)./workageadults;
 
 % correlation between workforce in place and contacts from work
 Z = mvnrnd([0 0], [1 .8; .8 1], 1); %Generate multivariate corralated random number
 U = normcdf(Z,0,1);     %Compute the CDF
 
-wipindex = find(strcmp(country_parameter_distributions.parameter_name,'workforce_in_place'));
+wipindex = find(strcmp(country_parameter_distributions.parameter_name,'workforce_in_place') & strcmp(country_parameter_distributions.igroup,income_level));
 cpd = country_parameter_distributions(wipindex,:);
 emp = betainv(U(2),cpd.Parameter_1,cpd.Parameter_2); %sort(employmentrates);
 % rowindex = ceil(U(2)*(length(emp)-1) + unifrnd(0,1));

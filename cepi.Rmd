@@ -183,7 +183,7 @@ The outcomes of the DAEDALUS model are:
  2. GDP: Short-term economic loss from economic closures and disruptions to demand and labour supply, globally, by country income groups, and by economic sectors;
  3. Education: long-term economic loss from closures of educational institutions, globally and by country income groups.
  
-Numbers of deaths are translated into discounted years of life lost (dYLL). This takes into account the life expectancy of each person who dies. dYLLs are valued using the value of a statistical life, which we estimate as being 160 times GDP per capita [@Robinson2019].
+Numbers of deaths are translated into discounted years of life lost (YLL). This takes into account the life expectancy of each person who dies. YLL are valued using the value of a statistical life, which we estimate as being 160 times GDP per capita [@Robinson2019].
 
 GDP loss is estimated as the total GDP - the sum of GVA across all sectors, scaled by how open they are across the year - divided by the value of GDP when all sectors are completely open all the time.
 
@@ -264,18 +264,18 @@ We first present results on the outcomes or costs of pandemics for the analysed 
 
 ## Distributions over outcomes
 
-In this section we present the costs of pandemics, by country category, mitigation policy, vaccination scenario, and for the three costs separately and summed up. For illustration, results for the BAU Origin countries are shown in Figure \@ref(fig:BAUviolinspill); the figures for the other scenarios are in the Appendix (Figures \@ref(fig:BAUviolinsecond) to  \@ref(fig:violin100second)). Because we are varying key characteristics across countries within a category (LLMIC, MIC, or HIC), there is a distribution over costs, which we present with violin plots (e.g. Figure \@ref(fig:BAUviolinspill)). They show the outcomes of 2,048 modelling runs of the same scenario where each run has a different set of randomly drawn parameters. The top row shows projections for total costs across three outcomes, while the 2nd, 3rd and 4th rows show the different types of costs (dYLLS, education and GDP losses). Each shape represents a probability distribution: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value projected by any modelling run, after which point the density is 0. The base of the violin is given by the lowest value projected. Plots for all virus profiles are shown in Figures \@ref(fig:BAUviolinspill) to \@ref(fig:violin100second), and mean values and 95\% prediction intervals are given in Table \@ref(tab:tabres).
+In this section we present the costs of pandemics, by country category, mitigation policy, vaccination scenario, and for the three costs separately and summed up. For illustration, results for the BAU Origin countries are shown in Figure \@ref(fig:BAUviolinspill); the figures for the other scenarios are in the Appendix (Figures \@ref(fig:BAUviolinsecond) to  \@ref(fig:violin100second)). Because we are varying key characteristics across countries within a category (LLMIC, MIC, or HIC), there is a distribution over costs, which we present with violin plots (e.g. Figure \@ref(fig:BAUviolinspill)). They show the outcomes of 2,048 modelling runs of the same scenario where each run has a different set of randomly drawn parameters. The top row shows projections for total costs across three outcomes, while the 2nd, 3rd and 4th rows show the different types of costs (YLL, education and GDP losses). Each shape represents a probability distribution: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value projected by any modelling run, after which point the density is 0. The base of the violin is given by the lowest value projected. Plots for all virus profiles are shown in Figures \@ref(fig:BAUviolinspill) to \@ref(fig:violin100second), and mean values and 95\% prediction intervals are given in Table \@ref(tab:tabres).
 
 There is high variation in projected costs across modelling runs, for all country types. For some favourable combinations of the randomly drawn parameters (bottom of the violin), costs are just above zero. On the other hand, for a few unfavourable parameter combinations (top of the violin), costs approach 500\% of annual pre-pandemic GDP in Figure \@ref(fig:BAUviolinspill). This area represents extreme adverse outcomes. Our aim in Section \@ref(value-of-information) is to identify which parameters lead to these high-cost outcomes.
 
 <!-- Distributions over costs associated with the first two years of an outbreak of a new SARS-X virus are shown for three income levels and four mitigation strategies. Each shape represents the probability density made up of the sampled values for outcomes: the most likely value to take is where the figure is widest. The tip of the tail indicates the highest value sampled, after which point the density is 0. -->
 
-<!-- These distributions show that vulnerability to a pandemic depends on a country's income level together with its mitigation policy. For example, the elimination policy appears to have the lowest distribution for overall cost for HICs among all strategies, whereas it appears no lower for UMICs and perhaps higher for LLMICs. This will be because of the factors that vary systematically across countries of different income levels. Likewise, the heavier tails in the distributions for dYLLs for HICs is likely due to the age distributions in HICs being heavier in older ages. These cross-country differences are one of the focuses of the development of the model. -->
+<!-- These distributions show that vulnerability to a pandemic depends on a country's income level together with its mitigation policy. For example, the elimination policy appears to have the lowest distribution for overall cost for HICs among all strategies, whereas it appears no lower for UMICs and perhaps higher for LLMICs. This will be because of the factors that vary systematically across countries of different income levels. Likewise, the heavier tails in the distributions for YLL for HICs is likely due to the age distributions in HICs being heavier in older ages. These cross-country differences are one of the focuses of the development of the model. -->
 
 ```{r resultsBAU,echo=F,warning=F,message=F}
 
 
-result_cols <- c('Cost','dYLLs','School','GDP_loss')
+result_cols <- c('Cost','YLL','School','GDP_loss')
 
 allresults <- data.frame()
 
@@ -304,8 +304,8 @@ vioplot <- melt(allresults[,(nvar-3):ncol(allresults)],id.vars=c('Policy','igrou
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
 vioplot$Policy <- factor(vioplot$Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
 vioplot$variable <- factor(vioplot$variable,
-                           levels=c('Cost','dYLLs','School','GDP_loss'),
-                           labels=c('Cost','dYLLs','Education','GDP'))
+                           levels=c('Cost','YLL','School','GDP_loss'),
+                           labels=c('Cost','YLL','Education','GDP'))
 
 
 ```
@@ -336,6 +336,7 @@ for(vl in 1:length(vaccination_levels)){
             results$Policy <- inp3
             results$igroup <- income_level
             results$samplei <- 1:nrow(results)
+            colnames(results)[colnames(results)=='dYLLs'] <- 'YLL'
             results <- cbind(results,inputtab)
             allresults <- rbind(allresults,results)
         }
@@ -354,8 +355,8 @@ for(vl in 1:length(vaccination_levels)){
     vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
     vioplot$Policy <- factor(vioplot$Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
     vioplot$variable <- factor(vioplot$variable,
-                               levels=c('Cost','dYLLs','School','GDP_loss'),
-                               labels=c('Cost','dYLLs','Education','GDP'))
+                               levels=c('Cost','YLL','School','GDP_loss'),
+                               labels=c('Cost','YLL','Education','GDP'))
     
     p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=Policy,colour=Policy, y=value, x=Policy)) + 
       geom_violin(position="dodge", scale='width') +
@@ -381,7 +382,7 @@ for(vl in 1:length(vaccination_levels)){
     setDT(allresults)
     allresults[,mincost:=as.numeric(Cost==min(Cost)),by=.(samplei,igroup)]
     
-    meantab <- allresults[,.(deaths=mean(dYLLs),
+    meantab <- allresults[,.(deaths=mean(YLL),
                             education=mean(School),
                             gdp=mean(GDP_loss),
                             nmin=sum(mincost)),by=.(Policy,igroup)]
@@ -389,12 +390,12 @@ for(vl in 1:length(vaccination_levels)){
     meltmean$scen <- paste0(vaccination_level,', ',c('No BPSV','BPSV')[bpsv+1])
     meltmeantab <- rbind(meltmeantab,meltmean)
     
-    tabres <- setDT(allresults)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
-                            deaths=paste0(round(mean(dYLLs),1),' (',paste0(round(quantile(dYLLs,c(0.025,0.975)),1),collapse=', '),')'),
-                            education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
-                            gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
+    tabres <- setDT(allresults)[,list(costs=paste0(round(quantile(Cost,c(0.25,0.75)),1),collapse='--'),
+                            deaths=paste0(round(quantile(YLL,c(0.25,0.75)),1),collapse='--'),
+                            education=paste0(round(quantile(School,c(0.25,0.75)),1),collapse='--'),
+                            gdp=paste0(round(quantile(GDP_loss,c(0.25,0.75)),1),collapse='--')
                             ),by=.(Policy,igroup)]
-    colnames(tabres) <- c('Policy','Income group','Total costs','dYLLs','Education','GDP')
+    colnames(tabres) <- c('Policy','Income group','Total costs','YLL','Education','GDP')
     tabres$`SARS-X vaccine` <- vaccination_level
     tabres$BPSV <- bpsv+1
     tabresall <- rbind(tabresall,tabres)
@@ -454,10 +455,10 @@ setDT(meltmeantab)
 meltmeantab[,mincost:=nmin==max(nmin),by=.(scen,igroup)]
 ggplot(meltmeantab) + 
       geom_bar(aes(x=factor(Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
-                   y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','dYLLs','GDP')),
+                   y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLL','GDP')),
                    alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scen) + 
-      theme_bw(base_size=9) +
+      theme_bw(base_size=15) +
         scale_fill_viridis(discrete=T, name="") +
       labs(x='',y='Cost, % of GDP',fill='Cost type') +
         theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
@@ -467,7 +468,7 @@ ggplot(meltmeantab) +
 
 # ggplot(subset(meltmeantab,grepl('Secondary',igroupcountry))) + 
 #       geom_bar(aes(x=factor(Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
-#                    y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','dYLLs','GDP')),
+#                    y=value,fill=factor(variable,levels=c('education','deaths','gdp'),labels=c('Education','YLL','GDP')),
 #                    alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
 #   facet_grid(factor(igroupcountry,labels=c('LLMIC','UMIC','HIC'))~factor(scen,levels=c('BAU','100 days','BPSV'))) + 
 #       theme_bw(base_size=15) +
@@ -501,6 +502,7 @@ for(vl in 1:length(vaccination_levels)){
       vaccination_level <- vaccination_levels[vl]
       bpsv <- bpsv_levels[bl]
       difftab <- as.data.frame(readRDS(paste0('code/results/difftab_',bpsv,'_',vaccination_level,'.Rds')))
+      colnames(difftab)[colnames(difftab)=='dYLLs'] <- 'YLL'
       nvar <- which(colnames(difftab)=='GDP_loss')
       for(i in (nvar-3):nvar){
         difftab[,i] = difftab[,i]/difftab$gdp*100;
@@ -520,18 +522,18 @@ for(vl in 1:length(vaccination_levels)){
 
 ```{r diffviolin,fig.cap='Model results for costs saved by 100-day and BPS vaccines.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
-vioplot <- melt(difflist[,colnames(difflist)%in%c('Cost','dYLLs','School','GDP_loss','igroup','scen')],id.vars=c('igroup','scen'))
+vioplot <- melt(difflist[,colnames(difflist)%in%c('Cost','YLL','School','GDP_loss','igroup','scen')],id.vars=c('igroup','scen'))
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
 vioplot$variable <- factor(vioplot$variable,
-                           levels=c('Cost','dYLLs','School','GDP_loss'),
-                           labels=c('Total','dYLLs','Education','GDP'))
+                           levels=c('Cost','YLL','School','GDP_loss'),
+                           labels=c('Total','YLL','Education','GDP'))
 
 ggplot(vioplot,aes(fill=scen, colour=scen, y=value, x=scen)) + 
     geom_violin(position="dodge",scale='width') +
   facet_grid(igroup~variable, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
     scale_colour_viridis(discrete=T, name="") +
-    theme_bw(base_size = 10)  +
+    theme_bw(base_size = 15)  +
     xlab("") +
     ylab("Percent of GDP") +
   scale_x_discrete(labels=c('','',''))+ 
@@ -549,27 +551,27 @@ ggplot(vioplot,aes(fill=scen, colour=scen, y=value, x=scen)) +
 
 ```{r tabresdiff,tab.cap='Value of vaccines: expected difference between BAU and 100 days. Mean values and 95% prediction intervals.',echo=F,warning=F,message=F}
 
-
-meantab <- setDT(difflist)[,.(deaths=mean(dYLLs),
+colnames(difflist)[colnames(difflist)=='dYLLs'] <- 'YLL'
+meantab <- setDT(difflist)[,.(deaths=mean(YLL),
                         education=mean(School),
                         gdp=mean(GDP_loss)),by=.(igroup,BPSV,Vaccine)]
 
-tabres <- setDT(difflist)[,list(costs=paste0(round(mean(Cost),1),' (',paste0(round(quantile(Cost,c(0.025,0.975)),1),collapse=', '),')'),
-                        deaths=paste0(round(mean(dYLLs),1),' (',paste0(round(quantile(dYLLs,c(0.025,0.975)),1),collapse=', '),')'),
-                        education=paste0(round(mean(School),1),' (',paste0(round(quantile(School,c(0.025,0.975)),1),collapse=', '),')'),
-                        gdp=paste0(round(mean(GDP_loss),1),' (',paste0(round(quantile(GDP_loss,c(0.025,0.975)),1),collapse=', '),')')
+tabres <- setDT(difflist)[,list(costs=paste0(signif(quantile(Cost,c(0.25,0.75)),2),collapse='--'),
+                        deaths=paste0(signif(quantile(YLL,c(0.25,0.75)),2),collapse='--'),
+                        education=paste0(signif(quantile(School,c(0.25,0.75)),2),collapse='--'),
+                        gdp=paste0(signif(quantile(GDP_loss,c(0.25,0.75)),2),collapse='--')
                         ),by=.(BPSV,Vaccine,igroup)]
 
 tabres[,igroup:=factor(igroup,levels=c('LLMIC','UMIC','HIC'))]
 tabres[,Scenario:=paste0(Vaccine,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(Vaccine,BPSV)]
 tabres[,Vaccine:=factor(Vaccine,levels=c(365,100))]
 setorder(tabres,BPSV,Vaccine,igroup)
-colnames(tabres) <- c('BPSV','Vaccine','Income group','Total value','dYLLs','Education','GDP','Scenario')
+colnames(tabres) <- c('BPSV','Vaccine','Income group','Total value','YLL','Education','GDP','Scenario')
 
 
 write.csv(tabres,'resultsdiff.csv',row.names = F)
 
-tabres <- tabres[,.(Scenario,`Income group`,`Total value`,dYLLs,Education,GDP)]
+tabres <- tabres[,.(Scenario,`Income group`,`Total value`,YLL,Education,GDP)]
 # tabres[,Scenario:=paste0(Vaccine,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(BPSV,Vaccine)]
 
 lg <- 'Value of vaccines as a percent of GDP: differences between BAU and scenarios. Mean values and 95% prediction intervals. \\label{tab:tabresdiff}'
@@ -703,7 +705,7 @@ keptresults[,qVSY:=rank(vsy)/.N,by=.(igroup,vax)]
 ggplot(keptresults) + 
   geom_histogram(aes(x=qVSY,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
-  theme_bw(base_size = 13) +
+  theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
@@ -725,7 +727,7 @@ ggplot(keptresults) +
 ggplot(subset(allallresults,keeprow==T)) + 
   geom_histogram(aes(x=remote_teaching_effectiveness,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
-  theme_bw(base_size = 13) +
+  theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
@@ -753,7 +755,7 @@ ggplot(keptresults) +
   geom_histogram(aes(x=qtime,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
   geom_vline(aes(xintercept=qtime0),colour='grey',linewidth=1.2) +
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
-  theme_bw(base_size = 13) +
+  theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
@@ -770,7 +772,7 @@ keptresults[,qVLY:=rank(vly)/.N,by=.(igroup,vax)]
 ggplot(keptresults) + 
   geom_histogram(aes(x=qVLY,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
-  theme_bw(base_size = 13) +
+  theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
@@ -787,7 +789,7 @@ keptresults[,qseedsize:=-seedsize,by=.(igroup,vax)]
 ggplot(keptresults) + 
   geom_histogram(aes(x=qseedsize,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
   facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
-  theme_bw(base_size = 13) +
+  theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
   scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
@@ -810,7 +812,7 @@ The EVPPI for tourism is high, particularly for lower-income countries because t
 
 The next two items on the x axis are parameter groups. First, both sectors. Second, both tourism parameters. The grouping of parameters shows their combined impact on outcomes, which can be greater than the sum of their individual impacts.
 
-The next columns do not correspond to the "independent variables" of interest but might be expected to influence outcomes: fraction of population who are school age, fraction of population who are in the oldest age group, population size, rate of testing, GDP, $R_0$ and maximum hospital capacity. $R_0$ in particular drives a lot of uncertainty in costs, primarily through dYLLs. 
+The next columns do not correspond to the "independent variables" of interest but might be expected to influence outcomes: fraction of population who are school age, fraction of population who are in the oldest age group, population size, rate of testing, GDP, $R_0$ and maximum hospital capacity. $R_0$ in particular drives a lot of uncertainty in costs, primarily through YLL. 
 
 The final four items on the x axis are groups of variables: both age groups; two social-distancing parameters; hospital capacity, the fraction of the population aged 65 and over, and R$_0$; and testing parameters, response time, and R$_0$. 
 
@@ -824,7 +826,7 @@ These relationships are identified in the value-of-information analyses: the las
 param_cutoff <- c('Remote quantile','Time to death')
 
 voiall <- readRDS('code/results/voidiff_0_100.Rds')
-rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
+rownames(voiall) <- gsub('Deaths:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 rownames(voiall) <- gsub('Cost:','Value:',rownames(voiall))
 
@@ -871,7 +873,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 ```{r voi,fig.cap='\\footnotesize Value of information for BAU.',echo=F,warning=F,message=F,fig.height=10}
 
 voiall <- readRDS('code/results/voi_365_0.Rds')
-rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
+rownames(voiall) <- gsub('Deaths:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
 fullnames <- rownames(voiall)
@@ -966,7 +968,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
 ```{r dvoi100,fig.cap='Decision VOI for 100 days. Which parameters would enable the decision maker to choose a policy that minimises expected losses for 100-day vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
 
 voiall <- readRDS('code/results/decisionvoi100_0.Rds')*100
-rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
+rownames(voiall) <- gsub('Deaths:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
 nscen <- nrow(voiall)
@@ -1005,7 +1007,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(dvoibrks)-1),labels=milbs
 ```{r mi,fig.cap='Mutual information (MI) for BAU.',eval=T,echo=F,warning=F,message=F,fig.height=12,eval=F}
 
 voiall <- readRDS('code/results/mi.Rds')
-rownames(voiall) <- gsub('Deaths:','dYLLs:',rownames(voiall))
+rownames(voiall) <- gsub('Deaths:','YLL:',rownames(voiall))
 rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
 
 nscen <- nrow(voiall)
