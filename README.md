@@ -141,13 +141,35 @@ the number of expected life years remaining, and where each year has the
 same value:
 
 $$\begin{equation}
-\text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VdLY}.
+\text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
 \end{equation}$$
 
 Following The Global Fund (2022), “In this way, we made a choice to
 value deaths proportionally to the remaining life expectancy associated
 with the counterfactual of that death (how long they would live if they
 had not died)”.
+
+We estimate VSL as a function of GDP:
+
+$$\begin{equation}
+\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{\text{GDP}}{\text{GDP}_{\text{USA}}}\right)^{r_e}.
+\end{equation}$$
+
+Here, $\text{VSL}_{\text{USA}}$ is the VSL of the USA (10.9 million \$)
+and $\text{GDP}_{\text{USA}}$. We sample two random variables to encode
+a choice of method from Robinson, Sullivan, and Shogren (2021): $r_p$ is
+a conversion from GDP to GDP with PPP, which is 1 with probability 0.5
+and an income-level–specific random variable with probability 0.5. $r_e$
+is an elasticity relating VSL to GDP, which is 1 with probability 0.5
+and an income-level–specific random variable with probability 0.5.
+
+| Method               | Probability | LLMIC             | UMIC (GNIpc \< \$8,809) | UMIC (GNIpc \> \$8,809) | HIC              |
+|:---------------------|:------------|:------------------|:------------------------|:------------------------|:-----------------|
+| OECD/IHME/World Bank | 0.5         | Uniform(0.9, 1.2) | Uniform(0.9, 1.2)       | Uniform(0.9, 1.2)       | 0.8              |
+| Viscusi/Masterman    | 0.5         | 1                 | 1                       | Uniform(0.85, 1)        | Uniform(0.85, 1) |
+
+values for elasticities, from Robinson, Sullivan, and Shogren (2021),
+Table 2 (page 25)
 
 ## 2.2 Lost economic activity
 
@@ -3000,7 +3022,7 @@ Gamma
 </td>
 <td style="text-align:right;">
 
-10.75
+10.76
 
 </td>
 <td style="text-align:right;">
@@ -3027,7 +3049,7 @@ Gamma
 </td>
 <td style="text-align:right;">
 
-16.27
+16.28
 
 </td>
 <td style="text-align:right;">
@@ -3054,7 +3076,7 @@ Gamma
 </td>
 <td style="text-align:right;">
 
-11.10
+11.11
 
 </td>
 <td style="text-align:right;">
@@ -3432,12 +3454,12 @@ Beta
 </td>
 <td style="text-align:right;">
 
-11.23
+11.59
 
 </td>
 <td style="text-align:right;">
 
-13.90
+14.49
 
 </td>
 </tr>
@@ -3654,6 +3676,87 @@ NA
 <td style="text-align:right;">
 
 0.41
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+workforce in place
+
+</td>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+2.36
+
+</td>
+<td style="text-align:right;">
+
+1.20
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+workforce in place
+
+</td>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+5.57
+
+</td>
+<td style="text-align:right;">
+
+2.51
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+workforce in place
+
+</td>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+Beta
+
+</td>
+<td style="text-align:right;">
+
+4.60
+
+</td>
+<td style="text-align:right;">
+
+0.94
 
 </td>
 </tr>
