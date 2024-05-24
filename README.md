@@ -151,25 +151,26 @@ had not died)”.
 
 We estimate VSL as a function of GDP:
 
-$$\begin{equation}
+``` math
 \text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{\text{GDP}}{\text{GDP}_{\text{USA}}}\right)^{r_e}.
-\end{equation}$$
+```
 
-Here, $\text{VSL}_{\text{USA}}$ is the VSL of the USA (10.9 million \$)
-and $\text{GDP}_{\text{USA}}$. We sample two random variables to encode
-a choice of method from Robinson, Sullivan, and Shogren (2021): $r_p$ is
-a conversion from GDP to GDP with PPP, which is 1 with probability 0.5
-and an income-level–specific random variable with probability 0.5. $r_e$
-is an elasticity relating VSL to GDP, which is 1 with probability 0.5
-and an income-level–specific random variable with probability 0.5.
+Here, $`\text{VSL}_{\text{USA}}`$ is the VSL of the USA (10.9 million
+\$) and $`\text{GDP}_{\text{USA}}`$. We sample two random variables to
+encode a choice of method from Robinson, Sullivan, and Shogren (2021):
+$r_p$ is a conversion from GDP to GDP with PPP, which is 1 with
+probability 0.5 and an income-level–specific random variable with
+probability 0.5. $r_e$ is an elasticity relating VSL to GDP, whose
+definition depends on income level, given in Table
+<a href="#tab:ruleselimination">1.2</a>.
 
-| Method               | Probability | LLMIC             | UMIC (GNIpc \< \$8,809) | UMIC (GNIpc \> \$8,809) | HIC              |
-|:---------------------|:------------|:------------------|:------------------------|:------------------------|:-----------------|
-| OECD/IHME/World Bank | 0.5         | Uniform(0.9, 1.2) | Uniform(0.9, 1.2)       | Uniform(0.9, 1.2)       | 0.8              |
-| Viscusi/Masterman    | 0.5         | 1                 | 1                       | Uniform(0.85, 1)        | Uniform(0.85, 1) |
+| Method               | Probability | $r_p$                | $r_e$ (LLMIC)     | $r_e$ (UMIC, GNIpc \< \$8,809) | $r_e$ (UMIC, GNIpc \> \$8,809) | $r_e$ (HIC)      |
+|:---------------------|:------------|:---------------------|:------------------|:-------------------------------|:-------------------------------|:-----------------|
+| OECD/IHME/World Bank | 0.5         | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2)              | Uniform(0.9, 1.2)              | 0.8              |
+| Viscusi/Masterman    | 0.5         | 1                    | 1                 | 1                              | Uniform(0.85, 1)               | Uniform(0.85, 1) |
 
-values for elasticities, from Robinson, Sullivan, and Shogren (2021),
-Table 2 (page 25)
+<span id="tab:vslrules"></span>Table 2.1: values for elasticities, from
+Robinson, Sullivan, and Shogren (2021), Table 2 (page 25)
 
 ## 2.2 Lost economic activity
 
