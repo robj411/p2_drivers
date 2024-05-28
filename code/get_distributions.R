@@ -9,6 +9,7 @@ library(squire)
 library("cowplot")
 
 setwd('~/projects/DAEDALUS/Daedalus-P2-Dashboard/')
+yougovdata <- '../data/covid-19-tracker/data/'
 countrydatafile <- 'data/country_data.csv'
 incomelevels <- read.csv('data/Metadata_Country_API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv')
 colnames(incomelevels)[1] <- 'Country.Code'
@@ -427,6 +428,48 @@ ggplot(meanptrs) + geom_histogram(aes(x=meanptr,fill=IncomeGroup),position='dodg
 print('contacts')
 
 source('../cmix_post_pandemic/r/rj_script.R')
+
+## compliance ###########################
+
+files <- list.files(yougovdata)
+files <- files[files!='tmp']
+csv_countries <- sapply(files[grepl('csv',files)],function(x) strsplit(x,'\\.')[[1]][1])
+ygdata <- list()
+for(i in files){
+  cn <- strsplit(i,'\\.')[[1]][1]
+  
+  if(grepl('csv',i)){
+    cndata <- read.csv(file.path(yougovdata,i))
+    cndata$country <- cn
+    ygdata[[cn]] <- cndata[,colnames(cndata)%in%c('country','qweek','i11_health')]
+  }else if(!cn %in% csv_countries){
+    tmppath <- file.path(yougovdata,'tmp')
+    if(dir.exists(tmppath))
+      system(paste0('rm ',tmppath,'/*'))
+    else
+      system(paste0('mkdir ',tmppath))
+    unzip(file.path(yougovdata,i),exdir=tmppath)
+    print(list.files(tmppath,full.names=T))
+    cndata <- read.csv(list.files(tmppath,full.names=T), fileEncoding="latin1")
+    write.csv(cndata,file.path(yougovdata,paste0(cn,'.csv')))
+  }
+}
+
+ygdf <- setDT(do.call(rbind,ygdata))
+ygdf <- subset(ygdf,i11_health!=' ') %>%
+  mutate(compliance=as.numeric(plyr::mapvalues(i11_health,from=c('Very willing',
+                                                    'Somewhat willing',
+                                                    'Neither willing nor unwilling',
+                                                    'Not sure',
+                                                    'Somewhat unwilling',
+                                                    'Very unwilling'),
+                                    to=c(1,.75,.5,.5,.25,0))))
+ygdf[,week:=as.numeric(gsub('week ','',qweek)),by=qweek]
+ygdf[,mean(compliance,na.rm=T),by=country]
+ygdf[,.N,by=country]
+ygdf[,mean(compliance,na.rm=T),by=week]
+sapply(ygdf,class)
+table(ygdf$i11_health)
 
 ## end ############################################
 
