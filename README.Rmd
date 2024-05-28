@@ -280,6 +280,8 @@ The value $p^{16}$ represents the effectiveness of remote teaching, which we sam
 ## Disease state transitions
 
 ```{tikz statetransitions, fig.cap = "Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status.", fig.ext = 'png',echo=F, out.width="50%"}
+
+
 \usetikzlibrary{shapes}
 \usetikzlibrary{fit}
 \usetikzlibrary{arrows}
@@ -1005,6 +1007,15 @@ ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) +
 
 
 ```
+
+Figure \@ref(fig:vaxrate) shows histograms of COVID-19 vaccine administration rates by income level. Values are estimates of maximum rates of complete schedules given. Maximum rates are estimated as the maximum slope observed in the pandemic period. The maximum slope ideally represents the highest rate possible: rates are often low to begin with, due to limitted supply. They are often low at the end, due to depleted demand.
+
+```{r vaxratemx,fig.cap='Vaccines administered in Mexico.',echo=F,warning=F,message=F, out.width="50%"}
+
+knitr::include_graphics(path = "figures/vax_admin_MX.png")
+
+```
+
 
 \newpage
 

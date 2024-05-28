@@ -3827,6 +3827,14 @@ fully vaccinated people from OWID (2022).
 
 </div>
 
+Figure <a href="#fig:vaxrate">5.3</a> shows histograms of COVID-19
+vaccine administration rates by income level. Values are estimates of
+maximum rates of complete schedules given. Maximum rates are estimated
+as the maximum slope observed in the pandemic period. The maximum slope
+ideally represents the highest rate possible: rates are often low to
+begin with, due to limitted supply. They are often low at the end, due
+to depleted demand.
+
 # 6 Notation
 
 In general in this notation, subscripts are indices, and superscripts
