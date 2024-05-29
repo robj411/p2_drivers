@@ -1018,7 +1018,7 @@ knitr::include_graphics(path = "README_files/figure-gfm/vax_rate_MX.png")
 
 In LMICs and LICs, there was arguably not a period of vaccine delivery in which the rate was limited by neither demand nor supply. Therefore we use an alternative source to validate our choices of administration rate in different scenarios. 
 
-Figure \@ref(fig:vaxratewho) shows that in 40% of campaigns, the rate exceeded 0.2% of the population per day; in 28% of campaigns, the rate exceeded 0.4% of the population per day; and in 13% of campaigns, the rate exceeded 1% of the population per day. We use these rates of delivery for LLMIC synthetic countries.
+Figure \@ref(fig:vaxratewho) shows that in 40% of vaccination campaigns in LLMICs, the rate exceeded 0.2% of the population per day; in 28% of campaigns, the rate exceeded 0.4% of the population per day; and in 13% of campaigns, the rate exceeded 1% of the population per day. We use these rates of delivery for LLMIC synthetic countries.
 
 ```{r vaxratewho,fig.cap='Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more (https://immunizationdata.who.int/global?topic=&location=). The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up.',echo=F,warning=F,message=F, out.width="80%"}
 

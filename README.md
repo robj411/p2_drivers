@@ -3856,11 +3856,12 @@ in which the rate was limited by neither demand nor supply. Therefore we
 use an alternative source to validate our choices of administration rate
 in different scenarios.
 
-Figure <a href="#fig:vaxratewho">5.5</a> shows that in 40% of campaigns,
-the rate exceeded 0.2% of the population per day; in 28% of campaigns,
-the rate exceeded 0.4% of the population per day; and in 13% of
-campaigns, the rate exceeded 1% of the population per day. We use these
-rates of delivery for LLMIC synthetic countries.
+Figure <a href="#fig:vaxratewho">5.5</a> shows that in 40% of
+vaccination campaigns in LLMICs, the rate exceeded 0.2% of the
+population per day; in 28% of campaigns, the rate exceeded 0.4% of the
+population per day; and in 13% of campaigns, the rate exceeded 1% of the
+population per day. We use these rates of delivery for LLMIC synthetic
+countries.
 
 <div class="figure">
 
