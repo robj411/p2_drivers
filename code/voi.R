@@ -24,7 +24,7 @@ strategies <- c('No Closures','School Closures','Economic Closures','Elimination
 income_levels <- c('LLMIC','UMIC','HIC')
 vaccination_levels <- c(365,100)
 bpsv_levels <- c(0,1)
-result_cols <- c('Cost','dYLLs','School','GDP_loss')
+result_cols <- c('Cost','YLL','School','GDP_loss')
 
 #
 
@@ -203,7 +203,7 @@ for(bl in 1:length(bpsv_levels)){
       difftab <- copy(topresults[[1]][[1]])
       # difftab[,policy:=NULL]
       difftab[,Cost:=Cost-topresults[[bl]][[v]]$Cost]
-      difftab[,dYLLs:=dYLLs-topresults[[bl]][[v]]$dYLLs]
+      difftab[,YLL:=YLL-topresults[[bl]][[v]]$YLL]
       difftab[,School:=School-topresults[[bl]][[v]]$School]
       difftab[,GDP_loss:=GDP_loss-topresults[[bl]][[v]]$GDP_loss]
       difftab[,scen_Exit_wave:=topresults[[bl]][[v]]$Exit_wave]
@@ -216,7 +216,7 @@ for(bl in 1:length(bpsv_levels)){
       pctab <- copy(topresults[[1]][[1]])
       pctab[,policy:=NULL]
       pctab[,Cost:=(Cost-topresults[[bl]][[v]]$Cost)/Cost]
-      pctab[,dYLLs:=(dYLLs-topresults[[bl]][[v]]$dYLLs)/dYLLs]
+      pctab[,YLL:=(YLL-topresults[[bl]][[v]]$YLL)/YLL]
       pctab[,School:=(School-topresults[[bl]][[v]]$School)/School]
       pctab[,GDP_loss:=(GDP_loss-topresults[[bl]][[v]]$GDP_loss)/GDP_loss]
       
@@ -260,7 +260,7 @@ unique(subset(endhosp,End_hosp>1000)[,.(igroup,policy,samplei)])
 
 ## negatives ###########################
 
-dispcols <- c('Cost','GDP_loss','dYLLs','School','igroup','gdp',
+dispcols <- c('Cost','GDP_loss','YLL','School','igroup','gdp',
                                       'policy','samplei','Exit_wave','scen_Exit_wave')
 nneg <- 0
 for(vaccination_level in vaccination_levels){
@@ -327,7 +327,7 @@ for(bl in 1:length(bpsv_levels)){
       difftab[,keeprow:=NULL]
       difftab[,policy:=NULL]
       difftab[,Cost:=-Cost+topresults[[1]][[1]]$Cost]
-      difftab[,dYLLs:=-dYLLs+topresults[[1]][[1]]$dYLLs]
+      difftab[,YLL:=-YLL+topresults[[1]][[1]]$YLL]
       difftab[,School:=-School+topresults[[1]][[1]]$School]
       difftab[,GDP_loss:=-GDP_loss+topresults[[1]][[1]]$GDP_loss]
       
@@ -337,7 +337,7 @@ for(bl in 1:length(bpsv_levels)){
       pctab[,keeprow:=NULL]
       pctab[,policy:=NULL]
       pctab[,Cost:=(-Cost+topresults[[1]][[1]]$Cost)/Cost]
-      pctab[,dYLLs:=(-dYLLs+topresults[[1]][[1]]$dYLLs)/dYLLs]
+      pctab[,YLL:=(-YLL+topresults[[1]][[1]]$YLL)/YLL]
       pctab[,School:=(-School+topresults[[1]][[1]]$School)/School]
       pctab[,GDP_loss:=(-GDP_loss+topresults[[1]][[1]]$GDP_loss)/GDP_loss]
       
@@ -395,7 +395,7 @@ for(bl in 1:length(bpsv_levels)){
       
       
       voiall <- do.call(rbind,ilistvoi)
-      roworder <- unlist(lapply(c("Cost","dYLLs","School","GDP loss"),
+      roworder <- unlist(lapply(c("Cost","YLL","School","GDP loss"),
                                 function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
       voiall <- voiall[roworder,]
       miall <- do.call(rbind,ilistmi)
@@ -506,7 +506,7 @@ for(vl in 1:length(vaccination_levels)){
     voilist[[vl]][[bl]] <- do.call(rbind,voilist[[vl]][[bl]])
     milist[[vl]][[bl]] <- do.call(rbind,milist[[vl]][[bl]])
     
-    roworder <- unlist(lapply(c("Cost","dYLLs","School","GDP loss"),
+    roworder <- unlist(lapply(c("Cost","YLL","School","GDP loss"),
                               function(x)which(grepl(paste0(x,':'),rownames(voilist[[vl]][[bl]])))))
     voilist[[vl]][[bl]] <- voilist[[vl]][[bl]][roworder,]
     milist[[vl]][[bl]] <- milist[[vl]][[bl]][roworder,]
@@ -581,7 +581,7 @@ for(vl in 1:length(vaccination_levels)){
     }
     
     voiall <- do.call(rbind,listout)
-    roworder <- unlist(lapply(c("Cost","dYLLs","School","GDP loss"),
+    roworder <- unlist(lapply(c("Cost","YLL","School","GDP loss"),
                               function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
     voiall <- voiall[roworder,]
     saveRDS(voiall,paste0('results/decisionvoi',vaccination_level,'_',bpsv,'.Rds'))
@@ -619,13 +619,13 @@ for (il in 1:length(income_levels)){
     outcomes[,density:=x$density[costcat]/max(x$density),by=costcat]
     barplt <- outcomes[,.(School=mean(School)*mean(density),
                           GDP_loss=mean(GDP_loss)*mean(density),
-                          dYLLs=mean(dYLLs)*mean(density)),by=costcat]
+                          YLL=mean(YLL)*mean(density)),by=costcat]
     barplt[,midpoint:=x$mids[costcat],by=costcat]
     
     
-    meltbarplt <- reshape2::melt((barplt[,2:5]),value.name = 'value',measure.vars=c('School','dYLLs','GDP_loss'))
+    meltbarplt <- reshape2::melt((barplt[,2:5]),value.name = 'value',measure.vars=c('School','YLL','GDP_loss'))
     
-    # meltedres <- reshape2::melt((outcomes[,2:4]),value.name = 'value',measure.vars=c('School','dYLLs','GDP_loss'))
+    # meltedres <- reshape2::melt((outcomes[,2:4]),value.name = 'value',measure.vars=c('School','YLL','GDP_loss'))
     meltbarplt$Income_group <- income_level
     meltbarplt$Policy <- inp3
     voioutcomelist[[ks]] <- meltbarplt
@@ -635,7 +635,7 @@ for (il in 1:length(income_levels)){
 voioutcomes <- do.call(rbind,ivoioutcomelist)
 voioutcomes$Income_group <- factor(voioutcomes$Income_group,levels=c('LLMIC','MIC','HIC'))
 voioutcomes$Policy <- factor(voioutcomes$Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
-voioutcomes$variable <- factor(voioutcomes$variable,levels=c('School','dYLLs','GDP_loss'),labels=c('Education','dYLLs','GDP'))
+voioutcomes$variable <- factor(voioutcomes$variable,levels=c('School','YLL','GDP_loss'),labels=c('Education','YLL','GDP'))
 
 ggplot(voioutcomes) + 
   annotate(geom = "rect",xmin = 10,xmax = 10^1.5,ymin = -Inf,ymax = +Inf,alpha = 0.2) +
