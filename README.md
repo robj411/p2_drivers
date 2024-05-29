@@ -3830,10 +3830,55 @@ fully vaccinated people from OWID (2022).
 Figure <a href="#fig:vaxrate">5.3</a> shows histograms of COVID-19
 vaccine administration rates by income level. Values are estimates of
 maximum rates of complete schedules given. Maximum rates are estimated
-as the maximum slope observed in the pandemic period. The maximum slope
-ideally represents the highest rate possible: rates are often low to
-begin with, due to limitted supply. They are often low at the end, due
-to depleted demand.
+as the maximum slope observed in the pandemic period (Figure
+<a href="#fig:vaxratemx">5.4</a>). The maximum slope ideally represents
+the highest rate possible: rates are often low to begin with, due to
+limited supply. They are often low at the end, due to depleted demand.
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/vax_rate_MX.png" alt="Vaccines administered in Mexico." width="50%" />
+
+<p class="caption">
+
+<span id="fig:vaxratemx"></span>Figure 5.4: Vaccines administered in
+Mexico.
+
+</p>
+
+</div>
+
+In LMICs and LICs, there was arguably not a period of vaccine delivery
+in which the rate was limited by neither demand nor supply. Therefore we
+use an alternative source to validate our choices of administration rate
+in different scenarios.
+
+Figure <a href="#fig:vaxratewho">5.5</a> shows the cumulative
+distribution of vaccine delivery rates, which is the % of the population
+vaccinated per day. The data are 141 points, from 55 countries that are
+currently classified as LIC or LMIC, from the years 2000 to 2022, of
+programmes for measles, MR or MMR vaccines, lasting two weeks or more
+(<https://immunizationdata.who.int/global?topic=&location=>). The types
+of programme include campaigns and outbreak response as well as catch
+up, follow up, speed up, and mop up.
+
+The graph shows that in 40% of campaigns, the rate exceeded 0.2% of the
+population per day; in 28% of campaigns, the rate exceeded 0.4% of the
+population per day; in 13% of campaigns, the rate exceeded 1% of the
+population per day.
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/vaccinationrates.png" alt="Vaccines administered in M((M)R) campaigns" width="80%" />
+
+<p class="caption">
+
+<span id="fig:vaxratewho"></span>Figure 5.5: Vaccines administered in
+M((M)R) campaigns
+
+</p>
+
+</div>
 
 # 6 Notation
 
