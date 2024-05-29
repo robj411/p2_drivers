@@ -1008,9 +1008,9 @@ ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) +
 
 ```
 
-Figure \@ref(fig:vaxrate) shows histograms of COVID-19 vaccine administration rates by income level. Values are estimates of maximum rates of complete schedules given. Maximum rates are estimated as the maximum slope observed in the pandemic period (Figure \@ref(fig:vaxratemx)). The maximum slope ideally represents the highest rate possible: rates are often low to begin with, due to limited supply. They are often low at the end, due to depleted demand.
+Figure \@ref(fig:vaxrate) shows histograms of COVID-19 vaccine administration rates by income level. Values are estimates of administration rates of complete schedules given. Administration rates are estimated as the best-fit slope observed in the pandemic period (Figure \@ref(fig:vaxratemx)). The administration slope ideally represents the highest rate possible: rates are often low to begin with, due to limited supply. They are often low at the end, due to depleted demand.
 
-```{r vaxratemx,fig.cap='Vaccines administered in Mexico.',echo=F,warning=F,message=F, out.width="50%"}
+```{r vaxratemx,fig.cap='Vaccine administration in Mexico. The blue line shows the average rate over the whole vaccination campaign. The yellow line shows the average rate when administration was rate limiting.',echo=F,warning=F,message=F, out.width="50%"}
 
 knitr::include_graphics(path = "README_files/figure-gfm/vax_rate_MX.png")
 
@@ -1018,11 +1018,9 @@ knitr::include_graphics(path = "README_files/figure-gfm/vax_rate_MX.png")
 
 In LMICs and LICs, there was arguably not a period of vaccine delivery in which the rate was limited by neither demand nor supply. Therefore we use an alternative source to validate our choices of administration rate in different scenarios. 
 
-Figure \@ref(fig:vaxratewho) shows the cumulative distribution of vaccine delivery rates, which is the % of the population vaccinated per day. The data are 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more (https://immunizationdata.who.int/global?topic=&location=). The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up. 
+Figure \@ref(fig:vaxratewho) shows that in 40% of campaigns, the rate exceeded 0.2% of the population per day; in 28% of campaigns, the rate exceeded 0.4% of the population per day; and in 13% of campaigns, the rate exceeded 1% of the population per day. We use these rates of delivery for LLMIC synthetic countries.
 
-The graph shows that in 40% of campaigns, the rate exceeded 0.2% of the population per day; in 28% of campaigns, the rate exceeded 0.4% of the population per day; in 13% of campaigns, the rate exceeded 1% of the population per day. 
-
-```{r vaxratewho,fig.cap='Vaccines administered in M((M)R) campaigns',echo=F,warning=F,message=F, out.width="80%"}
+```{r vaxratewho,fig.cap='Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more (https://immunizationdata.who.int/global?topic=&location=). The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up.',echo=F,warning=F,message=F, out.width="80%"}
 
 knitr::include_graphics(path = "README_files/figure-gfm/vaccinationrates.png")
 
