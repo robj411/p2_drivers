@@ -34,6 +34,8 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
   - [5.1 Hospital capacity](#51-hospital-capacity)
   - [5.2 Labour share of GVA](#52-labour-share-of-gva)
   - [5.3 Vaccine administration](#53-vaccine-administration)
+  - [5.4 Compliance with the requirement to self
+    isolate](#54-compliance-with-the-requirement-to-self-isolate)
 - [6 Notation](#6-notation)
 
 # 1 Simulation rules
@@ -259,7 +261,7 @@ open):
 $$p^{24}(t)=p^2(t)p^{18}I_{j_{\text{school}}}^{a}.$$
 
 For the value of a year of education, we use the method of
-(Psacharopoulos, Collis, and Patrinos 2021).
+(Psacharopoulos et al. 2021).
 
 $$\text{VSY} =  p^{12}\cdot p^{13}\cdot p^{15}.$$
 
@@ -857,7 +859,7 @@ four levels of mitigation. Data shown as points.
 ## 3.6 Self isolating
 
 We assume that infectious people who know their status have a compliance
-$p^1\sim\mathcal(U)(0,1)$ with the instruction to self isolate, starting
+$p^1\sim\text(Beta)(5,5)$ with the instruction to self isolate, starting
 one day into their infectious period. We assume constant infectiousness
 over time and that a fraction $p^{26}$ of the symptomatic infectiousness
 is presymptomatic. Then the amount of infectiousness averted of
@@ -3836,6 +3838,11 @@ ideally represents the highest rate possible: rates are often low to
 begin with, due to limited supply. They are often low at the end, due to
 depleted demand.
 
+Using the method illustrated in Figure <a href="#fig:vaxratemx">5.4</a>,
+we estimate how many countries per income group surpassed an average
+maximum rate of 0.5% of the population per day: 7% of HICs, 2% of UMICs,
+and 5% of LLMICs.
+
 <div class="figure">
 
 <img src="README_files/figure-gfm/vax_rate_MX.png" alt="Vaccine administration in Mexico. The blue line shows the average rate over the whole vaccination campaign. The yellow line shows the average rate when administration was rate limiting." width="50%" />
@@ -3865,7 +3872,7 @@ countries.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaccinationrates.png" alt="Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more (https://immunizationdata.who.int/global?topic=&amp;location=). The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up." width="80%" />
+<img src="README_files/figure-gfm/vaccinationrates.png" alt="Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more [@whoSummaryMeaslesRubellaSupplementary]. The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up." width="80%" />
 
 <p class="caption">
 
@@ -3875,13 +3882,36 @@ measured as the % of the population vaccinated per day. The data consist
 of 141 points, from 55 countries that are currently classified as LIC or
 LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR
 vaccines, lasting two weeks or more
-(<https://immunizationdata.who.int/global?topic=&location=>). The types
-of programme include campaigns and outbreak response as well as catch
-up, follow up, speed up, and mop up.
+(**whoSummaryMeaslesRubellaSupplementary?**). The types of programme
+include campaigns and outbreak response as well as catch up, follow up,
+speed up, and mop up.
 
 </p>
 
 </div>
+
+## 5.4 Compliance with the requirement to self isolate
+
+We use a broad Beta distribution with parameters (5,5) to describe the
+compliance of the population with the requirement to isolate if
+symptomatic or positive. A YouGov survey (Jones, Sarah P, Imperial
+College London Big Data Analytical Unit, and YouGov Plc 2020) asked “If
+you were advised to do so by a healthcare professional or public health
+authority to what extent are you willing or not to self-isolate for 7
+days?” The question was asked in 30 different countries (21 high income,
+five upper-middle income, four lower-middle income) and 63 different
+weeks of the COVID-19 pandemic to a total of 837,368 people.
+
+The possible answers were ‘Very unwilling’, ‘Somewhat unwilling’,
+‘Neither willing nor unwilling’, ‘Not sure’, ‘Somewhat willing’, ‘Very
+willing’. Excluding the answer ‘Not sure’, and weighting all other
+answers on a uniform scale of 0 to 1, the average compliance from all
+participants is 84%. The range across countries is 73% to 90%. The
+average value for the UK is 87%. In contrast, Smith et al. (2021) found
+that duration-adjusted adherence to full self isolation was 42.5%. The
+average value for Australia was 88%. A survey undertaken in 2009 found
+that 55% of households complied with quarantine requirements
+(<https://doi.org/10.1186/1471-2334-11-2>).
 
 # 6 Notation
 
@@ -4081,9 +4111,9 @@ entry-spacing="0">
 <div id="ref-Ananthapavan2021" class="csl-entry">
 
 Ananthapavan, Jaithri, Marj Moodie, Andrew J. Milat, and Rob Carter.
-2021. “<span class="nocase">Systematic review to update ‘value of a
-statistical life’ estimates for Australia</span>.” *International
-Journal of Environmental Research and Public Health* 18 (11).
+2021. “Systematic Review to Update ‘Value of a Statistical Life’
+Estimates for Australia.” *International Journal of Environmental
+Research and Public Health* 18 (11).
 <https://doi.org/10.3390/ijerph18116168>.
 
 </div>
@@ -4092,57 +4122,54 @@ Journal of Environmental Research and Public Health* 18 (11).
 
 Béraud, Guillaume, Sabine Kazmercziak, Philippe Beutels, Daniel
 Levy-Bruhl, Xavier Lenne, Nathalie Mielcarek, Yazdan Yazdanpanah, Pierre
-Yves Boëlle, Niel Hens, and Benoit Dervaux. 2015.
-“<span class="nocase">The French connection: The first large
-population-based contact survey in France relevant for the spread of
-infectious diseases</span>.” *PLoS ONE* 10 (7): 1–22.
-<https://doi.org/10.1371/journal.pone.0133203>.
+Yves Boëlle, Niel Hens, and Benoit Dervaux. 2015. “The French
+Connection: The First Large Population-Based Contact Survey in France
+Relevant for the Spread of Infectious Diseases.” *PLoS ONE* 10 (7):
+1–22. <https://doi.org/10.1371/journal.pone.0133203>.
 
 </div>
 
 <div id="ref-Betthauser2023" class="csl-entry">
 
 Betthäuser, Bastian A, Anders M Bach-Mortensen, and Per Engzell. 2023.
-“<span class="nocase">A systematic review and meta-analysis of the
-evidence on learning during the COVID-19 pandemic</span>.” *Nature Human
-Behaviour* 7 (March). <https://doi.org/10.1038/s41562-022-01506-4>.
+“A Systematic Review and Meta-Analysis of the Evidence on Learning
+During the COVID-19 Pandemic.” *Nature Human Behaviour* 7 (March).
+<https://doi.org/10.1038/s41562-022-01506-4>.
 
 </div>
 
 <div id="ref-Cutler2020" class="csl-entry">
 
-Cutler, David M., and Lawrence H. Summers. 2020.
-“<span class="nocase">The COVID-19 pandemic and the \$16 trillion
-virus</span>.” *JAMA* 324 (15). <https://doi.org/10.1257/pol.20170046>.
+Cutler, David M., and Lawrence H. Summers. 2020. “The COVID-19 Pandemic
+and the \$16 Trillion Virus.” *JAMA* 324 (15).
+<https://doi.org/10.1257/pol.20170046>.
 
 </div>
 
 <div id="ref-GlobalBurdenofDiseaseCollaborativeNetwork2021"
 class="csl-entry">
 
-Global Burden of Disease Collaborative Network. 2021.
-“<span class="nocase">Global Burden of Disease Study 2019 (GBD 2019)
-Reference Life Table</span>.” Seattle, United States of America:
-Institute for Health Metrics; Evaluation (IHME).
+Global Burden of Disease Collaborative Network. 2021. “Global Burden of
+Disease Study 2019 (GBD 2019) Reference Life Table.” Seattle, United
+States of America: Institute for Health Metrics and Evaluation (IHME).
 
 </div>
 
 <div id="ref-Gottlieb2021" class="csl-entry">
 
 Gottlieb, Charles, Jan Grobovšek, Markus Poschke, and Fernando Saltiel.
-2021. “<span class="nocase">Working from home in developing
-countries</span>.” *European Economic Review* 133: 103679.
-<https://doi.org/10.1016/j.euroecorev.2021.103679>.
+2021. “Working from Home in Developing Countries.” *European Economic
+Review* 133: 103679. <https://doi.org/10.1016/j.euroecorev.2021.103679>.
 
 </div>
 
 <div id="ref-Haw2020" class="csl-entry">
 
 Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo
-Pianella, Rob Johnson, Sumali Bajaj, et al. 2022.
-“<span class="nocase">Optimizing social and economic activity while
-containing SARS-CoV-2 transmission using DAEDALUS</span>.” *Nature
-Computational Science* 2: 223–33. <https://doi.org/10.25561/83928>.
+Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. “Optimizing Social and
+Economic Activity While Containing SARS-CoV-2 Transmission Using
+DAEDALUS.” *Nature Computational Science* 2: 223–33.
+<https://doi.org/10.25561/83928>.
 
 </div>
 
@@ -4150,62 +4177,75 @@ Computational Science* 2: 223–33. <https://doi.org/10.25561/83928>.
 
 Jarvis, Christopher I, Pietro Coletti, Jantien A Backer, James D Munday,
 Christel Faes, Philippe Beutels, Christian L. Althaus, et al. 2023.
-“<span class="nocase">Social contact patterns following the COVID-19
-pandemic: a snapshot of post-pandemic behaviour from the CoMix
-study</span>.” *MedRxiv*.
+“Social Contact Patterns Following the COVID-19 Pandemic: A Snapshot of
+Post-Pandemic Behaviour from the CoMix Study.” *MedRxiv*.
+
+</div>
+
+<div id="ref-jonessarahpImperialCollegeLondon2020" class="csl-entry">
+
+Jones, Sarah P, Imperial College London Big Data Analytical Unit, and
+YouGov Plc. 2020. “Imperial College London YouGov Covid 19 Behaviour
+Tracker Data Hub.”
 
 </div>
 
 <div id="ref-Moscoviz2022" class="csl-entry">
 
-Moscoviz, Laura, and David K Evans. 2022. “<span class="nocase">Learning
-loss and student dropouts during the COVID-19 pandemic: A review of the
-evidence two years after schools shut down</span>.” Washington, DC:
-Center for Global Development.
+Moscoviz, Laura, and David K Evans. 2022. “Learning Loss and Student
+Dropouts During the COVID-19 Pandemic: A Review of the Evidence Two
+Years After Schools Shut Down.” Washington, DC: Center for Global
+Development.
 
 </div>
 
 <div id="ref-Patrinos2023" class="csl-entry">
 
-Patrinos, Harry Anthony. 2023. “<span class="nocase">The longer students
-were out of school, the less they learned</span>.” *Journal of School
-Choice* 17 (2): 161–75. <https://doi.org/10.1080/15582159.2023.2210941>.
+Patrinos, Harry Anthony. 2023. “The Longer Students Were Out of School,
+the Less They Learned.” *Journal of School Choice* 17 (2): 161–75.
+<https://doi.org/10.1080/15582159.2023.2210941>.
 
 </div>
 
 <div id="ref-Prem2021" class="csl-entry">
 
 Prem, Kiesha, Kevin van Zandvoort, Petra Klepac, Rosalind M. Eggo,
-Nicholas G. Davies, Alex R. Cook, and Mark Jit. 2021.
-“<span class="nocase">Projecting contact matrices in 177 geographical
-regions: An update and comparison with empirical data for the COVID-19
-era</span>.” *PLoS Computational Biology* 17 (7).
-<https://doi.org/10.1371/journal.pcbi.1009098>.
+Nicholas G. Davies, Alex R. Cook, and Mark Jit. 2021. “Projecting
+Contact Matrices in 177 Geographical Regions: An Update and Comparison
+with Empirical Data for the COVID-19 Era.” *PLoS Computational Biology*
+17 (7). <https://doi.org/10.1371/journal.pcbi.1009098>.
 
 </div>
 
 <div id="ref-Psacharopoulos2021a" class="csl-entry">
 
-Psacharopoulos, George, Victoria; Collis, and Patrinos. 2021.
-“<span class="nocase">The COVID-19 Cost of School Closures in Earnings
-and Income across the World</span>.” *Comparative Education Review* 65
-(2).
+Psacharopoulos, George, Victoria Collis, Harry Anthony Patrinos, and
+Emiliana Vegas. 2021. “The COVID-19 Cost of School Closures in Earnings
+and Income Across the World.” *Comparative Education Review* 65 (2).
 
 </div>
 
 <div id="ref-Robinson2021" class="csl-entry">
 
-Robinson, Lisa A., Ryan Sullivan, and Jason F. Shogren. 2021.
-“<span class="nocase">Do the benefits of COVID-19 policies exceed the
-costs? Exploring uncertainties in the age–VSL relationship</span>.”
-*Risk Analysis* 41 (5): 761–70. <https://doi.org/10.1111/risa.13561>.
+Robinson, Lisa A., Ryan Sullivan, and Jason F. Shogren. 2021. “Do the
+Benefits of COVID-19 Policies Exceed the Costs? Exploring Uncertainties
+in the Age–VSL Relationship.” *Risk Analysis* 41 (5): 761–70.
+<https://doi.org/10.1111/risa.13561>.
+
+</div>
+
+<div id="ref-Smith2021" class="csl-entry">
+
+Smith, Louise E., Henry W. W. Potts, Richard Amlôt, Nicola T. Fear,
+Susan Michie, and G. James Rubin. 2021. “Adherence to the Test, Trace,
+and Isolate System in the UK: Results from 37 Nationally Representative
+Surveys.” *The BMJ* 372. <https://doi.org/10.1136/bmj.n608>.
 
 </div>
 
 <div id="ref-TheGlobalFund2022" class="csl-entry">
 
-The Global Fund. 2022. “<span class="nocase">Fight for What Counts
-Investment Case</span>,” 1–4.
+The Global Fund. 2022. “Fight for What Counts Investment Case,” 1–4.
 
 </div>
 
@@ -4213,9 +4253,9 @@ Investment Case</span>,” 1–4.
 
 Walker, Patrick G. T., Charles Whittaker, Oliver J. Watson, Marc
 Baguelin, Peter Winskill, Arran Hamlet, Bimandra A. Djafaara, et al.
-2020. “<span class="nocase">The impact of COVID-19 and strategies for
-mitigation and suppression in low- and middle-income countries</span>.”
-*Science* 369 (6502): 413–22. <https://doi.org/10.1126/science.abc0035>.
+2020. “The Impact of COVID-19 and Strategies for Mitigation and
+Suppression in Low- and Middle-Income Countries.” *Science* 369 (6502):
+413–22. <https://doi.org/10.1126/science.abc0035>.
 
 </div>
 
