@@ -441,7 +441,7 @@ for(i in files){
   if(grepl('csv',i)){
     cndata <- read.csv(file.path(yougovdata,i))
     cndata$country <- cn
-    ygdata[[cn]] <- cndata[,colnames(cndata)%in%c('country','qweek','i11_health')]
+    ygdata[[cn]] <- cndata[,colnames(cndata)%in%c('country','qweek','i11_health','weight')]
   }else if(!cn %in% csv_countries){
     tmppath <- file.path(yougovdata,'tmp')
     if(dir.exists(tmppath))
@@ -456,16 +456,19 @@ for(i in files){
 }
 
 ygdf <- setDT(do.call(rbind,ygdata))
-ygdf <- subset(ygdf,i11_health!=' ') %>%
+ygdf <- subset(ygdf,!i11_health%in%c(' ','Not sure')) %>%
   mutate(compliance=as.numeric(plyr::mapvalues(i11_health,from=c('Very willing',
                                                     'Somewhat willing',
                                                     'Neither willing nor unwilling',
-                                                    'Not sure',
                                                     'Somewhat unwilling',
                                                     'Very unwilling'),
-                                    to=c(1,.75,.5,.5,.25,0))))
+                                    to=c(1,.75,.5,.25,0))))
 ygdf[,week:=as.numeric(gsub('week ','',qweek)),by=qweek]
-ygdf[,mean(compliance,na.rm=T),by=country]
+ygdf[,sum(compliance*weight,na.rm=T)/sum(weight)]
+meanvals <- ygdf[,sum(compliance*weight,na.rm=T)/sum(weight),by=country]
+# uk: 87%
+hist(meanvals$V1)
+range(meanvals$V1)
 ygdf[,.N,by=country]
 ygdf[,mean(compliance,na.rm=T),by=week]
 sapply(ygdf,class)

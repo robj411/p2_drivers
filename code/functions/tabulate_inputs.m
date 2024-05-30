@@ -29,6 +29,7 @@ function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
     ldata.obj = ldata.obj/ldata.gdp*365;
     ldata.vly = ldata.vly/ldata.gdp;
     ldata.vsy = ldata.vsy/ldata.gdp;
+    ldata.vsl = ldata.vsl/ldata.gdp;
     
     [dataname, datavals] = get_struct_names_vals(ldata,leavenames);
 

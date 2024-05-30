@@ -141,7 +141,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    isterminal(4) = 1;
     end
     
-    %% Event 5: End
+    %% Event 5: End mitigation
     
     if strcmp(strategy,"Elimination") || strcmp(strategy,"Unmitigated")   
         %measures can be removed at any stage if (Rt<1) or (after end of vaccination campaign)        
@@ -182,10 +182,10 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     direction(6)  = 1;
     isterminal(6) = 1;
     
-    %% Event 7: end
+    %% Event 7: end simulation
     % mitigation is over
     ival = -abs(i-5);
-    % t is one month greater than the end of the vaccine rollout and a week since the last changepoint (which was end mitigation): tval = 0
+    % t is one month greater than the end of the vaccine rollout and the last changepoint (which was end mitigation): tval = 0
     tval = min(t-(max([p2.tpoints data.tvec(end-1)])+30),0);
     % tlong: one year since end mitigation
     tlong = min(t-(data.tvec(end-1)+365),0);
@@ -195,8 +195,8 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     hval = min(p2.hosp_final_threshold - sumH,0);
     % either: more than one year has passed
     % or: H is low and coming down
-    R3flag = ival + (hval + hdotval + ival + tval);
-    if ival==0 && tlong==0 && R3flag < 0
+    R3flag = ival + hval + tval + hdotval;
+    if ival==0 && tlong==0 && R3flag ~= 0
 %         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         doubling_time = log(2)*dis.generation_time/max(R_est-1,1e-5);

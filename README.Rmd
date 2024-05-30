@@ -672,7 +672,7 @@ knitr::include_graphics(path = "README_files/figure-gfm/mobilitycurves.png")
 
 ## Self isolating
 
-We assume that infectious people who know their status have a compliance $p^1\sim\mathcal(U)(0,1)$ with the instruction to self isolate, starting one day into their infectious period. We assume constant infectiousness over time and that a fraction $p^{26}$ of the symptomatic infectiousness is presymptomatic. Then the amount of infectiousness averted of symptomatic people is $p^4=p^1(1-p^{26})$, who isolate due to the onset of symptoms. The fraction of asymptomatic cases identified by testing is $p^2(t)$. We assume asymptomatic cases have the same probability to self isolate and that test results are returned after $p^{17}$ days of infectiousness. Then the infectiousness that testing averts is $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$. 
+We assume that infectious people who know their status have a compliance $p^1\sim\text(Beta)(5,5)$ with the instruction to self isolate, starting one day into their infectious period. We assume constant infectiousness over time and that a fraction $p^{26}$ of the symptomatic infectiousness is presymptomatic. Then the amount of infectiousness averted of symptomatic people is $p^4=p^1(1-p^{26})$, who isolate due to the onset of symptoms. The fraction of asymptomatic cases identified by testing is $p^2(t)$. We assume asymptomatic cases have the same probability to self isolate and that test results are returned after $p^{17}$ days of infectiousness. Then the infectiousness that testing averts is $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$. 
 
 <!-- b0    = 2.197; -->
 <!-- b1    = 0.1838; -->
@@ -1009,20 +1009,34 @@ ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) +
 
 ```
 
-Figure \@ref(fig:vaxrate) shows histograms of COVID-19 vaccine administration rates by income level. Values are estimates of maximum rates of complete schedules given. Maximum rates are estimated as the maximum slope observed in the pandemic period (Figure \@ref(fig:vaxratemx)). The maximum slope ideally represents the highest rate possible: rates are often low to begin with, due to limitted supply. They are often low at the end, due to depleted demand.
-
-```{r vaxratemx,fig.cap='Vaccines administered per day as a percentage of population. The average rate from beginning to end is lower than the maximum possible rate.',echo=F,warning=F,message=F, out.width="50%"}
-
-knitr::include_graphics(path = "figures/vax_rate_MX.png")
-
-```
+Figure \@ref(fig:vaxrate) shows histograms of COVID-19 vaccine administration rates by income level. Values are estimates of administration rates of complete schedules given. Administration rates are estimated as the best-fit slope observed in the pandemic period (Figure \@ref(fig:vaxratemx)). The administration slope ideally represents the highest rate possible: rates are often low to begin with, due to limited supply. They are often low at the end, due to depleted demand.
 
 
 Using the method illustrated in Figure \@ref(fig:vaxratemx), we estimate how many countries per income group surpassed an average maximum rate of 0.5% of the population per day:  `r round(100*sum(hmaxi$igroup=='HIC'&hmaxi$arate/10^5>.005)/sum(hmaxi$igroup=='HIC'))`% of HICs,   `r round(100*sum(hmaxi$igroup=='UMIC'&hmaxi$arate/10^5>.005)/sum(hmaxi$igroup=='UMIC'))`% of UMICs,  and `r round(100*sum(hmaxi$igroup%in%c('LMIC','LIC')&hmaxi$arate/10^5>.005)/sum(hmaxi$igroup%in%c('LMIC','LIC')))`% of LLMICs.
 
 
 
+```{r vaxratemx,fig.cap='Vaccine administration in Mexico. The blue line shows the average rate over the whole vaccination campaign. The yellow line shows the average rate when administration was rate limiting.',echo=F,warning=F,message=F, out.width="50%"}
 
+knitr::include_graphics(path = "README_files/figure-gfm/vax_rate_MX.png")
+
+```
+
+In LMICs and LICs, there was arguably not a period of vaccine delivery in which the rate was limited by neither demand nor supply. Therefore we use an alternative source to validate our choices of administration rate in different scenarios. 
+
+Figure \@ref(fig:vaxratewho) shows that in 40% of vaccination campaigns in LLMICs, the rate exceeded 0.2% of the population per day; in 28% of campaigns, the rate exceeded 0.4% of the population per day; and in 13% of campaigns, the rate exceeded 1% of the population per day. We use these rates of delivery for LLMIC synthetic countries.
+
+```{r vaxratewho,fig.cap='Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more [@whoSummaryMeaslesRubellaSupplementary]. The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up.',echo=F,warning=F,message=F, out.width="80%"}
+
+knitr::include_graphics(path = "README_files/figure-gfm/vaccinationrates.png")
+
+```
+
+## Compliance with the requirement to self isolate
+
+We use a broad Beta distribution with parameters (5,5) to describe the compliance of the population with the requirement to isolate if symptomatic or positive. A YouGov survey [@jonessarahpImperialCollegeLondon2020] asked "If you were advised to do so by a healthcare professional or public health authority to what extent are you willing or not to self-isolate for 7 days?" The question was asked in 30 different countries (21 high income, five upper-middle income, four lower-middle income) and 63 different weeks of the COVID-19 pandemic to a total of 837,368 people.
+
+The possible answers were 'Very unwilling', 'Somewhat unwilling', 'Neither willing nor unwilling', 'Not sure', 'Somewhat willing', 'Very willing'.  Excluding the answer 'Not sure', and weighting all other answers on a uniform scale of 0 to 1, the average compliance from all participants is 84%. The range across countries is 73% to 90%. The average value for the UK is 87%. In contrast, @Smith2021 found that duration-adjusted adherence to full self isolation was 42.5%. The average value for Australia was 88%. A survey undertaken in 2009 found that 55% of households complied with quarantine requirements (https://doi.org/10.1186/1471-2334-11-2).
 
 \newpage
 

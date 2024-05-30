@@ -551,7 +551,6 @@ ggplot(vioplot,aes(fill=scen, colour=scen, y=value, x=scen)) +
 
 ```{r tabresdiff,tab.cap='Value of vaccines: expected difference between BAU and 100 days. Mean values and 95% prediction intervals.',echo=F,warning=F,message=F}
 
-colnames(difflist)[colnames(difflist)=='dYLLs'] <- 'YLL'
 meantab <- setDT(difflist)[,.(deaths=mean(YLL),
                         education=mean(School),
                         gdp=mean(GDP_loss)),by=.(igroup,BPSV,Vaccine)]
@@ -572,9 +571,8 @@ colnames(tabres) <- c('BPSV','Vaccine','Income group','Total value','YLL','Educa
 write.csv(tabres,'resultsdiff.csv',row.names = F)
 
 tabres <- tabres[,.(Scenario,`Income group`,`Total value`,YLL,Education,GDP)]
-# tabres[,Scenario:=paste0(Vaccine,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(BPSV,Vaccine)]
 
-lg <- 'Value of vaccines as a percent of GDP: differences between BAU and scenarios. Mean values and 95% prediction intervals. \\label{tab:tabresdiff}'
+lg <- 'Value of vaccines as a percent of GDP: differences between BAU and scenarios. Mean values and 75% prediction intervals. \\label{tab:tabresdiff}'
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(tabres,caption=lg)
 }else{
@@ -582,14 +580,42 @@ if (!knitr::is_html_output(excludes = "markdown")) {
   kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
 }
 
-# tabres <- subset(tabres,Country=='Secondary')
-# tabres$Country <- NULL
-# if (!knitr::is_html_output(excludes = "markdown")) { 
-#   pander(tabres,caption=lg)
-# }else{
-#     x <- knitr::kable(tabres,escape=F, "html",caption=lg)
-#   kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
-# }
+decimalplaces <- function(x) {
+    if ((x %% 1) != 0) {
+        nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed=TRUE)[[1]][[2]])
+    } else {
+        return(0)
+    }
+}
+
+format_to_print2 <- function(x,z=2){
+  v <- signif(x,z)
+  sapply(v, function(i)  formatC(i, format="f", digits=decimalplaces(i), big.mark=","))
+}
+
+tabresGDP <- difflist[,list(costs=paste0(format_to_print2(quantile(Cost*gdp/100,c(0.25,0.75))),collapse='--'),
+                        deaths=paste0(format_to_print2(quantile(YLL*gdp/100,c(0.25,0.75))),collapse='--'),
+                        education=paste0(format_to_print2(quantile(School*gdp/100,c(0.25,0.75))),collapse='--'),
+                        gdp=paste0(format_to_print2(quantile(GDP_loss*gdp/100,c(0.25,0.75))),collapse='--')
+                        ),by=.(BPSV,Vaccine,igroup)]
+
+tabresGDP[,igroup:=factor(igroup,levels=c('LLMIC','UMIC','HIC'))]
+tabresGDP[,Scenario:=paste0(Vaccine,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(Vaccine,BPSV)]
+tabresGDP[,Vaccine:=factor(Vaccine,levels=c(365,100))]
+setorder(tabresGDP,BPSV,Vaccine,igroup)
+colnames(tabresGDP) <- c('BPSV','Vaccine','Income group','Total value','YLL','Education','GDP','Scenario')
+
+tabresGDP <- tabresGDP[,.(Scenario,`Income group`,`Total value`,YLL,Education,GDP)]
+
+lg <- 'Value of vaccines in $: differences between BAU and scenarios. Mean values and 75% prediction intervals. \\label{tab:tabresdiffGDP}'
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(tabresGDP,caption=lg)
+}else{
+    x <- knitr::kable(tabresGDP,escape=F, "html",caption=lg)
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+}
+
+
 
 ```
 
