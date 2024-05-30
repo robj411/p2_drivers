@@ -33,7 +33,7 @@ self_isolation_compliance = data.self_isolation_compliance;
 frac_cases_found = p3 / p2.frac_asym_infectiousness_averted;
 frac_isolating = frac_cases_found * self_isolation_compliance; % maybe should not scale by compliance because why do you test if you do not comply?
 
-%% VLYL
+%% value of life lost
 
 deaths    = deathmat;
 costs.deaths = deaths(end,:);
@@ -46,7 +46,7 @@ costs.value_dYLL = vlyl;
 
 % ccost_t(:,1:ln) = deaths.*data.lgh.*data.vly;
 
-%% VSYL
+%% value of education lost
 
 Stu              = nSectors+2;
 students         = data.NNs(Stu);
@@ -71,7 +71,7 @@ not_learning_int     = trapz(t,not_learning)/365;%= (diff(t)'*presl)/365;
 costs.value_SYL = not_learning_int * data.vsy;
 
 
-%% SGDPL
+%% value of GDP lost
 
 notEd = [1:(data.EdInd-1),(data.EdInd+1):nSectors];
 worker_numbers = data.NNs(notEd);
