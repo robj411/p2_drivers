@@ -997,6 +997,8 @@ We model these values with Beta distributions. For LLMICs, we have parameters `r
 
 ```{r vaxrate,fig.cap='Vaccines administered per day, on average, in each country as a percent of population. Data source: fully vaccinated people from OWID (2022).',echo=F,warning=F,message=F, out.width="50%"}
 
+hmaxi <- subset(hmaxi,!is.na(arate)&!is.na(igroup)&igroup!='')
+
 
 ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) + 
   geom_histogram(aes(x=arate/10^5*100),colour='navyblue',fill='grey') +
@@ -1005,16 +1007,21 @@ ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) +
   labs(x='Vaccines administered per day, % population',y='')
 
 
+```
+
+Figure \@ref(fig:vaxrate) shows histograms of COVID-19 vaccine administration rates by income level. Values are estimates of maximum rates of complete schedules given. Maximum rates are estimated as the maximum slope observed in the pandemic period (Figure \@ref(fig:vaxratemx)). The maximum slope ideally represents the highest rate possible: rates are often low to begin with, due to limitted supply. They are often low at the end, due to depleted demand.
+
+```{r vaxratemx,fig.cap='Vaccines administered per day as a percentage of population. The average rate from beginning to end is lower than the maximum possible rate.',echo=F,warning=F,message=F, out.width="50%"}
+
+knitr::include_graphics(path = "figures/vax_rate_MX.png")
 
 ```
 
-Figure \@ref(fig:vaxrate) shows histograms of COVID-19 vaccine administration rates by income level. Values are estimates of maximum rates of complete schedules given. Maximum rates are estimated as the maximum slope observed in the pandemic period. The maximum slope ideally represents the highest rate possible: rates are often low to begin with, due to limitted supply. They are often low at the end, due to depleted demand.
 
-```{r vaxratemx,fig.cap='Vaccines administered in Mexico.',echo=F,warning=F,message=F, out.width="50%"}
+Using the method illustrated in Figure \@ref(fig:vaxratemx), we estimate how many countries per income group surpassed an average maximum rate of 0.5% of the population per day:  `r round(100*sum(hmaxi$igroup=='HIC'&hmaxi$arate/10^5>.005)/sum(hmaxi$igroup=='HIC'))`% of HICs,   `r round(100*sum(hmaxi$igroup=='UMIC'&hmaxi$arate/10^5>.005)/sum(hmaxi$igroup=='UMIC'))`% of UMICs,  and `r round(100*sum(hmaxi$igroup%in%c('LMIC','LIC')&hmaxi$arate/10^5>.005)/sum(hmaxi$igroup%in%c('LMIC','LIC')))`% of LLMICs.
 
-knitr::include_graphics(path = "figures/vax_admin_MX.png")
 
-```
+
 
 
 \newpage
