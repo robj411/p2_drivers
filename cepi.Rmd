@@ -530,7 +530,7 @@ vioplot$variable <- factor(vioplot$variable,
 
 ggplot(vioplot,aes(fill=scen, colour=scen, y=value, x=scen)) + 
     geom_violin(position="dodge",scale='width') +
-  facet_grid(igroup~variable, scales="free") + 
+  facet_grid(variable~igroup, scales="free") + 
     scale_fill_viridis(discrete=T, name="") +
     scale_colour_viridis(discrete=T, name="") +
     theme_bw(base_size = 15)  +
@@ -847,15 +847,11 @@ Some distributions in Figure \@ref(fig:prealpha) are bimodal. For example, GDP l
 These relationships are identified in the value-of-information analyses: the last two columns show value of information for R$_0$, fraction of population aged 65 and over and hospital capacity combined, and R$_0$, testing parameters and social-distancing parameters combined. These variables together explain much of the variance in GDP loss for the Economic Closures and Elimination strategies, respectively.
 
 
-```{r voi100,fig.cap='\\footnotesize Value of information for 100-day vaccine value.',echo=F,warning=F,message=F,fig.height=10}
+```{r voidiff,fig.cap='\\footnotesize Value of information for 100-day vaccine value.',echo=F,warning=F,message=F,fig.height=10}
 
 param_cutoff <- c('Remote quantile','Time to death')
 
-voiall <- readRDS('code/results/voidiff_0_100.Rds')
-rownames(voiall) <- gsub('dYLLs:','YLL:',rownames(voiall))
-rownames(voiall) <- gsub('Deaths:','YLL:',rownames(voiall))
-rownames(voiall) <- gsub('School:','Education:',rownames(voiall))
-rownames(voiall) <- gsub('Cost:','Value:',rownames(voiall))
+voiall <- readRDS('code/results/voidiff.Rds')
 
 fullnames <- rownames(voiall)
 splitnames <- do.call(rbind,sapply(fullnames,strsplit,': '))
@@ -885,15 +881,15 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
   theme(axis.text.x.bottom = element_text(angle = 90,  hjust=1,vjust=0.5)) +
   theme(
     plot.title = element_text(hjust = 1),        
-    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.0, 'cm')) +               
+    legend.position="right", legend.spacing.x = unit(0.15, 'cm'),legend.box.spacing = unit(0.1, 'cm')) +               
   guides(fill = guide_legend(#nrow = 1,
     title.theme = element_text(size=10),title.vjust = .8,title.hjust = 1,#title.position = "left",      
     #label.position="bottom", 
-    label.hjust = 0, #label.vjust = 0.3, 
+    label.hjust = 0, #label.vjust = 1.3, 
     #label.theme = element_text(size=8,angle = 45),
     title = 'EVPPI, % ',override.aes=list(colour='black')))  +
   scale_y_continuous(name='',breaks=rev(yvals),labels=strats,expand=c(0,0),
-                     sec.axis=sec_axis(trans='identity',breaks=seq(2,12,by=3.1),labels=rev(unique(splitnames[,1])))) +
+                     sec.axis=sec_axis(trans='identity',breaks=seq(2,9,by=3.1),labels=rev(unique(splitnames[,1])))) +
   coord_flip()
 ```
 
