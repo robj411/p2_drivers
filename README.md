@@ -3939,7 +3939,6 @@ the letter will be enclosed in parentheses for clarity.
 |  $M^{\text{CC}}$  |         CONTACTS: community, customers          |               |                               |
 | $M^{\text{trav}}$ |      CONTACTS: community, public transport      |               |                               |
 | $M^{\text{sch}}$  |           CONTACTS: community, school           |               |                               |
-|  $M^{\text{WW}}$  |             CONTACTS: work, workers             |               |                               |
 |  $M^{\text{WC}}$  |       CONTACTS: work, worker to customer        |               |                               |
 |  $M^{\text{CW}}$  |       CONTACTS: work, customer to worker        |               |                               |
 |        $M$        |                 CONTACTS: total                 |               |                               |
