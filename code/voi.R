@@ -148,6 +148,7 @@ multisource <- list('Importation time'="t_import",
                     'School/work contacts'=c('pupil_teacher_ratio','work_frac','school1_frac','school2_frac'),
                     "Hospitality frac"=c("hospitality_frac1","hospitality_frac2","hospitality_frac3","hospitality_frac4"),
                     'Timing'=c('t_import','Tres','Hres','response_time_quantile'),
+                    # 'Testing + R0'=c('R0','trate',"frac_sym_infectiousness_averted","frac_presym_infectiousness_averted","frac_asym_infectiousness_averted"),
                     'Testing'=c('trate',"frac_sym_infectiousness_averted","frac_presym_infectiousness_averted","frac_asym_infectiousness_averted"),
                     'Seed size'='seedsize'
                     )
@@ -283,6 +284,7 @@ for(vaccination_level in vaccination_levels){
 
 topresults <- list()
 choicestab <- c()
+ilistvoi <- ilistmi <- list()
 for(bl in 1:length(bpsv_levels)){
   topresults[[bl]] <- list()
   bpsv <- bpsv_levels[bl]
@@ -327,23 +329,10 @@ for(bl in 1:length(bpsv_levels)){
       difftab[,keeprow:=NULL]
       difftab[,policy:=NULL]
       difftab[,Cost:=-Cost+topresults[[1]][[1]]$Cost]
-      difftab[,YLL:=-YLL+topresults[[1]][[1]]$YLL]
-      difftab[,School:=-School+topresults[[1]][[1]]$School]
-      difftab[,GDP_loss:=-GDP_loss+topresults[[1]][[1]]$GDP_loss]
       
-      saveRDS(difftab,paste0('results/difftab_',bpsv,'_',vaccination_level,'.Rds'))
       
-      pctab <- copy(topresults[[bl]][[v]])
-      pctab[,keeprow:=NULL]
-      pctab[,policy:=NULL]
-      pctab[,Cost:=(-Cost+topresults[[1]][[1]]$Cost)/Cost]
-      pctab[,YLL:=(-YLL+topresults[[1]][[1]]$YLL)/YLL]
-      pctab[,School:=(-School+topresults[[1]][[1]]$School)/School]
-      pctab[,GDP_loss:=(-GDP_loss+topresults[[1]][[1]]$GDP_loss)/GDP_loss]
-      
-      saveRDS(pctab,paste0('results/pctab_',bpsv,'_',vaccination_level,'.Rds'))
-      
-      ilistvoi <- ilistmi <- list()
+      voilist <- list()
+      milist <- list()
       for (il in 1:length(income_levels)){
         income_level <- income_levels[il]
         results <- as.data.frame(subset(difftab,igroup==income_level&R0>1))
@@ -354,22 +343,11 @@ for(bl in 1:length(bpsv_levels)){
           if(ncol(sourcelist[[src]])<length(multisource[[src]])) print(src)
         }
         
-        firstreultcol <- which(colnames(results)==result_cols[1])
-        
-        colnames(results) <- gsub('_',' ',colnames(results))
-        
         sourcemat <- results
+        y <- results$Cost/sourcemat$gdp
         
-        outcomes <- results[,firstreultcol:(firstreultcol+length(result_cols)-1)]
-        for(i in 1:ncol(outcomes)) outcomes[,i] <- outcomes[,i]/sourcemat$gdp
-        
-        voilist <- list()
-        milist <- list()
-        
-        for(i in 1:ncol(outcomes)){
           voi <- c()
           mi <- c()
-          y <- outcomes[,i]
           vary <- var(y) 
           for(j in 1:length(sourcelist)){
             sourcesj <- sourcelist[[j]]
@@ -378,34 +356,58 @@ for(bl in 1:length(bpsv_levels)){
             # voi[j+ncol(sourcemat)] <- voi::evppivar(y,sourcesj,pars=colnames(sourcesj))[2]/vary*100
             voi[j] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
           }
-          milist[[i]] <- mi
-          voilist[[i]] <- voi
-        }
+          milist[[il]] <- mi
+          voilist[[il]] <- voi
+
         
-        voitab <- do.call(rbind,voilist)
-        colnames(voitab) <- c(names(multisource))
-        rownames(voitab) <- paste0(colnames(outcomes),': ',income_level)
-        mitab <- do.call(rbind,milist)
-        colnames(mitab) <- c(names(multisource))
-        rownames(mitab) <- paste0(colnames(outcomes),': ',income_level)
-        
-        ilistvoi[[il]] <- voitab
-        ilistmi[[il]] <- mitab
       }
       
+      voitab <- do.call(rbind,voilist)
+      colnames(voitab) <- c(names(multisource))
+      rownames(voitab) <- paste0(vaccination_level,', ',c('No ','')[bpsv+1],'BPSV: ',income_levels)
+      mitab <- do.call(rbind,milist)
+      colnames(mitab) <- c(names(multisource))
+      rownames(mitab) <- paste0(vaccination_level,', ',c('No ','')[bpsv+1],'BPSV: ',income_levels)
       
-      voiall <- do.call(rbind,ilistvoi)
-      roworder <- unlist(lapply(c("Cost","YLL","School","GDP loss"),
-                                function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
-      voiall <- voiall[roworder,]
-      miall <- do.call(rbind,ilistmi)
-      miall <- miall[roworder,]
+      ilistvoi[[length(ilistvoi)+1]] <- voitab
+      ilistmi[[length(ilistmi)+1]] <- mitab
       
-      saveRDS(voiall,paste0('results/voidiff_',bpsv,'_',vaccination_level,'.Rds'))
-      saveRDS(miall,paste0('results/midiff_',bpsv,'_',vaccination_level,'.Rds'))
+      
     }
+    
+    {
+    # trdf <- topresults[[bl]][[v]]
+    # sourcelist <- list()
+    # for(src in 1:length(multisource)) {
+    #   sourcelist[[src]] <- trdf[,colnames(trdf)%in%multisource[[src]],with=F]
+    #   if(ncol(sourcelist[[src]])<length(multisource[[src]])) print(src)
+    # }
+    # 
+    # mi <- c()
+    # for(j in 1:length(sourcelist)){
+    #   print(paste0(i,' ',names(multisource)[j]))
+    #   sourcesj <- sourcelist[[j]]
+    #   tryCatch({
+    #     mi[j] <- infotheo::mutinformation(infotheo::discretize(sourcesj),(trdf$policy))
+    #   },error = function(cond) {
+    #     mi[j] <- 0
+    #     # NA
+    #   })
+    # }
+    # names(mi) <- names(multisource)
+    # sort(mi)
+  }
   }
 }
+voiall <- do.call(rbind,ilistvoi)
+# roworder <- unlist(lapply(c("Cost","YLL","School","GDP loss"),
+#                           function(x)which(grepl(paste0(x,':'),rownames(voiall)))))
+# voiall <- voiall[roworder,]
+miall <- do.call(rbind,ilistmi)
+# miall <- miall[roworder,]
+
+saveRDS(voiall,paste0('results/voidiff.Rds'))
+saveRDS(miall,paste0('results/midiff.Rds'))
 
 saveRDS(choicestab,paste0('results/choicestab.Rds'))
 
