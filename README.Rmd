@@ -715,7 +715,7 @@ As there is no "tourism" sector in the 45-sector classification we are using, to
 
 
 
-```{r pairs, fig.cap="Correlations between tourism-related data. First: https://www.unwto.org/tourism-statistics/key-tourism-statistics. Second to fourth: https://www.unwto.org/tourism-data/international-tourism-and-covid-19. Fifth to seventh: OECD.",fig.height=7, fig.align="center",echo=F,warning=F,message=F}
+```{r pairs, fig.cap="Correlations between tourism-related data. First: @untourismKeyTourismStatistics2023. Second to fourth: @untourismInternationalTourismCOVID192023. Fifth to seventh: OECD.",fig.height=7, fig.align="center",echo=F,warning=F,message=F}
 
 data <- as.data.frame(readODS::read_ods('data/tourism.ods'))
 # colnames(data) <- data[1,]
@@ -827,7 +827,7 @@ fit <- dlnorm(x, fit_params$estimate['meanlog'], fit_params$estimate['sdlog'])
 We model the distribution of $c$ using data from 2020 (Figure \@ref(fig:tourismhist), bottom-right plot). We fit to it a log-normal distribution, and find mean value `r round(fit_params$estimate['meanlog'],2)` and standard deviation `r round(fit_params$estimate['sdlog'],2)` (Figure \@ref(fig:ytd)). We use these values as inputs for all country models.
 
 
-```{r tourismhist, fig.cap="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector.",fig.height=6, fig.width=9, fig.align="center",echo=F,warning=F,message=F, out.width="50%"}
+```{r tourismhist, fig.cap="Distributions of tourism-related data from @untourismInternationalTourismCOVID192023. In grey are the subset of countries for which we have GVA data by sector.",fig.height=6, fig.width=9, fig.align="center",echo=F,warning=F,message=F, out.width="50%"}
 tourismhist
 ```
 
