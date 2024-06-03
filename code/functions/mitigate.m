@@ -148,13 +148,13 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    % i is in 1:4: ival = 0
 	    ivals = -abs((i-1)*(i-2)*(i-3)*(i-4));
 	    % t is greater than the penultimate timepoint: tval = 0
-	    tval = min(t-(data.tvec(end-1)+0.1),0);
+	    tval = min(t-(data.tvec(end-1)+7),0);
 	    % have reached end of vaccine rollout: otherval = 0
-	    otherval = min(t-max(p2.tpoints+0.1),0);
+	    otherval = min(t-max(p2.tpoints+7),0);
     elseif strcmp(strategy,"Reactive closures")
 	    %measures can be removed if (not in hard lockdown) and ((Rt<1) or (after end of vaccination campaign and below 25% occupancy or low growth rate))
 	    % not in hard lockdown: i = 1, 2 or 4; ivals = 0
-	    ivals = -abs((i-1)*(i-2)*(i-4));
+	    ivals = -abs((i-1)*(i-2)*(i-4)*(i-3));
 	    % have passed penultimate timepoint: tval = 0
 	    tval = min(t-(data.tvec(end-1)+7),0) + min(t-7-max(p2.tpoints),0);
 	    % (low growth rate OR occupancy is low) AND have reached end of vaccine
