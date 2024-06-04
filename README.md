@@ -2646,16 +2646,13 @@ little correlation with tourism in terms of % of GDP. (See Figure
 
 <div class="figure" style="text-align: center">
 
-<img src="README_files/figure-gfm/pairs-1.png" alt="Correlations between tourism-related data. First: https://www.unwto.org/tourism-statistics/key-tourism-statistics. Second to fourth: https://www.unwto.org/tourism-data/international-tourism-and-covid-19. Fifth to seventh: OECD."  />
+<img src="README_files/figure-gfm/pairs-1.png" alt="Correlations between tourism-related data. First: @untourismKeyTourismStatistics2023. Second to fourth: @untourismInternationalTourismCOVID192023. Fifth to seventh: OECD."  />
 
 <p class="caption">
 
 <span id="fig:pairs"></span>Figure 4.1: Correlations between
-tourism-related data. First:
-<https://www.unwto.org/tourism-statistics/key-tourism-statistics>.
-Second to fourth:
-<https://www.unwto.org/tourism-data/international-tourism-and-covid-19>.
-Fifth to seventh: OECD.
+tourism-related data. First: UN Tourism (2023b). Second to fourth: UN
+Tourism (2023a). Fifth to seventh: OECD.
 
 </p>
 
@@ -2702,15 +2699,13 @@ as inputs for all country models.
 
 <div class="figure" style="text-align: center">
 
-<img src="README_files/figure-gfm/tourismhist-1.png" alt="Distributions of tourism-related data from https://www.unwto.org/tourism-data/international-tourism-and-covid-19. In grey are the subset of countries for which we have GVA data by sector." width="50%" />
+<img src="README_files/figure-gfm/tourismhist-1.png" alt="Distributions of tourism-related data from @untourismInternationalTourismCOVID192023. In grey are the subset of countries for which we have GVA data by sector." width="50%" />
 
 <p class="caption">
 
 <span id="fig:tourismhist"></span>Figure 4.2: Distributions of
-tourism-related data from
-<https://www.unwto.org/tourism-data/international-tourism-and-covid-19>.
-In grey are the subset of countries for which we have GVA data by
-sector.
+tourism-related data from UN Tourism (2023a). In grey are the subset of
+countries for which we have GVA data by sector.
 
 </p>
 
@@ -3944,7 +3939,6 @@ the letter will be enclosed in parentheses for clarity.
 |  $M^{\text{CC}}$  |         CONTACTS: community, customers          |               |                               |
 | $M^{\text{trav}}$ |      CONTACTS: community, public transport      |               |                               |
 | $M^{\text{sch}}$  |           CONTACTS: community, school           |               |                               |
-|  $M^{\text{WW}}$  |             CONTACTS: work, workers             |               |                               |
 |  $M^{\text{WC}}$  |       CONTACTS: work, worker to customer        |               |                               |
 |  $M^{\text{CW}}$  |       CONTACTS: work, customer to worker        |               |                               |
 |        $M$        |                 CONTACTS: total                 |               |                               |
@@ -4246,6 +4240,19 @@ Surveys.” *The BMJ* 372. <https://doi.org/10.1136/bmj.n608>.
 <div id="ref-TheGlobalFund2022" class="csl-entry">
 
 The Global Fund. 2022. “Fight for What Counts Investment Case,” 1–4.
+
+</div>
+
+<div id="ref-untourismInternationalTourismCOVID192023"
+class="csl-entry">
+
+UN Tourism. 2023a. “International Tourism and COVID-19.”
+
+</div>
+
+<div id="ref-untourismKeyTourismStatistics2023" class="csl-entry">
+
+———. 2023b. “Key Tourism Statistics.”
 
 </div>
 
