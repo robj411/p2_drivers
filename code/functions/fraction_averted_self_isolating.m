@@ -20,7 +20,8 @@ function [p3, p4] = fraction_averted_self_isolating(sumI, sumN, p2, t, mandate)
         
     if any(valid_timepoints==1) %& mandate~=5
         Ip = 10^5*sumI/sumN;
-        frac_cases_found = get_case_ID_rate(p2, Ip);
+        test_rate = p2.trate .* max(min((t-test_start_time)./30, 1),0);
+        frac_cases_found = get_case_ID_rate(test_rate, Ip);
         
         p3 = frac_cases_found * p2.frac_asym_infectiousness_averted ;
         p3 = p3.*(valid_timepoints); 
