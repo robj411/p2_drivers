@@ -31,8 +31,9 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
     I       = red*Ina+Ins +(1-trv1).*(red*Inav1+Insv1) + (1-trv2).*(red*Inav2+Insv2) ;   
     
     %% social distancing
-
-    sd = betamod_wrapped(10^6*sum(dis.mu.*hospital_occupancy)/sum(NN0), ...
+    yll = data.yll;
+    weighted_deaths = sum(dis.mu.*hospital_occupancy); %.*yll.^2./mean(yll.^2));
+    sd = betamod_wrapped(10^6*weighted_deaths/sum(NN0), ...
         data, mandate);
     
     %% seed

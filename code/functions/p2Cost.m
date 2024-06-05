@@ -42,7 +42,7 @@ lyl       = deaths(end,:).*data.yll;
 costs.life_years = lyl;
 
 vlyl      = lyl*data.vly;
-costs.value_dYLL = vlyl;
+costs.value_YLL = vlyl;
 
 %% value of education lost
 

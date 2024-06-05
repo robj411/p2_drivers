@@ -140,7 +140,7 @@ for il = 1:n_income
                         %% outputs: costs
                         costs    = p2Cost(ldata,dis2,p2,returned);
                         sec         = nan(1,4);
-                        sec(2)      = sum(costs.value_dYLL); % dylls
+                        sec(2)      = sum(costs.value_YLL); % ylls
                         sec(3)      = sum(costs.value_SYL); % school
                         sec(4)      = sum(costs.GDP_lost);  % gdp
                         sec(1)      = sum(sec(2:4)); % cost

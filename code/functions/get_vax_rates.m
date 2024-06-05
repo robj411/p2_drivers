@@ -53,11 +53,15 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
                 % populate v2rate and v12rate from S, Sv1, R, Rv1
                 denom2 = R+S+DE+1e-15;
                 denom12 = Rv1+Sv1+1e-15;
+                total12 = min(denom12, total_to_vax);
+                total2 = total_to_vax - total12;
+                v12rate = total12 ./ denom12;
+                v2rate = total2 ./ denom2;
                 vrate =  total_to_vax ./ (denom12 + denom2);
-                v12rates = vrate.*Sv1;
-                v12rater = vrate.*Rv1;
-                v2rates = vrate.*S;
-                v2rater = vrate.*R;
+                v12rates = Sv1 .* v12rate; % Sv1 .* vrate;
+                v12rater = Rv1 .* v12rate; % Rv1 .* vrate;
+                v2rates = S .* v2rate; % vrate.*S;
+                v2rater = R .* v2rate; % vrate.*R;
             else
                 % populate v2rate from S, R
                 denom2 = R+S+DE+1e-15;

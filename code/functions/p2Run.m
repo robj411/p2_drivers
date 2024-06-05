@@ -194,6 +194,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
 %     rundata.hw = data.hw; 
 %     rundata.inext = data.inext; 
     rundata.NNs = data.NNs; 
+    rundata.yll = data.yll; 
     rundata.Dvec = data.Dvec;
     rundata.tvec = data.tvec;
     rundata.compindex = data.compindex; 
