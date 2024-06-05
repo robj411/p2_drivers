@@ -132,6 +132,6 @@ life_years_lost_per_death         = arrayfun(@(x) dot(life_expectancy(x{1}),weig
 % for k = 1:length(life_years_lost_per_death)
 %     discounted_life_years_per_death(k) = sum(1./((1+discount_rate).^[1:life_years_lost_per_death(k)]));
 % end  
-data.lgh   = [repmat(life_years_lost_per_death(data.adInd),1,45),life_years_lost_per_death];
+data.yll   = [repmat(life_years_lost_per_death(data.adInd),1,45),life_years_lost_per_death];
 
 end
