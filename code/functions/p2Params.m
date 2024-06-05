@@ -135,3 +135,7 @@ life_years_lost_per_death         = arrayfun(@(x) dot(life_expectancy(x{1}),weig
 data.lgh   = [repmat(life_years_lost_per_death(data.adInd),1,45),life_years_lost_per_death];
 
 end
+
+
+
+

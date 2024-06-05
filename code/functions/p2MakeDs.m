@@ -88,3 +88,6 @@ worker_back = contacts_between_workers_and_community' ./ repmat(NN,1,nStrata);
 contact_matrix = community_mat + communitytoworker_mat + worker_back;
 
 end
+
+
+

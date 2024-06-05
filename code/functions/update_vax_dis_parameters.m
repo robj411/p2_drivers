@@ -54,3 +54,6 @@ function [dis2, V, B, vaccine_pp, booster_pp] = update_vax_dis_parameters(dis, S
     dis2.h_v2 = (1-hv2).*ph./Ts_v2;
     
 end
+
+
+

@@ -49,4 +49,7 @@ function [data, configuration] = get_strategy_design(data,strategy,p2)
     data.tvec = data.tvec + min(data.t_import,p2.Tres);
 
 end
+               
+               
+               
                 

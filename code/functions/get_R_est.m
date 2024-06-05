@@ -32,3 +32,6 @@ function R_est =  get_R_est(dis2, compindex, y_mat, p3, p4)
     R_est = (1+growth_rate/b1)*(1+growth_rate/b2);
     
 end
+
+
+

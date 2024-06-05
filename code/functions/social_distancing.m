@@ -23,3 +23,6 @@ function sd = social_distancing(baseline, death_coef, mandate_coef,...
 
 end
 %        sd_fun = @(l,b,x) (l-b)+(1-l+b)*(1+((l-1)/(1-l+b))).^(x./10);
+
+
+

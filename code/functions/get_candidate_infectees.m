@@ -158,3 +158,6 @@ function Rt = get_R_PD(ntot, dis, h, g2, S,Sv2, N, contact_matrix, beta, betamod
     Rt  = eigs(NGM,1);
 
 end
+
+
+

@@ -32,3 +32,6 @@ function R = get_R(nStrata, dis, S,Sv1,Sv2, beta, p3, p4, ddk, data, mandate)
     
 
 end
+
+
+
