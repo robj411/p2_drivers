@@ -42,7 +42,7 @@ lyl       = deaths(end,:).*data.lgh;
 costs.life_years = lyl;
 
 vlyl      = lyl*data.vly;
-costs.value_dYLL = vlyl;
+costs.value_YLL = vlyl;
 
 % ccost_t(:,1:ln) = deaths.*data.lgh.*data.vly;
 
