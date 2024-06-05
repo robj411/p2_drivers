@@ -6,19 +6,17 @@
 
 % p3: fraction of infectiousness averted
 
-function frac_cases_found = get_case_ID_rate(p2, Ip)
-
-    trate = p2.trate;
+function frac_cases_found = get_case_ID_rate(test_rate, Ip)
     
     b0    = 2.197;
     b1    = 0.1838;
     b2    = -1.024;
     
-    frac_cases_found = 1./(1+exp(b0+b1*Ip+b2*log10(trate)));
+    frac_cases_found = 1./(1+exp(b0+b1*Ip+b2*log10(test_rate)));
     
-    frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5);
+    frac_cases_found(Ip >= test_rate) = min(frac_cases_found(Ip >= test_rate),test_rate/10^5);
     
-    frac_cases_found = max(frac_cases_found, trate/10^5 );
+    frac_cases_found = max(frac_cases_found, test_rate/10^5 );
     
     
     

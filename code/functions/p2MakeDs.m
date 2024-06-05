@@ -7,7 +7,7 @@
 %
 % D: contact matrix
 
-function contact_matrix = p2MakeDs(data,NN,x,hw)
+function contact_matrix = p2MakeDs(data,NN,openness,home_working)
 
 %% variables to use
 
@@ -15,13 +15,13 @@ contacts = data.contacts;
 CM_4 = contacts.CM_4;
 contact_props = contacts.contact_props;
 
-w             = x;
+workers_present = openness;
 edInd = data.EdInd;
 adInd    = data.adInd; %Adult index
 HospInd = data.HospInd;
 
 workRow = CM_4(adInd,:);
-nSectors       = length(x);%Number of sectors
+nSectors       = length(openness);%Number of sectors
 nStrata       = length(NN);
 workage_indices = [1:nSectors,nSectors+adInd];
 
@@ -37,12 +37,12 @@ NNrea = repmat(NN(1:nSectors)'/sum(NN(1:nSectors)),nSectors,1);%workforce popula
 % start with hospitality
 hospitality_sectors = NN(HospInd);
 % get weighted average
-hospitality_sectors = sum(hospitality_sectors.*x(HospInd))/sum(hospitality_sectors); % constant from 0 to 1, weighted measure of how much sectors are open
+hospitality_sectors = sum(hospitality_sectors.*openness(HospInd))/sum(hospitality_sectors); % constant from 0 to 1, weighted measure of how much sectors are open
 CM_4 = CM_4 + hospitality_sectors^2 * contacts.hospitality_contacts;
 
 % school
-CM_4(1,1) = CM_4(1,1) + w(edInd).^2 * contacts.school1;
-CM_4(2,2) = CM_4(2,2) + w(edInd).^2 * contacts.school2;
+CM_4(1,1) = CM_4(1,1) + workers_present(edInd).^2 * contacts.school1;
+CM_4(2,2) = CM_4(2,2) + workers_present(edInd).^2 * contacts.school2;
 
 %% Make community matrix
 community_mat                    = zeros(nStrata,nStrata);
@@ -57,7 +57,7 @@ community_mat(:,workage_indices) = repmat(community_mat(:,nSectors+adInd),1,nSec
 
 %% WORKER-WORKER AND COMMUNITY-WORKER MATRICES
 
-effective_openness = x.*(1-hw');
+effective_openness = max(0, openness - home_working');
 effective_openness(nSectors+1:nStrata)    = 0;
 effective_openness_mat = repmat(effective_openness.^2,1,nStrata);
 % x(nSectors+1:nStrata)    = 0;
