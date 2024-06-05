@@ -38,7 +38,7 @@ frac_isolating = frac_cases_found * self_isolation_compliance; % maybe should no
 deaths    = deathmat;
 costs.deaths = deaths(end,:);
 
-lyl       = deaths(end,:).*data.lgh;
+lyl       = deaths(end,:).*data.yll;
 costs.life_years = lyl;
 
 vlyl      = lyl*data.vly;
