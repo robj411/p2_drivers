@@ -415,12 +415,6 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
     [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
         get_vax_rates(p2, t, nStrata, R,S,DE, Rv1,Sv1);
 
-    if t<83
-%         betamod = betamod_wrapped(10^6*sum(dis2.mu.*hospital_occupancy)/sum(NN0),p2, data, i);
-%         Rt1 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,NN0,data.Dvec(:,:,1),dis2.beta,1,0,0);
-%         disp([t foi'])
-    end
-
     %% EQUATIONS
 
     Sdot=      -v1rates - v2rates      -S.*foi  +nu.*R   ; 

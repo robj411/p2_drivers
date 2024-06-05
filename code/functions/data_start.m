@@ -4,9 +4,6 @@
 
 function data = data_start()
 
-%     load('../country_mats/Argentina.mat','data');%loading Argentina, but only keeping country-independent parameters
-%     fields    = fieldnames(data);
-%     ikeep     = [16,17,18];
     data      = struct; %rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
     closurefile = '../data/closures.xlsx';
     sheets = sheetnames(closurefile);

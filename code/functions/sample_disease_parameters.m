@@ -156,27 +156,6 @@ subplot(1,3,3); plot(plotfun(ifrs)); title('IFR')
 saveas(h,'../figures/ratesbyage','jpg');
 close gcf
 
-%% CEPI ifr
-
-% newifr = readtable('../data/IFR Distributions.xlsx','ReadRowNames',true).IFR(1:17);
-% % ps > ihr > ifr
-% % hfr > ifr
-% upperbound = sevenpathogens.ps;
-% vals = mean(ihrs')';
-% lowerbound = mean(ifrs')';
-% 
-% transformedvals = (vals-lowerbound)./(upperbound-lowerbound);
-% 
-% pHat = betafit(transformedvals);
-% relvals = betarnd(pHat(1),pHat(2),nsamples,1);
-% 
-% 
-% p1=7; newparams = gamrnd(p1,1/p1,nsamples,1);
-% 
-% for i = 1:nsamples
-%     param_struct.ifr(i,:) = newifr'*newparams(i);
-%     param_struct.ihr(i,:) = relvals(i) * (param_struct.ps(i) - param_struct.ifr(i,:)) + param_struct.ifr(i,:); 
-% end
 
 
 end

@@ -135,29 +135,5 @@ function CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, contac
     
 end
 
-function Rt = get_R_PD(ntot, dis, h, g2, S,Sv2, N, contact_matrix, beta, betamod, p3, p4)
-
-
-    FOIu = repmat(S.*dis.rr_infection,1,ntot).*beta.*betamod.*contact_matrix./repmat(N',ntot,1);
-    FOIv = repmat(Sv2.*dis.rr_infection,   1,ntot).*beta.*betamod.*contact_matrix./repmat(N',ntot,1).*(1-dis.scv2);
-
-    F                                = zeros(6*ntot,6*ntot);
-    F(1:ntot,       2*ntot+1:6*ntot) = [dis.red*FOIu,  FOIu,  dis.red*(1-dis.trv2)*FOIu,  (1-dis.trv2)*FOIu];
-    F(ntot+1:2*ntot,2*ntot+1:6*ntot) = [dis.red*FOIv,  FOIv,  dis.red*(1-dis.trv2)*FOIv,  (1-dis.trv2)*FOIv];
-
-    onesn                            = ones(ntot,1);
-    vvec                             = [(dis.sig1+dis.sig2).*onesn;  (dis.sig1+dis.sig2).*onesn;  (dis.g1+p3).*onesn;...
-                                        (g2+h+p4).*onesn;            (dis.g1+p3).*onesn;          (dis.g2_v2+dis.h_v2+p4).*onesn];
-    V                                = diag(vvec);
-    V(2*ntot+1:3*ntot,1:ntot)        = diag(-dis.sig1.*onesn);
-    V(3*ntot+1:4*ntot,1:ntot)        = diag(-dis.sig2.*onesn);
-    V(4*ntot+1:5*ntot,ntot+1:2*ntot) = diag(-dis.sig1.*onesn);
-    V(5*ntot+1:6*ntot,ntot+1:2*ntot) = diag(-dis.sig2.*onesn);
-
-    NGM = F/V;
-    Rt  = eigs(NGM,1);
-
-end
-
 
 
