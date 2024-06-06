@@ -20,7 +20,6 @@ edInd = data.EdInd;
 adInd    = data.adInd; %Adult index
 HospInd = data.HospInd;
 
-workRow = CM_4(adInd,:);
 nSectors       = length(openness);%Number of sectors
 nStrata       = length(NN);
 workage_indices = [1:nSectors,nSectors+adInd];
@@ -39,6 +38,7 @@ hospitality_sectors = NN(HospInd);
 % get weighted average
 hospitality_sectors = sum(hospitality_sectors.*openness(HospInd))/sum(hospitality_sectors); % constant from 0 to 1, weighted measure of how much sectors are open
 CM_4 = CM_4 + hospitality_sectors^2 * contacts.hospitality_contacts;
+workRow = CM_4(adInd,:);
 
 % school
 CM_4(1,1) = CM_4(1,1) + workers_present(edInd).^2 * contacts.school1;
