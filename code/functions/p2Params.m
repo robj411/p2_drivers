@@ -15,10 +15,6 @@ function [data,dis,p2] = p2Params(data,dis,vaccine_day,bpsv)
 
 p2 = struct;
 
-% social distancing
-% p2.sdl   = data.sdl;                        %Social Distancing Asymptote
-% p2.sdb   = data.sdb;                        %Social Distancing Steepness
-
 % response time and testing start time set by global alert
 p2.Tres = data.response_time;
 p2.t_tit = data.response_time;
@@ -125,13 +121,11 @@ life_expectancy(lihr) = dot(data.la(lihr:end),[data.Npop(lihr),sum(data.Npop((li
 % get population-weighted average ifr
 weighted_ifr       = Npop.*dis.ifr;
 % use weight to compute life expectancy lost per death
-life_years_lost_per_death         = arrayfun(@(x) dot(life_expectancy(x{1}),weighted_ifr(x{1}))/sum(weighted_ifr(x{1})), ageindex);
-% apply discounting
-% discount_rate = 0.03;
-% discounted_life_years_per_death = zeros(size(life_years_lost_per_death));
-% for k = 1:length(life_years_lost_per_death)
-%     discounted_life_years_per_death(k) = sum(1./((1+discount_rate).^[1:life_years_lost_per_death(k)]));
-% end  
+life_years_lost_per_death         = arrayfun(@(x) dot(life_expectancy(x{1}),weighted_ifr(x{1}))/sum(weighted_ifr(x{1})), ageindex); 
 data.yll   = [repmat(life_years_lost_per_death(data.adInd),1,45),life_years_lost_per_death];
 
 end
+
+
+
+

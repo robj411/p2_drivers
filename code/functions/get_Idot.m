@@ -52,3 +52,6 @@ function [Iadot, Isdot, Iav1dot, Isv1dot, Iav2dot, Isv2dot, IdotoverI] =  get_Id
     IdotoverI = Idot/(I+1e-10);
     
 end
+
+
+

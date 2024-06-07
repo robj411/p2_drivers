@@ -44,3 +44,6 @@ function Td = get_doubling_time(data,dis)
     Td      = log(2)/r;
 end
 
+
+
+

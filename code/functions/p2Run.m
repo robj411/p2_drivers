@@ -24,12 +24,6 @@ function [data, returnobject] = p2Run(data, dis, strategy, p2)
     configMat = reshape(configuration,nSectors,nConfigs);
     workerConfigMat = configMat;
     zs = zeros(size(data.NNs));
-%     NNvec = repmat(NNbar,1,nConfigs);
-%     NNvec                = repmat(NNbar(1:nSectors),1,int).*workerConfigMat;
-%     NNworkSum            = sum(NNvec,1);
-%     NNvec(nSectors+1:nStrata,:)     = repmat(NNbar(nSectors+1:nStrata),1,int);
-%     NNvec(nSectors+adInd,:)    = sum(NNbar([1:nSectors,nSectors+adInd]))-NNworkSum;
-%     data.NNvec = NNvec;
     
     % get low-contact matrices
     config_min_econ = data.x_econ(:,2)*.95;
@@ -55,7 +49,6 @@ function [data, returnobject] = p2Run(data, dis, strategy, p2)
     candidate_infectees_max = candidate_infectees(1);
     
     % store amount by which configurations reduce contacts
-%     data.rel_mobility = (candidate_infectees_max - candidate_infectees)./(candidate_infectees_max-candidate_infectees_min);
     rel_mobility = (candidate_infectees)./(candidate_infectees_max);
     rel_mobility_min = candidate_infectees_min/candidate_infectees_max;
     data.rel_stringency = (1-rel_mobility) / max(1-[rel_mobility_min; rel_mobility]);
@@ -422,12 +415,6 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
     
     [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
         get_vax_rates(p2, t, nStrata, R,S,DE, Rv1,Sv1);
-
-    if t<83
-%         betamod = betamod_wrapped(10^6*sum(dis2.mu.*hospital_occupancy)/sum(NN0),p2, data, i);
-%         Rt1 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,NN0,data.Dvec(:,:,1),dis2.beta,1,0,0);
-%         disp([t foi'])
-    end
 
     %% EQUATIONS
 

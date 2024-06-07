@@ -56,3 +56,6 @@ function branch_out = branching_process(R0, mean_ihr, hosp_trigger)
     end
     branch_out = [generations, hospitalisations];
 end
+
+
+

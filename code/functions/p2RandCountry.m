@@ -80,21 +80,6 @@ elseif strcmp(income_level,'HIC')
     country_indices = strcmp(CD.igroup,'HIC');
 end
 
-%% bmi
-bmi = min(max(25.9,bmi), 29.9);
-% three outcomes (infection, hospitalisation, death)
-% two age groups (20 to 64, 65 plus)
-bmi_gradients = [0.0166 0.0518 0.0534; 0.0045 0.026 0.0111];
-bmi_intercepts= [0.524 -0.484 -0.531; 0.872 0.254 0.68];
-bmi_sigma= [0.00185 0.00501 0.0168; 0.00155 0.0059 0.0121];
-
-bmi_rr_quantile = repmat(unifrnd(0,1,1,3), 2, 1);
-bmi_rr = norminv(bmi_rr_quantile, bmi.*bmi_gradients + bmi_intercepts, bmi_sigma);
-% data.bmi_rr = bmi_rr;
-% data.bmi = bmi;
-% data.bmi_rr_quantile = bmi_rr_quantile(1,:);
-
-
 %% population
 % population by age
 nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
@@ -117,8 +102,6 @@ alloptions = table2array(CD(nonempind,colNNs));
 workagecolnames = strcat("Npop",arrayfun(@num2str, data.ageindex{3}, 'UniformOutput', false));
 workagecols = cell2mat(cellfun(@(a) strmatch(a, colnames),...
     workagecolnames,'uniform',false));
-% workageadults = sum(table2array(CD(nonempind,workagecols)),2);
-% employmentrates = sum(alloptions,2)./workageadults;
 
 % correlation between workforce in place and contacts from work
 Z = mvnrnd([0 0], [1 .8; .8 1], 1); %Generate multivariate corralated random number
@@ -163,9 +146,6 @@ data.pupil_teacher_ratio = pupil_teacher_ratio;
 randvalue = table2array(CD(demoindex,strmatch("CM", colnames)'));
 defivalue = reshape(randvalue,16,16);
 contacts.CM   = defivalue;
-
-%workp = number of contacts in workplace
-% contacts.workp = sample_uniform("workp",CD,country_indices);
 
 
 %%
@@ -384,3 +364,7 @@ function r = drchrnd(a,n)
     r = gamrnd(repmat(a,n,1),1,n,p);
     r = r ./ repmat(sum(r,2),1,p);
 end
+
+
+
+

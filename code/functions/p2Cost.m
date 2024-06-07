@@ -44,8 +44,6 @@ costs.life_years = lyl;
 vlyl      = lyl*data.vly;
 costs.value_YLL = vlyl;
 
-% ccost_t(:,1:ln) = deaths.*data.lgh.*data.vly;
-
 %% value of education lost
 
 Stu              = nSectors+2;
@@ -109,3 +107,7 @@ costs.GDP_lost = max_GDP - GDP_in;
 
 
 end
+
+
+
+

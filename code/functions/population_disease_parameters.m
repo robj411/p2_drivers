@@ -42,12 +42,6 @@ dis.pd  = [repmat(probDgivenH(adInd),nSectors,1);probDgivenH];
 
 dis.rr_infection = 1; % [repmat(data.bmi_rr(1,1),nSectors,1); 1; 1; data.bmi_rr(1,1); data.bmi_rr(2,1)];
 
-% dis.ph([1:nSectors, nSectors+adInd]) = data.bmi_rr(1,2) * dis.ph([1:nSectors, nSectors+adInd]);
-% dis.pd([1:nSectors, nSectors+adInd]) = data.bmi_rr(1,3) * dis.pd([1:nSectors, nSectors+adInd]);
-% 
-% dis.ph(nSectors + adInd + 1) = data.bmi_rr(2,2) * dis.ph(nSectors + adInd + 1);
-% dis.pd(nSectors + adInd + 1) = data.bmi_rr(2,3) * dis.pd(nSectors + adInd + 1);
-
 %Durations
 dis.Ts = ((1-dis.ph).*dis.Tsr)   + (dis.ph.*dis.Tsh);
 dis.Th = ((1-dis.pd).*dis.Threc) + (dis.pd.*dis.Thd);
@@ -88,21 +82,7 @@ Ts_v2 = ((1-(1-dis.hv2)*dis.ph).*dis.Tsr) + ((1-dis.hv2)*dis.ph.*dis.Tsh);
 dis.g2_v2 = (1-(1-dis.hv2)*dis.ph)./Ts_v2;
 dis.h_v2  = (1-dis.hv2)*dis.ph./Ts_v2;
 
-%% Transmission
 
-% Deff  = data.basic_contact_matrix .* repmat(dis.rr_infection,1,data.ntot) .* repmat(data.NNs,1,data.ntot)./repmat(data.NNs',data.ntot,1);
-% onesn = ones(data.ntot,1);
-% F     = zeros(3*data.ntot,3*data.ntot);
-% F(1:data.ntot,data.ntot+1:end)=[dis.red*Deff,Deff];
-% 
-% vvec = [(dis.sig1+dis.sig2).*onesn;      dis.g1.*onesn;       (dis.g2+dis.h).*onesn];%g2 and h are vectors
-% V    = diag(vvec);
-% V(data.ntot+1:2*data.ntot,1:data.ntot)   = diag(-dis.sig1.*onesn);
-% V(2*data.ntot+1:3*data.ntot,1:data.ntot) = diag(-dis.sig2.*onesn);
-% 
-% GD = F/V;
-% d = eigs(GD,1);%largest in magnitude (+/-) 
-% R0a = max(d); 
 
 NNs = data.NNs;
 zs = zeros(size(NNs));
@@ -113,19 +93,11 @@ dis.R0 = R0beta(1);
 dis.beta = R0beta(2);
 
 dis.Td = get_doubling_time(data,dis);
-% dis.time_to_5 = log2(5) * dis.Td;
 
 dis.generation_time = log(dis.R0) / (log(2) / dis.Td);
 
-% % get upper Rs in different configurations
-% configurations = [data.x_elim, data.x_schc, data.x_econ];
-% NNbar                = data.NNs;
-% R0s = [];
-% zs = zeros(size(data.NNs));
-% for i=1:size(configurations,2)
-%     Dtemp   = p2MakeDs(data,NNbar,configurations(:,i),data.wfh(1,:));
-%     R0s(i) = get_R(data.nStrata, dis, NNbar, zs, zs, dis.beta, 0, 0, 0, data, i, Dtemp);
-% end
-% dis.R0s = R0s;
-
 end
+
+
+
+

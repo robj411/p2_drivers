@@ -33,3 +33,6 @@ function dis2 = update_hosp_dis_parameters(occ, p2, dis)
     dis2.mu   = pd./Th;
 
 end
+
+
+
