@@ -42,7 +42,7 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
         mandate < 5 && mandate > 1 || ... % using closures
         data.imand==3 && ... % reactive closure strategy
         mandate == 3) || ... % currently in closures
-        sum(I) == 0 % importation has not yet occurred
+        sum(E) == 0 % importation has not yet occurred
         seed = 0;
     end
     
