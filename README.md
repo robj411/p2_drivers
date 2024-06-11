@@ -174,6 +174,31 @@ definition depends on income level, given in Table
 <span id="tab:vslrules"></span>Table 2.1: values for elasticities, from
 Robinson, Sullivan, and Shogren (2021), Table 2 (page 25)
 
+We note that in Table <a href="#tab:vslrules">2.1</a> there is a
+relationship between exchange rate and elasticity, in that the flatter
+elasticity of Viscusi/Masterman is accompanied by market exchange rate
+expression of GNI per capita, whereas the more graduated elasticities of
+OECD/IHME/World Bank are accompanied by purchasing power parity. This
+might be because these choices enact inverse transformations of low
+values for GNI per capita (Figure <a href="#fig:pppelasticity">2.1</a>).
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/pppelasticity-1.png" alt="Exposition of different methods to estimate VSL from GNI per capita relative to the USA. On the y axis is VSL expressed as a percentage of GDP per capita. The grey line indicates the USA. We compare GNI per capita expressed using market exchange rates vs. purchasing power parity, and an elasticity of 1 vs. 1.5. Data source: World Bank."  />
+
+<p class="caption">
+
+<span id="fig:pppelasticity"></span>Figure 2.1: Exposition of different
+methods to estimate VSL from GNI per capita relative to the USA. On the
+y axis is VSL expressed as a percentage of GDP per capita. The grey line
+indicates the USA. We compare GNI per capita expressed using market
+exchange rates vs. purchasing power parity, and an elasticity of 1
+vs. 1.5. Data source: World Bank.
+
+</p>
+
+</div>
+
 ## 2.2 Lost economic activity
 
 We measure the cost of economic closures in terms of lost gross value

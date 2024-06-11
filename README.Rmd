@@ -48,6 +48,9 @@ library(viridis)
 library(hrbrthemes)
 library(MASS)
 library(kableExtra)
+library(wbstats)
+library("cowplot")
+
 
 panderOptions('round',2)
 panderOptions('table.split.table', Inf)
@@ -183,6 +186,55 @@ Here, $`\text{VSL}_{\text{USA}}`$ is the VSL of the USA (10.9 million \$) and $`
 
 Table: (\#tab:vslrules) values for elasticities, from @Robinson2021, Table 2 (page 25)
 
+We note that in Table \@ref(tab:vslrules) there is a relationship between exchange rate and elasticity, in that the flatter elasticity of Viscusi/Masterman is accompanied by market exchange rate expression of GNI per capita, whereas the more graduated elasticities of OECD/IHME/World Bank are accompanied by purchasing power parity. This might be because these choices enact inverse transformations of low values for GNI per capita (Figure \@ref(fig:pppelasticity)).
+
+
+
+```{r pppelasticity,fig.cap='Exposition of different methods to estimate VSL from GNI per capita relative to the USA. On the y axis is VSL expressed as a percentage of GDP per capita. The grey line indicates the USA. We compare GNI per capita expressed using market exchange rates vs. purchasing power parity, and an elasticity of 1 vs. 1.5. Data source: World Bank.',echo=F,warning=F,message=F}
+
+gdpdata <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+gnipppdata <- setDT(wb_data("NY.GDP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata[,.(iso3c,country,date,NY.GDP.PCAP.PP.CD)],by=c('iso3c','country','date'))
+joineddata <- subset(joineddata,!is.na(NY.GDP.PCAP.PP.CD)&!is.na(NY.GDP.PCAP.CD))
+joineddata[,mostrecent:=max(date),by=country]
+joineddata <- subset(joineddata,date==mostrecent)
+joineddata[,gdp_to_gnippp:=NY.GDP.PCAP.PP.CD/NY.GDP.PCAP.CD]
+joineddata <- left_join(joineddata,setDT(incomelevels)[,.(Country.Code,IncomeGroup)],by=c('iso3c'="Country.Code"))
+
+
+joineddata[,gnippp:=gdp_to_gnippp*NY.GDP.PCAP.CD]
+usagdppc <- with(subset(joineddata,iso3c=='USA'),NY.GDP.PCAP.CD)
+yint <- with(subset(joineddata,iso3c=='USA'),(10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.)/NY.GDP.PCAP.CD)
+joineddata[,minvsl:=20*NY.GDP.PCAP.CD]
+joineddata[,basicvsl:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.),by=iso3c]
+joineddata[,vsle:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.5),by=iso3c]
+joineddata[,vslpppe:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.5),by=iso3c]
+joineddata[,vslppp:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.),by=iso3c]
+
+p11 <- ggplot(joineddata,aes(x=NY.GDP.PCAP.CD,y=basicvsl/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title='MER, e=1',colour='') 
+p12 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vslppp/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title='PPP, e=1',colour='') 
+p21 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vsle/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title='MER, e=1.5',colour='') 
+p22 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vslpppe/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title='PPP, e=1.5',colour='') 
+
+
+plot_grid(p11,p21,p12,p22,ncol = 2, nrow = 2)
+```
 
 
 ## Lost economic activity
