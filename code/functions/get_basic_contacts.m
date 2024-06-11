@@ -41,9 +41,17 @@ NNrel = NN(workage_indices)/sum(NN(workage_indices)); %adult population proporti
 %% WORKER-WORKER AND COMMUNITY-WORKER MATRICES:
 
 sectoragedist = zeros(nSectors,nStrata);
-sectoragedist(:,nSectors+[1,2]) = contacts.sectorcontactfracs.under18 * pop_props(1:2)/sum(pop_props(1:2));
-sectoragedist(:,nSectors+4) = contacts.sectorcontactfracs.x65plus;
-sectoragedist(:,workage_indices) = contacts.sectorcontactfracs.workingage * NNrel';
+sectorcontactfracs = contacts.sectorcontactfracs;
+% correct for age dist
+over65frac = Npop4(4)/sum(Npop4);
+ukover65frac = .25;
+sectorcontactfracs.x65plus = sectorcontactfracs.x65plus * over65frac / ukover65frac;
+newtotal = sectorcontactfracs.workingage+sectorcontactfracs.x65plus+sectorcontactfracs.under18;
+sectorcontactfracs.under18 = sectorcontactfracs.under18 ./ newtotal;
+sectorcontactfracs.workingage = sectorcontactfracs.workingage ./ newtotal;
+sectoragedist(:,nSectors+[1,2]) = sectorcontactfracs.under18 * pop_props(1:2)/sum(pop_props(1:2));
+sectoragedist(:,nSectors+4) = sectorcontactfracs.x65plus;
+sectoragedist(:,workage_indices) = sectorcontactfracs.workingage * NNrel';
 
 community_to_worker          = contacts.sectorcontacts;
 community_to_worker_mat          = repmat(community_to_worker,1,nStrata).*sectoragedist;
