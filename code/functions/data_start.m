@@ -4,6 +4,7 @@
 
 function data = data_start()
 
+    %% closure strategies
     data      = struct; %rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
     closurefile = '../data/closures.xlsx';
     sheets = sheetnames(closurefile);
@@ -13,19 +14,21 @@ function data = data_start()
         data.(thissheet) = closurei;
     end
     
+    %% general variables
     data.adInd = 3;
     data.nSectors = length(data.x_elim);
     data.tvec = [0 365*10];
     data.EdInd    = 41;%education sector index
     data.HospInd  = [32,43,44];%hospitality sector indices
+    data.ageindex = {1,2:4,5:13,14:21};
     
+    %% contacts
     contacts = struct;
     contacts.sectorcontacts = readtable('../data/sectorcontacts.csv');
     contacts.sectorcontactfracs = readtable('../data/sec_contact_dist_UK.csv');
     data.contacts = contacts;
     
-    data.ageindex = {1,2:4,5:13,14:21};
-    
+    %% indices
     compindex = struct;
     
     compindex.S_index = [1, 8:11,24:25]; % S, Sn, S01, Sv, Sb, S02, S12
@@ -53,7 +56,21 @@ function data = data_start()
         compindex.R_index(3)];    
 
     data.compindex = compindex;
-
+    
+    %% vaccine rollout
+    fulltable = readtable('../data/20240604 LB Daily Vaccine Delivery.xlsx','FileType','spreadsheet','Sheet',1);
+    colnames = regexprep(fulltable.Properties.VariableNames(3:5),'s','');
+    vaxtab = table2array(fulltable);
+    scenarios = cell(1,5);
+    for i = 1:length(scenarios)
+        scenbpsv = array2table(vaxtab(:, 2 + (i-1)*6 + [1:3]));
+        scenspec = array2table(vaxtab(:, 2 + (i-1)*6 + [4:6]));
+        scenbpsv.Properties.VariableNames = colnames;
+        scenspec.Properties.VariableNames = colnames;
+        scenarios{i} = {scenbpsv, scenspec};        
+    end
+    
+    data.scenarios = scenarios;
 
 end
 

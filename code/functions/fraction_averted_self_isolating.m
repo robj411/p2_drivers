@@ -32,12 +32,8 @@ function [p3, p4] = fraction_averted_self_isolating(sumI, sumN, p2, t, mandate)
         p4 = sym_averted;
     else
         p3 = zeros(size(t));
-        if t>=test_start_time % instruction to self isolate if unwell
-            p4 = p2.frac_sym_infectiousness_averted;
-%             p4 = p3;
-        else
-            p4 = p3;
-        end
+        p4 = p3;
+        p4(t>=test_start_time) = p2.frac_sym_infectiousness_averted;
     end
     
 %     p4 = p3;
