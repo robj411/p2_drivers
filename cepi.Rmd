@@ -106,8 +106,8 @@ llmic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Low income
 
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','UMIC','HIC')
-vaccination_levels <- c(365,100)
-bpsv_levels <- c(0,1)
+scenario_levels <- 1:5
+scenario_names <- c('BAU',paste0('Scenario ',scenario_levels[-1]-1))
 
 ```
 
@@ -284,7 +284,7 @@ for (i in 1:length(income_levels)){
     inputtab <- read.csv(paste0('code/results/inputs_',income_level,'.csv'),header=T);
     for (k in 1:length(strategies)){
         inp3 <- strategies[k];
-        results <- read.csv(paste0('code/results/outputs_',inp3,'_',income_level,'_365_0.csv'),header=T);
+        results <- read.csv(paste0('code/results/outputs_',inp3,'_',income_level,'_scen1.csv'),header=T);
         results$Policy <- inp3
         results$igroup <- income_level
         results$Deaths <- NULL
@@ -317,11 +317,9 @@ vioplot$variable <- factor(vioplot$variable,
 meltmeantab <- c()
 allallresults <- tabresall <- data.frame()
 p <- list()
-for(vl in 1:length(vaccination_levels)){
-  vaccination_level <- vaccination_levels[vl]
-  p[[vl]] <- list()
-  for(bl in 1:length(bpsv_levels)){
-    bpsv <- bpsv_levels[bl]
+for(sl in scenario_levels){
+  scenario <- scenario_names[sl]
+  p[[sl]] <- list()
 
     allresults <- data.frame()
     
@@ -331,12 +329,12 @@ for(vl in 1:length(vaccination_levels)){
         for (k in 1:length(strategies)){
             inp3 <- strategies[k];
             
-            results <- read.csv(paste0('code/results/outputs_',inp3,'_',income_level,'_',vaccination_level,'_',bpsv,'.csv'),header=T);
+            results <- read.csv(paste0('code/results/outputs_',inp3,'_',income_level,'_scen',sl,'.csv'),header=T);
             results$Deaths <- NULL
             results$Policy <- inp3
             results$igroup <- income_level
             results$samplei <- 1:nrow(results)
-            colnames(results)[colnames(results)=='dYLLs'] <- 'YLL'
+            # colnames(results)[colnames(results)=='dYLLs'] <- 'YLL'
             results <- cbind(results,inputtab)
             allresults <- rbind(allresults,results)
         }
@@ -358,7 +356,7 @@ for(vl in 1:length(vaccination_levels)){
                                levels=c('Cost','YLL','School','GDP_loss'),
                                labels=c('Cost','YLL','Education','GDP'))
     
-    p[[vl]][[bl]] <- ggplot(vioplot,aes(fill=Policy,colour=Policy, y=value, x=Policy)) + 
+    p[[sl]] <- ggplot(vioplot,aes(fill=Policy,colour=Policy, y=value, x=Policy)) + 
       geom_violin(position="dodge", scale='width') +
       facet_grid(variable~igroup, scales="free") + 
         scale_fill_viridis(discrete=T, name="",option='inferno',direction=-1) +
@@ -374,8 +372,7 @@ for(vl in 1:length(vaccination_levels)){
 
 
     
-    allresults$vaccination_level <- vaccination_level
-    allresults$BPSV <- c('No','Yes')[bpsv+1]
+    allresults$scenario <- scenario
     
     allallresults <- rbind(allallresults,allresults)
     
@@ -387,7 +384,7 @@ for(vl in 1:length(vaccination_levels)){
                             gdp=mean(GDP_loss),
                             nmin=sum(mincost)),by=.(Policy,igroup)]
     meltmean <- reshape2::melt(meantab,id.vars=c('Policy','igroup','nmin'))
-    meltmean$scen <- paste0(vaccination_level,', ',c('No BPSV','BPSV')[bpsv+1])
+    meltmean$scen <- scenario
     meltmeantab <- rbind(meltmeantab,meltmean)
     
     tabres <- setDT(allresults)[,list(costs=paste0(round(quantile(Cost,c(0.25,0.75)),1),collapse='--'),
@@ -396,8 +393,7 @@ for(vl in 1:length(vaccination_levels)){
                             gdp=paste0(round(quantile(GDP_loss,c(0.25,0.75)),1),collapse='--')
                             ),by=.(Policy,igroup)]
     colnames(tabres) <- c('Policy','Income group','Total costs','YLL','Education','GDP')
-    tabres$`SARS-X vaccine` <- vaccination_level
-    tabres$BPSV <- bpsv+1
+    tabres$Scenario <- scenario
     tabresall <- rbind(tabresall,tabres)
 
     # write.csv(tabres,paste0('results_',vaccination_level,'_',bpsv,'.csv'),row.names = F)
@@ -408,10 +404,9 @@ for(vl in 1:length(vaccination_levels)){
     #   x <- knitr::kable(tabres,escape=F, "html",caption=lg)
     #   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
     # }
-  }
 }
-tabresall[,Scenario:=paste0(`SARS-X vaccine`,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(`SARS-X vaccine`,BPSV)]
-tabresall <- cbind(tabresall[,9],tabresall[,-c(7:9)])
+# tabresall[,Scenario:=paste0(`SARS-X vaccine`,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(`SARS-X vaccine`,BPSV)]
+tabresall <- cbind(tabresall[,7],tabresall[,-c(7)])
 lg <- paste0('Results for all vaccination levels, scenarios and country types. Mean values and 95% prediction intervals. \\label{tab:tabres}')
 if (!knitr::is_html_output(excludes = "markdown")) { 
   cat(pander(tabresall,caption=lg))
@@ -424,7 +419,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 
 ```{r violinBAU,fig.cap='Model results for the 365-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
-p[[1]][[1]]
+p[[1]]
 
 # ggsave(p[[1]][[1]] + theme_bw(base_size=15),filename='BAUviolinspill.png',width=9,height=6.5)
 # 
@@ -433,22 +428,26 @@ p[[1]][[1]]
 ```
 
 ```{r violinSARSX,fig.cap='Model results for the 100-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
-p[[2]][[1]]
+p[[2]]
 ```
 
 ```{r violinBPSV,fig.cap='Model results for the 365-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
-p[[1]][[2]]
+p[[3]]
 ```
 
 ```{r violinBPSVSARSX,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
-p[[2]][[2]]
+p[[4]]
+```
+
+```{r violin5,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+p[[5]]
 ```
 
 ```{r expectedvaluesbar,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=6,fig.width=6}
 
-meltmeantab$scen <- factor((meltmeantab$scen), 
-                                    levels=c('365, No BPSV','365, BPSV',
-                                             '100, No BPSV','100, BPSV'))
+# meltmeantab$scen <- factor((meltmeantab$scen), 
+#                                     levels=c('365, No BPSV','365, BPSV',
+#                                              '100, No BPSV','100, BPSV'))
 setDT(meltmeantab)
 # meltmeantab[,cost:=sum(value),by=.(scen,igroup,Policy)]
 # meltmeantab[,mincost:=cost==min(cost),by=.(scen,igroup)]
@@ -496,25 +495,20 @@ Finally, note that there are samples with a negative value. These come from unli
 ```{r resultsdiff,echo=F,warning=F,message=F}
 
 difflist <- c()
-for(vl in 1:length(vaccination_levels)){
-  for(bl in 1:length(bpsv_levels)){
-    if(vl>1|bl>1){
-      vaccination_level <- vaccination_levels[vl]
-      bpsv <- bpsv_levels[bl]
-      difftab <- as.data.frame(readRDS(paste0('code/results/difftab_',bpsv,'_',vaccination_level,'.Rds')))
-      colnames(difftab)[colnames(difftab)=='dYLLs'] <- 'YLL'
+for(sl in scenario_levels){
+    if(sl>1){
+      scenario <- scenario_names[sl]
+      difftab <- as.data.frame(readRDS(paste0('code/results/difftab_',sl,'.Rds')))
+      # colnames(difftab)[colnames(difftab)=='dYLLs'] <- 'YLL'
       nvar <- which(colnames(difftab)=='GDP_loss')
       for(i in (nvar-3):nvar){
         difftab[,i] = difftab[,i]/difftab$gdp*100;
       }
-      difftab$BPSV <- bpsv+1
-      difftab$Vaccine <- vaccination_level
-      difftab$scen <- paste0(c('No BPSV','BPSV')[bpsv+1],', ',vaccination_level, ' days')
+      difftab$scen <- scenario
       # colnames(difftab)
       # for (i in colnames(difflist)) if(!i%in%colnames(difftab)) difflist[[i]] <- NULL
       difflist <- rbind(difflist,difftab)
     }
-  }
 }
 
 ```
@@ -553,19 +547,18 @@ ggplot(vioplot,aes(fill=scen, colour=scen, y=value, x=scen)) +
 
 meantab <- setDT(difflist)[,.(deaths=mean(YLL),
                         education=mean(School),
-                        gdp=mean(GDP_loss)),by=.(igroup,BPSV,Vaccine)]
+                        gdp=mean(GDP_loss)),by=.(igroup,scen)]
 
 tabres <- setDT(difflist)[,list(costs=paste0(signif(quantile(Cost,c(0.25,0.75)),2),collapse='--'),
                         deaths=paste0(signif(quantile(YLL,c(0.25,0.75)),2),collapse='--'),
                         education=paste0(signif(quantile(School,c(0.25,0.75)),2),collapse='--'),
                         gdp=paste0(signif(quantile(GDP_loss,c(0.25,0.75)),2),collapse='--')
-                        ),by=.(BPSV,Vaccine,igroup)]
+                        ),by=.(scen,igroup)]
 
 tabres[,igroup:=factor(igroup,levels=c('LLMIC','UMIC','HIC'))]
-tabres[,Scenario:=paste0(Vaccine,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(Vaccine,BPSV)]
-tabres[,Vaccine:=factor(Vaccine,levels=c(365,100))]
-setorder(tabres,BPSV,Vaccine,igroup)
-colnames(tabres) <- c('BPSV','Vaccine','Income group','Total value','YLL','Education','GDP','Scenario')
+tabres[,Scenario:=scen]
+setorder(tabres,scen,igroup)
+colnames(tabres) <- c('Scenario','Income group','Total value','YLL','Education','GDP','s')
 
 
 write.csv(tabres,'resultsdiff.csv',row.names = F)
@@ -597,13 +590,12 @@ tabresGDP <- difflist[,list(costs=paste0(format_to_print2(quantile(Cost*gdp/100,
                         deaths=paste0(format_to_print2(quantile(YLL*gdp/100,c(0.25,0.75))),collapse='--'),
                         education=paste0(format_to_print2(quantile(School*gdp/100,c(0.25,0.75))),collapse='--'),
                         gdp=paste0(format_to_print2(quantile(GDP_loss*gdp/100,c(0.25,0.75))),collapse='--')
-                        ),by=.(BPSV,Vaccine,igroup)]
+                        ),by=.(scen,igroup)]
 
 tabresGDP[,igroup:=factor(igroup,levels=c('LLMIC','UMIC','HIC'))]
-tabresGDP[,Scenario:=paste0(Vaccine,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(Vaccine,BPSV)]
-tabresGDP[,Vaccine:=factor(Vaccine,levels=c(365,100))]
-setorder(tabresGDP,BPSV,Vaccine,igroup)
-colnames(tabresGDP) <- c('BPSV','Vaccine','Income group','Total value','YLL','Education','GDP','Scenario')
+tabresGDP[,Scenario:=scen]
+setorder(tabresGDP,scen,igroup)
+colnames(tabresGDP) <- c('Scenario','Income group','Total value','YLL','Education','GDP','s')
 
 tabresGDP <- tabresGDP[,.(Scenario,`Income group`,`Total value`,YLL,Education,GDP)]
 
@@ -626,9 +618,8 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 ```{r choicestab,fig.cap='Frequency of mitigation policy choices.',echo=F,warning=F,message=F,fig.height=4,fig.width=6}
 
 choicestab <- readRDS(paste0('code/results/choicestab.Rds'))
-choicestab[,scen:=paste0(c('No BPSV','BPSV')[bpsv+1],', ',vaccination_level,' days')]
 ggplot(choicestab) +  
-  geom_bar(aes(x=factor(scen,levels=c('No BPSV, 365 days','BPSV, 365 days','No BPSV, 100 days','BPSV, 100 days')),
+  geom_bar(aes(x=scenario,
                y=N/20.48,
                fill=factor(policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))),stat='identity') + 
   facet_wrap(~factor(igroup,levels=c('LLMIC','UMIC','HIC'))) + 
@@ -644,7 +635,7 @@ ggplot(choicestab) +
 
 ```{r importtime,fig.cap='Hospital occupancy at time of response.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 
-ggplot(subset(allallresults,Policy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
+ggplot(subset(allallresults,Policy=='No Closures'&scenario=='BAU'),aes(x=Hospital_occupancy_at_response,y=..density..)) +
   # geom_histogram(colour='white',fill='white') +
   geom_density(aes(colour=factor(igroup,levels=c('LLMIC','UMIC','HIC'))),linewidth=2, alpha=0.5) +
   theme_bw(base_size = 15) +
@@ -696,7 +687,7 @@ ggplot(iseq) +
 
 ```{r responsetime,fig.cap='Secondary countries: importation time vs. response time. Where importation time is before response time, the epidemic unfolds as in the Origin country, but with an earlier response time. *Future development: there is not a qualitative difference between Origin and Secondary countries. We could therefore remove this label and vary the importation time from 0 to 20, to include the Origin feature. This would also allow for the possibility that a Secondary country with early importation detects, reports and responds earlier than the Origin country.*',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
-ggplot(subset(allallresults,Policy=='No Closures'&vaccination_level==365&BPSV=='No'),aes(x=t_import,y=Tres)) +
+ggplot(subset(allallresults,Policy=='No Closures'&scenario=='BAU'),aes(x=t_import,y=Tres)) +
   # geom_histogram(colour='white',fill='white') +
   geom_point(aes(shape=t_import>Tres),size=3,show.legend=F,alpha=.5,colour='navyblue') +
   # facet_wrap(~factor(bpsv,levels=bpsv_levels),scales='free') +
@@ -713,9 +704,8 @@ ggplot(subset(allallresults,Policy=='No Closures'&vaccination_level==365&BPSV=='
 ```{r vsy,fig.cap='The relationship between policy choice and value of a school year.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
 setDT(allallresults)
-allallresults[,mincost:=min(Cost),by=.(igroup,vaccination_level,BPSV,samplei)]
+allallresults[,mincost:=min(Cost),by=.(igroup,scenario,samplei)]
 allallresults[,keeprow:=Cost==mincost]
-allallresults[,vax:=paste0(c('No BPSV, ','BPSV, ')[as.numeric(BPSV=='Yes')+1],vaccination_level,' days')]
 allallresults$Policy <- factor(allallresults$Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination'))
 
 # ggplot(subset(allallresults,keeprow==T)) + 
@@ -726,11 +716,11 @@ allallresults$Policy <- factor(allallresults$Policy,levels=c('No Closures','Scho
 #         legend.position = 'top') + labs(colour='',x='Value of a school year',y='Density')
 
 keptresults <- subset(allallresults,keeprow==T)
-keptresults[,qVSY:=rank(vsy)/.N,by=.(igroup,vax)]
+keptresults[,qVSY:=rank(vsy)/.N,by=.(igroup,scenario)]
 
 ggplot(keptresults) + 
   geom_histogram(aes(x=qVSY,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
-  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scenario) + 
   theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
@@ -752,7 +742,7 @@ ggplot(keptresults) +
 
 ggplot(subset(allallresults,keeprow==T)) + 
   geom_histogram(aes(x=remote_teaching_effectiveness,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
-  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scenario) + 
   theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
@@ -774,13 +764,13 @@ ggplot(subset(allallresults,keeprow==T)) +
 #   theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
 #         legend.position = 'top') + labs(colour='',x='Response time minus importation time',y='Density')
 
-keptresults[,qtime:=rank(Tres-t_import)/.N,by=.(igroup,vax)]
-keptresults[,qtime0:=qtime[which.min(abs(Tres-t_import))],by=.(igroup,vax)]
+keptresults[,qtime:=rank(Tres-t_import)/.N,by=.(igroup,scenario)]
+keptresults[,qtime0:=qtime[which.min(abs(Tres-t_import))],by=.(igroup,scenario)]
 
 ggplot(keptresults) + 
   geom_histogram(aes(x=qtime,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
   geom_vline(aes(xintercept=qtime0),colour='grey',linewidth=1.2) +
-  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scenario) + 
   theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
@@ -793,11 +783,11 @@ ggplot(keptresults) +
 
 ```{r vly,fig.cap='The relationship between policy choice and value of a life year.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
-keptresults[,qVLY:=rank(vly)/.N,by=.(igroup,vax)]
+keptresults[,qVLY:=rank(vly)/.N,by=.(igroup,scenario)]
 
 ggplot(keptresults) + 
   geom_histogram(aes(x=qVLY,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
-  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scenario) + 
   theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
@@ -810,11 +800,11 @@ ggplot(keptresults) +
 
 ```{r seed,fig.cap='The relationship between policy choice and the size of the seed.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 
-keptresults[,qseedsize:=-seedsize,by=.(igroup,vax)]
+keptresults[,qseedsize:=-seedsize,by=.(igroup,scenario)]
 
 ggplot(keptresults) + 
   geom_histogram(aes(x=qseedsize,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
-  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~vax) + 
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scenario) + 
   theme_bw(base_size = 11) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
@@ -889,7 +879,7 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
     #label.theme = element_text(size=8,angle = 45),
     title = 'EVPPI, % ',override.aes=list(colour='black')))  +
   scale_y_continuous(name='',breaks=rev(yvals),labels=strats,expand=c(0,0),
-                     sec.axis=sec_axis(trans='identity',breaks=seq(2,9,by=3.1),labels=rev(unique(splitnames[,1])))) +
+                     sec.axis=sec_axis(trans='identity',breaks=seq(2,12,by=3.1),labels=rev(unique(splitnames[,1])))) +
   coord_flip()
 ```
 
@@ -943,15 +933,14 @@ ggplot(df, aes(x, y, fill = factor(xs,levels=1:(length(voibrks)-1),labels=voilbs
 
 ```{r dvoiBAU,fig.cap='Decision VOI for BAU. Which parameters would enable the decision maker to choose a policy that minimises expected losses for BAU vaccination?',eval=T,echo=F,warning=F,message=F,fig.height=12,include=F,eval=F}
 voiall <- c()
-for(i in c(365,100)){
-  for(j in 0:1){
-    voitab <- readRDS(paste0('code/results/decisionvoi',i,'_',j,'.Rds'))*100
+for(i in scenario_levels){
+    voitab <- readRDS(paste0('code/results/decisionvoi',i,'.Rds'))*100
     newtab <- voitab[grepl('Cost',rownames(voitab)),]
     rownames(newtab) <- gsub('Cost',paste0(i,' days, ',c('no BPSV','BPSV')[j+1]),rownames(newtab))
     voiall <- rbind(voiall,newtab)
   }
 }
-rownames(voiall) <- gsub('dYLLs:','YLL:',rownames(voiall))
+# rownames(voiall) <- gsub('dYLLs:','YLL:',rownames(voiall))
 
 # voiall <- readRDS('code/results/decisionvoi365_0.Rds')*100
 
@@ -1077,13 +1066,13 @@ To understand the relationship between a parameter and an outcome, e.g. whether 
 
 ```{r R0cost,fig.cap='Relationship between R$_0$ and total costs for UMICs with the "School Closures" policy.',echo=F,warning=F,message=F}
 
-ggsave(ggplot(subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&BPSV=='No'&vaccination_level==365),aes(x=R0,y=Cost)) +
+ggsave(ggplot(subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&scenario=='BAU'),aes(x=R0,y=Cost)) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
   labs(x=bquote(R[0]),y='Total socio-economic cost, % of GDP'),filename='R0cost365.png')
 
-set100 <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&BPSV=='No'&vaccination_level==100)
-set365 <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&BPSV=='No'&vaccination_level==365)
+set100 <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&scenario=='BAU')
+set365 <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&scenario=='Scenario 5')
 set365$averted <- set365$Cost - set100$Cost
 ggsave(ggplot(set365,aes(x=R0,y=averted)) +
   geom_point(colour='navyblue') +
