@@ -18,6 +18,7 @@ function betamod = betamod_wrapped(ddk, data, mandate, rel_stringency)
         mandate_coef = data.sd_mandate_coef;
         
         betamod = min(1-rel_stringency,social_distancing(baseline, death_coef, mandate_coef,ddk, rel_stringency));
+%         betamod = social_distancing(baseline, death_coef, mandate_coef,ddk, rel_stringency);
         if any(mandate==data.imand)
             betamod = min(betamod, social_distancing(baseline, death_coef, mandate_coef, 20, rel_stringency));
         end
