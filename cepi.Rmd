@@ -530,7 +530,7 @@ ggplot(vioplot,aes(fill=scen, colour=scen, y=value, x=scen)) +
     theme_bw(base_size = 15)  +
     xlab("") +
     ylab("Percent of GDP") +
-  scale_x_discrete(labels=c('','',''))+ 
+  scale_x_discrete(labels=c('','','',''))+ 
   theme(axis.ticks.x=element_blank(),
         panel.spacing = unit(0.5, "lines"),
         legend.position = 'bottom',
