@@ -109,6 +109,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    R1flag3 = -1;
 	    minttvec3 = min(t-(data.tvec(end-1)+7),0);
 	    R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+        
 	    if i==2 && minttvec3==0  && R_est<.95
             Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3);
             R1flag3 = min(0.95-Rt1,0);
@@ -161,7 +162,10 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    % rollout: otherval = 0
 	    otherval = -abs(min(0.025-r,0)*max(0,occ-p2.hosp_release_trigger));
     end
-    
+    % if t<270 & t>260
+    %     R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+    %     disp(R_est)
+    % end
     R2flag = otherval + ivals + tval;
     if ivals==0 && tval==0 
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
@@ -176,9 +180,24 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     value(5)      = R2flag; 
     direction(5)  = 0;
     isterminal(5) = 1;
+
+    %% Event 6: end exit wave
+
+    % we are in the exit wave phase
+    ival = -abs(i-6);
+    % t is one week greater than the last changepoint (which was end mitigation): tval = 0
+    tval = min(t-(data.tvec(end-1)+7),0);
+    % current R is less than 1
+    R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+    % tlong: one year since end mitigation
+    tlong = min(t-(data.tvec(end-1)+365),0);
+    R6flag = tlong + ival + tval;
+    if ival==0 && tval==0 && R_est < 0.95 && R6flag ~= 0
+        Rt6 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+        R6flag = min(1.0 - Rt6, 0);
+    end
     
-    %% Event 6: importation
-    value(6)      =  min(t-data.t_import,0);
+    value(6)      =  R6flag;
     direction(6)  = 1;
     isterminal(6) = 1;
     
@@ -186,7 +205,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     % mitigation is over
     ival = -abs(i-5);
     % t is one month greater than the end of the vaccine rollout and the last changepoint (which was end mitigation): tval = 0
-    tval = min(t-(max([p2.tpoints data.tvec(end-1)])+30),0);
+    tval = min(t-(data.tvec(end-1)+30),0);
     % tlong: one year since end mitigation
     tlong = min(t-(data.tvec(end-1)+365),0);
     % patient numbers declining
@@ -203,10 +222,17 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
         R3flag = min(doubling_time - p2.final_doubling_time_threshold,0);
 %         disp([t/1000 Rt3 betamod p3 p4 sumH ])
     end
+
+    
     
     value(7)      =  R3flag;
     direction(7)  = 1;
     isterminal(7) = 1;
+    
+    %% Event 8: importation
+    value(8)      =  min(t-data.t_import,0);
+    direction(8)  = 1;
+    isterminal(8) = 1;
     
 end
 
