@@ -12,58 +12,38 @@ function [data, returnobject] = p2Run(data, dis, strategy, p2)
 
     %% get configurations
     
-    [data, configuration] = get_strategy_design(data, strategy, p2);
+    data = get_strategy_design(data, strategy, p2);
     
     %% get contact matrices
     
     nSectors = data.nSectors;
     nStrata = length(data.NNs);
-    nConfigs = length(configuration)/data.nSectors;
+    nConfigs = length(data.configuration)/data.nSectors;
 
     NNbar = data.NNs;
-    configMat = reshape(configuration,nSectors,nConfigs);
-    workerConfigMat = configMat;
-    zs = zeros(size(data.NNs));
+    configMat = reshape(data.configuration,nSectors,nConfigs);
+    data.workerConfigMat = configMat;
     
-    % get low-contact matrices
-    config_min_econ = data.x_econ(:,2)*.95;
-    Dminecon = p2MakeDs(data,NNbar,config_min_econ,data.wfh(2,:));
-    candidate_infectees_econ = get_candidate_infectees(nStrata, dis, NNbar, zs, zs, 0, 0, NNbar, Dminecon);
-    config_min_sch = data.x_schc(:,2)*.95;
-    Dminschc = p2MakeDs(data,NNbar,config_min_sch,data.wfh(2,:));
-    candidate_infectees_schc = get_candidate_infectees(nStrata, dis, NNbar, zs, zs, 0, 0, NNbar, Dminschc);
-    candidate_infectees_min = min(candidate_infectees_schc,candidate_infectees_econ);
-   
-    candidate_infectees = zeros(nConfigs,1);
     Dvec = zeros(nStrata,nStrata,nConfigs);
     for i = 1:nConfigs
         % get matrix per configuration
         Dtemp = p2MakeDs(data,NNbar,configMat(:,i),data.hw(i,:));
         % store matrix in list
         Dvec(:,:,i) = Dtemp;
-
-        candidate_infectees(i) = get_candidate_infectees(nStrata,dis,NNbar, zs, zs, 0, 0, NNbar, Dtemp);
-%         candidate_infectees(i) = get_R(nStrata, dis, NNbar, zs, zs,...
-%            NNbar, Dtemp, 1, 1, 0, 0);
     end
-    candidate_infectees_max = candidate_infectees(1);
     
-    % store amount by which configurations reduce contacts
-    rel_mobility = (candidate_infectees)./(candidate_infectees_max);
-    rel_mobility_min = candidate_infectees_min/candidate_infectees_max;
-    data.rel_stringency = (1-rel_mobility) / max(1-[rel_mobility_min; rel_mobility]);
     data.Dvec = Dvec;
     data.strategy = strategy;
 
     data.basic_foi = Dvec(:,:,1)*(1./NNbar);
     
-    returnobject = p2SimVax(data, dis, workerConfigMat, p2);
+    returnobject = p2SimVax(data, dis, p2);
 
 end
 
 %%
 
-function returnobject = p2SimVax(data, dis, workerConfigMat, p2)    
+function returnobject = p2SimVax(data, dis, p2)    
     
     
     %% PARAMETERS
@@ -74,8 +54,7 @@ function returnobject = p2SimVax(data, dis, workerConfigMat, p2)
     compindex = data.compindex;
     nODEs = max(struct2array(compindex));
     S0 = NNbar;
-    Dvec = data.Dvec;
-    
+
     % initial conditions
     t0 = data.tvec(1);
     y0_mat = zeros(nStrata,nODEs);
@@ -109,10 +88,10 @@ function returnobject = p2SimVax(data, dis, workerConfigMat, p2)
 
     while Tout(end)<tend 
 
-        Wit               = workerConfigMat(:,i);    
+        Wit               = data.workerConfigMat(:,i);    
         NNfeed            = NNbar;
         NNfeed(NNfeed==0) = 1;
-        D                 = Dvec(:,:,i);
+        D                 = data.Dvec(:,:,i);
 
         %Vaccination Rollout by Sector
         NNnext              = NNbar;
@@ -123,7 +102,7 @@ function returnobject = p2SimVax(data, dis, workerConfigMat, p2)
 
         isequence = [isequence; [t0 i]];
         
-        [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0,inext,still_susc]=...
+        [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0,inext,still_susc,data]=...
          integr8(data,D,i,t0,tend,dis,y0,p2);
         if inext==0
             tend = tout(end);
@@ -183,8 +162,8 @@ end
 
 %%
 
-function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,still_susc]=...
-          integr8(data,D,i,t0,tend,dis,y0,p2)
+function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,still_susc,data]=...
+          integr8(data,contact_matrix,i,t0,tend,dis,y0,p2)
       
     %% copy over only required items
     
@@ -218,7 +197,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     D_index = compindex.D_index;
     
     nStrata = size(NN0,1);
-    fun  = @(t,y)ODEs(rundata,D,i,t,dis,y,p2);
+    fun  = @(t,y)ODEs(rundata,contact_matrix,i,t,dis,y,p2);
     strategy = data.strategy;
 
     if strcmp(strategy,'Elimination')
@@ -237,14 +216,14 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     y0new     = yout(end,:)'; 
     y_mat    = reshape(y0new,nStrata,[]);
     
-% ie is the index ("value") returned
-% inext is the value it maps to (from get_strategy_design)
-% disp([max(tout) i ie' ie'])
+    % ie is the index ("value") returned
+    % inext is the value it maps to (from get_strategy_design)
+    % disp([max(tout) i ie' ie'])
     if tout(end)<tend
-        if ie <= length(data.inext)
+        if ie <= 6
             inext = data.inext(ie(end));
 %             disp(data.rel_stringency(inext))
-        elseif ie == length(data.inext)+1 % importation event
+        elseif ie == 8 % importation event
             % keep the same i
             inext = i;
             % move 5 people from S to E
@@ -275,12 +254,12 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     H     = yout(:,(H_index(1)-1)*nStrata + indices);
     Hv1     = yout(:,(H_index(2)-1)*nStrata + indices);
     Hv2     = yout(:,(H_index(3)-1)*nStrata + indices);
-    D     = yout(:,(D_index(1)-1)*nStrata + indices);
+    Died     = yout(:,(D_index(1)-1)*nStrata + indices);
     still_susc = sum(yout(:,(repelem(S_index([1,3:end]),1,length(indices))-1)*nStrata + repmat(indices,1,length(S_index)-1)),2);
 
     Iclass   = Ia + Is + Iav1 + Isv1 + Iav2 + Isv2; 
     Hclass   = H + Hv1 + Hv2; 
-    Dclass   = D;
+    Dclass   = Died;
 
     %% TIME-DEPENDENT PARAMETERS
     
@@ -293,7 +272,10 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     
     sumNN0 = sum(NN0);
     ddk = 10^6*sum(mu.*Hclass,2)/sumNN0;
-    betamod = betamod_wrapped(ddk, data, i);
+    foi0 = data.basic_foi;
+    foi1 = contact_matrix*(1./NN0);
+    sd_so_far = ((foi1'*NN0+1e-10)./(foi0'*NN0+1e-10));
+    betamod = betamod_wrapped(ddk, data, i, 1-sd_so_far);
     
     [p3, p4] = fraction_averted_self_isolating(sum(Iclass,2), sumNN0, p2, tout, i);
     
@@ -308,19 +290,63 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     
     %% compute Rt at end of period
     
-%     S    = y_mat(:,compindex.S_index(1));
-%     Sn    = y_mat(:,compindex.S_index(2));
-%     S01   = y_mat(:,compindex.S_index(3));
-%     Sv1   = y_mat(:,compindex.S_index(4));
-%     Sv2   = y_mat(:,compindex.S_index(5));
-%     
-%     dis2 = update_vax_dis_parameters(dis2, S, Sn, compindex, y_mat);
-%     
-%     betam = social_distancing(p2.sdl,p2.sdb,ddk,data.rel_mobility(i));
-%     
-%     Rtret = get_R(nStrata,dis2,Stest,Stest1,Stest2,...
-%             data.NNvec(:,3),data.Dvec(:,:,3),dis.beta,betam(end),pout(end),pout(end));
-%         disp([2 sum(Iclass(end,:))/10^6 Ip(end) pout(end) Rtret])
+    S    = y_mat(:,compindex.S_index(1));
+    Sn    = y_mat(:,compindex.S_index(2));
+    S01   = y_mat(:,compindex.S_index(3));
+    Sv1   = y_mat(:,compindex.S_index(4));
+    Sv2   = y_mat(:,compindex.S_index(5));
+    S02   = y_mat(:,compindex.S_index(6));
+    S12   = y_mat(:,compindex.S_index(7));
+
+    dis2 = update_vax_dis_parameters(dis2, S, Sn, compindex, y_mat);
+
+    if inext==5 %& i~=6
+        closure = 1 - data.workerConfigMat(:,i);   
+        trial_vals = 0:0.05:1;
+        wfhvals = [2 1];
+        Rs = zeros(length(wfhvals), length(trial_vals));
+        Rthresh = 1.1 + 0.025*floor((tout(end)-max(p2.tpoints))/100);
+        for ival = 1:length(wfhvals)
+            for j =1:length(trial_vals)
+                trial_val = trial_vals(j);
+                openness = 1 - trial_val*closure;
+                Rs(ival,j) = get_trial_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data,openness,data.hw(wfhvals(ival),:),5);
+                if Rs(ival,j) < Rthresh
+                    break;
+                end
+            end
+        end
+        % disp([tout(end)/365 Rs(2,1)])
+        
+        if Rs(2,1) > Rthresh
+            inext = 6;
+            if max(Rs(1,:))<1
+                wfhindex = 2;
+            else
+                wfhindex = 1;
+            end
+            if min(Rs(wfhindex,:)>Rthresh)
+                index = length(trial_vals);
+            else
+                index = find(Rs(wfhindex,:)<Rthresh,1);
+            end
+            openness = 1 - trial_vals(index)*closure;
+            data.workerConfigMat(:,6) = openness;
+            data.hw(6,:) = data.hw(wfhvals(wfhindex),:);
+            Dtemp = p2MakeDs(data,data.NNs,openness,data.hw(inext,:));
+            % store matrix in list
+            data.Dvec(:,:,inext) = Dtemp;
+            % disp([Rthresh, Rs(2,1), Rs(wfhindex,index) tout(end)])
+        end
+        
+        % Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data, 5)
+        % Hmax = p2.Hmax;
+        % occupancy = occ(end);
+        % generation_time = dis2.Tlat + 0.5*dis2.Tsr;
+        % growth_rate = (Rs-1)./generation_time;
+        % time_to_capacity = log(Hmax/occupancy)./growth_rate;
+        % remaining_susc = still_susc(end);
+    end 
 
 end
 
