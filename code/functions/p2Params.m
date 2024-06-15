@@ -83,19 +83,23 @@ end
 t_vax2 = p2.t_vax2;
 start_gap = t_vax2 - t_vax;
 
+cum_sarsx = cumsum(sarsx_sched*50000000);
+keep_indices = find(diff([0; cum_sarsx])>0);
+interptime = @(x) interp1([0; cum_sarsx(keep_indices)],[0; keep_indices],x);
+
 t_ages = [];
-t_ages(4) = find(cumdoses >= doses4(4),1) - vaccine_day;
+t_ages(4) = interptime(doses4(4)) - vaccine_day;
 if max(cumdoses) <= doses
     if max(cumdoses) <= sum(doses4(3:4))
         t_ages(3) = length(cumdoses) - sum(t_ages(4)) - vaccine_day;
         t_ages(2) = 0;
     else
-        t_ages(3) = find(cumdoses >= sum(doses4(3:4)),1) - t_ages(4) - vaccine_day;
+        t_ages(3) = interptime(sum(doses4(3:4))) - t_ages(4) - vaccine_day;
         t_ages(2) = length(cumdoses) - sum(t_ages(3:4)) - vaccine_day;
     end
 else
-    t_ages(3) = find(cumdoses >= sum(doses4(3:4)),1) - t_ages(4) - vaccine_day;
-    t_ages(2) = find(cumdoses >= sum(doses4(2:4)),1) - sum(t_ages(3:4)) - vaccine_day;
+    t_ages(3) = interptime(sum(doses4(3:4))) - t_ages(4) - vaccine_day;
+    t_ages(2) = interptime(sum(doses4(2:4))) - sum(t_ages(3:4)) - vaccine_day;
 end
 
 % vaccination_rate = vaccination_rate_pc*sum(Npop);
