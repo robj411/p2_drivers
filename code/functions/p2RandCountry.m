@@ -172,11 +172,11 @@ data.trate = sample_uniform("trate",CD,country_indices);
 %sdb
 % data.sdb = sample_uniform("sdb",CD,country_indices);
 
-%t_vax = time to start vaccine administration
-data.t_vax = 1000; 
-
-%arate = vaccine administration rate
-data.vaccination_rate_pc = 0.005;%unifrnd(0.5,1.5,1,1)/100;
+% trim vaccine admin, leaving just country level
+incomescen = strmatch(income_level, data.scenarios{1}{1}.Properties.VariableNames);
+for i = 1:length(data.scenarios)
+    data.scenarios{i} = [table2array(data.scenarios{i}{1}(:,incomescen)), table2array(data.scenarios{i}{2}(:,incomescen))];
+end
 
 %puptake = population uptake
 data.vaccine_uptake = 0.8; %unifrnd(.4,.8,1,1);

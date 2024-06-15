@@ -19,13 +19,14 @@ function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
 
 
     % p2
-    leavenames = {'arate','final_doubling_time_threshold','group_order','hosp_final_threshold','sdb','sdl','t_tit','t_vax2','time_to_test','tpoints'};
+    leavenames = {'sarsx_per_day','bpsv_per_day','final_doubling_time_threshold','group_order','hosp_final_threshold','sdb','sdl','t_tit','t_vax2','time_to_test','tpoints'};
     [p2name, p2vals] = get_struct_names_vals(p2,leavenames);
 
 
     % data
     leavenames = {'EdInd','HospInd','Npop','adInd','compindex','contacts','educationloss_all_students','gdppc','yll','workerConfigMat',...
-        'nSectors','nStrata','response_time','t_vax','tvec','x_unmit','vaccination_rate_pc','vaccine_uptake','x_econ','x_elim','x_schc','ageindex'};
+        'nSectors','nStrata','response_time','t_vax','tvec','x_unmit','vaccination_rate_pc','vaccine_uptake','x_econ','x_elim','x_schc','ageindex',...
+        'scenarios'};
     ldata.obj = ldata.obj/ldata.gdp*365;
     ldata.vly = ldata.vly/ldata.gdp;
     ldata.vsy = ldata.vsy/ldata.gdp;

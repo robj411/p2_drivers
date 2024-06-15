@@ -2,14 +2,13 @@
 %
 % data: struct of general model parameters
 % dis: struct of pathogen parameters
-% vaccine_day: 100 or 365, depending on SARS-X vaccine scenario
-% bpsv: 0 or 1, depending on BPSV scenario (present or absent)
+% scenario: integer from 1 to 5 indicating which scenario
 %
 % data: struct of general model parameters
 % dis: struct of pathogen parameters
 % p2: struct of p2 intervention parameters
 
-function [data,dis,p2] = p2Params(data,dis,vaccine_day,bpsv)
+function [data,dis,p2] = p2Params(data,dis,scenario)
 
 %% PREPAREDNESS PARAMETERS
 
@@ -21,8 +20,6 @@ p2.t_tit = data.response_time;
 
 % testing impacts
 self_isolation_compliance = data.self_isolation_compliance;
-p2.trate = data.trate;                      %Test-Isolate-Trace Rate
-data = rmfield(data,'trate');
 % amount averted by isolating needs to account for discovery rule
 % time taken to test
 time_to_test = 2;
@@ -46,53 +43,76 @@ p2.frac_presym_infectiousness_averted = self_isolation_compliance * frac_averted
 p2.frac_asym_infectiousness_averted = self_isolation_compliance * min(1,1-time_to_test./dis.Tay);
 p2.time_to_test = time_to_test;
 
-% Hospital Capacity
-Hmax  = data.Hmax*sum(data.Npop)/10^5;   %Hospital Capacity
-data = rmfield(data,'Hmax');
-p2.hosp_release_trigger   = max(1,0.25*Hmax);%lower threshold can't be less than 1 occupant
-p2.Hmax  = max(4*p2.hosp_release_trigger,Hmax);
-% p2.SHmax = 2*p2.Hmax;
-
 % stopping criteria
 p2.hosp_final_threshold = 100;
 p2.final_doubling_time_threshold = 30;
 
 %% Vaccine Uptake
 
-t_vax    = data.t_vax;                      %Vaccine Administration Time
-
-vaccination_rate_pc    = data.vaccination_rate_pc;  %Vaccine Administration Rate
-vaccine_uptake  = data.vaccine_uptake;                    %Vaccine Uptake
+scentab = data.scenarios{scenario};
+bpsv = sum(scentab(:,1))>0;
 
 Npop    = data.Npop;
 Npop4 = data.Npop4;
 over14frac = Npop(4)/sum(Npop4(2));
 
+vaccine_uptake  = data.vaccine_uptake;                    %Vaccine Uptake
+uptake  = vaccine_uptake*[0 over14frac 1 1]; 
+doses4 = Npop4 .* uptake;
+doses = sum(doses4);
+
+bpsv_sched = scentab(:,1);
+sarsx_sched = scentab(:,2);
+cumdoses = cumsum(sarsx_sched*50000000);
+endrollout = find(cumdoses > doses,1);
+
+
+vaccine_day = find(sarsx_sched>0,1);
 p2.t_vax2 = p2.Tres + 7 + vaccine_day;  
 
 if bpsv == 1
     t_vax = p2.Tres;
+    cum_bpsv = cumsum(bpsv_sched*50000000);
+    keep_indices = find(diff([0; cum_bpsv])>0);
+    interptime = interp1([0; cum_bpsv(keep_indices)],[0; keep_indices],doses4(4));
+    t_bpsv = min(interptime, find(bpsv_sched~=0,1,'last'));
+else
+    t_vax = 10*365;
 end
 
-vaccination_rate = vaccination_rate_pc*sum(Npop);
-
 t_vax2 = p2.t_vax2;
-t_bspv = t_vax2 - t_vax;
+start_gap = t_vax2 - t_vax;
 
-uptake  = vaccine_uptake*[0 over14frac 1 1]; 
+t_ages = [];
+t_ages(4) = find(cumdoses >= doses4(4),1) - vaccine_day;
+if max(cumdoses) <= doses
+    if max(cumdoses) <= sum(doses4(3:4))
+        t_ages(3) = length(cumdoses) - sum(t_ages(4)) - vaccine_day;
+        t_ages(2) = 0;
+    else
+        t_ages(3) = find(cumdoses >= sum(doses4(3:4)),1) - t_ages(4) - vaccine_day;
+        t_ages(2) = length(cumdoses) - sum(t_ages(3:4)) - vaccine_day;
+    end
+else
+    t_ages(3) = find(cumdoses >= sum(doses4(3:4)),1) - t_ages(4) - vaccine_day;
+    t_ages(2) = find(cumdoses >= sum(doses4(2:4)),1) - sum(t_ages(3:4)) - vaccine_day;
+end
+
+% vaccination_rate = vaccination_rate_pc*sum(Npop);
+% vaccination_rate_pc    = data.vaccination_rate_pc;  %Vaccine Administration Rate
 
 
 %Vaccine Administration Rate
-t_ages     = min((uptake.*Npop4)/vaccination_rate,Inf);%vaccination_rate may be 0
+% t_ages     = min((uptake.*Npop4)/vaccination_rate,Inf);%vaccination_rate may be 0
 
 if bpsv==1
     % if primer starts before booster, there are t_bspv days of primer.
     % these people must then be boosted.
-    if t_bspv < t_ages(4)
-        t_ages = [t_ages(4)-t_bspv, t_ages(4), t_ages(3), t_ages(2)];
+    if start_gap < t_bpsv
+        t_ages = [start_gap, t_ages(4), t_ages(3), t_ages(2)];
         p2.group_order = [4,4,3,2];
     else
-        t_ages = [t_ages(4), t_bspv-t_ages(4), t_ages(4), t_ages(3), t_ages(2)];
+        t_ages = [t_bpsv, start_gap-t_bpsv, t_ages(4), t_ages(3), t_ages(2)];
         p2.group_order = [4,0,4,3,2];
     end
 else
@@ -100,9 +120,23 @@ else
     t_ages     = [t_ages(4),t_ages(3),t_ages(2)];
     p2.group_order = [4,3,2];
 end    
-tpoints    = cumsum([min(t_vax, p2.t_vax2), t_ages]);
+tpoints    = cumsum([floor(min(t_vax, p2.t_vax2)), t_ages]);
 p2.tpoints = tpoints;
-p2.arate = vaccination_rate;
+p2.sarsx_per_day = sarsx_sched*sum(Npop);
+p2.bpsv_per_day = bpsv_sched*sum(Npop);
+
+
+%% copy over parameters
+
+p2.trate = data.trate;                      %Test-Isolate-Trace Rate
+data = rmfield(data,'trate');
+
+% Hospital Capacity
+Hmax  = data.Hmax*sum(Npop)/10^5;   %Hospital Capacity
+data = rmfield(data,'Hmax');
+p2.hosp_release_trigger   = max(1,0.25*Hmax);%lower threshold can't be less than 1 occupant
+p2.Hmax  = max(4*p2.hosp_release_trigger,Hmax);
+% p2.SHmax = 2*p2.Hmax;
 
 
 %% COST PARAMETERS
