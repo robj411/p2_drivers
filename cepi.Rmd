@@ -427,19 +427,19 @@ p[[1]]
 
 ```
 
-```{r violinSARSX,fig.cap='Model results for the 100-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinscen1,fig.cap='Model results for the 100-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[2]]
 ```
 
-```{r violinBPSV,fig.cap='Model results for the 365-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinscen2,fig.cap='Model results for the 365-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[3]]
 ```
 
-```{r violinBPSVSARSX,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinscen3,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[4]]
 ```
 
-```{r violin5,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinscen4,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
 p[[5]]
 ```
 

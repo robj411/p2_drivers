@@ -304,8 +304,16 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
         closure = 1 - data.workerConfigMat(:,i);   
         trial_vals = 0:0.05:1;
         wfhvals = [2 1];
+        Hmax = p2.Hmax;
+        occupancy = occ(end);
+        ps = dis2.ps;
+        generation_time = dis2.Tlat + 0.5*(ps*dis2.Tsr + (1-ps)*dis2.Tay);
+        time_to_capacity = 200;
+        growth_rate = log(Hmax/occupancy) / time_to_capacity;
+        Rthresh = growth_rate * generation_time + 1;
+%         disp([tout(end)/100 Hmax/1e4 growth_rate Rthresh])
         Rs = zeros(length(wfhvals), length(trial_vals));
-        Rthresh = 1.1 + 0.025*floor((tout(end)-max(p2.tpoints))/100);
+%         Rthresh = 1.1 + 0.025*floor((tout(end)-max(p2.tpoints))/100);
         for ival = 1:length(wfhvals)
             for j =1:length(trial_vals)
                 trial_val = trial_vals(j);
@@ -316,7 +324,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
                 end
             end
         end
-        % disp([tout(end)/365 Rs(2,1)])
+%         disp([Rthresh Rs(2,1)])
         
         if Rs(2,1) > Rthresh
             inext = 6;
@@ -330,6 +338,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
             else
                 index = find(Rs(wfhindex,:)<Rthresh,1);
             end
+            wfhindex = 1; index=1;
             openness = 1 - trial_vals(index)*closure;
             data.workerConfigMat(:,6) = openness;
             data.hw(6,:) = data.hw(wfhvals(wfhindex),:);
@@ -340,11 +349,12 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
         end
         
         % Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data, 5)
-        % Hmax = p2.Hmax;
-        % occupancy = occ(end);
-        % generation_time = dis2.Tlat + 0.5*dis2.Tsr;
-        % growth_rate = (Rs-1)./generation_time;
-        % time_to_capacity = log(Hmax/occupancy)./growth_rate;
+        Hmax = p2.Hmax;
+        occupancy = occ(end);
+        generation_time = dis2.Tlat + 0.5*dis2.Tsr;
+        growth_rate = (Rs(2,1)-1)./generation_time;
+        time_to_capacity = log(Hmax/occupancy)./growth_rate;
+%         disp([tout(end) Hmax time_to_capacity])
         % remaining_susc = still_susc(end);
     end 
 
