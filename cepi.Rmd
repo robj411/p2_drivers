@@ -561,7 +561,7 @@ setorder(tabres,scen,igroup)
 colnames(tabres) <- c('Scenario','Income group','Total value','YLL','Education','GDP','s')
 
 
-write.csv(tabres,'resultsdiff.csv',row.names = F)
+write.csv(tabres,'figures/resultsdiff.csv',row.names = F)
 
 tabres <- tabres[,.(Scenario,`Income group`,`Total value`,YLL,Education,GDP)]
 
@@ -1069,15 +1069,19 @@ To understand the relationship between a parameter and an outcome, e.g. whether 
 ggsave(ggplot(subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&scenario=='BAU'),aes(x=R0,y=Cost)) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
-  labs(x=bquote(R[0]),y='Total socio-economic cost, % of GDP'),filename='R0cost365.png')
+  labs(x=bquote(R[0]),y='Total socio-economic cost, % of GDP'),filename='figures/R0costBAU.png')
+ggsave(ggplot(subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&scenario=='BAU'),aes(x=R0,y=log(Cost))) +
+  geom_point(colour='navyblue') +
+  theme_bw(base_size=15) + geom_smooth(formula=y~ns(x,df=3),method='glm',colour='hotpink',se = F,size=2) +
+  labs(x=bquote(R[0]),y='Log total socio-economic cost, % of GDP'),filename='figures/R0logcostBAU.png')
 
-set100 <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&scenario=='BAU')
-set365 <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&scenario=='Scenario 5')
-set365$averted <- set365$Cost - set100$Cost
-ggsave(ggplot(set365,aes(x=R0,y=averted)) +
+setBAU <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&scenario=='BAU')
+setscen4 <- subset(allallresults,igroup=='UMIC'&Policy=='School Closures'&scenario=='Scenario 4')
+setBAU$averted <- setBAU$Cost - setscen4$Cost
+ggsave(ggplot(setBAU,aes(x=R0,y=averted)) +
   geom_point(colour='navyblue') +
   theme_bw(base_size=15) + 
-  labs(x=bquote(R[0]),y='Total socio-economic saving, % of GDP'),filename='R0saving.png',width=10,height=6)
+  labs(x=bquote(R[0]),y='Total socio-economic saving, % of GDP'),filename='figures/R0saving.png',width=10,height=6)
 
 ```
 
