@@ -82,12 +82,10 @@ end
 
 %% population
 % population by age
-nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
-[~,idx] = sort(CD.average_contacts(nonempind));
-nonempind = nonempind(idx);
-demoindex = nonempind(randi(numel(nonempind)));
-cols = strmatch('Npop', colnames);
-randvalue = table2array(CD(demoindex,cols));
+nonempind = find(~isnan(CD.Npop1) & country_indices);
+demoindex = nonempind(randi());
+Npopcols = strmatch('Npop', colnames);
+randvalue = table2array(CD(demoindex,Npopcols));
 Npop = 50*10^6*randvalue'/sum(randvalue);
 data.Npop = Npop;
 Npop4 = arrayfun(@(x) sum(Npop(x{1})), data.ageindex);
@@ -143,9 +141,15 @@ contacts.sectorcontacts(data.EdInd) = pupil_teacher_ratio / uk_ptr * contacts.se
 data.pupil_teacher_ratio = pupil_teacher_ratio;
 
 % matrix
-randvalue = table2array(CD(demoindex,strmatch("CM", colnames)'));
-defivalue = reshape(randvalue,16,16);
-contacts.CM   = defivalue;
+nonempind = find(~isnan(CD.CMaa) & ~isnan(CD.Npop1) & country_indices);
+CMindex = nonempind(randi(numel(nonempind)));
+contactvals = table2array(CD(CMindex,strmatch("CM", colnames)'));
+contactmatrix = reshape(contactvals,16,16);
+correspondingpop = table2array(CD(CMindex,Npopcols));
+correspondingpop = 50*10^6*[correspondingpop(1:15) sum(correspondingpop(16:end))]/sum(correspondingpop);
+contactspp = contactmatrix ./ repmat(correspondingpop,16,1);
+newmatrix = contactspp .* repmat([Npop(1:15); sum(Npop(16:end))]' , 16, 1);
+contacts.CM   = newmatrix;
 
 
 %%
