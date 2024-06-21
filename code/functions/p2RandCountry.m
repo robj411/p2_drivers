@@ -83,7 +83,7 @@ end
 %% population
 % population by age
 nonempind = find(~isnan(CD.Npop1) & country_indices);
-demoindex = nonempind(randi());
+demoindex = nonempind(randi(numel(nonempind)));
 Npopcols = strmatch('Npop', colnames);
 randvalue = table2array(CD(demoindex,Npopcols));
 Npop = 50*10^6*randvalue'/sum(randvalue);
@@ -149,7 +149,9 @@ correspondingpop = table2array(CD(CMindex,Npopcols));
 correspondingpop = 50*10^6*[correspondingpop(1:15) sum(correspondingpop(16:end))]/sum(correspondingpop);
 contactspp = contactmatrix ./ repmat(correspondingpop,16,1);
 newmatrix = contactspp .* repmat([Npop(1:15); sum(Npop(16:end))]' , 16, 1);
-contacts.CM   = newmatrix;
+totalcontacts1 = newmatrix .* repmat([Npop(1:15); sum(Npop(16:end))] , 1, 16);
+normmat = (totalcontacts1 + totalcontacts1')/2 ./ repmat([Npop(1:15); sum(Npop(16:end))] , 1, 16);
+contacts.CM   = normmat;
 
 
 %%
