@@ -823,9 +823,9 @@ mobility plotted against the stringency on that date.
 - We want a maximum mobility of 1 when both the mandate and the epi
   outcome are 0: $f(0,0)=1$.
 - We want mobility to approach $p^8$ when the mandate and the epi
-  outcome become large: $\lim_{x\to 10^6, e\to 1}f(d,e)= 0$.
+  outcome become large: $\lim_{d\to 10^6, e\to 1}f(d,e)= 0$.
 - We want to allow for the possibility of redundancy between the two
-  variables: $f(0,0)/f(0,e) > f(x,0)/f(d,e)$ and
+  variables: $f(0,0)/f(0,e) > f(d,0)/f(d,e)$ and
   $f(0,0)/f(d,0) > f(0,e)/f(d,e)$ for $d,e>0$.
 
 A simple model to achieve these criteria is:
