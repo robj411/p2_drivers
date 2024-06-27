@@ -818,7 +818,8 @@ mobility plotted against the stringency on that date.
   $\rho(t)$ is mobility, $d$ is deaths per million, $e$ is government
   mandate, and $`0 < p^8 < 1`$ is the baseline.
 - We want mobility to drop monotonically with both the mandate and the
-  epi outcome: $\frac{df}{dy}<0$, $\frac{df}{dg}<0$.
+  epi outcome: $\frac{\partial f}{\partial d}<0$,
+  $\frac{\partial f}{\partial e}<0$.
 - We want a maximum mobility of 1 when both the mandate and the epi
   outcome are 0: $f(0,0)=1$.
 - We want mobility to approach $p^8$ when the mandate and the epi
@@ -828,7 +829,7 @@ mobility plotted against the stringency on that date.
   $f(0,0)/f(d,0) > f(0,e)/f(d,e)$ for $d,e>0$.
 
 A simple model to achieve these criteria is:
-$$f(d,e) = \frac{1}{1+p^9y+p^{10}e}$$ with $p^9, p^{10}>0$.
+$$f(d,e) = \frac{1}{1+p^9d+p^{10}e}$$ with $p^9, p^{10}>0$.
 
 <!-- However, we might also want a model that can be parametrised with a distribution whose uncertainty covers the whole range of possible eventualities. The equivalent model with compounded effects would be $$f_1(d,e) = \frac{1}{1+p^9 d}\frac{1}{1+p^{10}e}.$$ The equivalent model with completely overlapping effects would be $$f_2(d,e) = \frac{1}{1+\max(p^9 d,p^{10}e)}.$$ Then we could include 'model uncertainty' via some parameter $\beta\sim\mathcal{U}(0,1)$, defining $$f(d,e) = (f_1(d,e))^{p^{11}}(f_2(d,e))^{(1-p^{11})}.$$ -->
 
