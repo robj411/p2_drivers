@@ -8,10 +8,10 @@
 %
 % betamod: scalar between 0 and 1
 
-function betamod = betamod_wrapped(ddk, data, mandate, rel_stringency)
+function rel_betamod = betamod_wrapped(ddk, data, mandate, rel_stringency)
     
     if mandate==1   % means no mandate
-        betamod = ones(size(ddk));
+        rel_betamod = ones(size(ddk));
     else
         baseline = data.sd_baseline;
         death_coef = data.sd_death_coef;
@@ -22,8 +22,9 @@ function betamod = betamod_wrapped(ddk, data, mandate, rel_stringency)
         if any(mandate==data.imand)
             betamod = min(betamod, social_distancing(baseline, death_coef, mandate_coef, 20, rel_stringency));
         end
+        rel_betamod = betamod ./ (1-rel_stringency) ;
     end
-
+%     rel_betamod = ones(size(ddk));
 end
 
 

@@ -124,10 +124,10 @@ else
     t_ages     = [t_ages(4),t_ages(3),t_ages(2)];
     p2.group_order = [4,3,2];
 end    
-tpoints    = cumsum([floor(min(t_vax, p2.t_vax2)), t_ages]);
+tpoints    = cumsum([min(t_vax, p2.t_vax2), t_ages]);
 p2.tpoints = tpoints;
-p2.sarsx_per_day = sarsx_sched*sum(Npop);
-p2.bpsv_per_day = bpsv_sched*sum(Npop);
+p2.sarsx_per_day = sarsx_sched(find(sarsx_sched>0,1):end)*sum(Npop);
+p2.bpsv_per_day = bpsv_sched(find(bpsv_sched>0,1):end)*sum(Npop);
 
 
 %% copy over parameters

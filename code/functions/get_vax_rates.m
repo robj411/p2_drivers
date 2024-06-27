@@ -34,7 +34,7 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
     v12rater = zeros(nStrata,1);
         
     tpoints = p2.tpoints;
-    if t >= tpoints(1) && t <= max(tpoints) 
+    if t > tpoints(1) && t <= max(tpoints) 
         current_time = find(t>tpoints,1,'last');
         current_group = p2.group_order(current_time);
         day_today = ceil(t);
@@ -49,7 +49,7 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
         end
         
         start_sarsx = p2.t_vax2;
-        if t >= start_sarsx
+        if t > start_sarsx
 %             disp(t)
             rate_today = p2.sarsx_per_day(ceil(t - start_sarsx));
             total_to_vax = targets.*NNnext.*rate_today;

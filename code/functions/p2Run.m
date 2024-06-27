@@ -327,24 +327,24 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
 %         disp([Rthresh Rs(2,1)])
         
         if Rs(2,1) > Rthresh
-            inext = 6;
-            if max(Rs(1,:))<1
-                wfhindex = 2;
-            else
-                wfhindex = 1;
-            end
-            if min(Rs(wfhindex,:)>Rthresh)
-                index = length(trial_vals);
-            else
-                index = find(Rs(wfhindex,:)<Rthresh,1);
-            end
-            wfhindex = 1; index=1;
-            openness = 1 - trial_vals(index)*closure;
-            data.workerConfigMat(:,6) = openness;
-            data.hw(6,:) = data.hw(wfhvals(wfhindex),:);
-            Dtemp = p2MakeDs(data,data.NNs,openness,data.hw(inext,:));
-            % store matrix in list
-            data.Dvec(:,:,inext) = Dtemp;
+%             inext = 6;
+%             if max(Rs(1,:))<1
+%                 wfhindex = 2;
+%             else
+%                 wfhindex = 1;
+%             end
+%             if min(Rs(wfhindex,:)>Rthresh)
+%                 index = length(trial_vals);
+%             else
+%                 index = find(Rs(wfhindex,:)<Rthresh,1);
+%             end
+%             wfhindex = 1; index=1;
+%             openness = 1 - trial_vals(index)*closure;
+%             data.workerConfigMat(:,6) = openness;
+%             data.hw(6,:) = data.hw(wfhvals(wfhindex),:);
+%             Dtemp = p2MakeDs(data,data.NNs,openness,data.hw(inext,:));
+%             % store matrix in list
+%             data.Dvec(:,:,inext) = Dtemp;
             % disp([Rthresh, Rs(2,1), Rs(wfhindex,index) tout(end)])
         end
         
@@ -354,7 +354,6 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
         generation_time = dis2.Tlat + 0.5*dis2.Tsr;
         growth_rate = (Rs(2,1)-1)./generation_time;
         time_to_capacity = log(Hmax/occupancy)./growth_rate;
-%         disp([tout(end) Hmax time_to_capacity])
         % remaining_susc = still_susc(end);
     end 
 
