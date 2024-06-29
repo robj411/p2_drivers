@@ -85,7 +85,7 @@ CM_4(2,2) = CM_4(2,2) - contacts.school2;
 % customer to worker
 CM_4(3,:) = CM_4(3,:) - c_to_w_distributed;
 % worker to customer
-CM_4(:,3) = CM_4(:,3) - c_to_w_back';
+CM_4([1,2,4],3) = CM_4([1,2,4],3) - c_to_w_back([1,2,4])';
 
 % hospitality
 
