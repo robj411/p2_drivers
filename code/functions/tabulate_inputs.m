@@ -24,13 +24,14 @@ function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
 
 
     % data
-    leavenames = {'EdInd','HospInd','Npop','adInd','compindex','contacts','educationloss_all_students','gdppc','yll','workerConfigMat',...
+    leavenames = {'EdInd','HospInd','Npop','adInd','compindex','contacts','educationloss_all_students','gdppc','life_expectancy','workerConfigMat',...
         'nSectors','nStrata','response_time','t_vax','tvec','x_unmit','vaccination_rate_pc','vaccine_uptake','x_econ','x_elim','x_schc','ageindex',...
-        'scenarios'};
+        'scenarios','yll'};
     ldata.obj = ldata.obj/ldata.gdp*365;
     ldata.vly = ldata.vly/ldata.gdp;
     ldata.vsy = ldata.vsy/ldata.gdp;
     ldata.vsl = ldata.vsl/ldata.gdp;
+    ldata.yll_per_death = ldata.yll(ldata.nSectors + [1:4]);
     
     [dataname, datavals] = get_struct_names_vals(ldata,leavenames);
 
