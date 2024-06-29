@@ -25,9 +25,9 @@ function R = get_R(nStrata, dis, S,Sv1,Sv2, beta, p3, p4, ddk, data, mandate)
     sd_so_far = ((foi1'*N+1e-10)./(foi0'*N+1e-10));
 
     sd = betamod_wrapped(ddk, data, mandate, 1-sd_so_far);
-    betamod = sd./sd_so_far;
+%     betamod = 1;%sd./sd_so_far;
     
-    CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, betamod.*contact_matrix);
+    CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, sd.*contact_matrix);
     R  = beta .* CI;
     
 

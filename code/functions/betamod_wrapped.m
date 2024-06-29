@@ -22,7 +22,7 @@ function rel_betamod = betamod_wrapped(ddk, data, mandate, rel_stringency)
         if any(mandate==data.imand)
             betamod = min(betamod, social_distancing(baseline, death_coef, mandate_coef, 20, rel_stringency));
         end
-        rel_betamod = betamod ./ (1-rel_stringency) ;
+        rel_betamod = min(1, betamod ./ (1-rel_stringency)) ;
     end
 %     rel_betamod = ones(size(ddk));
 end

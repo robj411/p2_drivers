@@ -47,17 +47,15 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
     foi0 = contact_matrix_open*Ifrac;
     foi1 = contact_matrix*Ifrac;
     sd_so_far = ((foi1'*NN0+1e-10)./(foi0'*NN0+1e-10));
-    % new_betamod = sd./sd_so_far;
     
     %% social distancing
-    yll = data.yll;
-    weighted_deaths = sum(dis.mu.*hospital_occupancy); %.*yll.^2./mean(yll.^2));
+    weighted_deaths = sum(dis.mu.*hospital_occupancy); 
     sd = betamod_wrapped(10^6*weighted_deaths/sum(NN0), ...
         data, mandate, 1-sd_so_far);
-    new_betamod = sd./sd_so_far;
+%     new_betamod = 1;%sd./sd_so_far;
     
     %% foi
-    foi     = phi.*beta.*(new_betamod.*contact_matrix)*Ifrac + seed;
+    foi     = phi.*beta.*(sd.*contact_matrix)*Ifrac + seed;
     
 end
 
