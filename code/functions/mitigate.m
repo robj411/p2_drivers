@@ -35,6 +35,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     Sv2   = y_mat(:,S_index(5));
     S02   = y_mat(:,S_index(6));
     S12   = y_mat(:,S_index(7));
+    still_susc = sum(S+S01+Sv1+Sv2+S02+S12);
     
     Is   = y_mat(:,I_index(2));
     Isv1   = y_mat(:,I_index(4));
@@ -113,6 +114,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    if i==2 && minttvec3==0  && R_est<.95
             Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3);
             R1flag3 = min(0.95-Rt1,0);
+%             disp([t Rt1])
 	    end
 	    
 	    value(3)      = - abs(i-2) + minttvec3 + R1flag3;
@@ -169,11 +171,12 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     R2flag = otherval + ivals + tval;
     if ivals==0 && tval==0 
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
-        if otherval~=0 && R_est<0.95
+%         disp([t R_est])
+        if otherval~=0 && R_est<1
             % only compute R if R2flag is not already 0 and ivals and tval
             % conditions are both met
             Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 5);
-            R2flag = min(0.95-Rt2,0);
+            R2flag = min(1-Rt2,0);
         end
     end
 	    
@@ -196,6 +199,9 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
         Rt6 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         R6flag = min(1.0 - Rt6, 0);
     end
+    if i==6 & t<1200
+%         disp([t/100 R_est get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5)])
+    end
     
     value(6)      =  R6flag;
     direction(6)  = 1;
@@ -215,14 +221,14 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     % either: more than one year has passed
     % or: H is low and coming down
     R3flag = ival + hval + tval + hdotval;
-    if ival==0 && tlong==0 && R3flag ~= 0
+    if ival==0 && tlong==0 && R3flag ~= 0 && still_susc/50000000 < .5
 %         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         doubling_time = log(2)*dis.generation_time/max(R_est-1,1e-5);
         R3flag = min(doubling_time - p2.final_doubling_time_threshold,0);
 %         disp([t/1000 Rt3 betamod p3 p4 sumH ])
+%         disp([t ival hval tval hdotval tlong R_est R3flag doubling_time still_susc/50000000])
     end
-
     
     
     value(7)      =  R3flag;
