@@ -16,7 +16,7 @@
 % foi: force of infection, vector
 
 function foi = get_foi(dis, hospital_occupancy, data, mandate,...
-        Ina,Ins,Inav1,Insv1,Inav2,Insv2,contact_matrix)
+        Ina,Ins,Inav1,Insv1,Inav2,Insv2,contact_matrix, t)
     
     NN0 = data.NNs;
     phi = 1 .* dis.rr_infection;  %+data.amp*cos((t-32-data.phi)/(365/2*pi));
@@ -51,12 +51,17 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
     %% social distancing
     weighted_deaths = sum(dis.mu.*hospital_occupancy); 
     sd = betamod_wrapped(10^6*weighted_deaths/sum(NN0), ...
-        data, mandate, 1-sd_so_far);
+        data, mandate, 1-sd_so_far, t);
 %     new_betamod = 1;%sd./sd_so_far;
     
     %% foi
     foi     = phi.*beta.*(sd.*contact_matrix)*Ifrac + seed;
     
+    
+    if t>515 & t < 520
+%         disp(sd)
+%         contact_matrix(46:49,46:49)
+    end
 end
 
 
