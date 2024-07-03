@@ -60,14 +60,36 @@ function contact_matrix = p2MakeDs(data,NN,openness,home_working)
     communitytoworker_mat          = contacts.community_to_worker_mat .* effective_openness_mat;
 
     % get return contacts
-    communitytoworker_mat = contacts.work_scalar*communitytoworker_mat;
+    % communitytoworker_mat = contacts.work_scalar*communitytoworker_mat;
     contacts_between_workers_and_community = communitytoworker_mat .* repmat(NN,1,nStrata);
     worker_back = contacts_between_workers_and_community' ./ repmat(NN,1,nStrata);
 
+    % worker--worker contacts
+    wwcontacts = zeros(size(community_mat));
+    wwcontacts(1:nSectors,1:nSectors) = (communitytoworker_mat(1:nSectors,1:nSectors) + worker_back(1:nSectors,1:nSectors))/2;
+    % wwcontacts(1:nSectors,1:nSectors) = communitytoworker_mat(1:nSectors,1:nSectors) ;
+
+    % community--worker contacts
+    cwcontacts = zeros(size(community_mat));
+    cwcontacts(1:nSectors,(nSectors+1):end) = communitytoworker_mat(1:nSectors,(nSectors+1):end) ;
+    cwcontacts((nSectors+1):end, 1:nSectors) = worker_back((nSectors+1):end,1:nSectors);
+
     %% add all together
-    contact_matrix = community_mat + communitytoworker_mat + worker_back;
+    contact_matrix = community_mat + wwcontacts + cwcontacts;
+
+%     forward        = collapse_cm(communitytoworker_mat,data.NNs);
+%     back        = collapse_cm(worker_back,data.NNs);
 
 end
 
+function cm = collapse_cm(C16,Npop)
+
+    Ci        = [C16(:,46),C16(:,47),sum(C16(:,[1:45,48]),2),C16(:,49)];%sum of the columns
+    cm        = [Ci(46,:);
+            Ci(47,:);
+            Npop([1:45,48])'*Ci([1:45,48],:)/sum(Npop([1:45,48]));
+            Ci(49,:)];
+        
+end
 
 
