@@ -112,7 +112,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         
 	    if i==2 && minttvec3==0  && R_est<.95
-            Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3);
+            Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3, t);
             R1flag3 = min(0.95-Rt1,0);
 %             disp([t Rt1])
 	    end
@@ -151,7 +151,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    % i is in 1:4: ival = 0
 	    ivals = -abs((i-1)*(i-2)*(i-3)*(i-4));
 	    % t is greater than the penultimate timepoint: tval = 0
-	    tval = min(t-(data.tvec(end-1)+7),0);
+	    tval = min(t-(data.tvec(end-1)+7),0) + min(t-7-max(p2.tpoints),0);
 	    % have reached end of vaccine rollout: otherval = 0
 	    otherval = min(t-max(p2.tpoints+7),0);
     elseif strcmp(strategy,"Reactive closures")
@@ -175,7 +175,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
         if otherval~=0 && R_est<1
             % only compute R if R2flag is not already 0 and ivals and tval
             % conditions are both met
-            Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 5);
+            Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 5, t);
             R2flag = min(1-Rt2,0);
         end
     end
@@ -196,10 +196,11 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     tlong = min(t-(data.tvec(end-1)+365),0);
     R6flag = tlong + ival + tval;
     if ival==0 && tval==0 && R_est < 0.95 && R6flag ~= 0
-        Rt6 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+        Rt6 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5, t);
         R6flag = min(1.0 - Rt6, 0);
     end
-    if i==6 & t<1200
+    if (i==6|i==5) & t>515 & t < 800
+        disp([t/1000 R_est, get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5, t), get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 6, t)])
 %         disp([t/100 R_est get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5)])
     end
     
@@ -221,8 +222,8 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     % either: more than one year has passed
     % or: H is low and coming down
     R3flag = ival + hval + tval + hdotval;
-    if ival==0 && tlong==0 && R3flag ~= 0 && still_susc/50000000 < .5
-%         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5);
+    if ival==0 && tlong==0 && R3flag ~= 0 && still_susc/50000000 < .75
+%         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5, t);
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         doubling_time = log(2)*dis.generation_time/max(R_est-1,1e-5);
         R3flag = min(doubling_time - p2.final_doubling_time_threshold,0);
