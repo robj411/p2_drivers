@@ -275,7 +275,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     foi0 = data.basic_foi;
     foi1 = contact_matrix*(1./NN0);
     sd_so_far = ((foi1'*NN0+1e-10)./(foi0'*NN0+1e-10));
-    betamod = betamod_wrapped(ddk, data, i, 1-sd_so_far);
+    betamod = betamod_wrapped(ddk, data, i, 1-sd_so_far, tout);
     
     [p3, p4] = fraction_averted_self_isolating(sum(Iclass,2), sumNN0, p2, tout, i);
     
@@ -301,6 +301,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     dis2 = update_vax_dis_parameters(dis2, S, Sn, compindex, y_mat);
 
     if inext==5 %& i~=6
+        remaining_susc = still_susc(end);
         t = tout(end);
         closure = 1 - data.workerConfigMat(:,i);   
         trial_vals = 0:0.05:1;
@@ -309,7 +310,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
         occupancy = occ(end);
         ps = dis2.ps;
         generation_time = dis2.Tlat + 0.5*(ps*dis2.Tsr + (1-ps)*dis2.Tay);
-        time_to_capacity = 200;
+        time_to_capacity = 100;
         growth_rate = log(Hmax/occupancy) / time_to_capacity;
         Rthresh = growth_rate * generation_time + 1;
 %         disp([tout(end)/100 Hmax/1e4 growth_rate Rthresh])
@@ -319,7 +320,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
             for j =1:length(trial_vals)
                 trial_val = trial_vals(j);
                 openness = 1 - trial_val*closure;
-                Rs(ival,j) = get_trial_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data,openness,data.hw(wfhvals(ival),:),5);
+                Rs(ival,j) = get_trial_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data,openness,data.hw(wfhvals(ival),:),5, t);
                 if Rs(ival,j) < Rthresh
                     break;
                 end
@@ -330,34 +331,33 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
 %         disp(betamod(end))
         
         if Rs(2,1) > Rthresh
-            inext = 6;
-            if max(Rs(1,:))>1.1
-                wfhindex = 1;
-            else
-                wfhindex = 2;
-            end
-            if min(Rs(wfhindex,:)>Rthresh)
-                index = length(trial_vals);
-            else
-                index = find(Rs(wfhindex,:)<Rthresh,1);
-            end
-            wfhindex = 1; index=1;
-            openness = 1 - trial_vals(index)*closure;
-            data.workerConfigMat(:,6) = openness;
-            data.hw(6,:) = data.hw(wfhvals(wfhindex),:);
-            Dtemp = p2MakeDs(data,data.NNs,openness,data.hw(inext,:));
-            % store matrix in list
-            data.Dvec(:,:,inext) = Dtemp;
-            % disp([Rthresh, Rs(2,1), Rs(wfhindex,index) tout(end)])
+%             inext = 6;
+%             if max(Rs(1,:))>1.1
+%                 wfhindex = 1;
+%             else
+%                 wfhindex = 2;
+%             end
+%             if min(Rs(wfhindex,:)>Rthresh)
+%                 index = length(trial_vals);
+%             else
+%                 index = find(Rs(wfhindex,:)<Rthresh,1);
+%             end
+% %             wfhindex = 1; index=1;
+%             openness = 1 - trial_vals(index)*closure;
+%             data.workerConfigMat(:,6) = openness;
+%             data.hw(6,:) = data.hw(wfhvals(wfhindex),:);
+%             Dtemp = p2MakeDs(data,data.NNs,openness,data.hw(inext,:));
+%             % store matrix in list
+%             data.Dvec(:,:,inext) = Dtemp;
+%             disp([t/1000 Rthresh, Rs(wfhindex,index) wfhindex index ])
         end
-        
+%         disp([t/1000 Rthresh, Rs(2,1) get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data,5, t)])
         % Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data, 5)
 %         Hmax = p2.Hmax;
 %         occupancy = occ(end);
 %         generation_time = dis2.Tlat + 0.5*dis2.Tsr;
 %         growth_rate = (Rs(2,1)-1)./generation_time;
 %         time_to_capacity = log(Hmax/occupancy)./growth_rate;
-        % remaining_susc = still_susc(end);
     end 
 
 end
@@ -446,7 +446,7 @@ function [f] = ODEs(data,D,i,t,dis,y,p2)
     %% FOI
     
     foi = get_foi(dis2, hospital_occupancy, data, i,...
-        Ina,Ins,Inav1,Insv1,Inav2,Insv2,D);
+        Ina,Ins,Inav1,Insv1,Inav2,Insv2,D, t);
     
 
     %% VACCINATION
