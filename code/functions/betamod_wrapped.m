@@ -8,12 +8,12 @@
 %
 % betamod: scalar between 0 and 1
 
-function rel_betamod = betamod_wrapped(ddk, data, mandate, rel_stringency)
+function rel_betamod = betamod_wrapped(ddk, data, mandate, rel_stringency, t)
     
     if mandate==1   % means no mandate
         rel_betamod = ones(size(ddk));
     else
-        baseline = data.sd_baseline;
+        baseline = 1 - (1-data.sd_baseline)./(1+0.001).^t;
         death_coef = data.sd_death_coef;
         mandate_coef = data.sd_mandate_coef;
         
