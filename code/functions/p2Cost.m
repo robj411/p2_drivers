@@ -99,6 +99,7 @@ x             = workers(:,notEd);
 
 workers_absent = isosym + (1-hw).*isoasym;
 worker_presence        = x.*(1 - workers_absent./worker_numbers');
+% figure; plot(worker_presence)
 worker_presence_int     = trapz(t,worker_presence);
 
 GDP_in = sum(worker_presence_int .* data.obj(notEd)');

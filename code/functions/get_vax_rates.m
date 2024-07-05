@@ -34,10 +34,11 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
     v12rater = zeros(nStrata,1);
         
     tpoints = p2.tpoints;
-    if t >= tpoints(1) && t <= max(tpoints) 
+    if t > tpoints(1) && t <= max(tpoints) 
         current_time = find(t>tpoints,1,'last');
         current_group = p2.group_order(current_time);
-        arate = p2.arate;
+        day_today = ceil(t);
+        
         NNnext = p2.NNnext;
         targets = zeros(size(NNnext));
         if current_group == 3
@@ -47,8 +48,11 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
             targets((nStrata-4) + current_group) = 1;
         end
         
-        total_to_vax = targets.*NNnext.*arate;
-        if t > p2.t_vax2
+        start_sarsx = p2.t_vax2;
+        if t > start_sarsx
+%             disp(t)
+            rate_today = p2.sarsx_per_day(ceil(t - start_sarsx));
+            total_to_vax = targets.*NNnext.*rate_today;
             if current_group == 4
                 % populate v2rate and v12rate from S, Sv1, R, Rv1
                 denom2 = R+S+DE+1e-15;
@@ -57,7 +61,7 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
                 total2 = total_to_vax - total12;
                 v12rate = total12 ./ denom12;
                 v2rate = total2 ./ denom2;
-                vrate =  total_to_vax ./ (denom12 + denom2);
+%                 vrate =  total_to_vax ./ (denom12 + denom2);
                 v12rates = Sv1 .* v12rate; % Sv1 .* vrate;
                 v12rater = Rv1 .* v12rate; % Rv1 .* vrate;
                 v2rates = S .* v2rate; % vrate.*S;
@@ -70,13 +74,15 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
                 v2rater = v2rate.*R;
             end
             
-        else
+        elseif t <= tpoints(2)
+            rate_today = p2.bpsv_per_day(ceil(t - tpoints(1)));
+            total_to_vax = targets.*NNnext.*rate_today;
             % populate v1 from S, R
             denom = R+S+DE+1e-15;
             v1rate = total_to_vax ./ denom;
             v1rates = v1rate.*S;
             v1rater = v1rate.*R;
-            
+%         disp([t tpoints(1:2) DE(end)])
         end
     end
 end

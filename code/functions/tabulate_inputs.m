@@ -19,17 +19,19 @@ function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
 
 
     % p2
-    leavenames = {'arate','final_doubling_time_threshold','group_order','hosp_final_threshold','sdb','sdl','t_tit','t_vax2','time_to_test','tpoints'};
+    leavenames = {'sarsx_per_day','bpsv_per_day','final_doubling_time_threshold','group_order','hosp_final_threshold','sdb','sdl','t_tit','t_vax2','time_to_test','tpoints'};
     [p2name, p2vals] = get_struct_names_vals(p2,leavenames);
 
 
     % data
-    leavenames = {'EdInd','HospInd','Npop','adInd','compindex','contacts','educationloss_all_students','gdppc','yll','workerConfigMat',...
-        'nSectors','nStrata','response_time','t_vax','tvec','x_unmit','vaccination_rate_pc','vaccine_uptake','x_econ','x_elim','x_schc','ageindex'};
+    leavenames = {'EdInd','HospInd','Npop','adInd','compindex','contacts','educationloss_all_students','gdppc','life_expectancy','workerConfigMat',...
+        'nSectors','nStrata','response_time','t_vax','tvec','x_unmit','vaccination_rate_pc','vaccine_uptake','x_econ','x_elim','x_schc','ageindex',...
+        'scenarios','yll'};
     ldata.obj = ldata.obj/ldata.gdp*365;
     ldata.vly = ldata.vly/ldata.gdp;
     ldata.vsy = ldata.vsy/ldata.gdp;
     ldata.vsl = ldata.vsl/ldata.gdp;
+    ldata.yll_per_death = ldata.yll(ldata.nSectors + [1:4]);
     
     [dataname, datavals] = get_struct_names_vals(ldata,leavenames);
 

@@ -196,7 +196,7 @@ for(bl in 1:length(bpsv_levels)){
     ##!! decision under uncertainty, or decision under certainty?
     # topresults[[bl]][[v]] <- subset(allresults,keeprow)
     topresults[[bl]][[v]] <- subset(allresults,mincost)
-    print(dim(topresults[[bl]][[v]]))
+    print(table(topresults[[bl]][[v]]$policy))
     setorder(topresults[[bl]][[v]],igroup,samplei)
     
     if(v>1|bl>1){
