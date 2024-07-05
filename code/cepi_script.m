@@ -5,7 +5,7 @@ addpath('functions');
 
 income_levels = {'LLMIC','UMIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
-nsamples  = 128;
+nsamples  = 1024;
 n_income = numel(income_levels);
 
 %% country variables
