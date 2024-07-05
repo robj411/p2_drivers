@@ -12,6 +12,7 @@
 % Inav2: number of SARS-X--vaccinated infectious not self isolating asymptomatic people
 % Insv2: number of SARS-X--vaccinated infectious not self isolating symptomatic people
 % contact_matrix: contact matrix
+% t: current time
 %
 % foi: force of infection, vector
 
@@ -46,13 +47,11 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
     Ifrac = I./NN0;
     foi0 = contact_matrix_open*Ifrac;
     foi1 = contact_matrix*Ifrac;
-    sd_so_far = ((foi1'*NN0+1e-10)./(foi0'*NN0+1e-10));
+    size_of_mandate = ((foi1'*NN0+1e-10)./(foi0'*NN0+1e-10));
     
     %% social distancing
-    weighted_deaths = sum(dis.mu.*hospital_occupancy); 
-    sd = betamod_wrapped(10^6*weighted_deaths/sum(NN0), ...
-        data, mandate, 1-sd_so_far, t);
-%     new_betamod = 1;%sd./sd_so_far;
+    deaths = sum(dis.mu.*hospital_occupancy); 
+    sd = betamod_wrapped(10^6*deaths/sum(NN0), data, mandate, 1-size_of_mandate, t);
     
     %% foi
     foi     = phi.*beta.*(sd.*contact_matrix)*Ifrac + seed;
