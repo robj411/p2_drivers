@@ -24,7 +24,7 @@ pop_props = Npop4/sum(Npop);
 %% COMMUNITY-COMMUNITY MATRIX:
 
 CM_164    = cell2mat(arrayfun(@(x) sum(CM_16(:,x{1}),2), ageindex, 'UniformOutput', false)); %sum of the columns
-CM_4      = cell2mat(arrayfun(@(x) (Npop(x{1})'*CM_164(x{1},:)/sum(Npop(x{1})))', ageindex, 'UniformOutput', false))';        
+CM_4      = cell2mat(arrayfun(@(x) (Npop(x{1})'*CM_164(x{1},:)/sum(Npop(x{1})))', ageindex, 'UniformOutput', false))';     
 CMav      = pop_props*sum(CM_4,2);
 contact_props = CM_4(3,:)/sum(CM_4(3,:));
 workage_total = sum(CM_4(3,:));
@@ -68,9 +68,9 @@ contacts.community_to_worker_mat = community_to_worker_mat;
 
 % get marginal contacts by age for workers
 rel_mat = NNrel' * community_to_worker_mat(workage_indices,:);
-c_to_w_distributed = [rel_mat(:,nSectors+1), rel_mat(:,nSectors+2), sum(rel_mat(:,workage_indices)), rel_mat(:,nSectors+4)];
+c_to_w_distributed = [rel_mat(:,nSectors+1), rel_mat(:,nSectors+2), sum(rel_mat(:,workage_indices)), rel_mat(:,nSectors+4)]
 
-c_to_w_back = c_to_w_distributed*Npop4(3) ./ Npop4;
+c_to_w_back = c_to_w_distributed*Npop4(3) ./ Npop4
         
 %% get new contact rates
 contacts.school1 = CM_4(1,1) * contacts.school1_frac;
@@ -85,7 +85,7 @@ CM_4(2,2) = CM_4(2,2) - contacts.school2;
 % customer to worker
 CM_4(3,:) = CM_4(3,:) - c_to_w_distributed;
 % worker to customer
-CM_4(:,3) = CM_4(:,3) - c_to_w_back';
+CM_4([1,2,4],3) = CM_4([1,2,4],3) - c_to_w_back([1,2,4])';
 
 % hospitality
 
