@@ -50,6 +50,7 @@ function data = p2RandCountry(data,CD,income_level,country_parameter_distributio
     data.sd_baseline = max(social_dist_coefs.baseline(randrow), 0.1); % social_dist_coefs.baseline(randrow); %
     data.sd_death_coef = (social_dist_coefs.deathcoef(randrow));
     data.sd_mandate_coef = (social_dist_coefs.mandatecoef(randrow));
+    data.sd_decay_rate = unifrnd(0, 0.001);
 
     % contacts.pt = pt;
     contacts.school1_frac = school1_frac;
