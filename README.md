@@ -844,6 +844,9 @@ create the counterfactual in evaluating impacts of vaccine programmes.
 This is a very large source of uncertainty, and we expect it to be
 identified as such in value-of-information analyses.
 
+Finally, we assume that the effect wanes over time, with the minimum
+(baseline) tending to 1 with a rate of 0 to 0.1% per day.
+
 <div class="figure">
 
 <img src="README_files/figure-gfm/mobilityfitted.png" alt="Fit of model to data." width="50%" />

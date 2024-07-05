@@ -709,6 +709,8 @@ with $p^9, p^{10}>0$.
 
 The implications of this modelling choice are that two extremes are possible in terms of behaviour under (unseen) circumstances of a severe moment in an outbreak: 1, it is possible that social distancing comes "free" (i.e. that you get the same reduction in transmission with and without closures and, without closures, there is no economic cost); and 2, there is no voluntary social distancing, and behaviour is independent of epidemiological circumstances. This is an assumption commonly made to create the counterfactual in evaluating impacts of vaccine programmes. This is a very large source of uncertainty, and we expect it to be identified as such in value-of-information analyses.
 
+Finally, we assume that the effect wanes over time, with the minimum (baseline) tending to 1 with a rate of 0 to 0.1% per day.
+
 ```{r mobilityfitted,fig.cap='Fit of model to data.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/mobilityfitted.png")
 ```
