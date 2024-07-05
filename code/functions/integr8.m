@@ -41,6 +41,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     rundata.sd_baseline = data.sd_baseline;
     rundata.sd_death_coef = data.sd_death_coef;
     rundata.sd_mandate_coef = data.sd_mandate_coef;
+    rundata.sd_decay_rate = data.sd_decay_rate;
     
     NN0 = data.NNs; 
     %% CALL
@@ -148,6 +149,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     if inext==5 
         
         S    = y_mat(:,compindex.S_index(1));
+        Sn   = y_mat(:,compindex.S_index(2));
         S01   = y_mat(:,compindex.S_index(3));
         Sv1   = y_mat(:,compindex.S_index(4));
         Sv2   = y_mat(:,compindex.S_index(5));
