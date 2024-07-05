@@ -164,10 +164,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    % rollout: otherval = 0
 	    otherval = -abs(min(0.025-r,0)*max(0,occ-p2.hosp_release_trigger));
     end
-    % if t<270 & t>260
-    %     R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
-    %     disp(R_est)
-    % end
+    
     R2flag = otherval + ivals + tval;
     if ivals==0 && tval==0 
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
@@ -191,17 +188,15 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     % t is one week greater than the last changepoint (which was end mitigation): tval = 0
     tval = min(t-(data.tvec(end-1)+7),0);
     % current R is less than 1
-    R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+%     R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
     % tlong: one year since end mitigation
     tlong = min(t-(data.tvec(end-1)+365),0);
     R6flag = tlong + ival + tval;
-    if ival==0 && tval==0 && R_est < 0.95 && R6flag ~= 0
-        Rt6 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5, t);
+    
+    if ival==0 && tval==0 && R6flag ~= 0
+        Rt6 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 6, t);
         R6flag = min(1.0 - Rt6, 0);
-    end
-    if (i==6|i==5) & t>515 & t < 800
-        disp([t/1000 R_est, get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5, t), get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 6, t)])
-%         disp([t/100 R_est get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5)])
+%         R6flag = min(doubling_time - p2.final_doubling_time_threshold,0);
     end
     
     value(6)      =  R6flag;
@@ -214,25 +209,24 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     % t is one month greater than the end of the vaccine rollout and the last changepoint (which was end mitigation): tval = 0
     tval = min(t-(data.tvec(end-1)+30),0);
     % tlong: one year since end mitigation
-    tlong = min(t-(data.tvec(end-1)+365),0);
+    tlong = min(t-(data.tvec(end-1)+3650),0);
     % patient numbers declining
     hdotval = min(-occdot,0);
     % hval: few patients
     hval = min(p2.hosp_final_threshold - sumH,0);
     % either: more than one year has passed
     % or: H is low and coming down
-    R3flag = ival + hval + tval + hdotval;
-    if ival==0 && tlong==0 && R3flag ~= 0 && still_susc/50000000 < .75
+    R7flag = ival + hval + tval + hdotval;
+    
+    if ival==0 && tlong==0 && R7flag ~= 0 && still_susc/50000000 < .75
 %         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5, t);
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         doubling_time = log(2)*dis.generation_time/max(R_est-1,1e-5);
-        R3flag = min(doubling_time - p2.final_doubling_time_threshold,0);
-%         disp([t/1000 Rt3 betamod p3 p4 sumH ])
-%         disp([t ival hval tval hdotval tlong R_est R3flag doubling_time still_susc/50000000])
+        R7flag = min(doubling_time - p2.final_doubling_time_threshold,0);
     end
     
     
-    value(7)      =  R3flag;
+    value(7)      =  R7flag;
     direction(7)  = 1;
     isterminal(7) = 1;
     
