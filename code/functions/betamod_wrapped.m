@@ -5,26 +5,25 @@
 % data: struct of general model parameters
 % mandate: integer corresponding to states of government mandate
 % rel_stringency: fraction, approximation of impact of mandate on R
+% t: current time
 %
 % betamod: scalar between 0 and 1
 
-function rel_betamod = betamod_wrapped(ddk, data, mandate, rel_stringency, t)
+function sd = betamod_wrapped(ddk, data, mandate, rel_stringency, t)
     
     if mandate==1   % means no mandate
-        rel_betamod = ones(size(ddk));
+        sd = ones(size(ddk));
     else
-        baseline = 1 - (1-data.sd_baseline)./(1+0.001).^t;
+        baseline = 1 - (1-data.sd_baseline)./(1+data.sd_decay_rate).^t;
         death_coef = data.sd_death_coef;
         mandate_coef = data.sd_mandate_coef;
         
-        betamod = min(1-rel_stringency,social_distancing(baseline, death_coef, mandate_coef,ddk, rel_stringency));
-%         betamod = social_distancing(baseline, death_coef, mandate_coef,ddk, rel_stringency);
+        sd_with_mandate = social_distancing(baseline, death_coef, mandate_coef,ddk, rel_stringency);
         if any(mandate==data.imand)
-            betamod = min(betamod, social_distancing(baseline, death_coef, mandate_coef, 20, rel_stringency));
+            sd_with_mandate = min(sd_with_mandate, social_distancing(baseline, death_coef, mandate_coef, 20, rel_stringency));
         end
-        rel_betamod = min(1, betamod ./ (1-rel_stringency)) ;
+        sd = min(1, sd_with_mandate ./ (1-rel_stringency).^.5) ;
     end
-%     rel_betamod = ones(size(ddk));
 end
 
 
