@@ -1,4 +1,28 @@
-%%
+% function that calls the ode solver
+%
+% data: struct containing fixed values
+% contact_matrix: 49 by 49 contact matrix used this time
+% i: current event state
+% t0: start time of this time segment
+% tend: maximum time for projection
+% dis: struct of disease parameters
+% y0: initial conditions for solver
+% p2: struct of response parameters
+%
+% tout: vector of times
+% Iclass: array of I values
+% Iaclass: array of asymptomatic I values
+% Isclass: array of symptomatic I values
+% Hclass: array of I values
+% Dclass: array of I values
+% p3: vector of asymptomatic self isolating
+% p4: vector of symptomatic self isolating
+% betamod: vector of social distancing values
+% y0new: end conditions / initial conditions for next time
+% inext: next event state
+% still_susc: vector of number still susceptible
+% data: struct containing fixed values, with potential for updated state-6
+% variables
 
 function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,still_susc,data]=...
           integr8(data,contact_matrix,i,t0,tend,dis,y0,p2)
