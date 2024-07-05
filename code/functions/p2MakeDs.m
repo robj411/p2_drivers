@@ -2,8 +2,8 @@
 %
 % data: struct of general model parameters
 % NN: population by stratum
-% x: economic configuration
-% hw: proportion working from home by stratum
+% openness: economic configuration
+% home_working: proportion working from home by stratum
 %
 % D: contact matrix
 
@@ -67,7 +67,6 @@ function contact_matrix = p2MakeDs(data,NN,openness,home_working)
     % worker--worker contacts
     wwcontacts = zeros(size(community_mat));
     wwcontacts(1:nSectors,1:nSectors) = (communitytoworker_mat(1:nSectors,1:nSectors) + worker_back(1:nSectors,1:nSectors))/2;
-    % wwcontacts(1:nSectors,1:nSectors) = communitytoworker_mat(1:nSectors,1:nSectors) ;
 
     % community--worker contacts
     cwcontacts = zeros(size(community_mat));
