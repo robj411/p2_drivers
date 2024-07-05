@@ -44,7 +44,7 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
     p2.time_to_test = time_to_test;
 
     % stopping criteria
-    p2.hosp_final_threshold = 100;
+    p2.hosp_final_threshold = 1000;
     p2.final_doubling_time_threshold = 30;
 
     %% Vaccine Uptake
@@ -129,6 +129,17 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
     p2.sarsx_per_day = sarsx_sched(find(sarsx_sched>0,1):end)*sum(Npop);
     p2.bpsv_per_day = bpsv_sched(find(bpsv_sched>0,1):end)*sum(Npop);
 
+    
+
+    %Vaccination Rollout by Sector
+    NNbar = data.NNs;
+    nSectors = data.nSectors;
+    sumWorkingAge = sum(NNbar([1:nSectors,nSectors+3]));
+    NNnext              = NNbar;
+    NNnext(nSectors+[1,2])    = 1;
+    NNnext([1:nSectors,nSectors+3]) = NNnext([1:nSectors,nSectors+3])/sumWorkingAge;
+    NNnext(end)         = 1;
+    p2.NNnext = NNnext;
 
     %% copy over parameters
 
