@@ -5,7 +5,7 @@ addpath('functions');
 
 income_levels = {'LLMIC','UMIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
-nsamples  = 1024;
+nsamples  = 2048;
 n_income = numel(income_levels);
 
 %% country variables
@@ -20,6 +20,9 @@ synthetic_countries_dis_basis = cell(nsamples,1);
 synthetic_countries_p2 = cell(nsamples,length(income_levels),nScen);
 
 %% disease variables
+
+% prep self isolation compliance to depend on R0
+R0_quant = zeros(nsamples,1);
 
 rng(0);
 [alldissamples, R0_dist] = sample_disease_parameters(nsamples);
@@ -37,7 +40,12 @@ for i = 1:nsamples
         dis.(thisfield) = samples(i,:);
     end
     synthetic_countries_dis_basis{i} = dis;
+    % get R0 quantile
+    R0_quant(i) = cdf(R0_dist,dis.R0);
 end
+
+% generate correlated self-isolation variables
+si_quant = correlate_random_var(R0_quant, 0.7);
 
 %% countries by disease
 
@@ -51,6 +59,8 @@ for i = 1:nsamples
         ldata1     = p2RandCountry(data,CD,income_level,country_parameter_distributions,social_dist_coefs);
         % get combined country and disease parameters
         [dis1, ldata1] = population_disease_parameters(ldata1,dis,R0_to_beta,R0_dist);
+        % convert to beta random variable
+        ldata1.self_isolation_compliance = betainv(si_quant(i), 5,5);
         % save temporarily:
         synthetic_countries_dis{i,il} = dis1;
         synthetic_countries{i,il}     = ldata1;
