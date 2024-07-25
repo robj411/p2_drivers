@@ -43,6 +43,7 @@ function returnobject = reRun(data, dis, p2, returned)
     i = 6;
     if data.exittype==2
         data.Dvec(:,:,6) = data.Dvec(:,:,1);
+        data.workerConfigMat(:,6) = data.workerConfigMat(:,1);
     end
 
     tend = data.tvec(end);
@@ -111,7 +112,7 @@ function returnobject = reRun(data, dis, p2, returned)
     pout.p4 = p4out;
     returnobject.selfisolation = pout;
     returnobject.isequence = isequence; 
-    returnobject.y0 = y0;
+%     returnobject.y0 = y0;
   
 end
 

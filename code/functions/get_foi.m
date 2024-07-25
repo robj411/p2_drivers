@@ -56,11 +56,6 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
     %% foi
     foi     = phi.*beta.*(sd.*contact_matrix)*Ifrac + seed;
     
-    
-    if t>515 & t < 520
-%         disp(sd)
-%         contact_matrix(46:49,46:49)
-    end
 end
 
 

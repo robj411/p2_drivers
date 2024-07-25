@@ -14,7 +14,7 @@ function sd = betamod_wrapped(ddk, data, mandate, rel_stringency, t)
     if mandate==1   % means no mandate
         sd = ones(size(ddk));
     else
-        baseline = 1 - (1-data.sd_baseline)./(1+data.sd_decay_rate).^t;
+        baseline = data.sd_baseline; %1 - (1-data.sd_baseline).*(data.sd_decay_rate);
         death_coef = data.sd_death_coef;
         mandate_coef = data.sd_mandate_coef;
         
@@ -22,8 +22,9 @@ function sd = betamod_wrapped(ddk, data, mandate, rel_stringency, t)
         if any(mandate==data.imand)
             sd_with_mandate = min(sd_with_mandate, social_distancing(baseline, death_coef, mandate_coef, 20, rel_stringency));
         end
-        sd = min(1, sd_with_mandate ./ (1-rel_stringency).^.5) ;
+        sd = min(1, sd_with_mandate ./ (1-rel_stringency)) ;
     end
+%     sd = ones(size(ddk));
 end
 
 

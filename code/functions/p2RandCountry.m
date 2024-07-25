@@ -47,10 +47,11 @@ function data = p2RandCountry(data,CD,income_level,country_parameter_distributio
     % social distancing parameters taken from table of saved samples
     sdtab_ncol = size(social_dist_coefs,1);
     randrow = randi([1 sdtab_ncol],1,1);
-    data.sd_baseline = max(social_dist_coefs.baseline(randrow), 0.1); % social_dist_coefs.baseline(randrow); %
+    sd_probability = unifrnd(0,1); %1 - betarnd(2, 5);
+    sd_baseline = max(social_dist_coefs.baseline(randrow), 0.1); % social_dist_coefs.baseline(randrow); %
+    data.sd_baseline = 1 - (1-sd_baseline).*sd_probability;
     data.sd_death_coef = (social_dist_coefs.deathcoef(randrow));
     data.sd_mandate_coef = (social_dist_coefs.mandatecoef(randrow));
-    data.sd_decay_rate = unifrnd(0, 0.001);
 
     % contacts.pt = pt;
     contacts.school1_frac = school1_frac;

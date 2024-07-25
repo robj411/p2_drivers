@@ -12,7 +12,7 @@
 %
 % R: effective reproduction number
 
-function CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, contact_matrix)
+function CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, contact_matrix, I)
     
     h = dis.h;
     g2 = dis.g2;
@@ -29,9 +29,16 @@ function CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, contac
     V_frac = Sv1 ./ S_sum;
     B_frac = Sv2 ./ S_sum;
     
-    FOI  = contact_matrix .* repmat(S_sum.*dis.rr_infection,1,nStrata)./repmat(N',nStrata,1);
+    Nfrac = N/sum(N);
+    Ifrac = I/sum(I);
+    rebalance = Ifrac./Nfrac;
     onesn = ones(nStrata,1);
+    if sum(I)==0
+        rebalance = onesn;
+    end
 
+    FOI  = contact_matrix .* repmat(rebalance',nStrata,1) .* repmat(S_sum.*dis.rr_infection,1,nStrata)./repmat(N',nStrata,1);
+    
     S_frac_mat = repmat(S_frac,1,nStrata);
     V_frac_mat = repmat(V_frac,1,nStrata);
     B_frac_mat = repmat(B_frac,1,nStrata);
