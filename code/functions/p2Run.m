@@ -162,7 +162,7 @@ function [data, returnobject] = p2SimVax(data, dis, p2)
     pout.p4 = p4out;
     returnobject.selfisolation = pout;
     returnobject.isequence = isequence; 
-    returnobject.y0 = ysave;
+%     returnobject.y0 = ysave;
   
 end
 

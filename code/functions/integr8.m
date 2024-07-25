@@ -41,7 +41,8 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     rundata.sd_baseline = data.sd_baseline;
     rundata.sd_death_coef = data.sd_death_coef;
     rundata.sd_mandate_coef = data.sd_mandate_coef;
-    rundata.sd_decay_rate = data.sd_decay_rate;
+%     rundata.sd_decay_rate = data.sd_decay_rate;
+%     rundata.never_close = data.never_close;
     
     NN0 = data.NNs; 
     %% CALL
@@ -74,12 +75,13 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     
     % ie is the index ("value") returned
     % inext is the value it maps to (from get_strategy_design)
-    % disp([max(tout) i ie' ie'])
+%     disp([max(tout) i ie' ie'])
+    iee = ie(end);
     if tout(end)<tend
-        if ie <= 6
-            inext = data.inext(ie(end));
+        if iee <= 6
+            inext = data.inext(iee);
 %             disp(data.rel_stringency(inext))
-        elseif ie == 8 % importation event
+        elseif iee == 8 % importation event
             % keep the same i
             inext = i;
             % move 5 people from S to E
@@ -122,7 +124,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     occ   = max(1,sum(Hclass,2));
     mu = zeros(size(Hclass));
     for ii = 1:size(mu,1)
-        dis2 = update_hosp_dis_parameters(occ(ii), p2, dis);
+        dis2 = update_hosp_dis_parameters(occ(ii), p2, dis, tout(ii));
         mu(ii,:)    = dis2.mu;
     end
     
@@ -146,50 +148,55 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     
     %% get exit status variables
 
-    if inext==5 
-        
-        S    = y_mat(:,compindex.S_index(1));
-        Sn   = y_mat(:,compindex.S_index(2));
-        S01   = y_mat(:,compindex.S_index(3));
-        Sv1   = y_mat(:,compindex.S_index(4));
-        Sv2   = y_mat(:,compindex.S_index(5));
-        S02   = y_mat(:,compindex.S_index(6));
-        S12   = y_mat(:,compindex.S_index(7));
-
-        dis2 = update_vax_dis_parameters(dis2, S, Sn, compindex, y_mat);
-    
-        t = tout(end);
-        closure = 1 - data.workerConfigMat(:,i);   
-        trial_vals = 0:0.25:1;
-        Rthresh = log(2)*dis.generation_time/p2.final_doubling_time_threshold + 1;
-        Rs = zeros(1, length(trial_vals));
-        for j =1:length(trial_vals)
-            trial_val = trial_vals(j);
-            openness = 1 - trial_val*closure;
-            Rs(j) = get_trial_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data,openness,data.hw(2,:),5, t);
-            if Rs(j) < Rthresh
-                break;
-            end
-        end
-            
-        if min(Rs>Rthresh)
-            index = length(trial_vals);
-        else
-            index = find(Rs<Rthresh,1);
-        end
-        if data.exittype==2
-            index=1;
-        end
-        openness = 1 - trial_vals(index)*closure;
-        data.workerConfigMat(:,6) = openness;
-        data.hw(6,:) = data.hw(2,:); % this can go into setup
-        Dtemp = p2MakeDs(data,data.NNs,openness,data.hw(6,:));
-        % store matrix in list
-        data.Dvec(:,:,6) = Dtemp;
-        if data.exittype > 0 % if not in exit mode, save data for restart
-            inext = 6;
-        end
-    end 
+%     if inext==5 
+%         
+%         t = tout(end);
+%         S    = y_mat(:,compindex.S_index(1));
+%         Sn   = y_mat(:,compindex.S_index(2));
+%         S01   = y_mat(:,compindex.S_index(3));
+%         Sv1   = y_mat(:,compindex.S_index(4));
+%         Sv2   = y_mat(:,compindex.S_index(5));
+%         S02   = y_mat(:,compindex.S_index(6));
+%         S12   = y_mat(:,compindex.S_index(7));
+%         
+%         Isum = sum(y_mat(:,compindex.I_index)')';
+% 
+%         dis2 = update_vax_dis_parameters(dis2, S, Sn, compindex, y_mat);
+%         
+%         R5 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data,5, t, Isum);
+%     
+%         closure = 1 - data.workerConfigMat(:,i);   
+%         trial_vals = 0:0.25:1;
+%         Rthresh = log(2)*dis.generation_time/(p2.final_doubling_time_threshold/4) + 1;
+%         Rs = zeros(1, length(trial_vals));
+%         for j =1:length(trial_vals)
+%             trial_val = trial_vals(j);
+%             openness = 1 - trial_val*closure;
+%             Rs(j) = get_trial_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data,openness,data.hw(2,:),5, t, Isum);
+%             if Rs(j) < Rthresh
+%                 break;
+%             end
+%         end
+%             
+%         if min(Rs>Rthresh)
+%             index = length(trial_vals);
+%         else
+%             index = find(Rs<Rthresh,1);
+%         end
+%         if data.exittype==2
+%             index=1;
+%         end
+% %         disp([t/1000, Rthresh, Rs(index) index R5])
+%         openness = 1 - trial_vals(index)*closure;
+%         data.workerConfigMat(:,6) = openness;
+%         data.hw(6,:) = data.hw(2,:); % this can go into setup
+%         Dtemp = p2MakeDs(data,data.NNs,openness,data.hw(6,:));
+%         % store matrix in list
+%         data.Dvec(:,:,6) = Dtemp;
+%         if data.exittype > 0 & R5>Rthresh % if not in exit mode, save data for restart
+%             inext = 6;
+%         end
+%     end 
 
 end
 
@@ -261,7 +268,7 @@ function [f] = ODEs(data,contact_matrix,i,t,dis,y,p2)
     
     % correct for hosp occupancy
     hospital_occupancy = H + Hv1 + Hv2;
-    dis2 = update_hosp_dis_parameters(max(1,sum(hospital_occupancy)), p2, dis2);
+    dis2 = update_hosp_dis_parameters(max(1,sum(hospital_occupancy)), p2, dis2, t);
     
     scv1 = dis2.scv1;
     scv2 = dis2.scv2;

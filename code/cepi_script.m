@@ -104,9 +104,8 @@ for il = 1:n_income
     for i = 1:nsamples
         %% load stored objects
         dis2 = synthetic_countries_dis{i,il};
-        ldata = synthetic_countries{i,il};                   
+        ldata = synthetic_countries{i,il};     
         p2 = synthetic_countries_p2{i,il,1,1};
-
         [~, vals] = tabulate_inputs(ldata,p2,dis2);
         inputs(i,:)  = vals;
     end
@@ -118,7 +117,7 @@ end
 
 %% set up simulation
 
-outputcolumnnames = {'Exit','Hospital breach','Mitigated_deaths','End_mitigation','End_simulation', 'Remaining_susceptible','End_hosp','Exit_wave',...
+outputcolumnnames = {'State_changes','Breach_before','Breach_after','Mitigated_deaths','End_mitigation','End_simulation', 'Remaining_susceptible','End_hosp','Exit_wave',...
     'Deaths1','Deaths2','Deaths3','Deaths4','Deaths','Cost','YLL','School','GDP_loss'};
 columnnames = [outputcolumnnames ];
 outputs   = zeros(nsamples,length(outputcolumnnames));
@@ -138,30 +137,12 @@ for il = 1:n_income
                 p2 = synthetic_countries_p2{i,il,sl};
                 try
                     %% run model
-                    ldata.exittype = 0;
                     [dataout,returned] = p2Run(ldata,dis2,strategy,p2);
     %                         figure('Position', [100 100 400 300]); plot(returned.Tout,returned.Htot)
 
                     %% outputs: costs
                     costs    = p2Cost(ldata,dis2,p2,returned);
-                    refcost = sum(costs.value_YLL) + sum(costs.value_SYL) + sum(costs.GDP_lost);
-                    exitno = 0;
-                    
-                    % try different exits
-                    for exittrial = 1:2
-                        ldata.exittype = exittrial;
-                        newexit = reRun(dataout,dis2,p2,returned);
-                        costs    = p2Cost(ldata,dis2,p2,newexit);
-                        newcost = sum(costs.value_YLL) + sum(costs.value_SYL) + sum(costs.GDP_lost);
-                        if newcost < refcost
-                            refcost = newcost
-                            returned = newexit;
-                            exitno = exittrial;
-                        end
-                    end
-                    
-                    costs    = p2Cost(ldata,dis2,p2,returned);
-                    
+                                        
                     sec         = nan(1,4);
                     sec(2)      = sum(costs.value_YLL); % ylls
                     sec(3)      = sum(costs.value_SYL); % school
@@ -191,11 +172,13 @@ for il = 1:n_income
                     endsusc = returned.Stotal(end)/returned.Stotal(1);
                     % hospital occupancy at response time
                     ht = returned.Htot(find(returned.Tout > p2.Tres,1));
+                    % was hospital capacity breached in the response period
+                    breach_before = max(returned.Htot(1:exitwave)) - p2.Hmax;
                     % was hospital capacity breached in the exit wave
-                    hosp_breach = max(returned.Htot(exitwave:end)) - p2.Hmax;
+                    breach_after = max(returned.Htot(exitwave:end)) - p2.Hmax;
 
                     %% store outputs
-                    outputs(i,:) = [exitno hosp_breach mitdeaths endmit endsim endsusc endhosp exitwavefrac deaths1 deaths2 deaths3 deaths4 total_deaths sec];
+                    outputs(i,:) = [size(returned.isequence,1) breach_before breach_after mitdeaths endmit endsim endsusc endhosp exitwavefrac deaths1 deaths2 deaths3 deaths4 total_deaths sec];
 
                     if any(sec<0)
                         disp(strcat(string(strategy),'_',string(income_level),'_scen',string(sl),'_',string(i),' 0'))
@@ -217,4 +200,6 @@ for il = 1:n_income
         disp(tabulate(id));
     end
 end
+
+!\Progra~1\R\R-4.1.1\bin\x64\Rscript cepi_voi.R
 
