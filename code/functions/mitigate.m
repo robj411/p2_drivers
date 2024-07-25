@@ -41,9 +41,11 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     Isv1   = y_mat(:,I_index(4));
     Isv2   = y_mat(:,I_index(6));
     
+    Isum = sum(y_mat(:,I_index)')';
+    
     hospital_occupancy = H + Hv1 + Hv2;
     sumH = sum(hospital_occupancy);
-    occ   = max(1,sumH); 
+    occ   = max(1e-10,sumH); 
     
     %% isolating
     
@@ -55,7 +57,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     
     %% correct for hosp occupancy
     
-    dis2 = update_hosp_dis_parameters(occ, p2, dis2);
+    dis2 = update_hosp_dis_parameters(occ, p2, dis2, t);
 
     g3    = dis2.g3;
     mu    = dis2.mu;
@@ -67,8 +69,8 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     occdot = sum(Hdot+Hv1dot+Hv2dot);
     
     % variables for reactive closures
-    r      = occdot/occ;
-    Tcap   = t + log(p2.Hmax/occ)/r - 7;
+    r      = occdot/max(occ,1);
+    
     
     %% distancing
     
@@ -88,14 +90,23 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    isterminal(2) = 1;
     else
     	% Early Lockdown; reactive closure
-    
-	    value(2)     = - abs((i-2)*(i-4)) + min(t-(data.tvec(end-1)+0.1),0) + min(t-Tcap,0);
+        Rflag2 = - abs((i-2)*(i-4)) + min(t-(data.tvec(end-1)+0.1),0) ;
+        if i==2 && Rflag2 == 0
+            R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+            Rt = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 2, t, Isum);
+            growth_rate = (Rt-1)/dis.generation_time;
+            time_to_breach   = log(p2.Hmax/occ)/growth_rate;
+%             disp([t r Rt growth_rate occ time_to_breach log(p2.Hmax/occ)])
+            
+            Rflag2 = min(4-time_to_breach,0);
+        end
+	    value(2)     =  Rflag2;
 	    direction(2) = 1;
 	    if r>0.025
             isterminal(2) = 1;
 	    else
             isterminal(2) = 0;
-	    end
+        end
     end
 	    
     
@@ -111,10 +122,9 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    minttvec3 = min(t-(data.tvec(end-1)+7),0);
 	    R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         
-	    if i==2 && minttvec3==0  && R_est<.95
-            Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3, t);
-            R1flag3 = min(0.95-Rt1,0);
-%             disp([t Rt1])
+	    if i==2 && minttvec3==0  && R_est<1
+            Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3, t, Isum);
+            R1flag3 = min(1-Rt1,0);
 	    end
 	    
 	    value(3)      = - abs(i-2) + minttvec3 + R1flag3;
@@ -130,17 +140,24 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     %% Event 4: 
     
     if strcmp(strategy,"Elimination") % Relockdown
-    
-	    minttvec4 = min(t-(data.tvec(end-1)+7),0);
+        % it's been a week, or response time was less than a week ago:
+	    minttvec4 = - min(t-(data.tvec(end-1)+7),0) * min(p2.Tres+7 - t,0) + min(t-(data.tvec(end-1)+.1),0);
 	    R1flag4 = min(R_est-1.2000,0);
-	    
+%         if i==3 && minttvec4==0  && t<50
+%             Rt4 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3, t, Isum);
+%             R4flag = min(Rt4-1.2,0);
+%             disp([t Rt4 R_est R1flag4])
+% 	    end
+% 	    
 	    value(4)      = - abs(i-3) + minttvec4 + R1flag4;
 	    direction(4)  = 0;
 	    isterminal(4) = 1;
     elseif strcmp(strategy,"Reactive closures") % Reopening
-    
-	    value(4)      = abs(i-3) + abs(min(t-(data.tvec(end-1)+7),0)) + max(0,occ-p2.hosp_release_trigger);
-	    direction(4)  = -1;
+%         if t<120
+%             disp([i-3,t,(p2.hosp_release_trigger - occ)/1000, r])
+%         end
+	    value(4)      = - abs(i-3) + min(t-(data.tvec(end-1)+7),0) + min(0, p2.hosp_release_trigger - occ) + min(-r,0);
+	    direction(4)  = 0;
 	    isterminal(4) = 1;
     end
     
@@ -168,11 +185,10 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     R2flag = otherval + ivals + tval;
     if ivals==0 && tval==0 
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
-%         disp([t R_est])
         if otherval~=0 && R_est<1
             % only compute R if R2flag is not already 0 and ivals and tval
             % conditions are both met
-            Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 5, t);
+            Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 5, t, Isum);
             R2flag = min(1-Rt2,0);
         end
     end
@@ -186,7 +202,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     % we are in the exit wave phase
     ival = -abs(i-6);
     % t is one week greater than the last changepoint (which was end mitigation): tval = 0
-    tval = min(t-(data.tvec(end-1)+7),0);
+    tval = min(t-(data.tvec(end-1)+30),0);
     % current R is less than 1
 %     R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
     % tlong: one year since end mitigation
@@ -194,8 +210,10 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     R6flag = tlong + ival + tval;
     
     if ival==0 && tval==0 && R6flag ~= 0
-        Rt6 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 6, t);
-        R6flag = min(1.0 - Rt6, 0);
+        R_est = get_R_est(dis2, compindex, y_mat, p3, p4);
+        Rt6 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 6, t, Isum);
+        R6flag = min(1.0 - R_est, 0);
+%         disp([t/1000 R_est Rt6])
 %         R6flag = min(doubling_time - p2.final_doubling_time_threshold,0);
     end
     
@@ -209,7 +227,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     % t is one month greater than the end of the vaccine rollout and the last changepoint (which was end mitigation): tval = 0
     tval = min(t-(data.tvec(end-1)+30),0);
     % tlong: one year since end mitigation
-    tlong = min(t-(data.tvec(end-1)+3650),0);
+    tlong = min(t-(data.tvec(end-1)+365),0);
     % patient numbers declining
     hdotval = min(-occdot,0);
     % hval: few patients
@@ -217,12 +235,15 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     % either: more than one year has passed
     % or: H is low and coming down
     R7flag = ival + hval + tval + hdotval;
-    
-    if ival==0 && tlong==0 && R7flag ~= 0 && still_susc/50000000 < .75
+%     R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
+%     disp([t/1000 hdotval still_susc/50000000 R_est])
+%     disp([ival tlong R7flag still_susc/50000000])
+    if ival==0 && tlong==0 && R7flag ~= 0 %&& still_susc/50000000 < .85
 %         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5, t);
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         doubling_time = log(2)*dis.generation_time/max(R_est-1,1e-5);
         R7flag = min(doubling_time - p2.final_doubling_time_threshold,0);
+%         disp(doubling_time)
     end
     
     
