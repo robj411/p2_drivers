@@ -87,7 +87,7 @@ function [dis, data] = population_disease_parameters(data,dis,R0betafun, R0_dist
 
     NNs = data.NNs;
     zs = zeros(size(NNs));
-    dis.CI = get_candidate_infectees(length(NNs), dis, NNs,zs, zs, 0, 0, NNs, data.contacts.basic_contact_matrix);
+    dis.CI = get_candidate_infectees(length(NNs), dis, NNs,zs, zs, 0, 0, NNs, data.contacts.basic_contact_matrix, NNs);
 
     R0beta = R0betafun(dis);
     dis.R0 = R0beta(1);
