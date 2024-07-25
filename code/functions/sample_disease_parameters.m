@@ -59,8 +59,8 @@ function [param_struct, R0_dist] = sample_disease_parameters(nsamples)
     Z = mvnrnd(mu, rho, nsamples); %Generate multivariate correlated random number
     U = normcdf(Z,0,1);     %Compute the CDF
 
-    R0_lower = 2;
-    R0_upper = 4.5;
+    R0_lower = 1.5;
+    R0_upper = 4;
 
     for i = 1:size(disparams,2)
         thisparam = disparams.Properties.VariableNames{i};
