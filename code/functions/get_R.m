@@ -15,7 +15,7 @@
 %
 % R: effective reproduction number
 
-function R = get_R(nStrata, dis, S,Sv1,Sv2, beta, p3, p4, ddk, data, mandate, t)
+function R = get_R(nStrata, dis, S,Sv1,Sv2, beta, p3, p4, ddk, data, mandate, t, Isum)
 
     N = data.NNs;
     
@@ -28,7 +28,9 @@ function R = get_R(nStrata, dis, S,Sv1,Sv2, beta, p3, p4, ddk, data, mandate, t)
 
     sd = betamod_wrapped(ddk, data, mandate, 1-sd_so_far, t);
     
-    CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, sd.*contact_matrix);
+    CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, sd.*contact_matrix, Isum);
+%     beta*get_candidate_infectees3(nStrata, dis, S,Sv1,Sv2, p3, p4, N, sd.*contact_matrix)
+%     get_R_PD(nStrata, dis, dis.h,dis.g2,S,Sv2, N, contact_matrix,beta,sd, p3, p4)
     R  = beta .* CI;
     
 
