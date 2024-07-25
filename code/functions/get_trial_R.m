@@ -17,7 +17,7 @@
 %
 % R: effective reproduction number
 
-function R = get_trial_R(nStrata, dis, S,Sv1,Sv2, beta, p3, p4, ddk, data, openness, home_working, mandate, t)
+function R = get_trial_R(nStrata, dis, S,Sv1,Sv2, beta, p3, p4, ddk, data, openness, home_working, mandate, t, Isum)
 
     N = data.NNs;
     
@@ -29,7 +29,7 @@ function R = get_trial_R(nStrata, dis, S,Sv1,Sv2, beta, p3, p4, ddk, data, openn
 
     sd = betamod_wrapped(ddk, data, mandate, 1-sd_so_far, t);
     
-    CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, sd.* contact_matrix);
+    CI = get_candidate_infectees(nStrata, dis, S,Sv1,Sv2, p3, p4, N, sd.* contact_matrix, Isum);
     R  = beta .* CI;
 
 end
