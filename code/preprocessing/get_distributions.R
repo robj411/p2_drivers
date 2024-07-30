@@ -6,12 +6,12 @@ library(wbstats)
 library(dplyr)
 library(haven)
 library(squire)
-library("cowplot")
+library(cowplot)
 
-setwd('~/projects/DAEDALUS/Daedalus-P2-Dashboard/')
-yougovdata <- '../data/covid-19-tracker/data/'
-countrydatafile <- 'data/country_data.csv'
-incomelevels <- read.csv('data/Metadata_Country_API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv')
+datapath <- '../../data'
+# yougovdata <- file.path(datapath,'covid-19-tracker/data/')
+countrydatafile <- file.path(datapath,'country_data.csv')
+incomelevels <- read.csv(file.path(datapath,'Metadata_Country_API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv'))
 colnames(incomelevels)[1] <- 'Country.Code'
 
 p2data <- read.csv(countrydatafile)
@@ -21,7 +21,7 @@ p2countries <- p2data$country
 ## internet coverage ##############
 print('internet coverage')
 
-internet <- read.csv('data/API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv',header = F) ## more recent
+internet <- read.csv(file.path(datapath,'API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv'),header = F) ## more recent
 internet <- internet[-c(1:3),-c(3:63,65:nrow(internet))]
 colnames(internet) <- c('country','Country.Code','internet')
 
@@ -40,7 +40,7 @@ internet_distributions <- data.frame(parameter_name='internet_coverage',
 ## labour share ####################
 print('labour share')
 
-labs <- setDT(read_dta('data/lab_share_data.dta'))
+labs <- setDT(read_dta(file.path(datapath,'lab_share_data.dta')))
 labs[!is.na(labsh),maxyear:=max(year),by=countrycode]
 labincome <- left_join(subset(labs,year==maxyear),incomelevels,by=c('countrycode'="Country.Code"))
 labincome <- labincome[,.(labsh,IncomeGroup)]
@@ -58,7 +58,7 @@ labsh_distributions <- data.frame(parameter_name='labsh',
 ## bmi ##########################
 print('bmi')
 
-bmi <- read.csv('data/bmidata.csv',stringsAs=F)
+bmi <- read.csv(file.path(datapath,'bmidata.csv'),stringsAs=F)
 bmi <- subset(bmi,Dim1=='Both sexes'&!is.na(FactValueNumeric))
 setDT(bmi)
 bmi[,latest:=max(Period),by=Location]
@@ -195,6 +195,7 @@ pops <- lapply(p2data$country[rowindices],function(cn)
 
 ## school a2 ############################
 print('school a2')
+# what fraction of contacts for 5-19 year olds come from school
 
 out <- c()
 illevels <- c()
@@ -230,6 +231,7 @@ schoolA2_distributions <- data.frame(parameter_name='schoolA2_frac',
 
 ## school a1 #################################
 print('school a1')
+# what fraction of contacts for 0-4 year olds come from school
 
 out <- c()
 illevels <- c()
@@ -263,7 +265,7 @@ schoolA1_distributions <- data.frame(parameter_name='schoolA1_frac',
 ## international tourism ###################
 print('international tourism')
 
-data <- as.data.frame(readODS::read_ods('data/tourism.ods',sheet=1))
+data <- as.data.frame(readODS::read_ods(file.path(datapath,'tourism.ods'),sheet=1))
 # colnames(data) <- data[1,]
 # data <- data[-1,]
 for(i in 2:ncol(data)) data[,i] <- as.numeric(data[,i])
@@ -272,7 +274,7 @@ for(i in 2:ncol(data)) data[,i] <- as.numeric(data[,i])
 data$`International tourism as a share of GDP` <- data$`Tourism as a share of GDP (%)`/100 * data$`International tourism as share of total tourism (%)`
 
 
-ytd <- as.data.frame(readODS::read_ods('data/tourism.ods',sheet=2))
+ytd <- as.data.frame(readODS::read_ods(file.path(datapath,'tourism.ods'),sheet=2))
 
 # colnames(ytd) <- ytd[1,]
 # ytd <- ytd[-1,]
@@ -348,7 +350,9 @@ indicators <- wb_indicators()
 indicators[grepl('GNI',indicators$indicator)&grepl('PPP',indicators$indicator),]
 indicators[grepl('GDP',indicators$indicator)&grepl('current',indicators$indicator)&grepl('\\$',indicators$indicator),]
 
+Sys.sleep(1)
 gdpdata <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+Sys.sleep(1)
 gnipppdata <- setDT(wb_data("NY.GNP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
 joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata[,.(iso3c,country,date,NY.GNP.PCAP.PP.CD)],by=c('iso3c','country','date'))
 joineddata <- subset(joineddata,!is.na(NY.GNP.PCAP.PP.CD)&!is.na(NY.GDP.PCAP.CD))
@@ -377,7 +381,9 @@ gdp_to_gnippp_distributions <- data.frame(parameter_name='gdp_to_gnippp',
 print('pupil to teacher ratio')
 
 # allyears_PTRpreprimary=  wb(indicator = "SE.PRE.ENRL.TC.ZS", startdate = 2000, enddate = 2020)
+Sys.sleep(1)
 allyears_PTRprimary=  setDT(wb_data("SE.PRM.ENRL.TC.ZS",country = "countries_only", 2000, 2024)) 
+Sys.sleep(1)
 allyears_PTRsecondary=  setDT(wb_data("SE.SEC.ENRL.TC.ZS",country = "countries_only", 2000, 2024))
 # allyears_PTRtertiary=  wb(indicator = "SE.TER.ENRL.TC.ZS", startdate = 2000, enddate = 2020)
 
@@ -407,7 +413,7 @@ ggplot(meanptrs) +
                      labels = meanptrs$country[seq(1,nrow(meanptrs),by=2)],
                      sec.axis = dup_axis(breaks=seq(2,nrow(meanptrs),by=2),labels = meanptrs$country[seq(2,nrow(meanptrs),by=2)])) +
   theme(axis.text=element_text(size=10)) -> ptrp
-ggsave(ptrp,filename='data/pupil_teacher_ratio.png',width=8,height=9)
+ggsave(ptrp,filename='store/pupil_teacher_ratio.png',width=8,height=9)
 
 meanptrs <- left_join(meanptrs,incomelevels,by=c('iso3c'="Country.Code"))
 
@@ -427,52 +433,52 @@ ggplot(meanptrs) + geom_histogram(aes(x=meanptr,fill=IncomeGroup),position='dodg
 ## contacts #########################
 print('contacts')
 
-source('../cmix_post_pandemic/r/rj_script.R')
+source('workplace_related_contacts.R')
 
 ## compliance ###########################
 
-files <- list.files(yougovdata)
-files <- files[files!='tmp']
-csv_countries <- sapply(files[grepl('csv',files)],function(x) strsplit(x,'\\.')[[1]][1])
-ygdata <- list()
-for(i in files){
-  cn <- strsplit(i,'\\.')[[1]][1]
-  
-  if(grepl('csv',i)){
-    cndata <- read.csv(file.path(yougovdata,i))
-    cndata$country <- cn
-    ygdata[[cn]] <- cndata[,colnames(cndata)%in%c('country','qweek','i11_health','weight')]
-  }else if(!cn %in% csv_countries){
-    tmppath <- file.path(yougovdata,'tmp')
-    if(dir.exists(tmppath))
-      system(paste0('rm ',tmppath,'/*'))
-    else
-      system(paste0('mkdir ',tmppath))
-    unzip(file.path(yougovdata,i),exdir=tmppath)
-    print(list.files(tmppath,full.names=T))
-    cndata <- read.csv(list.files(tmppath,full.names=T), fileEncoding="latin1")
-    write.csv(cndata,file.path(yougovdata,paste0(cn,'.csv')))
-  }
-}
-
-ygdf <- setDT(do.call(rbind,ygdata))
-ygdf <- subset(ygdf,!i11_health%in%c(' ','Not sure')) %>%
-  mutate(compliance=as.numeric(plyr::mapvalues(i11_health,from=c('Very willing',
-                                                    'Somewhat willing',
-                                                    'Neither willing nor unwilling',
-                                                    'Somewhat unwilling',
-                                                    'Very unwilling'),
-                                    to=c(1,.75,.5,.25,0))))
-ygdf[,week:=as.numeric(gsub('week ','',qweek)),by=qweek]
-ygdf[,sum(compliance*weight,na.rm=T)/sum(weight)]
-meanvals <- ygdf[,sum(compliance*weight,na.rm=T)/sum(weight),by=country]
-# uk: 87%
-hist(meanvals$V1)
-range(meanvals$V1)
-ygdf[,.N,by=country]
-ygdf[,mean(compliance,na.rm=T),by=week]
-sapply(ygdf,class)
-table(ygdf$i11_health)
+# files <- list.files(yougovdata)
+# files <- files[files!='tmp']
+# csv_countries <- sapply(files[grepl('csv',files)],function(x) strsplit(x,'\\.')[[1]][1])
+# ygdata <- list()
+# for(i in files){
+#   cn <- strsplit(i,'\\.')[[1]][1]
+#   
+#   if(grepl('csv',i)){
+#     cndata <- read.csv(file.path(yougovdata,i))
+#     cndata$country <- cn
+#     ygdata[[cn]] <- cndata[,colnames(cndata)%in%c('country','qweek','i11_health','weight')]
+#   }else if(!cn %in% csv_countries){
+#     tmppath <- file.path(yougovdata,'tmp')
+#     if(dir.exists(tmppath))
+#       system(paste0('rm ',tmppath,'/*'))
+#     else
+#       system(paste0('mkdir ',tmppath))
+#     unzip(file.path(yougovdata,i),exdir=tmppath)
+#     print(list.files(tmppath,full.names=T))
+#     cndata <- read.csv(list.files(tmppath,full.names=T), fileEncoding="latin1")
+#     write.csv(cndata,file.path(yougovdata,paste0(cn,'.csv')))
+#   }
+# }
+# 
+# ygdf <- setDT(do.call(rbind,ygdata))
+# ygdf <- subset(ygdf,!i11_health%in%c(' ','Not sure')) %>%
+#   mutate(compliance=as.numeric(plyr::mapvalues(i11_health,from=c('Very willing',
+#                                                     'Somewhat willing',
+#                                                     'Neither willing nor unwilling',
+#                                                     'Somewhat unwilling',
+#                                                     'Very unwilling'),
+#                                     to=c(1,.75,.5,.25,0))))
+# ygdf[,week:=as.numeric(gsub('week ','',qweek)),by=qweek]
+# ygdf[,sum(compliance*weight,na.rm=T)/sum(weight)]
+# meanvals <- ygdf[,sum(compliance*weight,na.rm=T)/sum(weight),by=country]
+# # uk: 87%
+# hist(meanvals$V1)
+# range(meanvals$V1)
+# ygdf[,.N,by=country]
+# ygdf[,mean(compliance,na.rm=T),by=week]
+# sapply(ygdf,class)
+# table(ygdf$i11_health)
 
 ## end ############################################
 
@@ -494,42 +500,15 @@ table(ygdf$i11_health)
                                  workforce_in_place
                                  ))
 
-setwd('~/projects/DAEDALUS/Daedalus-P2-Dashboard/')
-write.csv(parameter_distributions,'data/parameter_distributions.csv',row.names = F)
+write.csv(parameter_distributions,file.path(datapath,'parameter_distributions.csv'),row.names = F)
 
 #######################################
 
-x <- seq(0.01,1.1,0.001)
-ggplot() + geom_line(aes(x=x,y=x^c(.2,0,-.2)[as.numeric(x>.07)+as.numeric(x>.24)+1])) + theme_bw(base_size = 15) + 
-  labs(x='GNI pc ppp relative to USA',y='VSL/GNI relative to USA') + 
-  geom_hline(yintercept=1,col='grey')
+# vsl plot
 
-ggplot(joineddata) + geom_point(aes(x=NY.GDP.PCAP.CD,y=gdp_to_gnippp,colour=IncomeGroup)) + theme_bw(base_size = 15) +
-  labs(x='GDP pc',y='GDP pc PPP / GDP pc',colour='')
-ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(gdp_to_gnippp*NY.GDP.PCAP.CD/77950)^1.2))) + 
-  geom_point(aes(colour=IncomeGroup)) + theme_bw(base_size = 15) +
-  labs(x='GDP pc',y='VSL(GDPppp), e=1.5',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
-summary(glm(log((gdp_to_gnippp*NY.GDP.PCAP.CD)^1.25)~log(NY.GDP.PCAP.CD)+offset(log(NY.GDP.PCAP.CD)),data=joineddata))
-
-p11 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(NY.GDP.PCAP.CD/77950)^1.))) + 
-  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 15) +
-  labs(x='GDP pc',y='VSL(GDP), e=1',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
-p12 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(gdp_to_gnippp*NY.GDP.PCAP.CD/77950)^1.))) + 
-  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 15) +
-  labs(x='GDP pc',y='VSL(GDPppp), e=1',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
-p21 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(NY.GDP.PCAP.CD/77950)^1.6))) + 
-  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 15) +
-  labs(x='GDP pc',y='VSL(GDP), e=1.6',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
-p22 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=(10*(gdp_to_gnippp*NY.GDP.PCAP.CD/77950)^1.6))) + 
-  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 15) +
-  labs(x='GDP pc',y='VSL(GDPppp), e=1.6',colour='') + geom_smooth(formula=y~ns(x,df=2),method=glm,se=F)
-
-
-plot_grid(p11,p21,p12,p22,ncol = 2, nrow = 2)
-
-
-
+Sys.sleep(1)
 gdpdata <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+Sys.sleep(1)
 gnipppdata <- setDT(wb_data("NY.GDP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
 joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata[,.(iso3c,country,date,NY.GDP.PCAP.PP.CD)],by=c('iso3c','country','date'))
 joineddata <- subset(joineddata,!is.na(NY.GDP.PCAP.PP.CD)&!is.na(NY.GDP.PCAP.CD))
@@ -575,30 +554,6 @@ plot_grid(p11,p21,p12,p22,ncol = 2, nrow = 2)
 
 
 
-wb_data("NY.GNP.PCAP.PP.CD",country = "China", start_date = 1995, end_date = 2006)
-wb_data("NY.GNP.PCAP.PP.CD",country = "Czech Republic", start_date = 1995, end_date = 2006)
-wb_data("NY.GNP.PCAP.CD",country = "Czech Republic", start_date = 1995, end_date = 2006)
-wb_data("NY.GNP.PCAP.PP.CD",country = "India", start_date = 2005, end_date = 2006)
-wb_data("NY.GNP.PCAP.CD",country = "India", start_date = 2005, end_date = 2006)
-wb_data("NY.GNP.PCAP.PP.CD",country = "Malaysia", start_date = 1999, end_date = 2006)
-wb_data("NY.GNP.PCAP.CD",country = "Malaysia", start_date = 1999, end_date = 2006)
-wb_data("NY.GNP.PCAP.PP.CD",country = "Mexico", start_date = 2002, end_date = 2006)
-wb_data("NY.GNP.PCAP.CD",country = "Mexico", start_date = 2002, end_date = 2006)
-wb_data("NY.GNP.PCAP.PP.CD",country = "Mongolia", start_date = 2010, end_date = 2010)
-wb_data("NY.GNP.PCAP.CD",country = "Mongolia", start_date = 2010, end_date = 2010)
-wb_data("NY.GNP.PCAP.CD",country = "Sudan", start_date = 2013, end_date = 2013)
-wb_data("NY.GNP.PCAP.PP.CD",country = "Sudan", start_date = 2013, end_date = 2013)
-wb_data("NY.GNP.PCAP.CD",country = "Thailand", start_date = 2003, end_date = 2011)
-wb_data("NY.GNP.PCAP.PP.CD",country = "Thailand", start_date = 2003, end_date = 2011)
-wb_data("NY.GNP.PCAP.PP.CD",country = "Tunisia", start_date = 2002, end_date = 2002)
-wb_data("NY.GNP.PCAP.CD",country = "Tunisia", start_date = 2002, end_date = 2002)
-wb_data("NY.GNP.PCAP.PP.CD",country = "Turkey", start_date = 2012, end_date = 2012)
-wb_data("NY.GNP.PCAP.CD",country = "Turkey", start_date = 2012, end_date = 2012)
-
-
-
-plot(log(c(717,4729,34127)),c(1,.9,.8))
-plot((c(717,4729,34127)),c(1.2,1.2,.8))
 
 
 

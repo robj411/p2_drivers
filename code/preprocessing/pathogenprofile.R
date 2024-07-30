@@ -1,9 +1,8 @@
-fn <- function(){}
-folder <- utils::getSrcDirectory(fn)
-setwd(ifelse(folder=='','.',folder))
 
-data_path <- '../data'
-figure_path <- '../figures'
+data_path <- '../../data'
+figure_path <- '../../figures'
+
+## copy in data from https://github.com/jameel-institute/Daedalus-P2-Dashboard
 
 rnms <- c(paste0('ihr',1:17),paste0('ifr',1:17),
           'ps','Tlat','Tay','Tsr','Tsh','Threc','Thd','Ti','red','R0')
@@ -65,7 +64,7 @@ rownames(pp) <- c(paste0('IHR, ages ',agegroups),
   'Probability asymptomatic',
   'Latent period','Time to recovery (asymptomatic)','Time to recovery (symptomatic)','Time to hospitalisation','Time to recovery (hospital)','Time to death','Immunity waning','Reduced infectivity asymptomatic','R0')
 
-pairs(t(pp[35:nrow(pp),]))
+# pairs(t(pp[35:nrow(pp),]))
 
 pp <- rbind(pp,colMeans(pp[1:17,]),colMeans(pp[18:34,]))
 
@@ -87,27 +86,29 @@ library(MASS)
 hfr <- tpp[,1:17+17]/tpp[,1:17]
 
 # logitihr <- logit(tpp[,1:17])
+# get relative risk: divide by first age group
 rrtpp <- tpp[,1:17]/t(repmat(unlist(tpp[,1]),17,1))
 logihr <- log(rrtpp)
-x <- (1:length(logihr))*5 - 3
-
-dat <- melt(t(logihr))
-dat$x <- rep(1:17,7)
-colnames(dat)[colnames(dat)=='Var2'] <- 'variable'
-
-fit8 <- brm(value ~ -1+ variable + s(x,by=variable), data=subset(dat,x>1), chains = 2)
-me8 <- brms:::conditional_effects.brmsfit(fit8, ndraws = 200, spaghetti = TRUE)
-x11(); plot(me8, ask = FALSE, points = TRUE)
 png(file.path(figure_path,'trainingihr.png')); 
 matplot(t(logihr),typ='l',xlab='Age group index',ylab='Log relative risk: IHR'); 
 dev.off()
 
-fit1 <- brm(value ~ -1 + variable + s(x,by=variable,k=4), data=subset(dat,x>1), chains = 2)
+dat <- melt(t(logihr))
+dat$agegroup <- rep(1:17,7)
+colnames(dat)[colnames(dat)=='Var2'] <- 'variable'
+
+# fit8 <- brm(value ~ -1+ variable + s(agegroup,by=variable), data=subset(dat,agegroup>1), chains = 2)
+# me8 <- brms:::conditional_effects.brmsfit(fit8, ndraws = 200, spaghetti = TRUE)
+# x11(); plot(me8, ask = FALSE, points = TRUE)
+
+# fit a smooth model
+fit1 <- brm(value ~ -1 + variable + s(agegroup,by=variable,k=4), data=subset(dat,agegroup>1), chains = 2)
 me1 <- brms:::conditional_effects.brmsfit(fit1, ndraws = 200, spaghetti = TRUE)
 x11(); plot(me1, ask = FALSE, points = F) 
 
+# extract samples
 ps <- posterior_samples(fit1)
-names(ps)
+# reformat and blend together
 meltps <- melt(ps)
 diseases <- unique(dat$variable)
 meltps$disease <- NA
@@ -121,14 +122,16 @@ png(file.path(figure_path,'pairsplot.png'), height = 900, width = 900)
 print(pairsp)
 dev.off()
 
+# extract model 
 stan_data <- standata(fit1)
 cov_model_matrix <- stan_data$Xs[1:16,1]
 spline_model <- stan_data$Zs_1_1[1:16,]
-ps[1,1] + cov_model_matrix*ps[1,8] + spline_model %*% t(ps[1,23:24])
-x <- 7
-ps[1,x] + cov_model_matrix*ps[1,7+x] + spline_model %*% t(ps[1,22+(2*x-1):(2*x)])
-i <- 2
+# ps[1,1] + cov_model_matrix*ps[1,8] + spline_model %*% t(ps[1,23:24])
+# x <- 7
+# ps[1,x] + cov_model_matrix*ps[1,7+x] + spline_model %*% t(ps[1,22+(2*x-1):(2*x)])
+# i <- 2
 
+# predict from samples
 allsamples <- lapply(1:7,function(x)t(sapply(1:nrow(ps),function(i)
   c(0,ps[i,x] + cov_model_matrix*ps[i,7+x] + spline_model %*% t(ps[i,22+(2*x-1):(2*x)])))
 ))
@@ -139,18 +142,19 @@ allsampleslonglong$disease <- rep(diseases,each=2000)
 ggplot(allsampleslonglong) + 
   geom_line(aes(x=Var2,y=value,group=Var1,colour=disease),alpha=1,size=1.5) +
   labs(x='Age group index',y='Log relative risk: IHR',colour='Pathogen') -> pathogenplot
-ggsave(pathogenplot,filename='pathogenplot.png',width=9,height=9)
+# ggsave(pathogenplot,filename='pathogenplot.png',width=9,height=9)
 png(file.path(figure_path,'pathogenplot.png'), height = 600, width = 600)
-print(pathogenplot)
+# print(pathogenplot)
 dev.off()
 
 x11(); matplot(t(allsampleslong),typ='l',
                col=rep(c('grey','navyblue','skyblue1','maroon','darkorange1','hotpink','turquoise'),each=2000))
 
-
+# get covariances between parameters
 covmat <- cov(castps[,3:7])
 parametertoihr <- function(x) c(0,x[1] + cov_model_matrix*x[2] + spline_model %*% (x[3:4]))
 
+# generate new samples blending across pathogens
 nsamples <- 4096
 newpoints <- samples <- c()
 for(i in 1:nsamples){
@@ -176,28 +180,23 @@ dev.off()
 
 
 ## hfr #####################################
+# repeat for hfr
 
 hfr <- tpp[,1:17+17]/tpp[,1:17]
 hfr <- hfr/repmat(t(t(hfr[,1])),1,17)
 loghfr <- log(hfr)
-matplot(t(loghfr),typ='l',xlab='Age group index',ylab='Log relative risk');
+png(file.path(figure_path,'traininghfr.png')); matplot(t(loghfr),typ='l',xlab='Age group index',ylab='Log relative risk: HFR'); dev.off()
 
 
 dat <- melt(t(loghfr))
-dat$x <- rep(1:17,7)
+dat$agegroup <- rep(1:17,7)
 colnames(dat)[colnames(dat)=='Var2'] <- 'variable'
 
-fit8 <- brm(value ~ -1+ variable + s(x,by=variable), data=subset(dat,x>1), chains = 2)
-me8 <- brms:::conditional_effects.brmsfit(fit8, ndraws = 200, spaghetti = TRUE)
-x11(); plot(me8, ask = FALSE, points = TRUE)
-png(file.path(figure_path,'traininghfr.png')); matplot(t(loghfr),typ='l',xlab='Age group index',ylab='Log relative risk: HFR'); dev.off()
+# fit model
+fit1 <- brm(value ~ -1 + variable + s(agegroup,by=variable,k=4), data=subset(dat,agegroup>1), chains = 2)
 
-fit1 <- brm(value ~ -1 + variable + s(x,by=variable,k=4), data=subset(dat,x>1), chains = 2)
-me1 <- brms:::conditional_effects.brmsfit(fit1, ndraws = 200, spaghetti = TRUE)
-x11(); plot(me1, ask = FALSE, points = F) 
-
+# extract samples and collate parameter values
 ps <- posterior_samples(fit1)
-names(ps)
 meltps <- melt(ps)
 diseases <- unique(dat$variable)
 meltps$disease <- NA
@@ -211,14 +210,12 @@ png(file.path(figure_path,'pairsplothfr.png'), height = 900, width = 900)
 print(pairsp)
 dev.off()
 
+# extract model
 stan_data <- standata(fit1)
 cov_model_matrix <- stan_data$Xs[1:16,1]
 spline_model <- stan_data$Zs_1_1[1:16,]
-ps[1,1] + cov_model_matrix*ps[1,8] + spline_model %*% t(ps[1,23:24])
-x <- 7
-ps[1,x] + cov_model_matrix*ps[1,7+x] + spline_model %*% t(ps[1,22+(2*x-1):(2*x)])
-i <- 2
 
+# generate pathogen samples
 allsamples <- lapply(1:7,function(x)t(sapply(1:nrow(ps),function(i)
   c(0,ps[i,x] + cov_model_matrix*ps[i,7+x] + spline_model %*% t(ps[i,22+(2*x-1):(2*x)])))
 ))
@@ -233,14 +230,13 @@ png(file.path(figure_path,'pathogenplothfr.png'), height = 600, width = 600)
 print(pathogenplot)
 dev.off()
 
-x11(); matplot(t(allsampleslong),typ='l',
-               col=rep(c('grey','navyblue','skyblue1','maroon','darkorange1','hotpink','turquoise'),each=2000))
 
-
+# get covariance between parameters
 covmat <- cov(castps[,3:7])
 parametertoihr <- function(x)
   c(0,x[1] + cov_model_matrix*x[2] + spline_model %*% (x[3:4]))
 
+# sample new values and apply model
 newpoints <- c()
 for(i in 1:nsamples){
   newpoint <- mvrnorm(1,colMeans(castps[,3:7]),covmat)
@@ -248,6 +244,7 @@ for(i in 1:nsamples){
   newpoints <- rbind(newpoints,funeval)
 }
 x11(); matplot(t(newpoints),typ='l')
+# save
 write.csv(newpoints,file.path(data_path,'hfrrr.csv'),row.names = F)
 
 
