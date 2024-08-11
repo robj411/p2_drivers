@@ -5,11 +5,11 @@
 % income_level: string indicating income level (e.g. HIC)
 % country_parameter_distributions: pre-specified, named distributions and
 % parameters
-% social_dist_coefs: table of parameters for social distancing function
+% utr_coefs: table of parameters for uncosted transmission reduction function
 %
 % data: struct of general model parameters
 
-function data = p2RandCountry(data,CD,income_level,country_parameter_distributions, social_dist_coefs)
+function data = p2RandCountry(data,CD,income_level,country_parameter_distributions, utr_coefs)
 
     %% start
     nSectors = data.nSectors;
@@ -44,14 +44,14 @@ function data = p2RandCountry(data,CD,income_level,country_parameter_distributio
     data.remote_teaching_effectiveness = unifrnd(0,1);
     data.seedsize = unifrnd(4,8);
 
-    % social distancing parameters taken from table of saved samples
-    sdtab_ncol = size(social_dist_coefs,1);
-    randrow = randi([1 sdtab_ncol],1,1);
-    sd_probability = unifrnd(0,1); %1 - betarnd(2, 5);
-    sd_baseline = max(social_dist_coefs.baseline(randrow), 0.1); % social_dist_coefs.baseline(randrow); %
-    data.sd_baseline = 1 - (1-sd_baseline).*sd_probability;
-    data.sd_death_coef = (social_dist_coefs.deathcoef(randrow));
-    data.sd_mandate_coef = (social_dist_coefs.mandatecoef(randrow));
+    % uncosted transmission reduction parameters taken from table of saved samples
+    utr_tab_ncol = size(utr_coefs,1);
+    randrow = randi([1 utr_tab_ncol],1,1);
+    utr_probability = unifrnd(0,1); %1 - betarnd(2, 5);
+    utr_baseline = max(utr_coefs.baseline(randrow), 0.1); % utr_coefs.baseline(randrow); %
+    data.utr_baseline = 1 - (1-utr_baseline).*utr_probability;
+    data.utr_death_coef = (utr_coefs.deathcoef(randrow));
+    data.utr_mandate_coef = (utr_coefs.mandatecoef(randrow));
 
     % contacts.pt = pt;
     contacts.school1_frac = school1_frac;

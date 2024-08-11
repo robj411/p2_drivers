@@ -72,9 +72,9 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     r      = occdot/max(occ,1);
     
     
-    %% distancing
+    %% uncosted transmission reduction
     
-    ddk    = 10^6*sum(mu.*hospital_occupancy)/sumN;    
+    deaths_per_mill    = 10^6*sum(mu.*hospital_occupancy)/sumN;    
     
     %% Event 1: Response time
     
@@ -93,7 +93,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
         Rflag2 = - abs((i-2)*(i-4)) + min(t-(data.tvec(end-1)+0.1),0) ;
         if i==2 && Rflag2 == 0
             R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
-            Rt = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 2, t, Isum);
+            Rt = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, deaths_per_mill, data, 2, t, Isum);
             growth_rate = (Rt-1)/dis.generation_time;
             time_to_breach   = log(p2.Hmax/occ)/growth_rate;
 %             disp([t r Rt growth_rate occ time_to_breach log(p2.Hmax/occ)])
@@ -123,7 +123,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         
 	    if i==2 && minttvec3==0  && R_est<1
-            Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3, t, Isum);
+            Rt1 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, deaths_per_mill, data, 3, t, Isum);
             R1flag3 = min(1-Rt1,0);
 	    end
 	    
@@ -144,7 +144,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    minttvec4 = - min(t-(data.tvec(end-1)+7),0) * min(p2.Tres+7 - t,0) + min(t-(data.tvec(end-1)+.1),0);
 	    R1flag4 = min(R_est-1.2000,0);
 %         if i==3 && minttvec4==0  && t<50
-%             Rt4 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 3, t, Isum);
+%             Rt4 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, deaths_per_mill, data, 3, t, Isum);
 %             R4flag = min(Rt4-1.2,0);
 %             disp([t Rt4 R_est R1flag4])
 % 	    end
@@ -188,7 +188,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
         if otherval~=0 && R_est<1
             % only compute R if R2flag is not already 0 and ivals and tval
             % conditions are both met
-            Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 5, t, Isum);
+            Rt2 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, deaths_per_mill, data, 5, t, Isum);
             R2flag = min(1-Rt2,0);
         end
     end
@@ -211,7 +211,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     
     if ival==0 && tval==0 && R6flag ~= 0
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4);
-        Rt6 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, ddk, data, 6, t, Isum);
+        Rt6 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3,p4, deaths_per_mill, data, 6, t, Isum);
         R6flag = min(1.0 - R_est, 0);
 %         disp([t/1000 R_est Rt6])
 %         R6flag = min(doubling_time - p2.final_doubling_time_threshold,0);
@@ -239,7 +239,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 %     disp([t/1000 hdotval still_susc/50000000 R_est])
 %     disp([ival tlong R7flag still_susc/50000000])
     if ival==0 && tlong==0 && R7flag ~= 0 %&& still_susc/50000000 < .85
-%         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, ddk, data, 5, t);
+%         Rt3 = get_R(nStrata,dis2,S+S01,Sv1,Sv2,dis.beta,p3,p4, deaths_per_mill, data, 5, t);
         R_est = get_R_est(dis2, compindex, y_mat, p3, p4); 
         doubling_time = log(2)*dis.generation_time/max(R_est-1,1e-5);
         R7flag = min(doubling_time - p2.final_doubling_time_threshold,0);

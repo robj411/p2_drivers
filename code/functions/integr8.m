@@ -17,7 +17,7 @@
 % Dclass: array of I values
 % p3: vector of asymptomatic self isolating
 % p4: vector of symptomatic self isolating
-% betamod: vector of social distancing values
+% betamod: vector of uncosted transmission reduction values
 % y0new: end conditions / initial conditions for next time
 % inext: next event state
 % still_susc: vector of number still susceptible
@@ -38,10 +38,10 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     rundata.t_import = data.t_import; 
     rundata.imand = data.imand; 
     rundata.seedsize = data.seedsize; 
-    rundata.sd_baseline = data.sd_baseline;
-    rundata.sd_death_coef = data.sd_death_coef;
-    rundata.sd_mandate_coef = data.sd_mandate_coef;
-%     rundata.sd_decay_rate = data.sd_decay_rate;
+    rundata.utr_baseline = data.utr_baseline;
+    rundata.utr_death_coef = data.utr_death_coef;
+    rundata.utr_mandate_coef = data.utr_mandate_coef;
+%     rundata.utr_decay_rate = data.utr_decay_rate;
 %     rundata.never_close = data.never_close;
     
     NN0 = data.NNs; 
@@ -129,11 +129,11 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     end
     
     sumNN0 = sum(NN0);
-    ddk = 10^6*sum(mu.*Hclass,2)/sumNN0;
+    deaths_per_mill = 10^6*sum(mu.*Hclass,2)/sumNN0;
     foi0 = data.basic_foi;
     foi1 = contact_matrix*(1./NN0);
-    sd_so_far = ((foi1'*NN0+1e-10)./(foi0'*NN0+1e-10));
-    betamod = betamod_wrapped(ddk, data, i, 1-sd_so_far, tout);
+    reduction_so_far = ((foi1'*NN0+1e-10)./(foi0'*NN0+1e-10));
+    betamod = betamod_wrapped(deaths_per_mill, data, i, 1-reduction_so_far, tout);
     
     [p3, p4] = fraction_averted_self_isolating(sum(Iclass,2), sumNN0, p2, tout, i);
     
@@ -163,7 +163,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
 % 
 %         dis2 = update_vax_dis_parameters(dis2, S, Sn, compindex, y_mat);
 %         
-%         R5 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data,5, t, Isum);
+%         R5 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), deaths_per_mill(end), data,5, t, Isum);
 %     
 %         closure = 1 - data.workerConfigMat(:,i);   
 %         trial_vals = 0:0.25:1;
@@ -172,7 +172,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
 %         for j =1:length(trial_vals)
 %             trial_val = trial_vals(j);
 %             openness = 1 - trial_val*closure;
-%             Rs(j) = get_trial_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), ddk(end), data,openness,data.hw(2,:),5, t, Isum);
+%             Rs(j) = get_trial_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), deaths_per_mill(end), data,openness,data.hw(2,:),5, t, Isum);
 %             if Rs(j) < Rthresh
 %                 break;
 %             end

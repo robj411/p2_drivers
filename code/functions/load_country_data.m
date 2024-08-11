@@ -1,4 +1,4 @@
-function [CD, country_parameter_distributions, social_dist_coefs] = load_country_data()
+function [CD, country_parameter_distributions, utr_coefs] = load_country_data()
     CD        = readtable('../data/country_data.csv');
     CD.popsum = sum(table2array(CD(:,4:24)),2);
     
@@ -19,7 +19,7 @@ function [CD, country_parameter_distributions, social_dist_coefs] = load_country
     CD.average_contacts = average_contacts;
     
     country_parameter_distributions = readtable('../data/parameter_distributions.csv');
-    social_dist_coefs = readtable('../data/social_dist_coefs.csv');
+    utr_coefs = readtable('../data/utr_coefs.csv');
     
 end
 

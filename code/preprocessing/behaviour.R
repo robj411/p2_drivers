@@ -321,5 +321,5 @@ ggsave(p,filename='../../README_files/figure-gfm/mobilitycurves.png')
 newnames <- c('deathcoef','mandatecoef','baseline')
 colnames(countrysamples)[match(c('k1','k2','bl'),colnames(countrysamples))] <- newnames
 write.csv(countrysamples[sample(1:nrow(countrysamples),2^13),..newnames],
-          file.path(data_path,'social_dist_coefs.csv'),row.names = F)
+          file.path(data_path,'utr_coefs.csv'),row.names = F)
 

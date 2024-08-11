@@ -526,6 +526,7 @@ joineddata[,basicvsl:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.),by=iso3c]
 joineddata[,vsle:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.5),by=iso3c]
 joineddata[,vslpppe:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.5),by=iso3c]
 joineddata[,vslppp:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.),by=iso3c]
+subset(joineddata,iso3c=="COD")
 
 p11 <- ggplot(joineddata,aes(x=NY.GDP.PCAP.CD,y=basicvsl/NY.GDP.PCAP.CD)) + 
   geom_hline(yintercept=yint,linewidth=2,colour='grey') +
@@ -553,6 +554,15 @@ plot_grid(p11,p21,p12,p22,ncol = 2, nrow = 2)
 
 
 
+
+
+
+
+cod <- subset(gnipppdata,iso3c%in%c('COD','USA')&date==2023)
+vsl_usa <- 10e6
+gnipc_cod <- subset(cod,iso3c=='COD')$NY.GNP.PCAP.PP.CD
+gnipc_usa <- subset(cod,iso3c=='USA')$NY.GNP.PCAP.PP.CD
+vsl_cod <- max((gnipc_cod/gnipc_usa)^1.5 * vsl_usa, 20*gnipc_cod)
 
 
 

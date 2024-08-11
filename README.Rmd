@@ -106,13 +106,13 @@ bpsv_levels <- c(0,1)
 - The response time is the time at which the reporting country reports having seen X hospital cases, where X is a random number between 1 and 20
 - The importation time is a random number between 0 and 20 days, where 0 days would be equivalent to the spillover, or origin, country
 - The simulation starts at the minimum between the response time and the importation time
-- At the response time, the BPSV, if present, is given to people aged 65 and older; testing begins; social distancing begins; economic closures, if in use, are implemented
+- At the response time, the BPSV, if present, is given to people aged 65 and older; testing begins; economic closures, if in use, are implemented
 - At the importation time, five people are moved from compartment S to compartment E
 - If closures are being implemented, the rules in Tables \@ref(tab:rulesreactive) and \@ref(tab:ruleselimination) are followed
 - The SARS-X--specific vaccine is rolled out starting on day 107 or 372 after the response time, depending on the investment assumption
 - All people aged 15 and over are eligible for vaccination, and we assume 80% take it up
 - Distribution rate increases linearly to a maximum of 1% of the population per day, at which is stays until 80% coverage is reached
-- When vaccine rollout is complete, closures, testing and social distancing end
+- When vaccine rollout is complete, closures and testing end
 - When the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends.
 
 | From/to | No closures | Light closures | Heavy closures |
@@ -394,7 +394,7 @@ with $m_J=49$ strata and
  I_h(t)=\sum_{v=0}^{m_V}\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
 ```
 
-  Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of social distancing; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p^3$ and $p^4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic ($I_{h,\cdot}^{a}$) and symptomatic ($I_{h,\cdot}^{s}$) people who are unvaccinated ($I_{h,v=0}^{\cdot}$), vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
+  Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of uncosted transmission reductions; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p^3$ and $p^4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic ($I_{h,\cdot}^{a}$) and symptomatic ($I_{h,\cdot}^{s}$) people who are unvaccinated ($I_{h,v=0}^{\cdot}$), vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
 
 ```math
  k^2 = \big(1-p^{I^S}\big)/T^{E:I} 
@@ -683,9 +683,9 @@ Here, there is superlinear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with res
 
 
 
-## Social distancing
+## Uncosted transmission reductions
 
-We parametrise the effects of 'social distancing' in the model using Google's mobility data (Figure \@ref(fig:smoothmobility)). These changes in mobility were consequences of both government mandates and individual's choices. As we cannot separate the two, we consider a range of possibilities, based on the range of mobility changes observed for a given level of stringency (Figure \@ref(fig:mobilitydrop)). In our model, the mandated economic configuration leads to a change in contacts. We associate the reduction in contacts, which translates as a relative reduction in transmission, with the reduction in mobility. 
+We parametrise the effects of 'uncosted transmission reductions' in the model using Google's mobility data (Figure \@ref(fig:smoothmobility)). These changes in mobility were consequences of both government mandates and individual's choices. As we cannot separate the two, we consider a range of possibilities, based on the range of mobility changes observed for a given level of stringency (Figure \@ref(fig:mobilitydrop)). In our model, the mandated economic configuration leads to a change in contacts. We associate the reduction in contacts, which translates as a relative reduction in transmission, with the reduction in mobility. 
 
 
 ```{r smoothmobility,fig.cap='Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over "Retail and recreation", "Transit stations" and "Workplaces" and smoothed with a spline of 80 knots.', echo=F,message=F,warning=F, out.width="50%"}
@@ -1058,7 +1058,7 @@ ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) +
   geom_histogram(aes(x=arate/10^5*100),colour='navyblue',fill='grey') +
   facet_wrap(~igroup) +
   theme_bw(base_size = 15) +
-  labs(x='Vaccines administered per day, % population',y='')
+  labs(x='Second doses administered per day, % population',y='')
 
 
 ```

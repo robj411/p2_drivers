@@ -10,7 +10,7 @@ n_income = numel(income_levels);
 
 %% country variables
 
-[CD, country_parameter_distributions, social_dist_coefs] = load_country_data();
+[CD, country_parameter_distributions, utr_coefs] = load_country_data();
 data = data_start();
 nScen = length(data.scenarios);
 
@@ -56,7 +56,7 @@ for i = 1:nsamples
         rng(il+n_income*(i-1));
         income_level = income_levels{il};
         % country data. random samples
-        ldata1     = p2RandCountry(data,CD,income_level,country_parameter_distributions,social_dist_coefs);
+        ldata1     = p2RandCountry(data,CD,income_level,country_parameter_distributions,utr_coefs);
         % get combined country and disease parameters
         [dis1, ldata1] = population_disease_parameters(ldata1,dis,R0_to_beta,R0_dist);
         % convert to beta random variable

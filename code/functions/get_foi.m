@@ -1,5 +1,5 @@
-% computes force of infection (foi). Accounts for social distancing and
-% corrects for sd already explained by mandate.
+% computes force of infection (foi). Accounts for uncosted transmission reductions and
+% corrects for reduction already explained by mandate.
 %
 % dis: struct of pathogen parameters
 % hospital_occupancy: number of people in hospital 
@@ -49,12 +49,12 @@ function foi = get_foi(dis, hospital_occupancy, data, mandate,...
     foi1 = contact_matrix*Ifrac;
     size_of_mandate = ((foi1'*NN0+1e-10)./(foi0'*NN0+1e-10));
     
-    %% social distancing
+    %% uncosted transmission reduction
     deaths = sum(dis.mu.*hospital_occupancy); 
-    sd = betamod_wrapped(10^6*deaths/sum(NN0), data, mandate, 1-size_of_mandate, t);
+    utr = betamod_wrapped(10^6*deaths/sum(NN0), data, mandate, 1-size_of_mandate, t);
     
     %% foi
-    foi     = phi.*beta.*(sd.*contact_matrix)*Ifrac + seed;
+    foi     = phi.*beta.*(utr.*contact_matrix)*Ifrac + seed;
     
 end
 
