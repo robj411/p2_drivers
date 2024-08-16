@@ -1,21 +1,19 @@
-suppressMessages({
-  require(data.table,quietly=T)
-  require(dplyr,quietly=T)
-  require(lubridate,quietly=T)
-  require(OECD,quietly=T)
-  require(readODS,quietly=T)
-  require(readxl,quietly=T)
-  require(xlsx,quietly=T)
-  require(stringi,quietly=T)
-  require(tidyverse,quietly=T)
-  require(splines,quietly=T)
-  library(zoo)
-  library(splines)
-  library(BayesTools)
-  require(runjags)
-  require(rjags)
-  library(extraDistr)
-})
+library(data.table)
+library(dplyr)
+library(lubridate)
+library(OECD)
+library(readODS)
+library(readxl)
+library(xlsx)
+library(stringi)
+library(tidyverse)
+library(splines)
+library(zoo)
+library(splines)
+library(BayesTools)
+library(runjags)
+library(rjags)
+library(extraDistr)
 
 ## paths and functions ####################################
 
@@ -266,16 +264,14 @@ plot(data$mobility,minmob$predmedian)
 
 (ggplot(allsamples) + geom_point(aes(mu1,(mub)),alpha=.2) +
   theme_bw(base_size=15) +
-  labs(x='Deaths coefficient',y='Logit baseline') -> p)
-ggsave(p,filename='../../README_files/figure-gfm/mobilityposterior.png')
+  labs(x='Deaths coefficient',y='Logit baseline') -> pmobpost)
 # as rate gets larger, population gets more responsive
 
 
 (ggplot(minmob) + geom_errorbar(aes(x=smoothmob/100+1,ymin=predl95,ymax=predu95),colour='grey') +
   geom_point(aes(x=smoothmob/100+1,y=predmedian))+#,colour=tdeathpp<1)) +
   theme_bw(base_size=15) +
-  labs(x='Observed',y='Predicted') -> p)
-ggsave(p,filename='../../README_files/figure-gfm/mobilityfitted.png')
+  labs(x='Observed',y='Predicted') -> pmobfit)
 
 
 # function definition
@@ -314,8 +310,13 @@ minmob$r <- cut(minmob$response,breaks=c(0,25,50,75,101),labels=c(25,50,75,100))
 (ggplot(plotsamples) + geom_line(aes(x,y,colour=as.factor(r*100),group=group)) +
   theme_bw(base_size=15) +
   labs(x='Deaths per million',y='Mobility',colour='Mandate') +
-  geom_point(data=minmob,aes(x=deaths,y=smoothmob/100+1,colour=as.factor(r))) -> p)
-ggsave(p,filename='../../README_files/figure-gfm/mobilitycurves.png')
+  geom_point(data=minmob,aes(x=deaths,y=smoothmob/100+1,colour=as.factor(r))) -> pcurve)
+
+if(file.exists('../../README_files/figure-gfm')){
+  ggsave(pmobpost,filename='../../README_files/figure-gfm/mobilityposterior.png')
+  ggsave(pmobfit,filename='../../README_files/figure-gfm/mobilityfitted.png')
+  ggsave(pcurve,filename='../../README_files/figure-gfm/mobilitycurves.png')
+}
 
 # label and save
 newnames <- c('deathcoef','mandatecoef','baseline')

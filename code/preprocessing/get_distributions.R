@@ -7,6 +7,7 @@ library(dplyr)
 library(haven)
 library(squire)
 library(cowplot)
+library(readODS)
 
 datapath <- '../../data'
 # yougovdata <- file.path(datapath,'covid-19-tracker/data/')
@@ -111,39 +112,39 @@ workforce_in_place <- data.frame(parameter_name='workforce_in_place',
 ## public transport ###################
 print('public transport')
 
-modeshare <- setDT(readxl::read_xlsx('~/projects/DAEDALUS/data/mode_shares.xlsx',sheet=2,skip = 1))
-modeshare2 <- setDT(readxl::read_xlsx('~/projects/DAEDALUS/data/mode_shares.xlsx',sheet=3,skip = 1))
-
-modeshare[,pt:=(`Bus/Coach`+Rail)/(`Bus/Coach`+Rail+`Passenger Car`)]
-modeshare2[,pt:=(`Public transport (coach, bus, rail)`)/(`Public transport (coach, bus, rail)`+`Passenger Car`)]
-
-ms <- rbind(modeshare[,c(1,5)],modeshare2[,c(1,4)])
-colnames(ms) <- c('Country','pt')
-
-
-ms$Country[ms$Country=="Lao People's Democratic Republic"] <- 'Laos'
-ms$Country[ms$Country=="Russian Federation"] <- 'Russia'
-ms$Country[ms$Country=="Venezuela (Bolivarian Republic of)"] <- 'Venezuela'
-ms$Country[ms$Country=="Bolivia (Plurinational State of)"] <- 'Bolivia'
-ms$Country[ms$Country=="Slovak Republic"] <- 'Slovakia'
-ms$Country[ms$Country=="United Republic of Tanzania"] <- 'Tanzania'
-ms$Country[ms$Country=="Côte d'Ivoire"] <- "Cote d'Ivoire"
-ms$Country[ms$Country=="Bosnia-Herzegovina"] <- "Bosnia and Herzegovina"
-ms$Country[ms$Country=="Czech Republic"] <- "Czechia"
-ms <- subset(ms,Country%in%p2countries)
-
-p2data$public_transport_share <- NA
-p2data$public_transport_share[match(ms$Country,p2data$country)] <- ms$pt
-
-hic <- fitdistr(subset(p2data,!is.na(public_transport_share)&igroup=='HIC')$public_transport_share,"beta",start=list(shape1=1,shape2=1))
-umic <- fitdistr(subset(p2data,!is.na(public_transport_share)&igroup=='UMIC')$public_transport_share,"beta",start=list(shape1=1,shape2=1))
-llmic <- fitdistr(subset(p2data,!is.na(public_transport_share)&igroup%in%c('LMIC','LIC'))$public_transport_share,"beta",start=list(shape1=1,shape2=1))
-
-pt_distributions <- data.frame(parameter_name='pt',
-                                     igroup=c('LLMIC','UMIC','HIC'),
-                                     distribution='betainv',
-                                     `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape1']]),
-                                     `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape2']]))
+# modeshare <- setDT(readxl::read_xlsx('~/projects/DAEDALUS/data/mode_shares.xlsx',sheet=2,skip = 1))
+# modeshare2 <- setDT(readxl::read_xlsx('~/projects/DAEDALUS/data/mode_shares.xlsx',sheet=3,skip = 1))
+# 
+# modeshare[,pt:=(`Bus/Coach`+Rail)/(`Bus/Coach`+Rail+`Passenger Car`)]
+# modeshare2[,pt:=(`Public transport (coach, bus, rail)`)/(`Public transport (coach, bus, rail)`+`Passenger Car`)]
+# 
+# ms <- rbind(modeshare[,c(1,5)],modeshare2[,c(1,4)])
+# colnames(ms) <- c('Country','pt')
+# 
+# 
+# ms$Country[ms$Country=="Lao People's Democratic Republic"] <- 'Laos'
+# ms$Country[ms$Country=="Russian Federation"] <- 'Russia'
+# ms$Country[ms$Country=="Venezuela (Bolivarian Republic of)"] <- 'Venezuela'
+# ms$Country[ms$Country=="Bolivia (Plurinational State of)"] <- 'Bolivia'
+# ms$Country[ms$Country=="Slovak Republic"] <- 'Slovakia'
+# ms$Country[ms$Country=="United Republic of Tanzania"] <- 'Tanzania'
+# ms$Country[ms$Country=="Côte d'Ivoire"] <- "Cote d'Ivoire"
+# ms$Country[ms$Country=="Bosnia-Herzegovina"] <- "Bosnia and Herzegovina"
+# ms$Country[ms$Country=="Czech Republic"] <- "Czechia"
+# ms <- subset(ms,Country%in%p2countries)
+# 
+# p2data$public_transport_share <- NA
+# p2data$public_transport_share[match(ms$Country,p2data$country)] <- ms$pt
+# 
+# hic <- fitdistr(subset(p2data,!is.na(public_transport_share)&igroup=='HIC')$public_transport_share,"beta",start=list(shape1=1,shape2=1))
+# umic <- fitdistr(subset(p2data,!is.na(public_transport_share)&igroup=='UMIC')$public_transport_share,"beta",start=list(shape1=1,shape2=1))
+# llmic <- fitdistr(subset(p2data,!is.na(public_transport_share)&igroup%in%c('LMIC','LIC'))$public_transport_share,"beta",start=list(shape1=1,shape2=1))
+# 
+# pt_distributions <- data.frame(parameter_name='pt',
+#                                      igroup=c('LLMIC','UMIC','HIC'),
+#                                      distribution='betainv',
+#                                      `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape1']]),
+#                                      `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape2']]))
 
 ## contact matrices ######################
 print('contact matrices')
@@ -350,9 +351,9 @@ indicators <- wb_indicators()
 indicators[grepl('GNI',indicators$indicator)&grepl('PPP',indicators$indicator),]
 indicators[grepl('GDP',indicators$indicator)&grepl('current',indicators$indicator)&grepl('\\$',indicators$indicator),]
 
-Sys.sleep(1)
+Sys.sleep(2)
 gdpdata <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
-Sys.sleep(1)
+Sys.sleep(2)
 gnipppdata <- setDT(wb_data("NY.GNP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
 joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata[,.(iso3c,country,date,NY.GNP.PCAP.PP.CD)],by=c('iso3c','country','date'))
 joineddata <- subset(joineddata,!is.na(NY.GNP.PCAP.PP.CD)&!is.na(NY.GDP.PCAP.CD))
@@ -488,7 +489,7 @@ source('workplace_related_contacts.R')
                                  gdp_to_gnippp_distributions,
                                  Hmax_distributions,
                                  bmi_distributions,
-                                 pt_distributions,
+                                 # pt_distributions,
                                  tourism_pointiness,
                                  sec_to_international,
                                  ptr_distributions,
@@ -506,11 +507,11 @@ write.csv(parameter_distributions,file.path(datapath,'parameter_distributions.cs
 
 # vsl plot
 
-Sys.sleep(1)
-gdpdata <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
-Sys.sleep(1)
-gnipppdata <- setDT(wb_data("NY.GDP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
-joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata[,.(iso3c,country,date,NY.GDP.PCAP.PP.CD)],by=c('iso3c','country','date'))
+Sys.sleep(2)
+gdpdata2 <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+Sys.sleep(5)
+gnipppdata2 <- setDT(wb_data("NY.GDP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+joineddata <- left_join(gdpdata2[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata2[,.(iso3c,country,date,NY.GDP.PCAP.PP.CD)],by=c('iso3c','country','date'))
 joineddata <- subset(joineddata,!is.na(NY.GDP.PCAP.PP.CD)&!is.na(NY.GDP.PCAP.CD))
 joineddata[,mostrecent:=max(date),by=country]
 joineddata <- subset(joineddata,date==mostrecent)

@@ -1,4 +1,6 @@
 
+set.seed(0)
+
 data_path <- '../../data'
 figure_path <- '../../figures'
 
@@ -82,6 +84,8 @@ library(GGally)
 library(gtools)
 library(reshape2)
 library(MASS)
+library(rstan)
+library(rstantools)
 
 hfr <- tpp[,1:17+17]/tpp[,1:17]
 
