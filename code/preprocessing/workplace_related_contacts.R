@@ -5,11 +5,12 @@ library(MASS)
 library(splines)
 library(data.table)
 library(lubridate)
-library(flextable)
 library(magrittr)
 library(ggplot2)
 
 # using data from https://github.com/jarvisc1/cmix_post_pandemic
+# checkout a6c98ab
+# many columns were omitted since
 cmixpath <- '../../../cmix_post_pandemic/'
 datapath <- '../../data/'
 
