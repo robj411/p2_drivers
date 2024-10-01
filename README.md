@@ -16,7 +16,8 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
     - [3.4.1 Community contacts](#341-community-contacts)
     - [3.4.2 Community-to-worker
       contacts](#342-community-to-worker-contacts)
-  - [3.5 Social distancing](#35-social-distancing)
+  - [3.5 Uncosted transmission
+    reductions](#35-uncosted-transmission-reductions)
   - [3.6 Self isolating](#36-self-isolating)
 - [4 Econ model](#4-econ-model)
   - [4.1 Configurations](#41-configurations)
@@ -50,43 +51,42 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 - The simulation starts at the minimum between the response time and the
   importation time
 - At the response time, the BPSV, if present, is given to people aged 65
-  and older; testing begins; social distancing begins; economic
-  closures, if in use, are implemented
+  and older; testing begins; economic closures, if in use, are
+  implemented
 - At the importation time, five people are moved from compartment S to
   compartment E
-- If closures are being implemented, the rules in Tables
-  <a href="#tab:rulesreactive">1.1</a> and
+- If closure policies (RC1, RC2, or RC3) are being implemented, the
+  rules in Tables <a href="#tab:rulesreactive">1.1</a> or
   <a href="#tab:ruleselimination">1.2</a> are followed
-- The SARS-X–specific vaccine is rolled out starting on day 107 or 372
-  after the response time, depending on the investment assumption
+- The SARS-X–specific vaccine is rolled out starting at least day 107
+  after the response time, depending on the investment scenario
+  assumption
 - All people aged 15 and over are eligible for vaccination, and we
   assume 80% take it up
-- Distribution rate increases linearly to a maximum of 1% of the
-  population per day, at which is stays until 80% coverage is reached
-- When vaccine rollout is complete, closures, testing and social
-  distancing end
+- Distribution rate depends on investment scenario assumptions
+- Once vaccine rollout is complete, closures and testing end
 - When the doubling time is more than 30 days and there are fewer than
   1,000 people in hospital, the simulation ends.
 
-| From/to            | No closures                                                                                                           | Light closures                                                   | Heavy closures                                                |
-|:-------------------|:----------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------|:--------------------------------------------------------------|
-| **No closures**    |                                                                                                                       |                                                                  | t $\geq$ response time AND Hospital occupancy \> 95% capacity |
-| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                  | Hospital occupancy \> 95% capacity                            |
-| **Heavy closures** |                                                                                                                       | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |                                                               |
+| From/to            | No closures                                                                                                           | Light closures                                                   | Heavy closures                     |
+|:-------------------|:----------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------|:-----------------------------------|
+| **No closures**    |                                                                                                                       | t $\geq$ response time AND Hospital occupancy \> 95% capacity    |                                    |
+| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                  | Hospital occupancy \> 95% capacity |
+| **Heavy closures** |                                                                                                                       | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |                                    |
 
 <span id="tab:rulesreactive"></span>Table 1.1: State transition rules
-for reactive closure strategies. See Table <a href="#tab:eccon">4.1</a>
-for details of closures.
+for policies RC1 and RC2. See Table <a href="#tab:eccon">4.1</a> for
+details of closures.
 
-| From/to            | No closures                                          | Light closures                                                          | Heavy closures                                               |
-|:-------------------|:-----------------------------------------------------|:------------------------------------------------------------------------|:-------------------------------------------------------------|
-| **No closures**    |                                                      |                                                                         | t $\geq$ response time OR Hospital occupancy \> 95% capacity |
-| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                         | $R_t > 1.2$                                                  |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t \> 7 + last change time |                                                              |
+| From/to            | No closures                                          | Light closures                                                          | Heavy closures |
+|:-------------------|:-----------------------------------------------------|:------------------------------------------------------------------------|:---------------|
+| **No closures**    |                                                      | t $\geq$ response time OR Hospital occupancy \> 95% capacity            |                |
+| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                         | $R_t > 1.2$    |
+| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t \> 7 + last change time |                |
 
 <span id="tab:ruleselimination"></span>Table 1.2: State transition rules
-for the elimination policy. See Table <a href="#tab:eccon">4.1</a> for
-details of closures.
+for policy RC3. See Table <a href="#tab:eccon">4.1</a> for details of
+closures.
 
 # 2 Socio-economic costs
 
@@ -362,16 +362,17 @@ with $m_J=49$ strata and
 
 Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given
 vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate
-of infection, $\beta$, which captures the impact of social distancing;
-$M(x)$ is the contact matrix between groups and depends on the economic
-configuration $x$; $\epsilon$ is the reduction in infectiousness from
-asymptomatic relative to symptomatic individuals; $p^3$ and $p^4$ are
-the proportions of asymptomatic and symptomatic infectiousness averted,
-respectively, due to self isolating; and $I_{h,\cdot}^{\cdot}$ is the
-number of infectious asymptomatic ($I_{h,\cdot}^{a}$) and symptomatic
-($I_{h,\cdot}^{s}$) people who are unvaccinated ($I_{h,v=0}^{\cdot}$),
-vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the
-specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
+of infection, $\beta$, which captures the impact of uncosted
+transmission reductions; $M(x)$ is the contact matrix between groups and
+depends on the economic configuration $x$; $\epsilon$ is the reduction
+in infectiousness from asymptomatic relative to symptomatic individuals;
+$p^3$ and $p^4$ are the proportions of asymptomatic and symptomatic
+infectiousness averted, respectively, due to self isolating; and
+$I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic
+($I_{h,\cdot}^{a}$) and symptomatic ($I_{h,\cdot}^{s}$) people who are
+unvaccinated ($I_{h,v=0}^{\cdot}$), vaccinated with the BPSV
+($I_{h,v=1}^{\cdot}$), or vaccinated with the specific vaccine
+($I_{h,v=2}^{\cdot}$) in stratum $h$.
 
 ``` math
  k^2 = \big(1-p^{I^S}\big)/T^{E:I} 
@@ -771,18 +772,18 @@ as the sector moves online and becomes more closed.
 <!-- M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0) -->
 <!-- ``` -->
 
-## 3.5 Social distancing
+## 3.5 Uncosted transmission reductions
 
-We parametrise the effects of ‘social distancing’ in the model using
-Google’s mobility data (Figure <a href="#fig:smoothmobility">3.10</a>).
-These changes in mobility were consequences of both government mandates
-and individual’s choices. As we cannot separate the two, we consider a
-range of possibilities, based on the range of mobility changes observed
-for a given level of stringency (Figure
-<a href="#fig:mobilitydrop">3.11</a>). In our model, the mandated
-economic configuration leads to a change in contacts. We associate the
-reduction in contacts, which translates as a relative reduction in
-transmission, with the reduction in mobility.
+We parametrise the effects of ‘uncosted transmission reductions’ in the
+model using Google’s mobility data (Figure
+<a href="#fig:smoothmobility">3.10</a>). These changes in mobility were
+consequences of both government mandates and individual’s choices. As we
+cannot separate the two, we consider a range of possibilities, based on
+the range of mobility changes observed for a given level of stringency
+(Figure <a href="#fig:mobilitydrop">3.11</a>). In our model, the
+mandated economic configuration leads to a change in contacts. We
+associate the reduction in contacts, which translates as a relative
+reduction in transmission, with the reduction in mobility.
 
 <div class="figure">
 
@@ -915,9 +916,8 @@ $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 
 <span id="tab:eccon"></span>Table 4.1: Economic configurations used to
 implement strategies. Values are the openness of the sector expressed as
-a percentage. Elimination values are taken from Australia. Lockdown and
-Economic Closures values are taken from the UK. School Closures values
-are taken from Indonesia.
+a percentage. RC3 values are taken from Australia. Lockdown and RC2
+values are taken from the UK. RC1 values are taken from Indonesia.
 
 </caption>
 <thead>
@@ -928,7 +928,7 @@ are taken from Indonesia.
 
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
 
-Elimination
+RC3
 
 </div>
 
@@ -937,7 +937,7 @@ Elimination
 
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
 
-Economic closures
+RC2
 
 </div>
 
@@ -946,7 +946,7 @@ Economic closures
 
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
 
-School closures
+RC1
 
 </div>
 
@@ -3049,12 +3049,12 @@ Gamma
 </td>
 <td style="text-align:right;">
 
-10.76
+9.40
 
 </td>
 <td style="text-align:right;">
 
-0.26
+0.33
 
 </td>
 </tr>
@@ -3076,7 +3076,7 @@ Gamma
 </td>
 <td style="text-align:right;">
 
-16.28
+16.40
 
 </td>
 <td style="text-align:right;">
@@ -3103,12 +3103,12 @@ Gamma
 </td>
 <td style="text-align:right;">
 
-11.11
+11.89
 
 </td>
 <td style="text-align:right;">
 
-0.13
+0.12
 
 </td>
 </tr>
@@ -3190,87 +3190,6 @@ Gamma
 <td style="text-align:right;">
 
 46.57
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Public transport fraction
-
-</td>
-<td style="text-align:left;">
-
-LLMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-4.88
-
-</td>
-<td style="text-align:right;">
-
-3.65
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Public transport fraction
-
-</td>
-<td style="text-align:left;">
-
-UMIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-2.06
-
-</td>
-<td style="text-align:right;">
-
-2.59
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Public transport fraction
-
-</td>
-<td style="text-align:left;">
-
-HIC
-
-</td>
-<td style="text-align:left;">
-
-Beta
-
-</td>
-<td style="text-align:right;">
-
-3.23
-
-</td>
-<td style="text-align:right;">
-
-11.65
 
 </td>
 </tr>
@@ -3481,12 +3400,12 @@ Beta
 </td>
 <td style="text-align:right;">
 
-11.59
+10.94
 
 </td>
 <td style="text-align:right;">
 
-14.49
+13.83
 
 </td>
 </tr>
@@ -3724,12 +3643,12 @@ Beta
 </td>
 <td style="text-align:right;">
 
-2.36
+3.69
 
 </td>
 <td style="text-align:right;">
 
-1.20
+2.16
 
 </td>
 </tr>
@@ -3751,12 +3670,12 @@ Beta
 </td>
 <td style="text-align:right;">
 
-5.57
+5.72
 
 </td>
 <td style="text-align:right;">
 
-2.51
+2.64
 
 </td>
 </tr>
@@ -3778,12 +3697,12 @@ Beta
 </td>
 <td style="text-align:right;">
 
-4.60
+9.26
 
 </td>
 <td style="text-align:right;">
 
-0.94
+2.01
 
 </td>
 </tr>

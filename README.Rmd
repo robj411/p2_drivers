@@ -93,6 +93,7 @@ llmic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Low income
 
 
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
+newstrategies <- c('NC','RC1','RC2','RC3')
 income_levels <- c('LLMIC','UMIC','HIC')
 vaccination_levels <- c(365,100)
 bpsv_levels <- c(0,1)
@@ -108,28 +109,28 @@ bpsv_levels <- c(0,1)
 - The simulation starts at the minimum between the response time and the importation time
 - At the response time, the BPSV, if present, is given to people aged 65 and older; testing begins; economic closures, if in use, are implemented
 - At the importation time, five people are moved from compartment S to compartment E
-- If closures are being implemented, the rules in Tables \@ref(tab:rulesreactive) and \@ref(tab:ruleselimination) are followed
-- The SARS-X--specific vaccine is rolled out starting on day 107 or 372 after the response time, depending on the investment assumption
+- If closure policies (RC1, RC2, or RC3) are being implemented, the rules in Tables \@ref(tab:rulesreactive) or \@ref(tab:ruleselimination) are followed
+- The SARS-X--specific vaccine is rolled out starting at least day 107 after the response time, depending on the investment scenario assumption
 - All people aged 15 and over are eligible for vaccination, and we assume 80% take it up
-- Distribution rate increases linearly to a maximum of 1% of the population per day, at which is stays until 80% coverage is reached
-- When vaccine rollout is complete, closures and testing end
+- Distribution rate depends on investment scenario assumptions
+- Once vaccine rollout is complete, closures and testing end
 - When the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends.
 
 | From/to | No closures | Light closures | Heavy closures |
 |:----- |:----- |:----- |:----- |
-| **No closures** |  |  | t $\geq$ response time AND Hospital occupancy > 95% capacity |
+| **No closures** |  | t $\geq$ response time AND Hospital occupancy > 95% capacity |  | 
 | **Light closures** | (Growth rate < 0.025 OR Hospital occupancy < 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |  | Hospital occupancy > 95% capacity |
 | **Heavy closures** |  | Hospital occupancy < 25% capacity AND t > 7 + last change time |  | 
 
-Table: (\#tab:rulesreactive) State transition rules for reactive closure strategies. See Table \@ref(tab:eccon) for details of closures.
+Table: (\#tab:rulesreactive) State transition rules for policies RC1 and RC2. See Table \@ref(tab:eccon) for details of closures.
 
 | From/to | No closures | Light closures | Heavy closures |
 |:----- |:----- |:----- |:----- |
-| **No closures** |  |  | t $\geq$ response time OR Hospital occupancy > 95% capacity |
+| **No closures** |  |  t $\geq$ response time OR Hospital occupancy > 95% capacity | | 
 | **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  |  | $R_t > 1.2$ |
 | **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t > 7 + last change time |  | 
 
-Table: (\#tab:ruleselimination) State transition rules for the elimination policy. See Table \@ref(tab:eccon) for details of closures.
+Table: (\#tab:ruleselimination) State transition rules for policy RC3. See Table \@ref(tab:eccon) for details of closures.
 
 # Socio-economic costs
 
@@ -739,7 +740,7 @@ We assume that infectious people who know their status have a compliance $p^1\si
 
 ## Configurations
 
-```{r eccon,tab.cap='Economic configurations used to implement sector-closure policies. Values are the openness of the sector expressed as a percentage. Elimination values are taken from Australia; Economic Closures values are taken from the UK; School Closures values are taken from Indonesia, with data from OECD. Heavy closures are implemented in response to the epidemic. Thereafter, the level of closure is mandated in response to the state of the epidemic, reverting between states as necessary.',echo=F,warning=F,message=F}
+```{r eccon,tab.cap='Economic configurations used to implement sector-closure policies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia; RC2 values are taken from the UK; RC1 values are taken from Indonesia, with data from OECD. Heavy closures are implemented in response to the epidemic. Thereafter, the level of closure is mandated in response to the state of the epidemic, reverting between states as necessary.',echo=F,warning=F,message=F}
 
 eccon <- readxl::read_xlsx('data/6.economic_closures.xlsx',sheet='configurations')
 for(j in 2:ncol(eccon)) eccon[,j] <- round(eccon[,j]*100)
@@ -748,11 +749,11 @@ eccon <- eccon[,c(0,colorder)+1]
 colnames(eccon) <- c('Sector',rep(c('Heavy closures','Light closures'),times=3))
 
 if (!knitr::is_html_output(excludes = "markdown")) { 
-  pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. Elimination values are taken from Australia. Lockdown and Economic Closures values are taken from the UK. School Closures values are taken from Indonesia. \\label{tab:eccon}')
+  pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
 }else{
-    x <- knitr::kable(eccon,escape=F, "html",caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage.  Elimination values are taken from Australia. Lockdown and Economic Closures values are taken from the UK. School Closures values are taken from Indonesia. \\label{tab:eccon}')
+    x <- knitr::kable(eccon,escape=F, "html",caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage.  RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
   kable_styling(x,full_width = F,latex_options = "HOLD_position") %>%
-  add_header_above(c('',"Elimination" = 2,"Economic closures" = 2,"School closures" = 2)) %>%
+  add_header_above(c('',"RC3" = 2,"RC2" = 2,"RC1" = 2)) %>%
   kable_classic()
 }
 
