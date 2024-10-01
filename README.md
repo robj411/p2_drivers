@@ -799,8 +799,8 @@ as the sector moves online and becomes more closed.
 
 ## 4.5 Uncosted transmission reductions
 
-We parametrise the effects of ‘uncosted transmission reductions’ in the
-model using Google’s mobility data (Figure
+We parametrise the effects of ‘uncosted transmission reductions’ (UTR)
+in the model using Google’s mobility data (Figure
 <a href="#fig:smoothmobility">4.10</a>). These changes in mobility were
 consequences of both government mandates and individual’s choices. As we
 cannot separate the two, we consider a range of possibilities, based on
@@ -5898,7 +5898,7 @@ Capital letters
 |       $d$       |                             deaths per million                             |                                       |                |
 |       $e$       |                             government mandate                             |                                       |                |
 |   $\text{ed}$   |                                                                            |      education sector (j index)       |                |
-|       $f$       |                       functions: sd, hospitalisation                       |                                       |                |
+|       $f$       |                      functions: UTR, hospitalisation                       |                                       |                |
 |       $g$       |                                                                            | INDEX: age index, DAEDALUS age groups |                |
 |       $h$       |                                                                            |          INDEX: dummy index           |                |
 |       $i$       |                                                                            |                                       | self isolating |

@@ -711,7 +711,7 @@ Here, there is superlinear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with res
 
 ## Uncosted transmission reductions
 
-We parametrise the effects of 'uncosted transmission reductions' in the model using Google's mobility data (Figure \@ref(fig:smoothmobility)). These changes in mobility were consequences of both government mandates and individual's choices. As we cannot separate the two, we consider a range of possibilities, based on the range of mobility changes observed for a given level of stringency (Figure \@ref(fig:mobilitydrop)). In our model, the mandated economic configuration leads to a change in contacts. We associate the reduction in contacts, which translates as a relative reduction in transmission, with the reduction in mobility. 
+We parametrise the effects of 'uncosted transmission reductions' (UTR) in the model using Google's mobility data (Figure \@ref(fig:smoothmobility)). These changes in mobility were consequences of both government mandates and individual's choices. As we cannot separate the two, we consider a range of possibilities, based on the range of mobility changes observed for a given level of stringency (Figure \@ref(fig:mobilitydrop)). In our model, the mandated economic configuration leads to a change in contacts. We associate the reduction in contacts, which translates as a relative reduction in transmission, with the reduction in mobility. 
 
 
 ```{r smoothmobility,fig.cap='Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over "Retail and recreation", "Transit stations" and "Workplaces" and smoothed with a spline of 80 knots.', echo=F,message=F,warning=F, out.width="50%"}
