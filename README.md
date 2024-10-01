@@ -31,13 +31,14 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
     - [4.2.4 Dependence on international
       tourism](#424-dependence-on-international-tourism)
   - [4.3 Remote working](#43-remote-working)
-- [5 Parametric distributions](#5-parametric-distributions)
-  - [5.1 Hospital capacity](#51-hospital-capacity)
-  - [5.2 Labour share of GVA](#52-labour-share-of-gva)
-  - [5.3 Vaccine administration](#53-vaccine-administration)
-  - [5.4 Compliance with the requirement to self
-    isolate](#54-compliance-with-the-requirement-to-self-isolate)
-- [6 Notation](#6-notation)
+- [5 Pathogen profiles](#5-pathogen-profiles)
+- [6 Parametric distributions](#6-parametric-distributions)
+  - [6.1 Hospital capacity](#61-hospital-capacity)
+  - [6.2 Labour share of GVA](#62-labour-share-of-gva)
+  - [6.3 Vaccine administration](#63-vaccine-administration)
+  - [6.4 Compliance with the requirement to self
+    isolate](#64-compliance-with-the-requirement-to-self-isolate)
+- [7 Notation](#7-notation)
 
 # 1 Simulation rules
 
@@ -2804,12 +2805,1956 @@ values in all sectors. We:
 
 <!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 1.78 and  3.11. For UMICs, we have parameters 14.32 and  6.44. For HICs, we have parameters 9.57 and  1.39. -->
 
-# 5 Parametric distributions
+# 5 Pathogen profiles
+
+We sample pathogen profiles by defining distributions over the pathogen
+parameters. The distributions are made using sourced data (Table
+<a href="#tab:pathogenprofile">5.1</a>), and are described in Table
+<a href="#tab:pathogenparameters">5.2</a>. Age profiles for severity
+rates are shown in Figure <a href="#fig:ratesbyage">5.1</a>. We sample
+parameter values from distributions informed by the seven pathogen
+profiles. R$_0$ is truncated at 1.5 and 4 following Whittaker et al.
+(2024).
+
+<table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+
+<span id="tab:pathogenprofile"></span>Table 5.1: Pathogen profiles. IHR:
+infection hospitalisation rate. IFR: infection fatality rate.
+
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+
+SARS-CoV-1
+
+</th>
+<th style="text-align:left;">
+
+Influenza 2009
+
+</th>
+<th style="text-align:left;">
+
+Influenza 1957
+
+</th>
+<th style="text-align:left;">
+
+Influenza 1918
+
+</th>
+<th style="text-align:left;">
+
+SARS-CoV-2 pre-alpha
+
+</th>
+<th style="text-align:left;">
+
+SARS-CoV-2 omicron
+
+</th>
+<th style="text-align:left;">
+
+SARS-CoV-2 delta
+
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+
+IHR in 0-4 age group
+
+</td>
+<td style="text-align:left;">
+
+0.058
+
+</td>
+<td style="text-align:left;">
+
+0.0047
+
+</td>
+<td style="text-align:left;">
+
+0.0009
+
+</td>
+<td style="text-align:left;">
+
+0.12
+
+</td>
+<td style="text-align:left;">
+
+0.000016
+
+</td>
+<td style="text-align:left;">
+
+0.000033
+
+</td>
+<td style="text-align:left;">
+
+0.00003
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 5-9 age group
+
+</td>
+<td style="text-align:left;">
+
+0.058
+
+</td>
+<td style="text-align:left;">
+
+0.0018
+
+</td>
+<td style="text-align:left;">
+
+0.0009
+
+</td>
+<td style="text-align:left;">
+
+0.021
+
+</td>
+<td style="text-align:left;">
+
+0.000016
+
+</td>
+<td style="text-align:left;">
+
+0.000033
+
+</td>
+<td style="text-align:left;">
+
+0.00003
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 10-14 age group
+
+</td>
+<td style="text-align:left;">
+
+0.058
+
+</td>
+<td style="text-align:left;">
+
+0.0018
+
+</td>
+<td style="text-align:left;">
+
+0.0009
+
+</td>
+<td style="text-align:left;">
+
+0.026
+
+</td>
+<td style="text-align:left;">
+
+0.00041
+
+</td>
+<td style="text-align:left;">
+
+0.00059
+
+</td>
+<td style="text-align:left;">
+
+0.00075
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 15-19 age group
+
+</td>
+<td style="text-align:left;">
+
+0.058
+
+</td>
+<td style="text-align:left;">
+
+0.0018
+
+</td>
+<td style="text-align:left;">
+
+0.0009
+
+</td>
+<td style="text-align:left;">
+
+0.053
+
+</td>
+<td style="text-align:left;">
+
+0.00041
+
+</td>
+<td style="text-align:left;">
+
+0.00059
+
+</td>
+<td style="text-align:left;">
+
+0.00075
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 20-24 age group
+
+</td>
+<td style="text-align:left;">
+
+0.082
+
+</td>
+<td style="text-align:left;">
+
+0.0018
+
+</td>
+<td style="text-align:left;">
+
+0.0009
+
+</td>
+<td style="text-align:left;">
+
+0.091
+
+</td>
+<td style="text-align:left;">
+
+0.01
+
+</td>
+<td style="text-align:left;">
+
+0.0083
+
+</td>
+<td style="text-align:left;">
+
+0.019
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 25-29 age group
+
+</td>
+<td style="text-align:left;">
+
+0.082
+
+</td>
+<td style="text-align:left;">
+
+0.0038
+
+</td>
+<td style="text-align:left;">
+
+0.0009
+
+</td>
+<td style="text-align:left;">
+
+0.16
+
+</td>
+<td style="text-align:left;">
+
+0.01
+
+</td>
+<td style="text-align:left;">
+
+0.0083
+
+</td>
+<td style="text-align:left;">
+
+0.019
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 30-34 age group
+
+</td>
+<td style="text-align:left;">
+
+0.082
+
+</td>
+<td style="text-align:left;">
+
+0.0038
+
+</td>
+<td style="text-align:left;">
+
+0.0009
+
+</td>
+<td style="text-align:left;">
+
+0.13
+
+</td>
+<td style="text-align:left;">
+
+0.034
+
+</td>
+<td style="text-align:left;">
+
+0.02
+
+</td>
+<td style="text-align:left;">
+
+0.063
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 35-39 age group
+
+</td>
+<td style="text-align:left;">
+
+0.082
+
+</td>
+<td style="text-align:left;">
+
+0.0038
+
+</td>
+<td style="text-align:left;">
+
+0.0009
+
+</td>
+<td style="text-align:left;">
+
+0.12
+
+</td>
+<td style="text-align:left;">
+
+0.034
+
+</td>
+<td style="text-align:left;">
+
+0.02
+
+</td>
+<td style="text-align:left;">
+
+0.063
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 40-44 age group
+
+</td>
+<td style="text-align:left;">
+
+0.3
+
+</td>
+<td style="text-align:left;">
+
+0.0038
+
+</td>
+<td style="text-align:left;">
+
+0.0009
+
+</td>
+<td style="text-align:left;">
+
+0.088
+
+</td>
+<td style="text-align:left;">
+
+0.042
+
+</td>
+<td style="text-align:left;">
+
+0.016
+
+</td>
+<td style="text-align:left;">
+
+0.079
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 45-49 age group
+
+</td>
+<td style="text-align:left;">
+
+0.3
+
+</td>
+<td style="text-align:left;">
+
+0.0038
+
+</td>
+<td style="text-align:left;">
+
+0.023
+
+</td>
+<td style="text-align:left;">
+
+0.064
+
+</td>
+<td style="text-align:left;">
+
+0.042
+
+</td>
+<td style="text-align:left;">
+
+0.016
+
+</td>
+<td style="text-align:left;">
+
+0.079
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 50-54 age group
+
+</td>
+<td style="text-align:left;">
+
+0.3
+
+</td>
+<td style="text-align:left;">
+
+0.0071
+
+</td>
+<td style="text-align:left;">
+
+0.023
+
+</td>
+<td style="text-align:left;">
+
+0.088
+
+</td>
+<td style="text-align:left;">
+
+0.082
+
+</td>
+<td style="text-align:left;">
+
+0.021
+
+</td>
+<td style="text-align:left;">
+
+0.15
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 55-59 age group
+
+</td>
+<td style="text-align:left;">
+
+0.3
+
+</td>
+<td style="text-align:left;">
+
+0.0071
+
+</td>
+<td style="text-align:left;">
+
+0.023
+
+</td>
+<td style="text-align:left;">
+
+0.063
+
+</td>
+<td style="text-align:left;">
+
+0.082
+
+</td>
+<td style="text-align:left;">
+
+0.021
+
+</td>
+<td style="text-align:left;">
+
+0.15
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 60-64 age group
+
+</td>
+<td style="text-align:left;">
+
+0.87
+
+</td>
+<td style="text-align:left;">
+
+0.0071
+
+</td>
+<td style="text-align:left;">
+
+0.023
+
+</td>
+<td style="text-align:left;">
+
+0.16
+
+</td>
+<td style="text-align:left;">
+
+0.12
+
+</td>
+<td style="text-align:left;">
+
+0.031
+
+</td>
+<td style="text-align:left;">
+
+0.22
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 65-69 age group
+
+</td>
+<td style="text-align:left;">
+
+0.87
+
+</td>
+<td style="text-align:left;">
+
+0.01
+
+</td>
+<td style="text-align:left;">
+
+0.18
+
+</td>
+<td style="text-align:left;">
+
+0.22
+
+</td>
+<td style="text-align:left;">
+
+0.12
+
+</td>
+<td style="text-align:left;">
+
+0.031
+
+</td>
+<td style="text-align:left;">
+
+0.22
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 70-74 age group
+
+</td>
+<td style="text-align:left;">
+
+0.87
+
+</td>
+<td style="text-align:left;">
+
+0.01
+
+</td>
+<td style="text-align:left;">
+
+0.18
+
+</td>
+<td style="text-align:left;">
+
+0.26
+
+</td>
+<td style="text-align:left;">
+
+0.17
+
+</td>
+<td style="text-align:left;">
+
+0.061
+
+</td>
+<td style="text-align:left;">
+
+0.31
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 75-79 age group
+
+</td>
+<td style="text-align:left;">
+
+0.87
+
+</td>
+<td style="text-align:left;">
+
+0.01
+
+</td>
+<td style="text-align:left;">
+
+0.18
+
+</td>
+<td style="text-align:left;">
+
+0.26
+
+</td>
+<td style="text-align:left;">
+
+0.17
+
+</td>
+<td style="text-align:left;">
+
+0.061
+
+</td>
+<td style="text-align:left;">
+
+0.31
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IHR in 80+ age group
+
+</td>
+<td style="text-align:left;">
+
+0.6
+
+</td>
+<td style="text-align:left;">
+
+0.01
+
+</td>
+<td style="text-align:left;">
+
+0.18
+
+</td>
+<td style="text-align:left;">
+
+0.26
+
+</td>
+<td style="text-align:left;">
+
+0.18
+
+</td>
+<td style="text-align:left;">
+
+0.11
+
+</td>
+<td style="text-align:left;">
+
+0.34
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 0-4 age group
+
+</td>
+<td style="text-align:left;">
+
+0.015
+
+</td>
+<td style="text-align:left;">
+
+0.00018
+
+</td>
+<td style="text-align:left;">
+
+0.000067
+
+</td>
+<td style="text-align:left;">
+
+0.015
+
+</td>
+<td style="text-align:left;">
+
+0.000016
+
+</td>
+<td style="text-align:left;">
+
+0.000033
+
+</td>
+<td style="text-align:left;">
+
+0.00003
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 5-9 age group
+
+</td>
+<td style="text-align:left;">
+
+0.015
+
+</td>
+<td style="text-align:left;">
+
+0.000074
+
+</td>
+<td style="text-align:left;">
+
+0.000067
+
+</td>
+<td style="text-align:left;">
+
+0.0027
+
+</td>
+<td style="text-align:left;">
+
+0.000016
+
+</td>
+<td style="text-align:left;">
+
+0.000033
+
+</td>
+<td style="text-align:left;">
+
+0.00003
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 10-14 age group
+
+</td>
+<td style="text-align:left;">
+
+0.015
+
+</td>
+<td style="text-align:left;">
+
+0.000074
+
+</td>
+<td style="text-align:left;">
+
+0.000067
+
+</td>
+<td style="text-align:left;">
+
+0.0032
+
+</td>
+<td style="text-align:left;">
+
+0.00007
+
+</td>
+<td style="text-align:left;">
+
+0.0001
+
+</td>
+<td style="text-align:left;">
+
+0.00013
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 15-19 age group
+
+</td>
+<td style="text-align:left;">
+
+0.015
+
+</td>
+<td style="text-align:left;">
+
+0.00008
+
+</td>
+<td style="text-align:left;">
+
+0.000067
+
+</td>
+<td style="text-align:left;">
+
+0.0066
+
+</td>
+<td style="text-align:left;">
+
+0.00007
+
+</td>
+<td style="text-align:left;">
+
+0.0001
+
+</td>
+<td style="text-align:left;">
+
+0.00013
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 20-24 age group
+
+</td>
+<td style="text-align:left;">
+
+0.021
+
+</td>
+<td style="text-align:left;">
+
+0.00008
+
+</td>
+<td style="text-align:left;">
+
+0.000067
+
+</td>
+<td style="text-align:left;">
+
+0.011
+
+</td>
+<td style="text-align:left;">
+
+0.00031
+
+</td>
+<td style="text-align:left;">
+
+0.00025
+
+</td>
+<td style="text-align:left;">
+
+0.00057
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 25-29 age group
+
+</td>
+<td style="text-align:left;">
+
+0.021
+
+</td>
+<td style="text-align:left;">
+
+0.0002
+
+</td>
+<td style="text-align:left;">
+
+0.000067
+
+</td>
+<td style="text-align:left;">
+
+0.02
+
+</td>
+<td style="text-align:left;">
+
+0.00031
+
+</td>
+<td style="text-align:left;">
+
+0.00025
+
+</td>
+<td style="text-align:left;">
+
+0.00057
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 30-34 age group
+
+</td>
+<td style="text-align:left;">
+
+0.021
+
+</td>
+<td style="text-align:left;">
+
+0.0002
+
+</td>
+<td style="text-align:left;">
+
+0.000067
+
+</td>
+<td style="text-align:left;">
+
+0.017
+
+</td>
+<td style="text-align:left;">
+
+0.00084
+
+</td>
+<td style="text-align:left;">
+
+0.00048
+
+</td>
+<td style="text-align:left;">
+
+0.0016
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 35-39 age group
+
+</td>
+<td style="text-align:left;">
+
+0.021
+
+</td>
+<td style="text-align:left;">
+
+0.0002
+
+</td>
+<td style="text-align:left;">
+
+0.000067
+
+</td>
+<td style="text-align:left;">
+
+0.015
+
+</td>
+<td style="text-align:left;">
+
+0.00084
+
+</td>
+<td style="text-align:left;">
+
+0.00048
+
+</td>
+<td style="text-align:left;">
+
+0.0016
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 40-44 age group
+
+</td>
+<td style="text-align:left;">
+
+0.077
+
+</td>
+<td style="text-align:left;">
+
+0.0002
+
+</td>
+<td style="text-align:left;">
+
+0.000067
+
+</td>
+<td style="text-align:left;">
+
+0.011
+
+</td>
+<td style="text-align:left;">
+
+0.0016
+
+</td>
+<td style="text-align:left;">
+
+0.0006
+
+</td>
+<td style="text-align:left;">
+
+0.003
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 45-49 age group
+
+</td>
+<td style="text-align:left;">
+
+0.077
+
+</td>
+<td style="text-align:left;">
+
+0.00043
+
+</td>
+<td style="text-align:left;">
+
+0.0017
+
+</td>
+<td style="text-align:left;">
+
+0.008
+
+</td>
+<td style="text-align:left;">
+
+0.0016
+
+</td>
+<td style="text-align:left;">
+
+0.0006
+
+</td>
+<td style="text-align:left;">
+
+0.003
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 50-54 age group
+
+</td>
+<td style="text-align:left;">
+
+0.077
+
+</td>
+<td style="text-align:left;">
+
+0.00043
+
+</td>
+<td style="text-align:left;">
+
+0.0017
+
+</td>
+<td style="text-align:left;">
+
+0.011
+
+</td>
+<td style="text-align:left;">
+
+0.006
+
+</td>
+<td style="text-align:left;">
+
+0.0015
+
+</td>
+<td style="text-align:left;">
+
+0.011
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 55-59 age group
+
+</td>
+<td style="text-align:left;">
+
+0.077
+
+</td>
+<td style="text-align:left;">
+
+0.00043
+
+</td>
+<td style="text-align:left;">
+
+0.0017
+
+</td>
+<td style="text-align:left;">
+
+0.0078
+
+</td>
+<td style="text-align:left;">
+
+0.006
+
+</td>
+<td style="text-align:left;">
+
+0.0015
+
+</td>
+<td style="text-align:left;">
+
+0.011
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 60-64 age group
+
+</td>
+<td style="text-align:left;">
+
+0.22
+
+</td>
+<td style="text-align:left;">
+
+0.00043
+
+</td>
+<td style="text-align:left;">
+
+0.0017
+
+</td>
+<td style="text-align:left;">
+
+0.021
+
+</td>
+<td style="text-align:left;">
+
+0.019
+
+</td>
+<td style="text-align:left;">
+
+0.005
+
+</td>
+<td style="text-align:left;">
+
+0.036
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 65-69 age group
+
+</td>
+<td style="text-align:left;">
+
+0.22
+
+</td>
+<td style="text-align:left;">
+
+0.0066
+
+</td>
+<td style="text-align:left;">
+
+0.013
+
+</td>
+<td style="text-align:left;">
+
+0.028
+
+</td>
+<td style="text-align:left;">
+
+0.019
+
+</td>
+<td style="text-align:left;">
+
+0.005
+
+</td>
+<td style="text-align:left;">
+
+0.036
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 70-74 age group
+
+</td>
+<td style="text-align:left;">
+
+0.22
+
+</td>
+<td style="text-align:left;">
+
+0.0066
+
+</td>
+<td style="text-align:left;">
+
+0.013
+
+</td>
+<td style="text-align:left;">
+
+0.033
+
+</td>
+<td style="text-align:left;">
+
+0.043
+
+</td>
+<td style="text-align:left;">
+
+0.016
+
+</td>
+<td style="text-align:left;">
+
+0.079
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 75-79 age group
+
+</td>
+<td style="text-align:left;">
+
+0.22
+
+</td>
+<td style="text-align:left;">
+
+0.0066
+
+</td>
+<td style="text-align:left;">
+
+0.013
+
+</td>
+<td style="text-align:left;">
+
+0.033
+
+</td>
+<td style="text-align:left;">
+
+0.043
+
+</td>
+<td style="text-align:left;">
+
+0.016
+
+</td>
+<td style="text-align:left;">
+
+0.079
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+IFR in 80+ age group
+
+</td>
+<td style="text-align:left;">
+
+0.15
+
+</td>
+<td style="text-align:left;">
+
+0.0066
+
+</td>
+<td style="text-align:left;">
+
+0.013
+
+</td>
+<td style="text-align:left;">
+
+0.033
+
+</td>
+<td style="text-align:left;">
+
+0.078
+
+</td>
+<td style="text-align:left;">
+
+0.048
+
+</td>
+<td style="text-align:left;">
+
+0.14
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+probability symptomatic
+
+</td>
+<td style="text-align:left;">
+
+0.87
+
+</td>
+<td style="text-align:left;">
+
+0.67
+
+</td>
+<td style="text-align:left;">
+
+0.67
+
+</td>
+<td style="text-align:left;">
+
+0.67
+
+</td>
+<td style="text-align:left;">
+
+0.6
+
+</td>
+<td style="text-align:left;">
+
+0.6
+
+</td>
+<td style="text-align:left;">
+
+0.6
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+latent period
+
+</td>
+<td style="text-align:left;">
+
+4.6
+
+</td>
+<td style="text-align:left;">
+
+1.1
+
+</td>
+<td style="text-align:left;">
+
+1.1
+
+</td>
+<td style="text-align:left;">
+
+1.1
+
+</td>
+<td style="text-align:left;">
+
+4.6
+
+</td>
+<td style="text-align:left;">
+
+4
+
+</td>
+<td style="text-align:left;">
+
+4
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+duration asymptomatic
+
+</td>
+<td style="text-align:left;">
+
+2.1
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+2.1
+
+</td>
+<td style="text-align:left;">
+
+2.1
+
+</td>
+<td style="text-align:left;">
+
+2.1
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+duration infectious and symptomatic given recovery without
+hospitalisation
+
+</td>
+<td style="text-align:left;">
+
+4
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+4
+
+</td>
+<td style="text-align:left;">
+
+4
+
+</td>
+<td style="text-align:left;">
+
+4
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+duration infectious and symptomatic given hospitalisation
+
+</td>
+<td style="text-align:left;">
+
+3.8
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+4
+
+</td>
+<td style="text-align:left;">
+
+4
+
+</td>
+<td style="text-align:left;">
+
+4
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+duration hospitalised given recovery
+
+</td>
+<td style="text-align:left;">
+
+23
+
+</td>
+<td style="text-align:left;">
+
+5
+
+</td>
+<td style="text-align:left;">
+
+5
+
+</td>
+<td style="text-align:left;">
+
+5
+
+</td>
+<td style="text-align:left;">
+
+12
+
+</td>
+<td style="text-align:left;">
+
+5.5
+
+</td>
+<td style="text-align:left;">
+
+7.6
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+duration hospitalised given death
+
+</td>
+<td style="text-align:left;">
+
+20
+
+</td>
+<td style="text-align:left;">
+
+5
+
+</td>
+<td style="text-align:left;">
+
+5
+
+</td>
+<td style="text-align:left;">
+
+5
+
+</td>
+<td style="text-align:left;">
+
+12
+
+</td>
+<td style="text-align:left;">
+
+5.5
+
+</td>
+<td style="text-align:left;">
+
+7.6
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+duration of infection-acquired immunity
+
+</td>
+<td style="text-align:left;">
+
+360
+
+</td>
+<td style="text-align:left;">
+
+360
+
+</td>
+<td style="text-align:left;">
+
+360
+
+</td>
+<td style="text-align:left;">
+
+360
+
+</td>
+<td style="text-align:left;">
+
+360
+
+</td>
+<td style="text-align:left;">
+
+360
+
+</td>
+<td style="text-align:left;">
+
+360
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+relative infectiousness of asymptomatic
+
+</td>
+<td style="text-align:left;">
+
+0.58
+
+</td>
+<td style="text-align:left;">
+
+0.58
+
+</td>
+<td style="text-align:left;">
+
+0.58
+
+</td>
+<td style="text-align:left;">
+
+0.58
+
+</td>
+<td style="text-align:left;">
+
+0.58
+
+</td>
+<td style="text-align:left;">
+
+0.58
+
+</td>
+<td style="text-align:left;">
+
+0.58
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+basic reproduction number
+
+</td>
+<td style="text-align:left;">
+
+1.8
+
+</td>
+<td style="text-align:left;">
+
+1.6
+
+</td>
+<td style="text-align:left;">
+
+1.8
+
+</td>
+<td style="text-align:left;">
+
+2.5
+
+</td>
+<td style="text-align:left;">
+
+2.9
+
+</td>
+<td style="text-align:left;">
+
+5.9
+
+</td>
+<td style="text-align:left;">
+
+5.1
+
+</td>
+</tr>
+</tbody>
+</table>
+
+| Model parameter name                       | Distribution     | Distribution parameter values | Correlations                                            |
+|:-------------------------------------------|:-----------------|:------------------------------|:--------------------------------------------------------|
+| Probability symptomatic                    | Beta             | 14.68, 7.30                   | None                                                    |
+| Latent period                              | Gamma            | 2.28, 1.06                    | None                                                    |
+| Asymptomatic infectious period             | Gamma            | 139.0, 0.017                  | None                                                    |
+| Time from symptom onset to recovery        | Gamma            | 18.61, 0.17                   | 0.99 (time to hospitalisation); 0.60 (R$_0$)            |
+| Time from symptom onset to hospitalisation | Gamma            | 21.21, 0.14                   | 0.99 (time to recovery); 0.66 (R$_0$)                   |
+| Time from hospitalisation to recovery      | Gamma            | 2.46, 3.75                    | 0.997                                                   |
+| Time from hospitalisation to death         | Gamma            | 2.93, 2.96                    | 0.997                                                   |
+| Time to immunity waning                    | Constant         | Inf                           | None                                                    |
+| Relative infectiousness of asymptomatic    | Constant         | 0.58                          | None                                                    |
+| R$_0$                                      | Truncated normal | 2.45, 1.32; (1.5, 4)          | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
+
+<span id="tab:pathogenparameters"></span>Table 5.2: Distributions for
+pathogen parameters used to sample synthetic pathogens. Distributions
+are built from values in Table <a href="#tab:pathogenprofile">5.1</a>.
+
+<!-- ```{r ratesbyage,fig.cap='Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table \<a href="#tab:pathogenprofile">5.1</a>.',echo=F,warning=F,message=F, out.width="50%"} -->
+<!-- knitr::include_graphics("ratesbyage.jpg") -->
+<!-- ``` -->
+
+<figure>
+<img src="README_files/figure-gfm/ratesbyage.jpeg"
+alt="Figure 5.1: Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table 5.1." />
+<figcaption aria-hidden="true"><span id="fig:ratesbyage"></span>Figure
+5.1: Infection hospitalisation and fatality ratios are generated by
+modelling profiles from SARS and influenza ratios. x axis: age group
+index. y axis: log ratio. Colours: seven example profiles. Grey: sampled
+profiles. Profiles are built from values in Table
+<a href="#tab:pathogenprofile">5.1</a>.</figcaption>
+</figure>
+
+# 6 Parametric distributions
 
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 
-<span id="tab:paramdist"></span>Table 5.1: Parameter distributions.
+<span id="tab:paramdist"></span>Table 6.1: Parameter distributions.
 
 </caption>
 <thead>
@@ -3709,7 +5654,7 @@ Beta
 </tbody>
 </table>
 
-## 5.1 Hospital capacity
+## 6.1 Hospital capacity
 
 <div class="figure">
 
@@ -3717,7 +5662,7 @@ Beta
 
 <p class="caption">
 
-<span id="fig:hmax"></span>Figure 5.1: Hospital capacity: available beds
+<span id="fig:hmax"></span>Figure 6.1: Hospital capacity: available beds
 minus usual occupancy.
 
 </p>
@@ -3729,13 +5674,13 @@ parameters 1.3 and 0.05. For UMICs, we have parameters 1.73 and 0.02.
 For HICs, we have parameters 2.05 and 0.02. (Data sources: World Bank
 (beds); OECD, WHO euro (bed occupancy rates).)
 
-## 5.2 Labour share of GVA
+## 6.2 Labour share of GVA
 
 We estimate the average annual income per working-age adult as the total
 GVA multiplied by the fraction of GVA that goes to labour divided by the
 number of working-age adults. For the fraction of GVA that goes to
 labour we use PWT estimates from 2011 (Figure
-<a href="#fig:labsh">5.2</a>).
+<a href="#fig:labsh">6.2</a>).
 
 <!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is 207% of GDP. For a UMIC, the cost of a lost school year is 73% of GDP. For an HIC, the cost of a lost school year is 30% of GDP. -->
 
@@ -3745,7 +5690,7 @@ labour we use PWT estimates from 2011 (Figure
 
 <p class="caption">
 
-<span id="fig:labsh"></span>Figure 5.2: Fraction of GVA that goes to
+<span id="fig:labsh"></span>Figure 6.2: Fraction of GVA that goes to
 labour (PWT, 2011).
 
 </p>
@@ -3756,7 +5701,7 @@ We model these values with Beta distributions. For LLMICs, we have
 parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18.
 For HICs, we have parameters 7.97 and 6.87.
 
-## 5.3 Vaccine administration
+## 6.3 Vaccine administration
 
 <div class="figure">
 
@@ -3764,7 +5709,7 @@ For HICs, we have parameters 7.97 and 6.87.
 
 <p class="caption">
 
-<span id="fig:vaxrate"></span>Figure 5.3: Vaccines administered per day,
+<span id="fig:vaxrate"></span>Figure 6.3: Vaccines administered per day,
 on average, in each country as a percent of population. Data source:
 fully vaccinated people from OWID (2022).
 
@@ -3772,16 +5717,16 @@ fully vaccinated people from OWID (2022).
 
 </div>
 
-Figure <a href="#fig:vaxrate">5.3</a> shows histograms of COVID-19
+Figure <a href="#fig:vaxrate">6.3</a> shows histograms of COVID-19
 vaccine administration rates by income level. Values are estimates of
 administration rates of complete schedules given. Administration rates
 are estimated as the best-fit slope observed in the pandemic period
-(Figure <a href="#fig:vaxratemx">5.4</a>). The administration slope
+(Figure <a href="#fig:vaxratemx">6.4</a>). The administration slope
 ideally represents the highest rate possible: rates are often low to
 begin with, due to limited supply. They are often low at the end, due to
 depleted demand.
 
-Using the method illustrated in Figure <a href="#fig:vaxratemx">5.4</a>,
+Using the method illustrated in Figure <a href="#fig:vaxratemx">6.4</a>,
 we estimate how many countries per income group surpassed an average
 maximum rate of 0.5% of the population per day: 7% of HICs, 2% of UMICs,
 and 5% of LLMICs.
@@ -3792,7 +5737,7 @@ and 5% of LLMICs.
 
 <p class="caption">
 
-<span id="fig:vaxratemx"></span>Figure 5.4: Vaccine administration in
+<span id="fig:vaxratemx"></span>Figure 6.4: Vaccine administration in
 Mexico. The blue line shows the average rate over the whole vaccination
 campaign. The yellow line shows the average rate when administration was
 rate limiting.
@@ -3806,7 +5751,7 @@ in which the rate was limited by neither demand nor supply. Therefore we
 use an alternative source to validate our choices of administration rate
 in different scenarios.
 
-Figure <a href="#fig:vaxratewho">5.5</a> shows that in 40% of
+Figure <a href="#fig:vaxratewho">6.5</a> shows that in 40% of
 vaccination campaigns in LLMICs, the rate exceeded 0.2% of the
 population per day; in 28% of campaigns, the rate exceeded 0.4% of the
 population per day; and in 13% of campaigns, the rate exceeded 1% of the
@@ -3815,17 +5760,16 @@ countries.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaccinationrates.png" alt="Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more [@whoSummaryMeaslesRubellaSupplementary]. The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up." width="80%" />
+<img src="README_files/figure-gfm/vaccinationrates.png" alt="Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more [@whoSummaryMeaslesRubellaSupplementary2022]. The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up." width="80%" />
 
 <p class="caption">
 
-<span id="fig:vaxratewho"></span>Figure 5.5: Vaccine administration
+<span id="fig:vaxratewho"></span>Figure 6.5: Vaccine administration
 rates in LLMICs. Shown is the cumulative distribution of delivery rate,
 measured as the % of the population vaccinated per day. The data consist
 of 141 points, from 55 countries that are currently classified as LIC or
 LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR
-vaccines, lasting two weeks or more
-(**whoSummaryMeaslesRubellaSupplementary?**). The types of programme
+vaccines, lasting two weeks or more (WHO 2022). The types of programme
 include campaigns and outbreak response as well as catch up, follow up,
 speed up, and mop up.
 
@@ -3833,7 +5777,7 @@ speed up, and mop up.
 
 </div>
 
-## 5.4 Compliance with the requirement to self isolate
+## 6.4 Compliance with the requirement to self isolate
 
 We use a broad Beta distribution with parameters (5,5) to describe the
 compliance of the population with the requirement to isolate if
@@ -3856,7 +5800,7 @@ average value for Australia was 88%. A survey undertaken in 2009 found
 that 55% of households complied with quarantine requirements
 (<https://doi.org/10.1186/1471-2334-11-2>).
 
-# 6 Notation
+# 7 Notation
 
 In general in this notation, subscripts are indices, and superscripts
 are never indices but instead define new labels. In particular, note
@@ -4211,6 +6155,23 @@ Baguelin, Peter Winskill, Arran Hamlet, Bimandra A. Djafaara, et al.
 2020. “The Impact of COVID-19 and Strategies for Mitigation and
 Suppression in Low- and Middle-Income Countries.” *Science* 369 (6502):
 413–22. <https://doi.org/10.1126/science.abc0035>.
+
+</div>
+
+<div id="ref-whittakerQuantifyingImpactBroadly2024" class="csl-entry">
+
+Whittaker, Charles, Gregory Barnsley, Daniela Olivera Mesa, Daniel J
+Laydon, Chee Wah Tan, Feng Zhu, Rob Johnson, et al. 2024. “Quantifying
+the Impact of a Broadly Protective Sarbecovirus Vaccine in a Future
+SARS-X Pandemic.” <https://doi.org/10.1101/2024.08.12.24311730>.
+
+</div>
+
+<div id="ref-whoSummaryMeaslesRubellaSupplementary2022"
+class="csl-entry">
+
+WHO. 2022. “Summary of Measles-Rubella Supplementary Immunization
+Activities.”
 
 </div>
 
