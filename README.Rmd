@@ -120,42 +120,15 @@ bpsv_levels <- c(0,1)
 - The response time is the time at which the reporting country reports having seen X hospital cases, where X is a random number between 1 and 20
 - The importation time is a random number between 0 and 20 days, where 0 days would be equivalent to the spillover, or origin, country
 - The simulation starts at the minimum between the response time and the importation time
-- At the response time, the BPSV, if present, is given to people aged 65 and older; testing begins; economic closures, if in use, are implemented
+- At the response time, the BPSV, if present, is given to people aged 65 and older; testing begins; working from home begins; economic closures, if in use, are implemented
 - At the importation time, five people are moved from compartment S to compartment E
 - If closure policies (RC1, RC2, or RC3) are being implemented, the rules in Tables \@ref(tab:rulesreactive) or \@ref(tab:ruleselimination) are followed
 - The SARS-X--specific vaccine is rolled out starting at least day 107 after the response time, depending on the investment scenario assumption
 - All people aged 15 and over are eligible for vaccination, and we assume 80% take it up
 - Distribution rate depends on investment scenario assumptions
-- Once vaccine rollout is complete, closures and testing end
+- Once vaccine rollout is complete, closures, working from home and testing end
 - When the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends.
 
-| From/to | No closures | Light closures | Heavy closures |
-|:----- |:----- |:----- |:----- |
-| **No closures** |  | t $\geq$ response time AND Hospital occupancy > 95% capacity |  | 
-| **Light closures** | (Growth rate < 0.025 OR Hospital occupancy < 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |  | Hospital occupancy > 95% capacity |
-| **Heavy closures** |  | Hospital occupancy < 25% capacity AND t > 7 + last change time |  | 
-
-Table: (\#tab:rulesreactive) State transition rules for policies RC1 and RC2. See Table \@ref(tab:eccon) for details of closures.
-
-| From/to | No closures | Light closures | Heavy closures |
-|:----- |:----- |:----- |:----- |
-| **No closures** |  |  t $\geq$ response time OR Hospital occupancy > 95% capacity | | 
-| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  |  | $R_t > 1.2$ |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t > 7 + last change time |  | 
-
-Table: (\#tab:ruleselimination) State transition rules for policy RC3. See Table \@ref(tab:eccon) for details of closures.
-
-# Vaccine effects
-
-Quantity | BPSV | SSV
-|:----- |:----- |:----- |
-Time to develop immunity | 21 days | 21 days 
-Effectiveness against infection | 0.35 | 0.55 
-Effectiveness against hospitalisation | 0.8 | 0.9 
-Effect on transmission | 0 | 0 
-Rate of waning | 0 | 0 
-
-Table: (\#tab:vaccineeffects) Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition 1/21 per day. The Effectiveness against transmission is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time.
 
 # Socio-economic costs
 
@@ -552,6 +525,19 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
 \end{tikzpicture}
 
 ```
+
+### Vaccine effects
+
+Quantity | BPSV | SSV
+|:----- |:----- |:----- |
+Time to develop immunity | 21 days | 21 days 
+Effectiveness against infection | 0.35 | 0.55 
+Effectiveness against hospitalisation | 0.8 | 0.9 
+Effect on transmission | 0 | 0 
+Rate of waning | 0 | 0 
+
+Table: (\#tab:vaccineeffects) Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition 1/21 per day. The Effectiveness against transmission is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time.
+
 
 ## Contact rates
 
@@ -956,7 +942,7 @@ Here, $p^5$ controls the variance of the distribution and $p^6$ and $p^7$ the li
 ## Remote working
 
 
-For each sector in each country, we have the 90% interval for the proportion of people who can work from home from [@Gottlieb2021]. We assume that the value we sample within the range is related to internet infrastructure, so that a low value in one sector implies low values in all sectors. We:
+For each sector in each country, we have the 90% interval for the proportion of people who can work from home from @Gottlieb2021. We assume that the value we sample within the range is related to internet infrastructure, so that a low value in one sector implies low values in all sectors. We:
 
 - take the subset of countries in the income group (LLMIC / UMIC / HIC);
 - take the minimum of the lower bounds by sector (5%);
@@ -967,7 +953,105 @@ For each sector in each country, we have the 90% interval for the proportion of 
 internetplot
 ```
 
+
+We assume that remote working happens to its fullest extent for the whole period of mitigation for all policies.
+
 <!-- We model the Figure \@ref(fig:internet) values with Beta distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape1'],2)` and  `r round(llmic$estimate['shape2'],2)`. For UMICs, we have parameters `r round(mic$estimate['shape1'],2)` and  `r round(mic$estimate['shape2'],2)`. For HICs, we have parameters `r round(hic$estimate['shape1'],2)` and  `r round(hic$estimate['shape2'],2)`. -->
+
+# Closure policies
+
+
+Impacts of mandated closures of businesses and schools on epidemics can be described using three factors: length, stringency, and frequency. We model mandated closures using a discrete set of predefined policies, which specify the *stringency* of closures in each sector. The policies we use are the same for each country. The length and frequency of economic closures are endogenous to the model (via its epidemiology), and therefore depend on the dynamics of the epidemic that is being modelled. 
+
+We define four generic policies that might be adopted once a novel pathogen has been identified. The policies represent possible choices that range from very stringent to laissez faire, and are grounded in real-life observations. We name the policies no closures (NC) and reactive closures 1 to 3 (RC1 to RC3), and they are depicted in Figure \@ref(fig:policies), structured by the qualities that distinguish them. 
+
+The three sector-closure policies are each defined by a pair of economic configurations, and rules for moving between them. An economic configuration is a vector specifying the extent to which each sector is open, expressed as a percentage. Our economic configurations are constructed using data from three countries (Indonesia (RC1), the United Kingdom (RC2), and Australia (RC3)), via the manifest economic impacts in the wake of the COVID-19 pandemic. We take the sectoral GVA observed the COVID-19 pandemic expressed as a percentage of the values observed in the year before (OECD), i.e. we assume that the relative GVA reflects the degree to which sectors were open. (In reality, the observed effects combined mandated closures, reductions in consumption and labour supply due to infection avoidance of individuals, interruptions in supply chains, and changes in  imports and exports, but these cannot be disentangled in accounts, and nor do we attempt to model them separately in our economic model.)
+
+The economic configurations define the sector closures for both the economic model and the epidemiological model. Contacts associated with sectors -- between and among workers and customers -- are scaled down with closures. GVA per sector is scaled according to economic configurations in the economic model.
+
+
+For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the "heavy" configuration has higher stringency than the "light" configuration; the configurations are tabulated in Table \@ref(tab:eccon)). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. Tables \@ref(tab:rulesreactive) and \@ref(tab:ruleselimination) show the transitions and their conditions. RC1 and RC2 respond to hospital occupancy, allowing cases to rise and using closures to allow them to fall again. RC1 keeps school closed throughout, whereas RC2 has school open in the lighter configuration. RC3 aims to reduce cases and then to keep them low. All mitigation is suspended when the vaccine rollout has reached its target coverage (which is when 80% of the eligible population have been vaccinated). 
+
+
+
+```{tikz policies, fig.cap = "The four sector-closure policy options. No closures (NC) does not mandate any closures. The other three policies all implement reactive closures (RC), either in response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The difference between RC1 and RC2 is that in RC1 schools are closed throughout, whereas in RC2 schools are fully open during the ``light closure'' configuration.", fig.ext = 'png',echo=F,out.width="50%"}
+\usetikzlibrary{shapes}
+\usetikzlibrary{fit}
+\usetikzlibrary{arrows}
+\usetikzlibrary{positioning,arrows.meta}
+\tikzset{
+     block/.style={rectangle, draw, fill=red!40, text width=6em,
+                   text centered, rounded corners, minimum height=3em},
+     arrow/.style={-{Stealth[]}}
+}
+\tikzstyle{plate} = [draw, rectangle, rounded corners, fit=#1]
+\tikzstyle{wrap} = [inner sep=0pt, fit=#1]
+\tikzstyle{caption} = [font=\footnotesize, node distance=0] %
+\tikzstyle{plate caption} = [caption, node distance=0, inner sep=0pt,
+below left=5pt and 0pt of #1.south east] %
+\tikzstyle{factor caption} = [caption] %
+\tikzstyle{every label} += [caption] %
+
+\newcommand{\plate}[4][]{ %
+  \node[wrap=#3,#1] (#2-wrap) {}; % draw box round #3, called #2, with parameters #1
+  \node[plate caption=#2-wrap] (#2-caption) {#4}; % fit caption
+  \node[plate=(#2-wrap)(#2-caption)] (#2) {}; % draw (used to have #1)
+}
+\tikzset{box/.style={draw, diamond, thick, text centered, minimum height=0.5cm, minimum width=1cm}}
+  \tikzset{line/.style={draw, thick, -latex'}}
+\tikzstyle{latent} = [circle,fill=white,draw=black,inner sep=1pt,
+minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
+%\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
+%\clip (-3, -10) rectangle (7, 1);
+\begin{tikzpicture}[auto]
+        \node [box, text width = 1.5cm,align=center]     (x3)      {Mandate closures?};
+        \node [box, below=-0.5cm of x3, xshift=-3cm, text width = 1.5cm,align=center,color=blue]    (x1sx)    {NC};
+        \node [box, below=-0.5cm of x3, xshift=3cm, text width = 1.5cm,align=center]     (x2dx)    {Responding to:};
+        \node [box, below=-0.5cm of x2dx, xshift=-2cm, text width = 1.5cm,align=center]   (x1dx)    {Schools ever open?};
+        \node [box, below=-0.5cm of x2dx, xshift=2cm, text width = 1.5cm,align=center,color=blue]    (A1dx)    {RC3};
+        \node [box, below=-0.5cm of x1dx, xshift=-2cm, text width = 1.5cm,align=center,color=blue]  (A2dx)    {RC1};
+        \node [box, below=-0.5cm of x1dx, xshift=2cm, text width = 1.5cm,align=center,color=blue]   (A3dx)    {RC2};
+        %
+        \path [line] (x3) -|   node[text width=1cm,align=center,above] {Yes}    (x2dx);
+        \path [line] (x3) -|   node[text width=1cm,align=center,above] {No}     (x1sx);
+        \path [line] (x2dx) -|   node[text width=1.75cm,align=center,above] {Hospital occupancy}       (x1dx);
+        \path [line] (x2dx) -|    node[text width=1cm,align=center,above] {$R_t$}      (A1dx);
+        \path [line] (x1dx) -|    node[text width=1cm,align=center,above] {No}   (A2dx);
+        \path [line] (x1dx) -|    node[text width=1cm,align=center,above] {Yes}      (A3dx);
+    \end{tikzpicture}
+
+```
+
+
+The sector-closure policies are defined as follows:
+
+- NC: No closures are mandated. 
+- RC1: Schools are mandated to close to 10% of pre-epidemic levels throughout, and other economic sectors close to the heavy-closure economic configuration when hospital occupancy reaches 95% of its capacity, and change to the light configuration once occupancy is less than 25% capacity.
+- RC2: Sectors (including the education sector)  toggle between heavy and light closures reactively, as in RC1, albeit with slightly different economic configurations. 
+- RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when $R_t<0.95$. Closures are maintained until $R_t<1$ without closures, or vaccination coverage targets are reached. 
+
+
+All policies assume there is testing (Section \@ref(self-isolating)), working from home (Section \@ref(remote-working)), and uncosted transmission reductions from behavioural changes (Section \@ref(uncosted-transmission-reductions)), which impact epidemiological outcomes. They do not directly impact economic outcomes, but indirectly may reduce the need for closures because of reduced incidence. 
+
+
+
+
+| From/to | No closures | Light closures | Heavy closures |
+|:----- |:----- |:----- |:----- |
+| **No closures** |  | t $\geq$ response time AND Hospital occupancy > 95% capacity |  | 
+| **Light closures** | (Growth rate < 0.025 OR Hospital occupancy < 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |  | Hospital occupancy > 95% capacity |
+| **Heavy closures** |  | Hospital occupancy < 25% capacity AND t > 7 + last change time |  | 
+
+Table: (\#tab:rulesreactive) State transition rules for policies RC1 and RC2. See Table \@ref(tab:eccon) for details of closures.
+
+| From/to | No closures | Light closures | Heavy closures |
+|:----- |:----- |:----- |:----- |
+| **No closures** |  |  t $\geq$ response time OR Hospital occupancy > 95% capacity | | 
+| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  |  | $R_t > 1.2$ |
+| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t > 7 + last change time |  | 
+
+Table: (\#tab:ruleselimination) State transition rules for policy RC3. See Table \@ref(tab:eccon) for details of closures.
+
 
 
 # Pathogen profiles
