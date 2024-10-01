@@ -2,43 +2,44 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 ================
 
 - [1 Simulation rules](#1-simulation-rules)
-- [2 Socio-economic costs](#2-socio-economic-costs)
-  - [2.1 Lost lives](#21-lost-lives)
-  - [2.2 Lost economic activity](#22-lost-economic-activity)
-  - [2.3 Lost education](#23-lost-education)
-- [3 Epi model](#3-epi-model)
-  - [3.1 Ordinary differential
-    equations](#31-ordinary-differential-equations)
-  - [3.2 Disease state transitions](#32-disease-state-transitions)
-  - [3.3 Vaccination state
-    transitions](#33-vaccination-state-transitions)
-  - [3.4 Contact rates](#34-contact-rates)
-    - [3.4.1 Community contacts](#341-community-contacts)
-    - [3.4.2 Community-to-worker
-      contacts](#342-community-to-worker-contacts)
-  - [3.5 Uncosted transmission
-    reductions](#35-uncosted-transmission-reductions)
-  - [3.6 Self isolating](#36-self-isolating)
-- [4 Econ model](#4-econ-model)
-  - [4.1 Configurations](#41-configurations)
-  - [4.2 Impact of tourism](#42-impact-of-tourism)
-    - [4.2.1 Food and accommodation services
-      sector](#421-food-and-accommodation-services-sector)
-    - [4.2.2 Sector shrinkage as a result of the
-      pandemic](#422-sector-shrinkage-as-a-result-of-the-pandemic)
-    - [4.2.3 Loss of international
-      tourists](#423-loss-of-international-tourists)
-    - [4.2.4 Dependence on international
-      tourism](#424-dependence-on-international-tourism)
-  - [4.3 Remote working](#43-remote-working)
-- [5 Pathogen profiles](#5-pathogen-profiles)
-- [6 Parametric distributions](#6-parametric-distributions)
-  - [6.1 Hospital capacity](#61-hospital-capacity)
-  - [6.2 Labour share of GVA](#62-labour-share-of-gva)
-  - [6.3 Vaccine administration](#63-vaccine-administration)
-  - [6.4 Compliance with the requirement to self
-    isolate](#64-compliance-with-the-requirement-to-self-isolate)
-- [7 Notation](#7-notation)
+- [2 Vaccine effects](#2-vaccine-effects)
+- [3 Socio-economic costs](#3-socio-economic-costs)
+  - [3.1 Lost lives](#31-lost-lives)
+  - [3.2 Lost economic activity](#32-lost-economic-activity)
+  - [3.3 Lost education](#33-lost-education)
+- [4 Epi model](#4-epi-model)
+  - [4.1 Ordinary differential
+    equations](#41-ordinary-differential-equations)
+  - [4.2 Disease state transitions](#42-disease-state-transitions)
+  - [4.3 Vaccination state
+    transitions](#43-vaccination-state-transitions)
+  - [4.4 Contact rates](#44-contact-rates)
+    - [4.4.1 Community contacts](#441-community-contacts)
+    - [4.4.2 Community-to-worker
+      contacts](#442-community-to-worker-contacts)
+  - [4.5 Uncosted transmission
+    reductions](#45-uncosted-transmission-reductions)
+  - [4.6 Self isolating](#46-self-isolating)
+- [5 Econ model](#5-econ-model)
+  - [5.1 Configurations](#51-configurations)
+  - [5.2 Impact of tourism](#52-impact-of-tourism)
+    - [5.2.1 Food and accommodation services
+      sector](#521-food-and-accommodation-services-sector)
+    - [5.2.2 Sector shrinkage as a result of the
+      pandemic](#522-sector-shrinkage-as-a-result-of-the-pandemic)
+    - [5.2.3 Loss of international
+      tourists](#523-loss-of-international-tourists)
+    - [5.2.4 Dependence on international
+      tourism](#524-dependence-on-international-tourism)
+  - [5.3 Remote working](#53-remote-working)
+- [6 Pathogen profiles](#6-pathogen-profiles)
+- [7 Parametric distributions](#7-parametric-distributions)
+  - [7.1 Hospital capacity](#71-hospital-capacity)
+  - [7.2 Labour share of GVA](#72-labour-share-of-gva)
+  - [7.3 Vaccine administration](#73-vaccine-administration)
+  - [7.4 Compliance with the requirement to self
+    isolate](#74-compliance-with-the-requirement-to-self-isolate)
+- [8 Notation](#8-notation)
 
 # 1 Simulation rules
 
@@ -76,7 +77,7 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 | **Heavy closures** |                                                                                                                       | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |                                    |
 
 <span id="tab:rulesreactive"></span>Table 1.1: State transition rules
-for policies RC1 and RC2. See Table <a href="#tab:eccon">4.1</a> for
+for policies RC1 and RC2. See Table <a href="#tab:eccon">5.1</a> for
 details of closures.
 
 | From/to            | No closures                                          | Light closures                                                          | Heavy closures |
@@ -86,10 +87,33 @@ details of closures.
 | **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t \> 7 + last change time |                |
 
 <span id="tab:ruleselimination"></span>Table 1.2: State transition rules
-for policy RC3. See Table <a href="#tab:eccon">4.1</a> for details of
+for policy RC3. See Table <a href="#tab:eccon">5.1</a> for details of
 closures.
 
-# 2 Socio-economic costs
+# 2 Vaccine effects
+
+| Quantity                              | BPSV    | SSV     |
+|:--------------------------------------|:--------|:--------|
+| Time to develop immunity              | 21 days | 21 days |
+| Effectiveness against infection       | 0.35    | 0.55    |
+| Effectiveness against hospitalisation | 0.8     | 0.9     |
+| Effect on transmission                | 0       | 0       |
+| Rate of waning                        | 0       | 0       |
+
+<span id="tab:vaccineeffects"></span>Table 2.1: Vaccine effects. The
+Time to develop immunity is the average time it takes a person to go
+from the Susceptible compartment to the Vaccinated equivalent
+compartment, such that the rate of transition 1/21 per day. The
+Effectiveness against transmission is one minus the relative risk of
+infection of a vaccinated person compared to an unvaccinated person. The
+Effectiveness against hospitalisation is one minus the relative risk of
+hospitalisation of a vaccinated person compared to an unvaccinated
+person. The Effect on transmission is one minus the relative
+infectiousness of an infectious vaccinated person compared to an
+infectious unvaccinated person. The Rate of waning is the rate at which
+the vaccine effects decay over time.
+
+# 3 Socio-economic costs
 
 We assign monetary values to YLLs and to years of education in order to
 add health and education costs of sector-closure policies to the costs
@@ -106,7 +130,7 @@ value of a life year; $K_2$ is the lost GDP over the period due to
 reduced economic activity; and $K_3$ is the number of school years lost
 and VSY the value of one school year.
 
-## 2.1 Lost lives
+## 3.1 Lost lives
 
 To value lives lost, we make use of the expected remaining life years
 per age group (Global Burden of Disease Collaborative Network 2021).
@@ -172,16 +196,16 @@ definition depends on income level, given in Table
 | OECD/IHME/World Bank | 0.5         | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2)              | Uniform(0.9, 1.2)              | 0.8              |
 | Viscusi/Masterman    | 0.5         | 1                    | 1                 | 1                              | Uniform(0.85, 1)               | Uniform(0.85, 1) |
 
-<span id="tab:vslrules"></span>Table 2.1: values for elasticities, from
+<span id="tab:vslrules"></span>Table 3.1: values for elasticities, from
 Robinson, Sullivan, and Shogren (2021), Table 2 (page 25)
 
-We note that in Table <a href="#tab:vslrules">2.1</a> there is a
+We note that in Table <a href="#tab:vslrules">3.1</a> there is a
 relationship between exchange rate and elasticity, in that the flatter
 elasticity of Viscusi/Masterman is accompanied by market exchange rate
 expression of GNI per capita, whereas the more graduated elasticities of
 OECD/IHME/World Bank are accompanied by purchasing power parity. This
 might be because these choices enact inverse transformations of low
-values for GNI per capita (Figure <a href="#fig:pppelasticity">2.1</a>).
+values for GNI per capita (Figure <a href="#fig:pppelasticity">3.1</a>).
 
 <div class="figure">
 
@@ -189,7 +213,7 @@ values for GNI per capita (Figure <a href="#fig:pppelasticity">2.1</a>).
 
 <p class="caption">
 
-<span id="fig:pppelasticity"></span>Figure 2.1: Exposition of different
+<span id="fig:pppelasticity"></span>Figure 3.1: Exposition of different
 methods to estimate VSL from GNI per capita relative to the USA. On the
 y axis is VSL expressed as a percentage of GDP per capita. The grey line
 indicates the USA. We compare GNI per capita expressed using market
@@ -200,7 +224,7 @@ vs. 1.5. Data source: World Bank.
 
 </div>
 
-## 2.2 Lost economic activity
+## 3.2 Lost economic activity
 
 We measure the cost of economic closures in terms of lost gross value
 added (GVA): the GDP generated by an economic configuration is the
@@ -257,7 +281,7 @@ and the GDP loss compared to the maximum is
 
 $$K_2=Y_0-Y.$$
 
-## 2.3 Lost education
+## 3.3 Lost education
 
 The loss due to school closure is
 
@@ -310,9 +334,9 @@ including education level, engagement and socio-economic status
 (Moscoviz and Evans 2022). However, these factors might be more
 pertinent to intra- rather than international modelling.
 
-# 3 Epi model
+# 4 Epi model
 
-## 3.1 Ordinary differential equations
+## 4.1 Ordinary differential equations
 
 $$\begin{align}
 \frac{dS_{j,v}}{dt} & = \sum_{u=0}^{v-1}k^9S_{j,u}^{c_v} - \left( k_{j,v}^{1}(t) + \sum_{u=v+1}^{{m_V}}k_{j,v}^{10,c_u}(t) \right)S_{j,v} \\
@@ -325,7 +349,7 @@ $$\begin{align}
 \frac{dD_{j,v}}{dt} & =  k_{j}^{8}(t) H_{j,v}
 \end{align}$$
 
-## 3.2 Disease state transitions
+## 4.2 Disease state transitions
 
 <div class="figure">
 
@@ -333,7 +357,7 @@ $$\begin{align}
 
 <p class="caption">
 
-<span id="fig:statetransitions"></span>Figure 3.1: Disease state
+<span id="fig:statetransitions"></span>Figure 4.1: Disease state
 transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic
 infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$:
 recovered. $D$: died. $j$: stratum. $v$: vaccination status.
@@ -343,7 +367,7 @@ recovered. $D$: died. $j$: stratum. $v$: vaccination status.
 </div>
 
 Possible transitions between disease states are shown in Figure
-<a href="#fig:statetransitions">3.1</a>. Transition rates are functions
+<a href="#fig:statetransitions">4.1</a>. Transition rates are functions
 of time $t$, vaccination status $v$, and group identity $j$ (where the
 groups are the 45 sectors and the four age groups).
 
@@ -352,7 +376,7 @@ defined as
 
 $$\begin{equation}
 k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_J}M_{j,h}(x) I_h(t)
-\qquad(3.1)
+\qquad(4.1)
 \end{equation}$$
 
 with $m_J=49$ strata and
@@ -450,13 +474,13 @@ k^{8}_{j}(t) = p^{D}_{j}(t)/T_j^{H}(t)
 
 is the rate of death following hospitalisation.
 
-## 3.3 Vaccination state transitions
+## 4.3 Vaccination state transitions
 
 In our model, $v=0$ refers to unvaccinated people, $v=1$ to people who
 have received a full schedule of BPSV, and $v=2$ to people who have
 received a full schedule of the specific vaccine. How we model
 transitions between vaccination states is shown in Figure
-<a href="#fig:vaccinetransitions">3.2</a>.
+<a href="#fig:vaccinetransitions">4.2</a>.
 
 $`k^{10,c_1}_{j,v=0}(t)`$ represents the rates of BPSV vaccination of
 unvaccinated susceptible and recovered people, and
@@ -477,7 +501,7 @@ pathway of the lower vaccination level.
 
 <p class="caption">
 
-<span id="fig:vaccinetransitions"></span>Figure 3.2: Vaccine state
+<span id="fig:vaccinetransitions"></span>Figure 4.2: Vaccine state
 transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently
 vaccinated but has not yet seroconverted (i.e. is not protected by most
 recent vaccination). $R$: recovered. $j$: stratum. $v$: initial
@@ -487,7 +511,7 @@ vaccination status. $u$: final vaccination status.
 
 </div>
 
-## 3.4 Contact rates
+## 4.4 Contact rates
 
 The configuration $x$ and the proportion of workers working from home
 $q$ determine the scaling of exposure to infection between different
@@ -557,14 +581,14 @@ to 64.
 In setting up a country, we sample values for $\tilde{M}$ (from which we
 get $`M(\textbf{1})`$). At the same time, we sample the proportion of
 contacts that come from workplaces (Figure
-<a href="#fig:workfrac">3.3</a>), and workplace-related contacts. From
+<a href="#fig:workfrac">4.3</a>), and workplace-related contacts. From
 these, we get $M^{\text{CW}}(\textbf{1})$, constructing the matrices and
 normalising.
 
 Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts
 experienced by workers from the community by sector (Figure
-<a href="#fig:allsector">3.4</a>, distributed by age, Figure
-<a href="#fig:uksecdistage">3.5</a>). Note that
+<a href="#fig:allsector">4.4</a>, distributed by age, Figure
+<a href="#fig:uksecdistage">4.5</a>). Note that
 $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix
 $M^{\text{WC}}(\textbf{1})$ is the complement of matrix
 $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by
@@ -584,8 +608,8 @@ M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\te
 Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values
 representing the fractions of contacts that come from school. School
 contacts are estimated separately in two age groups (pre-school age: 0—4
-(Figure <a href="#fig:school1frac">3.6</a>); school age: 5—19 (Figure
-<a href="#fig:school2frac">3.7</a>)): $M^{\text{sch}}(\textbf{1})$ has
+(Figure <a href="#fig:school1frac">4.6</a>); school age: 5—19 (Figure
+<a href="#fig:school2frac">4.7</a>)): $M^{\text{sch}}(\textbf{1})$ has
 entries of zero for groups not in school, and values for 0 to 4 year
 olds and 5 to 19 year olds.
 
@@ -593,8 +617,8 @@ olds and 5 to 19 year olds.
 
 Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of
 $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure
-<a href="#fig:hospfrac">3.8</a>, distributed by age, Figure
-<a href="#fig:conagefrac">3.9</a>), which leaves $M^{\text{home}}$.
+<a href="#fig:hospfrac">4.8</a>, distributed by age, Figure
+<a href="#fig:conagefrac">4.9</a>), which leaves $M^{\text{home}}$.
 Community contacts in consumption settings includes contacts made on
 public transport, as these contacts are small in number and are most
 correlated with consumption (and not work or school) (Jarvis et al.
@@ -607,7 +631,7 @@ you talk to.)
 
 <p class="caption">
 
-<span id="fig:workfrac"></span>Figure 3.3: Fraction of contacts made at
+<span id="fig:workfrac"></span>Figure 4.3: Fraction of contacts made at
 work, from (Jarvis et al. 2023). Extrapolated from three countries (UK,
 Belgium, Netherlands), whose values are all close to 40%, using time-use
 survey results for fraction of time spent at work (OECD, last updated
@@ -624,7 +648,7 @@ three reference countries have values 16 to 18%)).
 
 <p class="caption">
 
-<span id="fig:allsector"></span>Figure 3.4: Number of contacts made at
+<span id="fig:allsector"></span>Figure 4.4: Number of contacts made at
 work, from (Jarvis et al. 2023). Diamonds show average numbers and
 ranges are 50% quantile intervals. We sample values from half to double
 the average. Data come from UK, Netherlands and Switzerland, with
@@ -641,7 +665,7 @@ ONS data.
 
 <p class="caption">
 
-<span id="fig:uksecdistage"></span>Figure 3.5: Fraction of contacts made
+<span id="fig:uksecdistage"></span>Figure 4.5: Fraction of contacts made
 at work by age, from (Jarvis et al. 2023).
 
 </p>
@@ -654,7 +678,7 @@ at work by age, from (Jarvis et al. 2023).
 
 <p class="caption">
 
-<span id="fig:school1frac"></span>Figure 3.6: Fraction of contacts made
+<span id="fig:school1frac"></span>Figure 4.6: Fraction of contacts made
 at school for ages 0 to 4, from (Jarvis et al. 2023).
 
 </p>
@@ -667,7 +691,7 @@ at school for ages 0 to 4, from (Jarvis et al. 2023).
 
 <p class="caption">
 
-<span id="fig:school2frac"></span>Figure 3.7: Fraction of contacts made
+<span id="fig:school2frac"></span>Figure 4.7: Fraction of contacts made
 at school for ages 5 to 19, from (Jarvis et al. 2023).
 
 </p>
@@ -680,7 +704,7 @@ at school for ages 5 to 19, from (Jarvis et al. 2023).
 
 <p class="caption">
 
-<span id="fig:hospfrac"></span>Figure 3.8: Fraction of non-school and
+<span id="fig:hospfrac"></span>Figure 4.8: Fraction of non-school and
 non-work contacts made in hospitality settings, by age group, from
 (Jarvis et al. 2023).
 
@@ -694,7 +718,7 @@ non-work contacts made in hospitality settings, by age group, from
 
 <p class="caption">
 
-<span id="fig:conagefrac"></span>Figure 3.9: Distribution of non-school
+<span id="fig:conagefrac"></span>Figure 4.9: Distribution of non-school
 and non-work contacts made in hospitality settings by age group, from
 (Jarvis et al. 2023).
 
@@ -702,7 +726,7 @@ and non-work contacts made in hospitality settings by age group, from
 
 </div>
 
-### 3.4.1 Community contacts
+### 4.4.1 Community contacts
 
 We construct $M^{\text{com}}(x)$ from its constituent parts,
 representing intra- and inter-household interactions (home), school
@@ -719,7 +743,7 @@ closure.
 
 $$\begin{equation}
 M_{j,j}^{\text{sch}}(x)=x_{\text{ed}}^2M_{j,j}^{\text{sch}}(\textbf{1}).
-\qquad(3.2)
+\qquad(4.2)
 \end{equation}$$
 
 <!-- Matrix  $M^{\text{tran}}$ counts contacts between working people, representing travel. We assume that transport contacts only add to the infection risk if the sector is open and the workers travel to and from their workplace. Again, the value for configuration $x$ is the value for $\textbf{1}$ scaled accordingly: -->
@@ -735,7 +759,7 @@ sector:
 
 $$\begin{equation}
 M^{\text{CC}}(x) = (p^{27})^2M^{\text{CC}}(\textbf{1})
-\qquad(3.3)
+\qquad(4.3)
 \end{equation}$$
 
 The value $p^{27}$ is the workforce-weighted average extent to which the
@@ -748,11 +772,11 @@ p^{27} = \frac{\sum_jx_{j}N_j}{\sum_jN_j}
 
 where we sum over only the hospitality sectors.
 
-### 3.4.2 Community-to-worker contacts
+### 4.4.2 Community-to-worker contacts
 
 $$\begin{equation}
 M_{j,h}^{\text{CW}}(x) = (x_{j}(1-q_j))^2M_{j,h}^{\text{CW}}(\textbf{1}),
-\qquad(3.4)
+\qquad(4.4)
 \end{equation}$$
 
 for $h\in\{1,...,m_J\}$.
@@ -773,15 +797,15 @@ as the sector moves online and becomes more closed.
 <!-- M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0) -->
 <!-- ``` -->
 
-## 3.5 Uncosted transmission reductions
+## 4.5 Uncosted transmission reductions
 
 We parametrise the effects of ‘uncosted transmission reductions’ in the
 model using Google’s mobility data (Figure
-<a href="#fig:smoothmobility">3.10</a>). These changes in mobility were
+<a href="#fig:smoothmobility">4.10</a>). These changes in mobility were
 consequences of both government mandates and individual’s choices. As we
 cannot separate the two, we consider a range of possibilities, based on
 the range of mobility changes observed for a given level of stringency
-(Figure <a href="#fig:mobilitydrop">3.11</a>). In our model, the
+(Figure <a href="#fig:mobilitydrop">4.11</a>). In our model, the
 mandated economic configuration leads to a change in contacts. We
 associate the reduction in contacts, which translates as a relative
 reduction in transmission, with the reduction in mobility.
@@ -792,7 +816,7 @@ reduction in transmission, with the reduction in mobility.
 
 <p class="caption">
 
-<span id="fig:smoothmobility"></span>Figure 3.10: Mobility trajectories
+<span id="fig:smoothmobility"></span>Figure 4.10: Mobility trajectories
 in 2020 for all countries, with points showing the point at which the
 largest drop was observed. Trajectories are averaged over “Retail and
 recreation”, “Transit stations” and “Workplaces” and smoothed with a
@@ -808,7 +832,7 @@ spline of 80 knots.
 
 <p class="caption">
 
-<span id="fig:mobilitydrop"></span>Figure 3.11: The largest drop in
+<span id="fig:mobilitydrop"></span>Figure 4.11: The largest drop in
 mobility plotted against the stringency on that date.
 
 </p>
@@ -855,7 +879,7 @@ Finally, we assume that the effect wanes over time, with the minimum
 
 <p class="caption">
 
-<span id="fig:mobilityfitted"></span>Figure 3.12: Fit of model to data.
+<span id="fig:mobilityfitted"></span>Figure 4.12: Fit of model to data.
 
 </p>
 
@@ -867,7 +891,7 @@ Finally, we assume that the effect wanes over time, with the minimum
 
 <p class="caption">
 
-<span id="fig:mobilityposterior"></span>Figure 3.13: Posterior
+<span id="fig:mobilityposterior"></span>Figure 4.13: Posterior
 distribution for parameters $p^9$ and $p^8$.
 
 </p>
@@ -880,14 +904,14 @@ distribution for parameters $p^9$ and $p^8$.
 
 <p class="caption">
 
-<span id="fig:mobilitycurves"></span>Figure 3.14: Sampled curves for
+<span id="fig:mobilitycurves"></span>Figure 4.14: Sampled curves for
 four levels of mitigation. Data shown as points.
 
 </p>
 
 </div>
 
-## 3.6 Self isolating
+## 4.6 Self isolating
 
 We assume that infectious people who know their status have a compliance
 $p^1\sim\text(Beta)(5,5)$ with the instruction to self isolate, starting
@@ -908,14 +932,14 @@ $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 <!-- frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5); -->
 <!-- frac_cases_found = max(frac_cases_found, trate/10^5 ); -->
 
-# 4 Econ model
+# 5 Econ model
 
-## 4.1 Configurations
+## 5.1 Configurations
 
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
 
-<span id="tab:eccon"></span>Table 4.1: Economic configurations used to
+<span id="tab:eccon"></span>Table 5.1: Economic configurations used to
 implement strategies. Values are the openness of the sector expressed as
 a percentage. RC3 values are taken from Australia. Lockdown and RC2
 values are taken from the UK. RC1 values are taken from Indonesia.
@@ -2661,9 +2685,9 @@ services-producing activities of households for own use
 </tbody>
 </table>
 
-## 4.2 Impact of tourism
+## 5.2 Impact of tourism
 
-### 4.2.1 Food and accommodation services sector
+### 5.2.1 Food and accommodation services sector
 
 As there is no “tourism” sector in the 45-sector classification we are
 using, to model the impact of changes to tourism, we identify the “Food
@@ -2672,7 +2696,7 @@ correlation of their % contributions to GDP is 0.64 and the order of
 magnitude is similar (1 to 7% vs 2 to 10% of GDP). The other two sectors
 considered (Air transport and Arts, entertainment and recreation) have
 little correlation with tourism in terms of % of GDP. (See Figure
-<a href="#fig:pairs">4.1</a>.)
+<a href="#fig:pairs">5.1</a>.)
 
 <div class="figure" style="text-align: center">
 
@@ -2680,7 +2704,7 @@ little correlation with tourism in terms of % of GDP. (See Figure
 
 <p class="caption">
 
-<span id="fig:pairs"></span>Figure 4.1: Correlations between
+<span id="fig:pairs"></span>Figure 5.1: Correlations between
 tourism-related data. First: UN Tourism (2023b). Second to fourth: UN
 Tourism (2023a). Fifth to seventh: OECD.
 
@@ -2688,7 +2712,7 @@ Tourism (2023a). Fifth to seventh: OECD.
 
 </div>
 
-### 4.2.2 Sector shrinkage as a result of the pandemic
+### 5.2.2 Sector shrinkage as a result of the pandemic
 
 For many countries, tourism was reduced in the COVID-19 pandemic not
 because of domestic mandates but because of reduced international
@@ -2719,12 +2743,12 @@ Therefore, the contribution of the GVA of the food and accommodation
 services sector is limited either by the pandemic, or by the
 sector-closure policy - whichever is lower.
 
-### 4.2.3 Loss of international tourists
+### 5.2.3 Loss of international tourists
 
 We model the distribution of $c$ using data from 2020 (Figure
-<a href="#fig:tourismhist">4.2</a>, bottom-right plot). We fit to it a
+<a href="#fig:tourismhist">5.2</a>, bottom-right plot). We fit to it a
 log-normal distribution, and find mean value -1.39 and standard
-deviation 0.39 (Figure <a href="#fig:ytd">4.3</a>). We use these values
+deviation 0.39 (Figure <a href="#fig:ytd">5.3</a>). We use these values
 as inputs for all country models.
 
 <div class="figure" style="text-align: center">
@@ -2733,7 +2757,7 @@ as inputs for all country models.
 
 <p class="caption">
 
-<span id="fig:tourismhist"></span>Figure 4.2: Distributions of
+<span id="fig:tourismhist"></span>Figure 5.2: Distributions of
 tourism-related data from UN Tourism (2023a). In grey are the subset of
 countries for which we have GVA data by sector.
 
@@ -2747,14 +2771,14 @@ countries for which we have GVA data by sector.
 
 <p class="caption">
 
-<span id="fig:ytd"></span>Figure 4.3: Fit of log-normal distribution to
+<span id="fig:ytd"></span>Figure 5.3: Fit of log-normal distribution to
 loss-of-tourism data.
 
 </p>
 
 </div>
 
-### 4.2.4 Dependence on international tourism
+### 5.2.4 Dependence on international tourism
 
 We model $b$ as a function of the share of GDP that comes from the
 sector. Note that the data we have for this are biased towards
@@ -2775,21 +2799,21 @@ $$p^6 z + p^7 = \frac{\alpha(z)}{\alpha(z)+\beta(z)}$$
 Here, $p^5$ controls the variance of the distribution and $p^6$ and
 $p^7$ the linear relationship between $z$ and $b$. Using an optimisation
 routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are
-shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
+shown in Figure <a href="#fig:sectortourism">5.4</a>. We use these
 values as inputs for all country models.
 
 <figure>
 <img src="figures/sectortourism.png" style="width:40.0%"
-alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." />
+alt="Figure 5.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 5.2)." />
 <figcaption aria-hidden="true"><span
-id="fig:sectortourism"></span>Figure 4.4: Predicting the percentage of
+id="fig:sectortourism"></span>Figure 5.4: Predicting the percentage of
 tourism that comes from abroad as a function of the size of the sector.
 Each row represents a beta distribution whose mean is determined by the
 size of the sector (z). Blue points show the data we have available
-(grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
+(grey bars in Figure <a href="#fig:tourismhist">5.2</a>).</figcaption>
 </figure>
 
-## 4.3 Remote working
+## 5.3 Remote working
 
 For each sector in each country, we have the 90% interval for the
 proportion of people who can work from home from (Gottlieb et al. 2021).
@@ -2805,13 +2829,13 @@ values in all sectors. We:
 
 <!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 1.78 and  3.11. For UMICs, we have parameters 14.32 and  6.44. For HICs, we have parameters 9.57 and  1.39. -->
 
-# 5 Pathogen profiles
+# 6 Pathogen profiles
 
 We sample pathogen profiles by defining distributions over the pathogen
 parameters. The distributions are made using sourced data (Table
-<a href="#tab:pathogenprofile">5.1</a>), and are described in Table
-<a href="#tab:pathogenparameters">5.2</a>. Age profiles for severity
-rates are shown in Figure <a href="#fig:ratesbyage">5.1</a>. We sample
+<a href="#tab:pathogenprofile">6.1</a>), and are described in Table
+<a href="#tab:pathogenparameters">6.2</a>. Age profiles for severity
+rates are shown in Figure <a href="#fig:ratesbyage">6.1</a>. We sample
 parameter values from distributions informed by the seven pathogen
 profiles. R$_0$ is truncated at 1.5 and 4 following Whittaker et al.
 (2024).
@@ -2819,7 +2843,7 @@ profiles. R$_0$ is truncated at 1.5 and 4 following Whittaker et al.
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
 
-<span id="tab:pathogenprofile"></span>Table 5.1: Pathogen profiles. IHR:
+<span id="tab:pathogenprofile"></span>Table 6.1: Pathogen profiles. IHR:
 infection hospitalisation rate. IFR: infection fatality rate.
 
 </caption>
@@ -4730,31 +4754,31 @@ basic reproduction number
 | Relative infectiousness of asymptomatic    | Constant         | 0.58                          | None                                                    |
 | R$_0$                                      | Truncated normal | 2.45, 1.32; (1.5, 4)          | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
 
-<span id="tab:pathogenparameters"></span>Table 5.2: Distributions for
+<span id="tab:pathogenparameters"></span>Table 6.2: Distributions for
 pathogen parameters used to sample synthetic pathogens. Distributions
-are built from values in Table <a href="#tab:pathogenprofile">5.1</a>.
+are built from values in Table <a href="#tab:pathogenprofile">6.1</a>.
 
-<!-- ```{r ratesbyage,fig.cap='Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table \<a href="#tab:pathogenprofile">5.1</a>.',echo=F,warning=F,message=F, out.width="50%"} -->
+<!-- ```{r ratesbyage,fig.cap='Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table \<a href="#tab:pathogenprofile">6.1</a>.',echo=F,warning=F,message=F, out.width="50%"} -->
 <!-- knitr::include_graphics("ratesbyage.jpg") -->
 <!-- ``` -->
 
 <figure>
 <img src="README_files/figure-gfm/ratesbyage.jpeg"
-alt="Figure 5.1: Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table 5.1." />
+alt="Figure 6.1: Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table 6.1." />
 <figcaption aria-hidden="true"><span id="fig:ratesbyage"></span>Figure
-5.1: Infection hospitalisation and fatality ratios are generated by
+6.1: Infection hospitalisation and fatality ratios are generated by
 modelling profiles from SARS and influenza ratios. x axis: age group
 index. y axis: log ratio. Colours: seven example profiles. Grey: sampled
 profiles. Profiles are built from values in Table
-<a href="#tab:pathogenprofile">5.1</a>.</figcaption>
+<a href="#tab:pathogenprofile">6.1</a>.</figcaption>
 </figure>
 
-# 6 Parametric distributions
+# 7 Parametric distributions
 
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 
-<span id="tab:paramdist"></span>Table 6.1: Parameter distributions.
+<span id="tab:paramdist"></span>Table 7.1: Parameter distributions.
 
 </caption>
 <thead>
@@ -5654,7 +5678,7 @@ Beta
 </tbody>
 </table>
 
-## 6.1 Hospital capacity
+## 7.1 Hospital capacity
 
 <div class="figure">
 
@@ -5662,7 +5686,7 @@ Beta
 
 <p class="caption">
 
-<span id="fig:hmax"></span>Figure 6.1: Hospital capacity: available beds
+<span id="fig:hmax"></span>Figure 7.1: Hospital capacity: available beds
 minus usual occupancy.
 
 </p>
@@ -5674,13 +5698,13 @@ parameters 1.3 and 0.05. For UMICs, we have parameters 1.73 and 0.02.
 For HICs, we have parameters 2.05 and 0.02. (Data sources: World Bank
 (beds); OECD, WHO euro (bed occupancy rates).)
 
-## 6.2 Labour share of GVA
+## 7.2 Labour share of GVA
 
 We estimate the average annual income per working-age adult as the total
 GVA multiplied by the fraction of GVA that goes to labour divided by the
 number of working-age adults. For the fraction of GVA that goes to
 labour we use PWT estimates from 2011 (Figure
-<a href="#fig:labsh">6.2</a>).
+<a href="#fig:labsh">7.2</a>).
 
 <!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is 207% of GDP. For a UMIC, the cost of a lost school year is 73% of GDP. For an HIC, the cost of a lost school year is 30% of GDP. -->
 
@@ -5690,7 +5714,7 @@ labour we use PWT estimates from 2011 (Figure
 
 <p class="caption">
 
-<span id="fig:labsh"></span>Figure 6.2: Fraction of GVA that goes to
+<span id="fig:labsh"></span>Figure 7.2: Fraction of GVA that goes to
 labour (PWT, 2011).
 
 </p>
@@ -5701,7 +5725,7 @@ We model these values with Beta distributions. For LLMICs, we have
 parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18.
 For HICs, we have parameters 7.97 and 6.87.
 
-## 6.3 Vaccine administration
+## 7.3 Vaccine administration
 
 <div class="figure">
 
@@ -5709,7 +5733,7 @@ For HICs, we have parameters 7.97 and 6.87.
 
 <p class="caption">
 
-<span id="fig:vaxrate"></span>Figure 6.3: Vaccines administered per day,
+<span id="fig:vaxrate"></span>Figure 7.3: Vaccines administered per day,
 on average, in each country as a percent of population. Data source:
 fully vaccinated people from OWID (2022).
 
@@ -5717,16 +5741,16 @@ fully vaccinated people from OWID (2022).
 
 </div>
 
-Figure <a href="#fig:vaxrate">6.3</a> shows histograms of COVID-19
+Figure <a href="#fig:vaxrate">7.3</a> shows histograms of COVID-19
 vaccine administration rates by income level. Values are estimates of
 administration rates of complete schedules given. Administration rates
 are estimated as the best-fit slope observed in the pandemic period
-(Figure <a href="#fig:vaxratemx">6.4</a>). The administration slope
+(Figure <a href="#fig:vaxratemx">7.4</a>). The administration slope
 ideally represents the highest rate possible: rates are often low to
 begin with, due to limited supply. They are often low at the end, due to
 depleted demand.
 
-Using the method illustrated in Figure <a href="#fig:vaxratemx">6.4</a>,
+Using the method illustrated in Figure <a href="#fig:vaxratemx">7.4</a>,
 we estimate how many countries per income group surpassed an average
 maximum rate of 0.5% of the population per day: 7% of HICs, 2% of UMICs,
 and 5% of LLMICs.
@@ -5737,7 +5761,7 @@ and 5% of LLMICs.
 
 <p class="caption">
 
-<span id="fig:vaxratemx"></span>Figure 6.4: Vaccine administration in
+<span id="fig:vaxratemx"></span>Figure 7.4: Vaccine administration in
 Mexico. The blue line shows the average rate over the whole vaccination
 campaign. The yellow line shows the average rate when administration was
 rate limiting.
@@ -5751,7 +5775,7 @@ in which the rate was limited by neither demand nor supply. Therefore we
 use an alternative source to validate our choices of administration rate
 in different scenarios.
 
-Figure <a href="#fig:vaxratewho">6.5</a> shows that in 40% of
+Figure <a href="#fig:vaxratewho">7.5</a> shows that in 40% of
 vaccination campaigns in LLMICs, the rate exceeded 0.2% of the
 population per day; in 28% of campaigns, the rate exceeded 0.4% of the
 population per day; and in 13% of campaigns, the rate exceeded 1% of the
@@ -5764,7 +5788,7 @@ countries.
 
 <p class="caption">
 
-<span id="fig:vaxratewho"></span>Figure 6.5: Vaccine administration
+<span id="fig:vaxratewho"></span>Figure 7.5: Vaccine administration
 rates in LLMICs. Shown is the cumulative distribution of delivery rate,
 measured as the % of the population vaccinated per day. The data consist
 of 141 points, from 55 countries that are currently classified as LIC or
@@ -5777,7 +5801,7 @@ speed up, and mop up.
 
 </div>
 
-## 6.4 Compliance with the requirement to self isolate
+## 7.4 Compliance with the requirement to self isolate
 
 We use a broad Beta distribution with parameters (5,5) to describe the
 compliance of the population with the requirement to isolate if
@@ -5800,7 +5824,7 @@ average value for Australia was 88%. A survey undertaken in 2009 found
 that 55% of households complied with quarantine requirements
 (<https://doi.org/10.1186/1471-2334-11-2>).
 
-# 7 Notation
+# 8 Notation
 
 In general in this notation, subscripts are indices, and superscripts
 are never indices but instead define new labels. In particular, note

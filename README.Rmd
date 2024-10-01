@@ -145,6 +145,18 @@ Table: (\#tab:rulesreactive) State transition rules for policies RC1 and RC2. Se
 
 Table: (\#tab:ruleselimination) State transition rules for policy RC3. See Table \@ref(tab:eccon) for details of closures.
 
+# Vaccine effects
+
+Quantity | BPSV | SSV
+|:----- |:----- |:----- |
+Time to develop immunity | 21 days | 21 days 
+Effectiveness against infection | 0.35 | 0.55 
+Effectiveness against hospitalisation | 0.8 | 0.9 
+Effect on transmission | 0 | 0 
+Rate of waning | 0 | 0 
+
+Table: (\#tab:vaccineeffects) Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition 1/21 per day. The Effectiveness against transmission is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time.
+
 # Socio-economic costs
 
 
