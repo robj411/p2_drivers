@@ -19,27 +19,31 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
       contacts](#342-community-to-worker-contacts)
   - [3.5 Uncosted transmission
     reductions](#35-uncosted-transmission-reductions)
-  - [3.6 Self isolating](#36-self-isolating)
+  - [3.6 Testing and self isolating](#36-testing-and-self-isolating)
 - [4 Econ model](#4-econ-model)
-  - [4.1 Configurations](#41-configurations)
-  - [4.2 Impact of tourism](#42-impact-of-tourism)
-    - [4.2.1 Food and accommodation services
-      sector](#421-food-and-accommodation-services-sector)
-    - [4.2.2 Sector shrinkage as a result of the
-      pandemic](#422-sector-shrinkage-as-a-result-of-the-pandemic)
-    - [4.2.3 Loss of international
-      tourists](#423-loss-of-international-tourists)
-    - [4.2.4 Dependence on international
-      tourism](#424-dependence-on-international-tourism)
-  - [4.3 Remote working](#43-remote-working)
+  - [4.1 Impact of tourism](#41-impact-of-tourism)
+    - [4.1.1 Food and accommodation services
+      sector](#411-food-and-accommodation-services-sector)
+    - [4.1.2 Sector shrinkage as a result of the
+      pandemic](#412-sector-shrinkage-as-a-result-of-the-pandemic)
+    - [4.1.3 Loss of international
+      tourists](#413-loss-of-international-tourists)
+    - [4.1.4 Dependence on international
+      tourism](#414-dependence-on-international-tourism)
+  - [4.2 Remote working](#42-remote-working)
 - [5 Closure policies](#5-closure-policies)
+  - [5.1 Policy specifications](#51-policy-specifications)
+  - [5.2 Implementation](#52-implementation)
 - [6 Pathogen profiles](#6-pathogen-profiles)
-- [7 Parametric distributions](#7-parametric-distributions)
-  - [7.1 Hospital capacity](#71-hospital-capacity)
-  - [7.2 Labour share of GVA](#72-labour-share-of-gva)
-  - [7.3 Vaccine administration](#73-vaccine-administration)
-  - [7.4 Compliance with the requirement to self
-    isolate](#74-compliance-with-the-requirement-to-self-isolate)
+- [7 DAEDALUS model parameters](#7-daedalus-model-parameters)
+  - [7.1 Sampled](#71-sampled)
+  - [7.2 Parametric distributions informed by
+    data](#72-parametric-distributions-informed-by-data)
+    - [7.2.1 Hospital capacity](#721-hospital-capacity)
+    - [7.2.2 Labour share of GVA](#722-labour-share-of-gva)
+    - [7.2.3 Vaccine administration](#723-vaccine-administration)
+    - [7.2.4 Compliance with the requirement to self
+      isolate](#724-compliance-with-the-requirement-to-self-isolate)
 - [8 Notation](#8-notation)
 
 # 1 Simulation rules
@@ -56,38 +60,41 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 - At the response time, the BPSV, if present, is given to people aged 65
   and older; testing begins; working from home begins; economic
   closures, if in use, are implemented
-- At the importation time, five people are moved from compartment S to
-  compartment E
 - If closure policies (RC1, RC2, or RC3) are being implemented, the
   rules in Tables <a href="#tab:rulesreactive">5.1</a> or
   <a href="#tab:ruleselimination">5.2</a> are followed
-- The SARS-X–specific vaccine is rolled out starting at least day 107
+- At the importation time, five people are moved from compartment S to
+  compartment E
+- The SARS-X–specific vaccine is rolled out starting at least 107 days
   after the response time, depending on the investment scenario
   assumption
 - All people aged 15 and over are eligible for vaccination, and we
   assume 80% take it up
 - Distribution rate depends on investment scenario assumptions
-- Once vaccine rollout is complete, closures, working from home and
-  testing end
+- Closures, working from home and testing end when vaccine rollout
+  completes (or if other stopping criteria are met, see Tables
+  <a href="#tab:rulesreactive">5.1</a> and
+  <a href="#tab:ruleselimination">5.2</a>)
 - When the doubling time is more than 30 days and there are fewer than
   1,000 people in hospital, the simulation ends.
 
 # 2 Socio-economic costs
 
-We assign monetary values to YLLs and to years of education in order to
-add health and education costs of sector-closure policies to the costs
-of economic closures. We define the total socio-economic costs TSC of an
-epidemic as the sum of the individual costs:
+We assign monetary values to years of life lost (YLL) and to years of
+education in order to add health and education costs of sector-closure
+policies to the costs of economic closures. We define the total
+socio-economic cost (TSC) of an epidemic as the sum of the individual
+costs:
 
 $$\begin{equation}
 \text{TSC} = K_1\text{VLY} + K_2 + K_3\text{VSY},
 \label{eq:swf}
 \end{equation}$$
 
-where $K_1$ is the number of discounted life years lost and VLY the
-value of a life year; $K_2$ is the lost GDP over the period due to
-reduced economic activity; and $K_3$ is the number of school years lost
-and VSY the value of one school year.
+where $K_1$ is the number of life years lost and VLY the value of a life
+year; $K_2$ is the lost GDP over the period due to reduced economic
+activity; and $K_3$ is the number of school years lost and VSY the value
+of one school year.
 
 ## 2.1 Lost lives
 
@@ -98,8 +105,8 @@ death, and to estimate the value of a life year. We map the remaining
 life expectancy $\tilde{l}_a$ for the GBD age groups $a$ to $l_g$ for
 the model age groups $g$ as a population-weighted average, taking into
 account the size of each age group, $`\tilde{N}_a`$. For the expected
-number of life years lost per death, we take into account also the
-probability to die given infection, $P(D|I,a)$:
+number of life years lost per SARS-X death, we take into account also
+the probability to die given infection, $P(D|I,a)$:
 
 ``` math
 l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
@@ -280,7 +287,8 @@ $$p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}
 
 for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age
 $a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean
-annual earnings, $p^{15}=0.08$ is the rate of return for one year.
+annual earnings, and $p^{15}=0.08$ is the rate of return for one year of
+education.
 
 The value $p^{16}$ represents the effectiveness of remote teaching,
 which we sample as a standard uniform random variable. We note that no
@@ -290,8 +298,8 @@ of school closure, although there is not consensus even on this
 (Betthäuser, Bach-Mortensen, and Engzell 2023). Important factors to
 include in future work might be those relating to parental circumstances
 including education level, engagement and socio-economic status
-(Moscoviz and Evans 2022). However, these factors might be more
-pertinent to intra- rather than international modelling.
+(Moscoviz and Evans 2022). These factors might be more pertinent to
+intra- rather than international modelling.
 
 # 3 Epi model
 
@@ -893,7 +901,7 @@ four levels of mitigation. Data shown as points.
 
 </div>
 
-## 3.6 Self isolating
+## 3.6 Testing and self isolating
 
 We assume that infectious people who know their status have a compliance
 $p^1\sim\text(Beta)(5,5)$ with the instruction to self isolate, starting
@@ -916,12 +924,317 @@ $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 
 # 4 Econ model
 
-## 4.1 Configurations
+The economic model is measuring GDP by summing GVA over sectors and over
+time taking into account the extent to which sectors are open, as
+described in Section <a href="#lost-economic-activity">2.2</a>.
+
+The economy is stratified by sector following the International Standard
+Industrial Classification of All Economic Activities (ISIC) Rev. 4 as
+used by the OECD (UN Economic and Social Affairs 2008). Economic output
+is measured as the sum of gross value added (GVA) of all sectors over
+the epidemic period, expressed as a percentage of pre-epidemic GVA
+summed over the same period.
+
+Openness comes primarily from the economic configuration which is a
+policy choice, mandated in response to the epidemic (see Section
+<a href="#closure-policies">5</a>). There are potentially additional
+losses due to worker sickness and death (see Section
+<a href="#lost-economic-activity">2.2</a>) and due to lost tourism,
+which is an exogenous random variable (see Section
+<a href="#impact-of-tourism">4.1</a>). We do not model changes to supply
+or demand, reductions in consumption and labour supply due to infection
+avoidance of individuals, interruptions in supply chains, or changes in
+imports and exports.
+
+Lost education is also quantified monetarily and constitutes an economic
+cost. Unlike the other losses, they are not contemporaneous with the
+epidemic, but losses that unfold into the future. The assumptions and
+equations are described in Section <a href="#lost-education">2.3</a>.
+
+## 4.1 Impact of tourism
+
+### 4.1.1 Food and accommodation services sector
+
+As there is no “tourism” sector in the 45-sector classification we are
+using, to model the impact of changes to tourism, we identify the “Food
+and accommodation services” sector with tourism. This is imperfect. The
+correlation of their % contributions to GDP is 0.64 and the order of
+magnitude is similar (1 to 7% vs 2 to 10% of GDP). The other two sectors
+considered (Air transport and Arts, entertainment and recreation) have
+little correlation with tourism in terms of % of GDP. (See Figure
+<a href="#fig:pairs">4.1</a>.)
+
+<div class="figure" style="text-align: center">
+
+<img src="README_files/figure-gfm/pairs-1.png" alt="Correlations between tourism-related data. First: @untourismKeyTourismStatistics2023. Second to fourth: @untourismInternationalTourismCOVID192023. Fifth to seventh: OECD."  />
+
+<p class="caption">
+
+<span id="fig:pairs"></span>Figure 4.1: Correlations between
+tourism-related data. First: UN Tourism (2023b). Second to fourth: UN
+Tourism (2023a). Fifth to seventh: OECD.
+
+</p>
+
+</div>
+
+### 4.1.2 Sector shrinkage as a result of the pandemic
+
+For many countries, tourism was reduced in the COVID-19 pandemic not
+because of domestic mandates but because of reduced international
+travel. Therefore, the fraction of tourism that comes from abroad is a
+factor that can determine the impact of a pandemic on a country’s GDP
+potentially independently of what happens within the country. (A useful
+model extension would be to include some dependence on country factors,
+e.g. case numbers.)
+
+We model mitigation via business closures, which are mandated by sector.
+We represent openness with values $x$ which range from 0 to 1, 1
+representing maximum openness. To capture the impact of reduced
+international travel, we set the maximum openness of the food and
+accommodation services sector to be limited by international tourism as:
+
+``` math
+x = \min\{\hat{x}, 1+ b(c-1)\}
+```
+
+where $`\hat{x}`$ is the openness of the sector according to the
+schedule (i.e. the sector-closure policy), $b$ is the proportion of
+tourism that is international, and $c$ is the fraction international
+tourism reduces to as a consequence of the pandemic. I.e. the tourism
+remaining is the domestic ($1-b$) plus that that comes in from abroad
+($bc$).
+
+Therefore, the contribution of the GVA of the food and accommodation
+services sector is limited either by the pandemic, or by the
+sector-closure policy - whichever is lower.
+
+### 4.1.3 Loss of international tourists
+
+We model the distribution of $c$ using data from 2020 (Figure
+<a href="#fig:tourismhist">4.2</a>, bottom-right plot). We fit to it a
+log-normal distribution, and find mean value -1.39 and standard
+deviation 0.39 (Figure <a href="#fig:ytd">4.3</a>). We use these values
+as inputs for all country models.
+
+<div class="figure" style="text-align: center">
+
+<img src="README_files/figure-gfm/tourismhist-1.png" alt="Distributions of tourism-related data from @untourismInternationalTourismCOVID192023. In grey are the subset of countries for which we have GVA data by sector." width="50%" />
+
+<p class="caption">
+
+<span id="fig:tourismhist"></span>Figure 4.2: Distributions of
+tourism-related data from UN Tourism (2023a). In grey are the subset of
+countries for which we have GVA data by sector.
+
+</p>
+
+</div>
+
+<div class="figure" style="text-align: center">
+
+<img src="README_files/figure-gfm/ytd-1.png" alt="Fit of log-normal distribution to loss-of-tourism data."  />
+
+<p class="caption">
+
+<span id="fig:ytd"></span>Figure 4.3: Fit of log-normal distribution to
+loss-of-tourism data.
+
+</p>
+
+</div>
+
+### 4.1.4 Dependence on international tourism
+
+We model $b$ as a function of the share of GDP that comes from the
+sector. Note that the data we have for this are biased towards
+high-income countries.
+
+We write
+
+$$b\sim\text{Beta}(\alpha(z),\beta(z))$$
+
+where $z$ is the fraction of GDP coming from the Food and accommodation
+sector. We learn three parameters $p^5$, $p^6$ and $p^7$ to best fit the
+relationship between $z$ and $b$ in countries we have observations for:
+
+$$p^5 = \alpha(z)+\beta(z)$$
+
+$$p^6 z + p^7 = \frac{\alpha(z)}{\alpha(z)+\beta(z)}$$
+
+Here, $p^5$ controls the variance of the distribution and $p^6$ and
+$p^7$ the linear relationship between $z$ and $b$. Using an optimisation
+routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are
+shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
+values as inputs for all country models.
+
+<figure>
+<img src="figures/sectortourism.png" style="width:40.0%"
+alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." />
+<figcaption aria-hidden="true"><span
+id="fig:sectortourism"></span>Figure 4.4: Predicting the percentage of
+tourism that comes from abroad as a function of the size of the sector.
+Each row represents a beta distribution whose mean is determined by the
+size of the sector (z). Blue points show the data we have available
+(grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
+</figure>
+
+## 4.2 Remote working
+
+For each sector in each country, we have the 90% interval for the
+proportion of people who can work from home from Gottlieb et al. (2021).
+We assume that the value we sample within the range is related to
+internet infrastructure, so that a low value in one sector implies low
+values in all sectors. We:
+
+- take the subset of countries in the income group (LLMIC / UMIC / HIC);
+- take the minimum of the lower bounds by sector (5%);
+- take the maximum of the upper bounds by sector (95%);
+- sample from a uniform distribution between these bounds, taking the
+  same quantile for each sector.
+
+We assume that remote working happens to its fullest extent for the
+whole period of mitigation for all policies.
+
+<!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 1.78 and  3.11. For UMICs, we have parameters 14.32 and  6.44. For HICs, we have parameters 9.57 and  1.39. -->
+
+# 5 Closure policies
+
+Impacts of mandated closures of businesses and schools on epidemics can
+be described using three factors: length, stringency, and frequency. We
+model mandated closures using a discrete set of predefined policies,
+which specify the *stringency* of closures in each sector. The policies
+we use are the same for each country. The length and frequency of
+economic closures are endogenous to the model (via its epidemiology),
+and therefore depend on the dynamics of the epidemic that is being
+modelled.
+
+## 5.1 Policy specifications
+
+We define four generic policies that might be adopted once a novel
+pathogen has been identified. The policies represent possible choices
+that range from very stringent to laissez faire, and are grounded in
+real-life observations. We name the policies no closures (NC) and
+reactive closures 1 to 3 (RC1 to RC3), and they are depicted in Figure
+<a href="#fig:policies">5.1</a>, structured by the qualities that
+distinguish them.
+
+The three sector-closure policies are each defined by a pair of economic
+configurations, and rules for moving between them. An economic
+configuration is a vector specifying the extent to which each sector is
+open, expressed as a percentage. Our economic configurations are
+constructed using data from three countries (Indonesia (RC1), the United
+Kingdom (RC2), and Australia (RC3)), via the manifest economic impacts
+in the wake of the COVID-19 pandemic. We take the sectoral GVA observed
+the COVID-19 pandemic expressed as a percentage of the values observed
+in the year before (OECD), i.e. we assume that the relative GVA reflects
+the degree to which sectors were open.
+
+In reality, the observed effects combined mandated closures, reductions
+in consumption and labour supply due to infection avoidance of
+individuals, interruptions in supply chains, and changes in imports and
+exports. However, these effects have not been disentangled, and in
+DAEDALUS we model only the mandate. This is equivalent to saying that we
+assume the mandate alone determined economic outcomes and we simulate
+their repeated application. Thus we neglect two factors in our model:
+first, population behaviour, and second, international trade, and we
+ignore their impacts in the COVID-19 pandemic by subsuming all effects
+into the mandate. (e.g. a pandemic that does not originate in or impact
+greatly China might have a much smaller economic cost).
+
+## 5.2 Implementation
+
+The economic configurations define the sector closures for both the
+economic model and the epidemiological model. Contacts associated with
+sectors – between and among workers and customers – are scaled down with
+closures. GVA per sector is scaled according to economic configurations
+in the economic model.
+
+For their dynamic implementation in the model, the three closure
+policies follow the same general pattern: they are defined by two
+economic configurations, which we refer to as heavy and light (where the
+“heavy” configuration has higher stringency than the “light”
+configuration; the configurations are tabulated in Table
+<a href="#tab:eccon">5.3</a>). The light configuration is implemented at
+the response time. Thereafter, the level of closure for the three
+policies is mandated in response to the state of the epidemic, reverting
+between states as determined by the transmission dynamics. Tables
+<a href="#tab:rulesreactive">5.1</a> and
+<a href="#tab:ruleselimination">5.2</a> show the transitions and their
+conditions. RC1 and RC2 respond to hospital occupancy, allowing cases to
+rise and using closures to allow them to fall again. RC1 keeps schools
+closed throughout, whereas RC2 has schools open in the light
+configuration. RC3 aims to reduce cases and then to keep them low. All
+mitigation is suspended when the vaccine rollout has reached its target
+coverage (which is when 80% of the eligible population have been
+vaccinated).
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/policies-1.png" alt="The four sector-closure policy options. No closures (NC) does not mandate any closures. The other three policies all implement reactive closures (RC), either in response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The difference between RC1 and RC2 is that in RC1 schools are closed throughout, whereas in RC2 schools are fully open during the light configuration." width="50%" />
+
+<p class="caption">
+
+<span id="fig:policies"></span>Figure 5.1: The four sector-closure
+policy options. No closures (NC) does not mandate any closures. The
+other three policies all implement reactive closures (RC), either in
+response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The
+difference between RC1 and RC2 is that in RC1 schools are closed
+throughout, whereas in RC2 schools are fully open during the light
+configuration.
+
+</p>
+
+</div>
+
+The sector-closure policies are defined as follows:
+
+- NC: No closures are mandated.
+- RC1: Schools are mandated to close to 10% of pre-epidemic levels
+  throughout, and other economic sectors close to the heavy-closure
+  economic configuration when hospital occupancy reaches 95% of its
+  capacity, and change to the light configuration once occupancy is less
+  than 25% capacity.
+- RC2: Sectors (including the education sector) toggle between heavy and
+  light closures reactively, as in RC1, albeit with slightly different
+  economic configurations.
+- RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when
+  $R_t<0.95$. Closures are maintained until $R_t<1$ without closures, or
+  vaccination targets are reached.
+
+All policies assume there is testing (Section
+<a href="#testing-and-self-isolating">3.6</a>), working from home
+(Section <a href="#remote-working">4.2</a>), and uncosted transmission
+reductions from behavioural changes (Section
+<a href="#uncosted-transmission-reductions">3.5</a>), which impact
+epidemiological outcomes. They do not directly impact economic outcomes,
+but indirectly may reduce the need for closures because of reduced
+incidence.
+
+| From/to            | No closures                                                                                                           | Light closures                                                   | Heavy closures                     |
+|:-------------------|:----------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------|:-----------------------------------|
+| **No closures**    |                                                                                                                       | t $\geq$ response time AND Hospital occupancy \> 95% capacity    |                                    |
+| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                  | Hospital occupancy \> 95% capacity |
+| **Heavy closures** |                                                                                                                       | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |                                    |
+
+<span id="tab:rulesreactive"></span>Table 5.1: State transition rules
+for policies RC1 and RC2. See Table <a href="#tab:eccon">5.3</a> for
+details of closures.
+
+| From/to            | No closures                                          | Light closures                                                          | Heavy closures |
+|:-------------------|:-----------------------------------------------------|:------------------------------------------------------------------------|:---------------|
+| **No closures**    |                                                      | t $\geq$ response time OR Hospital occupancy \> 95% capacity            |                |
+| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                         | $R_t > 1.2$    |
+| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t \> 7 + last change time |                |
+
+<span id="tab:ruleselimination"></span>Table 5.2: State transition rules
+for policy RC3. See Table <a href="#tab:eccon">5.3</a> for details of
+closures.
 
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
 
-<span id="tab:eccon"></span>Table 4.1: Economic configurations used to
+<span id="tab:eccon"></span>Table 5.3: Economic configurations used to
 implement strategies. Values are the openness of the sector expressed as
 a percentage. RC3 values are taken from Australia. Lockdown and RC2
 values are taken from the UK. RC1 values are taken from Indonesia.
@@ -935,7 +1248,7 @@ values are taken from the UK. RC1 values are taken from Indonesia.
 
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
 
-RC3
+RC1
 
 </div>
 
@@ -953,7 +1266,7 @@ RC2
 
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
 
-RC1
+RC3
 
 </div>
 
@@ -1006,7 +1319,7 @@ Agriculture, hunting, forestry
 </td>
 <td style="text-align:right;">
 
-86
+100
 
 </td>
 <td style="text-align:right;">
@@ -1026,7 +1339,7 @@ Agriculture, hunting, forestry
 </td>
 <td style="text-align:right;">
 
-100
+86
 
 </td>
 <td style="text-align:right;">
@@ -1043,7 +1356,7 @@ Fishing and aquaculture
 </td>
 <td style="text-align:right;">
 
-86
+100
 
 </td>
 <td style="text-align:right;">
@@ -1063,7 +1376,7 @@ Fishing and aquaculture
 </td>
 <td style="text-align:right;">
 
-100
+86
 
 </td>
 <td style="text-align:right;">
@@ -1080,12 +1393,12 @@ Mining and quarrying, energy producing products
 </td>
 <td style="text-align:right;">
 
-90
+67
 
 </td>
 <td style="text-align:right;">
 
-100
+79
 
 </td>
 <td style="text-align:right;">
@@ -1100,12 +1413,12 @@ Mining and quarrying, energy producing products
 </td>
 <td style="text-align:right;">
 
-67
+90
 
 </td>
 <td style="text-align:right;">
 
-79
+100
 
 </td>
 </tr>
@@ -1117,7 +1430,7 @@ Mining and quarrying, non-energy producing products
 </td>
 <td style="text-align:right;">
 
-90
+100
 
 </td>
 <td style="text-align:right;">
@@ -1137,7 +1450,7 @@ Mining and quarrying, non-energy producing products
 </td>
 <td style="text-align:right;">
 
-100
+90
 
 </td>
 <td style="text-align:right;">
@@ -1154,7 +1467,7 @@ Mining support service activities
 </td>
 <td style="text-align:right;">
 
-90
+100
 
 </td>
 <td style="text-align:right;">
@@ -1174,7 +1487,7 @@ Mining support service activities
 </td>
 <td style="text-align:right;">
 
-100
+90
 
 </td>
 <td style="text-align:right;">
@@ -1191,7 +1504,7 @@ Food products, beverages and tobacco
 </td>
 <td style="text-align:right;">
 
-70
+100
 
 </td>
 <td style="text-align:right;">
@@ -1211,7 +1524,7 @@ Food products, beverages and tobacco
 </td>
 <td style="text-align:right;">
 
-100
+70
 
 </td>
 <td style="text-align:right;">
@@ -1228,26 +1541,6 @@ Textiles, textile products, leather and footwear
 </td>
 <td style="text-align:right;">
 
-70
-
-</td>
-<td style="text-align:right;">
-
-98
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
 89
 
 </td>
@@ -1256,11 +1549,14 @@ Textiles, textile products, leather and footwear
 92
 
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
+<td style="text-align:right;">
 
-Wood and products of wood and cork
+70
+
+</td>
+<td style="text-align:right;">
+
+94
 
 </td>
 <td style="text-align:right;">
@@ -1273,14 +1569,11 @@ Wood and products of wood and cork
 98
 
 </td>
-<td style="text-align:right;">
+</tr>
+<tr>
+<td style="text-align:left;">
 
-70
-
-</td>
-<td style="text-align:right;">
-
-94
+Wood and products of wood and cork
 
 </td>
 <td style="text-align:right;">
@@ -1293,6 +1586,26 @@ Wood and products of wood and cork
 95
 
 </td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+98
+
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1302,7 +1615,7 @@ Paper products and printing
 </td>
 <td style="text-align:right;">
 
-70
+100
 
 </td>
 <td style="text-align:right;">
@@ -1322,7 +1635,7 @@ Paper products and printing
 </td>
 <td style="text-align:right;">
 
-100
+70
 
 </td>
 <td style="text-align:right;">
@@ -1339,7 +1652,7 @@ Coke and refined petroleum products
 </td>
 <td style="text-align:right;">
 
-70
+87
 
 </td>
 <td style="text-align:right;">
@@ -1359,7 +1672,7 @@ Coke and refined petroleum products
 </td>
 <td style="text-align:right;">
 
-87
+70
 
 </td>
 <td style="text-align:right;">
@@ -1376,12 +1689,12 @@ Chemical and chemical products
 </td>
 <td style="text-align:right;">
 
-70
+100
 
 </td>
 <td style="text-align:right;">
 
-88
+100
 
 </td>
 <td style="text-align:right;">
@@ -1396,12 +1709,12 @@ Chemical and chemical products
 </td>
 <td style="text-align:right;">
 
-100
+70
 
 </td>
 <td style="text-align:right;">
 
-100
+88
 
 </td>
 </tr>
@@ -1413,12 +1726,12 @@ Pharmaceuticals, medicinal chemical and botanical products
 </td>
 <td style="text-align:right;">
 
-70
+100
 
 </td>
 <td style="text-align:right;">
 
-88
+100
 
 </td>
 <td style="text-align:right;">
@@ -1433,12 +1746,12 @@ Pharmaceuticals, medicinal chemical and botanical products
 </td>
 <td style="text-align:right;">
 
-100
+70
 
 </td>
 <td style="text-align:right;">
 
-100
+88
 
 </td>
 </tr>
@@ -1446,26 +1759,6 @@ Pharmaceuticals, medicinal chemical and botanical products
 <td style="text-align:left;">
 
 Rubber and plastics products
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-88
-
-</td>
-<td style="text-align:right;">
-
-70
-
-</td>
-<td style="text-align:right;">
-
-94
 
 </td>
 <td style="text-align:right;">
@@ -1478,11 +1771,14 @@ Rubber and plastics products
 100
 
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
+<td style="text-align:right;">
 
-Other non-metallic mineral products
+70
+
+</td>
+<td style="text-align:right;">
+
+94
 
 </td>
 <td style="text-align:right;">
@@ -1495,14 +1791,11 @@ Other non-metallic mineral products
 88
 
 </td>
-<td style="text-align:right;">
+</tr>
+<tr>
+<td style="text-align:left;">
 
-70
-
-</td>
-<td style="text-align:right;">
-
-94
+Other non-metallic mineral products
 
 </td>
 <td style="text-align:right;">
@@ -1515,6 +1808,26 @@ Other non-metallic mineral products
 89
 
 </td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+<td style="text-align:right;">
+
+70
+
+</td>
+<td style="text-align:right;">
+
+88
+
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1524,7 +1837,7 @@ Basic metals
 </td>
 <td style="text-align:right;">
 
-70
+100
 
 </td>
 <td style="text-align:right;">
@@ -1544,7 +1857,7 @@ Basic metals
 </td>
 <td style="text-align:right;">
 
-100
+70
 
 </td>
 <td style="text-align:right;">
@@ -1561,7 +1874,7 @@ Fabricated metal products
 </td>
 <td style="text-align:right;">
 
-70
+90
 
 </td>
 <td style="text-align:right;">
@@ -1581,7 +1894,7 @@ Fabricated metal products
 </td>
 <td style="text-align:right;">
 
-90
+70
 
 </td>
 <td style="text-align:right;">
@@ -1598,7 +1911,7 @@ Computer, electronic and optical equipment
 </td>
 <td style="text-align:right;">
 
-70
+90
 
 </td>
 <td style="text-align:right;">
@@ -1618,7 +1931,7 @@ Computer, electronic and optical equipment
 </td>
 <td style="text-align:right;">
 
-90
+70
 
 </td>
 <td style="text-align:right;">
@@ -1635,7 +1948,7 @@ Electrical equipment
 </td>
 <td style="text-align:right;">
 
-70
+90
 
 </td>
 <td style="text-align:right;">
@@ -1655,7 +1968,7 @@ Electrical equipment
 </td>
 <td style="text-align:right;">
 
-90
+70
 
 </td>
 <td style="text-align:right;">
@@ -1672,12 +1985,12 @@ Machinery and equipment, nec
 </td>
 <td style="text-align:right;">
 
-70
+89
 
 </td>
 <td style="text-align:right;">
 
-100
+95
 
 </td>
 <td style="text-align:right;">
@@ -1692,12 +2005,12 @@ Machinery and equipment, nec
 </td>
 <td style="text-align:right;">
 
-89
+70
 
 </td>
 <td style="text-align:right;">
 
-95
+100
 
 </td>
 </tr>
@@ -1709,12 +2022,12 @@ Motor vehicles, trailers and semi-trailers
 </td>
 <td style="text-align:right;">
 
-70
+66
 
 </td>
 <td style="text-align:right;">
 
-100
+82
 
 </td>
 <td style="text-align:right;">
@@ -1729,12 +2042,12 @@ Motor vehicles, trailers and semi-trailers
 </td>
 <td style="text-align:right;">
 
-66
+70
 
 </td>
 <td style="text-align:right;">
 
-82
+100
 
 </td>
 </tr>
@@ -1746,12 +2059,12 @@ Other transport equipment
 </td>
 <td style="text-align:right;">
 
-70
+66
 
 </td>
 <td style="text-align:right;">
 
-100
+82
 
 </td>
 <td style="text-align:right;">
@@ -1766,12 +2079,12 @@ Other transport equipment
 </td>
 <td style="text-align:right;">
 
-66
+70
 
 </td>
 <td style="text-align:right;">
 
-82
+100
 
 </td>
 </tr>
@@ -1783,12 +2096,12 @@ Manufacturing nec; repair and installation of machinery and equipment
 </td>
 <td style="text-align:right;">
 
-70
+98
 
 </td>
 <td style="text-align:right;">
 
-98
+100
 
 </td>
 <td style="text-align:right;">
@@ -1803,12 +2116,12 @@ Manufacturing nec; repair and installation of machinery and equipment
 </td>
 <td style="text-align:right;">
 
-98
+70
 
 </td>
 <td style="text-align:right;">
 
-100
+98
 
 </td>
 </tr>
@@ -1820,12 +2133,12 @@ Electricity, gas, steam and air conditioning supply
 </td>
 <td style="text-align:right;">
 
-89
+94
 
 </td>
 <td style="text-align:right;">
 
-97
+94
 
 </td>
 <td style="text-align:right;">
@@ -1840,12 +2153,12 @@ Electricity, gas, steam and air conditioning supply
 </td>
 <td style="text-align:right;">
 
-94
+89
 
 </td>
 <td style="text-align:right;">
 
-94
+97
 
 </td>
 </tr>
@@ -1857,12 +2170,12 @@ Water supply; sewerage, waste management and remediation activities
 </td>
 <td style="text-align:right;">
 
-92
+100
 
 </td>
 <td style="text-align:right;">
 
-97
+100
 
 </td>
 <td style="text-align:right;">
@@ -1877,80 +2190,6 @@ Water supply; sewerage, waste management and remediation activities
 </td>
 <td style="text-align:right;">
 
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Construction
-
-</td>
-<td style="text-align:right;">
-
-56
-
-</td>
-<td style="text-align:right;">
-
-94
-
-</td>
-<td style="text-align:right;">
-
-56
-
-</td>
-<td style="text-align:right;">
-
-92
-
-</td>
-<td style="text-align:right;">
-
-95
-
-</td>
-<td style="text-align:right;">
-
-95
-
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Wholesale and retail trade; repair of motor vehicles
-
-</td>
-<td style="text-align:right;">
-
-64
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-64
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
 92
 
 </td>
@@ -1963,12 +2202,86 @@ Wholesale and retail trade; repair of motor vehicles
 <tr>
 <td style="text-align:left;">
 
+Construction
+
+</td>
+<td style="text-align:right;">
+
+95
+
+</td>
+<td style="text-align:right;">
+
+95
+
+</td>
+<td style="text-align:right;">
+
+56
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+56
+
+</td>
+<td style="text-align:right;">
+
+94
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Wholesale and retail trade; repair of motor vehicles
+
+</td>
+<td style="text-align:right;">
+
+92
+
+</td>
+<td style="text-align:right;">
+
+97
+
+</td>
+<td style="text-align:right;">
+
+64
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+64
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
 Land transport and transport via pipelines
 
 </td>
 <td style="text-align:right;">
 
-63
+83
 
 </td>
 <td style="text-align:right;">
@@ -1988,7 +2301,7 @@ Land transport and transport via pipelines
 </td>
 <td style="text-align:right;">
 
-83
+63
 
 </td>
 <td style="text-align:right;">
@@ -2005,26 +2318,6 @@ Water transport
 </td>
 <td style="text-align:right;">
 
-63
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-82
-
-</td>
-<td style="text-align:right;">
-
 81
 
 </td>
@@ -2033,23 +2326,6 @@ Water transport
 98
 
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-
-Air transport
-
-</td>
-<td style="text-align:right;">
-
-63
-
-</td>
-<td style="text-align:right;">
-
-18
-
-</td>
 <td style="text-align:right;">
 
 63
@@ -2058,6 +2334,23 @@ Air transport
 <td style="text-align:right;">
 
 82
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+Air transport
 
 </td>
 <td style="text-align:right;">
@@ -2070,6 +2363,26 @@ Air transport
 42
 
 </td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+82
+
+</td>
+<td style="text-align:right;">
+
+63
+
+</td>
+<td style="text-align:right;">
+
+18
+
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -2079,7 +2392,7 @@ Warehousing and support activities for transportation
 </td>
 <td style="text-align:right;">
 
-63
+64
 
 </td>
 <td style="text-align:right;">
@@ -2099,7 +2412,7 @@ Warehousing and support activities for transportation
 </td>
 <td style="text-align:right;">
 
-64
+63
 
 </td>
 <td style="text-align:right;">
@@ -2116,7 +2429,7 @@ Postal and courier activities
 </td>
 <td style="text-align:right;">
 
-63
+64
 
 </td>
 <td style="text-align:right;">
@@ -2136,7 +2449,7 @@ Postal and courier activities
 </td>
 <td style="text-align:right;">
 
-64
+63
 
 </td>
 <td style="text-align:right;">
@@ -2153,12 +2466,12 @@ Accommodation and food service activities
 </td>
 <td style="text-align:right;">
 
-10
+77
 
 </td>
 <td style="text-align:right;">
 
-92
+91
 
 </td>
 <td style="text-align:right;">
@@ -2173,12 +2486,12 @@ Accommodation and food service activities
 </td>
 <td style="text-align:right;">
 
-77
+10
 
 </td>
 <td style="text-align:right;">
 
-91
+92
 
 </td>
 </tr>
@@ -2190,7 +2503,7 @@ Publishing, audiovisual and broadcasting activities
 </td>
 <td style="text-align:right;">
 
-88
+100
 
 </td>
 <td style="text-align:right;">
@@ -2210,7 +2523,7 @@ Publishing, audiovisual and broadcasting activities
 </td>
 <td style="text-align:right;">
 
-100
+88
 
 </td>
 <td style="text-align:right;">
@@ -2227,7 +2540,7 @@ Telecommunications
 </td>
 <td style="text-align:right;">
 
-88
+100
 
 </td>
 <td style="text-align:right;">
@@ -2247,7 +2560,7 @@ Telecommunications
 </td>
 <td style="text-align:right;">
 
-100
+88
 
 </td>
 <td style="text-align:right;">
@@ -2264,7 +2577,7 @@ IT and other information services
 </td>
 <td style="text-align:right;">
 
-88
+100
 
 </td>
 <td style="text-align:right;">
@@ -2284,7 +2597,7 @@ IT and other information services
 </td>
 <td style="text-align:right;">
 
-100
+88
 
 </td>
 <td style="text-align:right;">
@@ -2301,7 +2614,7 @@ Financial and insurance activities
 </td>
 <td style="text-align:right;">
 
-94
+100
 
 </td>
 <td style="text-align:right;">
@@ -2321,7 +2634,7 @@ Financial and insurance activities
 </td>
 <td style="text-align:right;">
 
-100
+94
 
 </td>
 <td style="text-align:right;">
@@ -2338,7 +2651,7 @@ Real estate activities
 </td>
 <td style="text-align:right;">
 
-98
+100
 
 </td>
 <td style="text-align:right;">
@@ -2358,7 +2671,7 @@ Real estate activities
 </td>
 <td style="text-align:right;">
 
-100
+98
 
 </td>
 <td style="text-align:right;">
@@ -2375,12 +2688,12 @@ Professional, scientific and technical activities
 </td>
 <td style="text-align:right;">
 
-85
+90
 
 </td>
 <td style="text-align:right;">
 
-100
+95
 
 </td>
 <td style="text-align:right;">
@@ -2395,12 +2708,12 @@ Professional, scientific and technical activities
 </td>
 <td style="text-align:right;">
 
-90
+85
 
 </td>
 <td style="text-align:right;">
 
-95
+100
 
 </td>
 </tr>
@@ -2412,12 +2725,12 @@ Administrative and support services
 </td>
 <td style="text-align:right;">
 
-66
+90
 
 </td>
 <td style="text-align:right;">
 
-90
+95
 
 </td>
 <td style="text-align:right;">
@@ -2432,12 +2745,12 @@ Administrative and support services
 </td>
 <td style="text-align:right;">
 
-90
+66
 
 </td>
 <td style="text-align:right;">
 
-95
+90
 
 </td>
 </tr>
@@ -2449,27 +2762,27 @@ Public administration and defence; compulsory social security
 </td>
 <td style="text-align:right;">
 
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
-100
-
-</td>
-<td style="text-align:right;">
-
 96
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
+
+</td>
+<td style="text-align:right;">
+
+100
 
 </td>
 <td style="text-align:right;">
@@ -2491,6 +2804,16 @@ Education
 </td>
 <td style="text-align:right;">
 
+10
+
+</td>
+<td style="text-align:right;">
+
+10
+
+</td>
+<td style="text-align:right;">
+
 100
 
 </td>
@@ -2502,16 +2825,6 @@ Education
 <td style="text-align:right;">
 
 100
-
-</td>
-<td style="text-align:right;">
-
-10
-
-</td>
-<td style="text-align:right;">
-
-10
 
 </td>
 </tr>
@@ -2523,7 +2836,7 @@ Human health and social work activities
 </td>
 <td style="text-align:right;">
 
-75
+100
 
 </td>
 <td style="text-align:right;">
@@ -2543,7 +2856,7 @@ Human health and social work activities
 </td>
 <td style="text-align:right;">
 
-100
+75
 
 </td>
 <td style="text-align:right;">
@@ -2560,12 +2873,12 @@ Arts, entertainment and recreation
 </td>
 <td style="text-align:right;">
 
-55
+90
 
 </td>
 <td style="text-align:right;">
 
-94
+96
 
 </td>
 <td style="text-align:right;">
@@ -2580,12 +2893,12 @@ Arts, entertainment and recreation
 </td>
 <td style="text-align:right;">
 
-90
+55
 
 </td>
 <td style="text-align:right;">
 
-96
+94
 
 </td>
 </tr>
@@ -2597,12 +2910,12 @@ Other service activities
 </td>
 <td style="text-align:right;">
 
-54
+90
 
 </td>
 <td style="text-align:right;">
 
-94
+96
 
 </td>
 <td style="text-align:right;">
@@ -2617,12 +2930,12 @@ Other service activities
 </td>
 <td style="text-align:right;">
 
-90
+54
 
 </td>
 <td style="text-align:right;">
 
-96
+94
 
 </td>
 </tr>
@@ -2635,12 +2948,12 @@ services-producing activities of households for own use
 </td>
 <td style="text-align:right;">
 
-49
+90
 
 </td>
 <td style="text-align:right;">
 
-94
+96
 
 </td>
 <td style="text-align:right;">
@@ -2655,286 +2968,17 @@ services-producing activities of households for own use
 </td>
 <td style="text-align:right;">
 
-90
+49
 
 </td>
 <td style="text-align:right;">
 
-96
+94
 
 </td>
 </tr>
 </tbody>
 </table>
-
-## 4.2 Impact of tourism
-
-### 4.2.1 Food and accommodation services sector
-
-As there is no “tourism” sector in the 45-sector classification we are
-using, to model the impact of changes to tourism, we identify the “Food
-and accommodation services” sector with tourism. This is imperfect. The
-correlation of their % contributions to GDP is 0.64 and the order of
-magnitude is similar (1 to 7% vs 2 to 10% of GDP). The other two sectors
-considered (Air transport and Arts, entertainment and recreation) have
-little correlation with tourism in terms of % of GDP. (See Figure
-<a href="#fig:pairs">4.1</a>.)
-
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/pairs-1.png" alt="Correlations between tourism-related data. First: @untourismKeyTourismStatistics2023. Second to fourth: @untourismInternationalTourismCOVID192023. Fifth to seventh: OECD."  />
-
-<p class="caption">
-
-<span id="fig:pairs"></span>Figure 4.1: Correlations between
-tourism-related data. First: UN Tourism (2023b). Second to fourth: UN
-Tourism (2023a). Fifth to seventh: OECD.
-
-</p>
-
-</div>
-
-### 4.2.2 Sector shrinkage as a result of the pandemic
-
-For many countries, tourism was reduced in the COVID-19 pandemic not
-because of domestic mandates but because of reduced international
-travel. Therefore, the fraction of tourism that comes from abroad is a
-factor that can determine the impact of a pandemic on a country’s GDP
-potentially independently of what happens within the country. (A useful
-model extension would be to include some dependence on country factors,
-e.g. case numbers.)
-
-We model mitigation via business closures, which are mandated by sector.
-We represent openness with values $x$ which range from 0 to 1, 1
-representing maximum openness. To capture the impact of reduced
-international travel, we set the maximum openness of the food and
-accommodation services sector to be limited by international tourism as:
-
-``` math
-x = \min\{\hat{x}, 1+ b(c-1)\}
-```
-
-where $`\hat{x}`$ is the openness of the sector according to the
-schedule (i.e. the sector-closure policy), $b$ is the proportion of
-tourism that is international, and $c$ is the fraction international
-tourism reduces to as a consequence of the pandemic. I.e. the tourism
-remaining is the domestic ($1-b$) plus that that comes in from abroad
-($bc$).
-
-Therefore, the contribution of the GVA of the food and accommodation
-services sector is limited either by the pandemic, or by the
-sector-closure policy - whichever is lower.
-
-### 4.2.3 Loss of international tourists
-
-We model the distribution of $c$ using data from 2020 (Figure
-<a href="#fig:tourismhist">4.2</a>, bottom-right plot). We fit to it a
-log-normal distribution, and find mean value -1.39 and standard
-deviation 0.39 (Figure <a href="#fig:ytd">4.3</a>). We use these values
-as inputs for all country models.
-
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/tourismhist-1.png" alt="Distributions of tourism-related data from @untourismInternationalTourismCOVID192023. In grey are the subset of countries for which we have GVA data by sector." width="50%" />
-
-<p class="caption">
-
-<span id="fig:tourismhist"></span>Figure 4.2: Distributions of
-tourism-related data from UN Tourism (2023a). In grey are the subset of
-countries for which we have GVA data by sector.
-
-</p>
-
-</div>
-
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/ytd-1.png" alt="Fit of log-normal distribution to loss-of-tourism data."  />
-
-<p class="caption">
-
-<span id="fig:ytd"></span>Figure 4.3: Fit of log-normal distribution to
-loss-of-tourism data.
-
-</p>
-
-</div>
-
-### 4.2.4 Dependence on international tourism
-
-We model $b$ as a function of the share of GDP that comes from the
-sector. Note that the data we have for this are biased towards
-high-income countries.
-
-We write
-
-$$b\sim\text{Beta}(\alpha(z),\beta(z))$$
-
-where $z$ is the fraction of GDP coming from the Food and accommodation
-sector. We learn three parameters $p^5$, $p^6$ and $p^7$ to best fit the
-relationship between $z$ and $b$ in countries we have observations for:
-
-$$p^5 = \alpha(z)+\beta(z)$$
-
-$$p^6 z + p^7 = \frac{\alpha(z)}{\alpha(z)+\beta(z)}$$
-
-Here, $p^5$ controls the variance of the distribution and $p^6$ and
-$p^7$ the linear relationship between $z$ and $b$. Using an optimisation
-routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are
-shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
-values as inputs for all country models.
-
-<figure>
-<img src="figures/sectortourism.png" style="width:40.0%"
-alt="Figure 4.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 4.2)." />
-<figcaption aria-hidden="true"><span
-id="fig:sectortourism"></span>Figure 4.4: Predicting the percentage of
-tourism that comes from abroad as a function of the size of the sector.
-Each row represents a beta distribution whose mean is determined by the
-size of the sector (z). Blue points show the data we have available
-(grey bars in Figure <a href="#fig:tourismhist">4.2</a>).</figcaption>
-</figure>
-
-## 4.3 Remote working
-
-For each sector in each country, we have the 90% interval for the
-proportion of people who can work from home from Gottlieb et al. (2021).
-We assume that the value we sample within the range is related to
-internet infrastructure, so that a low value in one sector implies low
-values in all sectors. We:
-
-- take the subset of countries in the income group (LLMIC / UMIC / HIC);
-- take the minimum of the lower bounds by sector (5%);
-- take the maximum of the upper bounds by sector (95%);
-- sample from a uniform distribution between these bounds, taking the
-  same quantile for each sector.
-
-We assume that remote working happens to its fullest extent for the
-whole period of mitigation for all policies.
-
-<!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 1.78 and  3.11. For UMICs, we have parameters 14.32 and  6.44. For HICs, we have parameters 9.57 and  1.39. -->
-
-# 5 Closure policies
-
-Impacts of mandated closures of businesses and schools on epidemics can
-be described using three factors: length, stringency, and frequency. We
-model mandated closures using a discrete set of predefined policies,
-which specify the *stringency* of closures in each sector. The policies
-we use are the same for each country. The length and frequency of
-economic closures are endogenous to the model (via its epidemiology),
-and therefore depend on the dynamics of the epidemic that is being
-modelled.
-
-We define four generic policies that might be adopted once a novel
-pathogen has been identified. The policies represent possible choices
-that range from very stringent to laissez faire, and are grounded in
-real-life observations. We name the policies no closures (NC) and
-reactive closures 1 to 3 (RC1 to RC3), and they are depicted in Figure
-<a href="#fig:policies">5.1</a>, structured by the qualities that
-distinguish them.
-
-The three sector-closure policies are each defined by a pair of economic
-configurations, and rules for moving between them. An economic
-configuration is a vector specifying the extent to which each sector is
-open, expressed as a percentage. Our economic configurations are
-constructed using data from three countries (Indonesia (RC1), the United
-Kingdom (RC2), and Australia (RC3)), via the manifest economic impacts
-in the wake of the COVID-19 pandemic. We take the sectoral GVA observed
-the COVID-19 pandemic expressed as a percentage of the values observed
-in the year before (OECD), i.e. we assume that the relative GVA reflects
-the degree to which sectors were open. (In reality, the observed effects
-combined mandated closures, reductions in consumption and labour supply
-due to infection avoidance of individuals, interruptions in supply
-chains, and changes in imports and exports, but these cannot be
-disentangled in accounts, and nor do we attempt to model them separately
-in our economic model.)
-
-The economic configurations define the sector closures for both the
-economic model and the epidemiological model. Contacts associated with
-sectors – between and among workers and customers – are scaled down with
-closures. GVA per sector is scaled according to economic configurations
-in the economic model.
-
-For their dynamic implementation in the model, the three closure
-policies follow the same general pattern: they are defined by two
-economic configurations, which we refer to as heavy and light (where the
-“heavy” configuration has higher stringency than the “light”
-configuration; the configurations are tabulated in Table
-<a href="#tab:eccon">4.1</a>). The light configuration is implemented at
-the response time. Thereafter, the level of closure for the three
-policies is mandated in response to the state of the epidemic, reverting
-between states as determined by the transmission dynamics. Tables
-<a href="#tab:rulesreactive">5.1</a> and
-<a href="#tab:ruleselimination">5.2</a> show the transitions and their
-conditions. RC1 and RC2 respond to hospital occupancy, allowing cases to
-rise and using closures to allow them to fall again. RC1 keeps school
-closed throughout, whereas RC2 has school open in the lighter
-configuration. RC3 aims to reduce cases and then to keep them low. All
-mitigation is suspended when the vaccine rollout has reached its target
-coverage (which is when 80% of the eligible population have been
-vaccinated).
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/policies-1.png" alt="The four sector-closure policy options. No closures (NC) does not mandate any closures. The other three policies all implement reactive closures (RC), either in response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The difference between RC1 and RC2 is that in RC1 schools are closed throughout, whereas in RC2 schools are fully open during the ``light closure'' configuration." width="50%" />
-
-<p class="caption">
-
-<span id="fig:policies"></span>Figure 5.1: The four sector-closure
-policy options. No closures (NC) does not mandate any closures. The
-other three policies all implement reactive closures (RC), either in
-response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The
-difference between RC1 and RC2 is that in RC1 schools are closed
-throughout, whereas in RC2 schools are fully open during the \`\`light
-closure’’ configuration.
-
-</p>
-
-</div>
-
-The sector-closure policies are defined as follows:
-
-- NC: No closures are mandated.
-- RC1: Schools are mandated to close to 10% of pre-epidemic levels
-  throughout, and other economic sectors close to the heavy-closure
-  economic configuration when hospital occupancy reaches 95% of its
-  capacity, and change to the light configuration once occupancy is less
-  than 25% capacity.
-- RC2: Sectors (including the education sector) toggle between heavy and
-  light closures reactively, as in RC1, albeit with slightly different
-  economic configurations.
-- RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when
-  $R_t<0.95$. Closures are maintained until $R_t<1$ without closures, or
-  vaccination coverage targets are reached.
-
-All policies assume there is testing (Section
-<a href="#self-isolating">3.6</a>), working from home (Section
-<a href="#remote-working">4.3</a>), and uncosted transmission reductions
-from behavioural changes (Section
-<a href="#uncosted-transmission-reductions">3.5</a>), which impact
-epidemiological outcomes. They do not directly impact economic outcomes,
-but indirectly may reduce the need for closures because of reduced
-incidence.
-
-| From/to            | No closures                                                                                                           | Light closures                                                   | Heavy closures                     |
-|:-------------------|:----------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------|:-----------------------------------|
-| **No closures**    |                                                                                                                       | t $\geq$ response time AND Hospital occupancy \> 95% capacity    |                                    |
-| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                  | Hospital occupancy \> 95% capacity |
-| **Heavy closures** |                                                                                                                       | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |                                    |
-
-<span id="tab:rulesreactive"></span>Table 5.1: State transition rules
-for policies RC1 and RC2. See Table <a href="#tab:eccon">4.1</a> for
-details of closures.
-
-| From/to            | No closures                                          | Light closures                                                          | Heavy closures |
-|:-------------------|:-----------------------------------------------------|:------------------------------------------------------------------------|:---------------|
-| **No closures**    |                                                      | t $\geq$ response time OR Hospital occupancy \> 95% capacity            |                |
-| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                         | $R_t > 1.2$    |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t \> 7 + last change time |                |
-
-<span id="tab:ruleselimination"></span>Table 5.2: State transition rules
-for policy RC3. See Table <a href="#tab:eccon">4.1</a> for details of
-closures.
 
 # 6 Pathogen profiles
 
@@ -4865,10 +4909,6 @@ basic reproduction number
 pathogen parameters used to sample synthetic pathogens. Distributions
 are built from values in Table <a href="#tab:pathogenprofile">6.1</a>.
 
-<!-- ```{r ratesbyage,fig.cap='Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table \<a href="#tab:pathogenprofile">6.1</a>.',echo=F,warning=F,message=F, out.width="50%"} -->
-<!-- knitr::include_graphics("ratesbyage.jpg") -->
-<!-- ``` -->
-
 <figure>
 <img src="README_files/figure-gfm/ratesbyage.jpeg"
 alt="Figure 6.1: Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table 6.1." />
@@ -4880,7 +4920,35 @@ profiles. Profiles are built from values in Table
 <a href="#tab:pathogenprofile">6.1</a>.</figcaption>
 </figure>
 
-# 7 Parametric distributions
+# 7 DAEDALUS model parameters
+
+In this section we list the parameters used to construct a country in
+order to run the model. We organise them by the way in which they are
+sampled. Fixed values are described elsewhere in the documentation.
+
+## 7.1 Sampled
+
+The following quantities are sampled from the set of values belonging to
+countries from one income level and/or uniform distributions:
+
+- Population distribution by age
+- Life expectancy
+- Number of workers per sector
+- GVA per worker per sector
+- Community contact matrix
+- Testing rate
+- Scaling factors for all workplace-related contacts
+- The extent to which there is uncosted transmission reduction
+- Type of VSL calculation
+- PPP conversion and/or VSL elasticity
+- Remote teaching effectiveness
+- Date of importation
+- Response time
+- Size of epidemic seed
+
+## 7.2 Parametric distributions informed by data
+
+The following are sampled from parametric distributions:
 
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
@@ -5785,7 +5853,7 @@ Beta
 </tbody>
 </table>
 
-## 7.1 Hospital capacity
+### 7.2.1 Hospital capacity
 
 <div class="figure">
 
@@ -5805,7 +5873,7 @@ parameters 1.3 and 0.05. For UMICs, we have parameters 1.73 and 0.02.
 For HICs, we have parameters 2.05 and 0.02. (Data sources: World Bank
 (beds); OECD, WHO euro (bed occupancy rates).)
 
-## 7.2 Labour share of GVA
+### 7.2.2 Labour share of GVA
 
 We estimate the average annual income per working-age adult as the total
 GVA multiplied by the fraction of GVA that goes to labour divided by the
@@ -5832,7 +5900,7 @@ We model these values with Beta distributions. For LLMICs, we have
 parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18.
 For HICs, we have parameters 7.97 and 6.87.
 
-## 7.3 Vaccine administration
+### 7.2.3 Vaccine administration
 
 <div class="figure">
 
@@ -5908,7 +5976,7 @@ speed up, and mop up.
 
 </div>
 
-## 7.4 Compliance with the requirement to self isolate
+### 7.2.4 Compliance with the requirement to self isolate
 
 We use a broad Beta distribution with parameters (5,5) to describe the
 compliance of the population with the requirement to isolate if
@@ -6263,6 +6331,14 @@ Surveys.” *The BMJ* 372. <https://doi.org/10.1136/bmj.n608>.
 <div id="ref-TheGlobalFund2022" class="csl-entry">
 
 The Global Fund. 2022. “Fight for What Counts Investment Case,” 1–4.
+
+</div>
+
+<div id="ref-un" class="csl-entry">
+
+UN Economic and Social Affairs. 2008. *International Standard Industrial
+Classification of All Economic Activities Revision 4*. New York: United
+Nations. <https://doi.org/10.4337/9781781955659.00009>.
 
 </div>
 

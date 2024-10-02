@@ -11,6 +11,7 @@ output:
   bookdown::pdf_document2: 
     toc: false
     keep_tex: yes
+    citation_package: natbib
     extra_dependencies: ["float"]
     # extra_dependencies: ["flafter"]
     pandoc_args:
@@ -121,31 +122,31 @@ bpsv_levels <- c(0,1)
 - The importation time is a random number between 0 and 20 days, where 0 days would be equivalent to the spillover, or origin, country
 - The simulation starts at the minimum between the response time and the importation time
 - At the response time, the BPSV, if present, is given to people aged 65 and older; testing begins; working from home begins; economic closures, if in use, are implemented
-- At the importation time, five people are moved from compartment S to compartment E
 - If closure policies (RC1, RC2, or RC3) are being implemented, the rules in Tables \@ref(tab:rulesreactive) or \@ref(tab:ruleselimination) are followed
-- The SARS-X--specific vaccine is rolled out starting at least day 107 after the response time, depending on the investment scenario assumption
+- At the importation time, five people are moved from compartment S to compartment E
+- The SARS-X--specific vaccine is rolled out starting at least 107 days after the response time, depending on the investment scenario assumption
 - All people aged 15 and over are eligible for vaccination, and we assume 80% take it up
 - Distribution rate depends on investment scenario assumptions
-- Once vaccine rollout is complete, closures, working from home and testing end
+- Closures, working from home and testing end when vaccine rollout completes (or if other stopping criteria are met, see Tables \@ref(tab:rulesreactive) and \@ref(tab:ruleselimination))
 - When the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends.
 
 
 # Socio-economic costs
 
 
-We assign monetary values to YLLs and to years of education in order to add health and education costs of sector-closure policies to the costs of economic closures. We define the total socio-economic costs TSC of an epidemic as the sum of the individual costs:
+We assign monetary values to years of life lost (YLL) and to years of education in order to add health and education costs of sector-closure policies to the costs of economic closures. We define the total socio-economic cost (TSC) of an epidemic as the sum of the individual costs:
 
 \begin{equation}
 \text{TSC} = K_1\text{VLY} + K_2 + K_3\text{VSY},
 \label{eq:swf}
 \end{equation}
 
-where $K_1$ is the number of discounted life years lost and VLY the value of a life year; $K_2$ is the lost GDP over the period due to reduced economic activity; and $K_3$ is the number of school years lost and VSY the value of one school year.
+where $K_1$ is the number of life years lost and VLY the value of a life year; $K_2$ is the lost GDP over the period due to reduced economic activity; and $K_3$ is the number of school years lost and VSY the value of one school year.
 
 
 ## Lost lives
 
-To value lives lost, we make use of the expected remaining life years per age group [@GlobalBurdenofDiseaseCollaborativeNetwork2021]. These are used to estimate the expected number of years of life lost per death, and to estimate the value of a life year. We map the remaining life expectancy $\tilde{l}_a$ for the GBD age groups $a$ to $l_g$ for the model age groups $g$ as a population-weighted average, taking into account the size of each age group, $`\tilde{N}_a`$. For the expected number of life years lost per death, we take into account also the probability to die given infection, $P(D|I,a)$:
+To value lives lost, we make use of the expected remaining life years per age group [@GlobalBurdenofDiseaseCollaborativeNetwork2021]. These are used to estimate the expected number of years of life lost per death, and to estimate the value of a life year. We map the remaining life expectancy $\tilde{l}_a$ for the GBD age groups $a$ to $l_g$ for the model age groups $g$ as a population-weighted average, taking into account the size of each age group, $`\tilde{N}_a`$. For the expected number of life years lost per SARS-X death, we take into account also the probability to die given infection, $P(D|I,a)$:
 
 ```math
 l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
@@ -300,9 +301,9 @@ $p^{12}$ is the present value of lost earnings:
 
 $$p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_Y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
-for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age $a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean annual earnings, $p^{15}=0.08$ is the rate of return for one year.
+for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age $a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean annual earnings, and $p^{15}=0.08$ is the rate of return for one year of education.
 
-The value $p^{16}$ represents the effectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified [@Patrinos2023]. We assume that losses are linear in duration of school closure, although there is not consensus even on this [@Betthauser2023]. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status [@Moscoviz2022]. However, these factors might be more pertinent to intra- rather than international modelling.
+The value $p^{16}$ represents the effectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified [@Patrinos2023]. We assume that losses are linear in duration of school closure, although there is not consensus even on this [@Betthauser2023]. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status [@Moscoviz2022]. These factors might be more pertinent to intra- rather than international modelling.
 
 
 
@@ -736,7 +737,7 @@ knitr::include_graphics(path = "README_files/figure-gfm/mobilitycurves.png")
 ```
 
 
-## Self isolating
+## Testing and self isolating
 
 We assume that infectious people who know their status have a compliance $p^1\sim\text(Beta)(5,5)$ with the instruction to self isolate, starting one day into their infectious period. We assume constant infectiousness over time and that a fraction $p^{26}$ of the symptomatic infectiousness is presymptomatic. Then the amount of infectiousness averted of symptomatic people is $p^4=p^1(1-p^{26})$, who isolate due to the onset of symptoms. The fraction of asymptomatic cases identified by testing is $p^2(t)$. We assume asymptomatic cases have the same probability to self isolate and that test results are returned after $p^{17}$ days of infectiousness. Then the infectiousness that testing averts is $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$. 
 
@@ -749,28 +750,13 @@ We assume that infectious people who know their status have a compliance $p^1\si
 
 # Econ model 
 
-## Configurations
+The economic model is measuring GDP by summing GVA over sectors and over time taking into account the extent to which sectors are open, as described in Section \@ref(lost-economic-activity). 
 
-```{r eccon,tab.cap='Economic configurations used to implement sector-closure policies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia; RC2 values are taken from the UK; RC1 values are taken from Indonesia, with data from OECD. Heavy closures are implemented in response to the epidemic. Thereafter, the level of closure is mandated in response to the state of the epidemic, reverting between states as necessary.',echo=F,warning=F,message=F}
+The economy is stratified by sector following the International Standard Industrial Classification of All Economic Activities (ISIC) Rev. 4 as used by the OECD [@un]. Economic output is measured as the sum of gross value added (GVA) of all sectors over the epidemic period, expressed as a percentage of pre-epidemic GVA summed over the same period. 
 
-eccon <- readxl::read_xlsx('data/6.economic_closures.xlsx',sheet='configurations')
-for(j in 2:ncol(eccon)) eccon[,j] <- round(eccon[,j]*100)
-colorder <- c(2,1,2,3,4,5)
-eccon <- eccon[,c(0,colorder)+1]
-colnames(eccon) <- c('Sector',rep(c('Heavy closures','Light closures'),times=3))
+Openness comes primarily from the economic configuration which is a policy choice, mandated in response to the epidemic (see Section \@ref(closure-policies)). There are potentially additional losses due to worker sickness and death (see Section \@ref(lost-economic-activity)) and due to lost tourism, which is an exogenous random variable (see Section \@ref(impact-of-tourism)). We do not model changes to supply or demand, reductions in consumption and labour supply due to infection avoidance of individuals, interruptions in supply chains, or changes in imports and exports.
 
-if (!knitr::is_html_output(excludes = "markdown")) { 
-  pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
-}else{
-    x <- knitr::kable(eccon,escape=F, "html",caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage.  RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
-  kable_styling(x,full_width = F,latex_options = "HOLD_position") %>%
-  add_header_above(c('',"RC3" = 2,"RC2" = 2,"RC1" = 2)) %>%
-  kable_classic()
-}
-
-```
-
-
+Lost education is also quantified monetarily and constitutes an economic cost. Unlike the other losses, they are not contemporaneous with the epidemic, but losses that unfold into the future. The assumptions and equations are described in Section \@ref(lost-education).
 
 ## Impact of tourism
 
@@ -963,18 +949,23 @@ We assume that remote working happens to its fullest extent for the whole period
 
 Impacts of mandated closures of businesses and schools on epidemics can be described using three factors: length, stringency, and frequency. We model mandated closures using a discrete set of predefined policies, which specify the *stringency* of closures in each sector. The policies we use are the same for each country. The length and frequency of economic closures are endogenous to the model (via its epidemiology), and therefore depend on the dynamics of the epidemic that is being modelled. 
 
+## Policy specifications
+
 We define four generic policies that might be adopted once a novel pathogen has been identified. The policies represent possible choices that range from very stringent to laissez faire, and are grounded in real-life observations. We name the policies no closures (NC) and reactive closures 1 to 3 (RC1 to RC3), and they are depicted in Figure \@ref(fig:policies), structured by the qualities that distinguish them. 
 
-The three sector-closure policies are each defined by a pair of economic configurations, and rules for moving between them. An economic configuration is a vector specifying the extent to which each sector is open, expressed as a percentage. Our economic configurations are constructed using data from three countries (Indonesia (RC1), the United Kingdom (RC2), and Australia (RC3)), via the manifest economic impacts in the wake of the COVID-19 pandemic. We take the sectoral GVA observed the COVID-19 pandemic expressed as a percentage of the values observed in the year before (OECD), i.e. we assume that the relative GVA reflects the degree to which sectors were open. (In reality, the observed effects combined mandated closures, reductions in consumption and labour supply due to infection avoidance of individuals, interruptions in supply chains, and changes in  imports and exports, but these cannot be disentangled in accounts, and nor do we attempt to model them separately in our economic model.)
+The three sector-closure policies are each defined by a pair of economic configurations, and rules for moving between them. An economic configuration is a vector specifying the extent to which each sector is open, expressed as a percentage. Our economic configurations are constructed using data from three countries (Indonesia (RC1), the United Kingdom (RC2), and Australia (RC3)), via the manifest economic impacts in the wake of the COVID-19 pandemic. We take the sectoral GVA observed the COVID-19 pandemic expressed as a percentage of the values observed in the year before (OECD), i.e. we assume that the relative GVA reflects the degree to which sectors were open. 
+
+In reality, the observed effects combined mandated closures, reductions in consumption and labour supply due to infection avoidance of individuals, interruptions in supply chains, and changes in  imports and exports. However, these effects have not been disentangled, and in DAEDALUS we model only the mandate. This is equivalent to saying that we assume the mandate alone determined economic outcomes and we simulate their repeated application. Thus we neglect two factors in our model: first, population behaviour, and second, international trade, and we ignore their impacts in the COVID-19 pandemic by subsuming all effects into the mandate. (e.g. a pandemic that does not originate in or impact greatly China might have a much smaller economic cost).
+
+## Implementation
 
 The economic configurations define the sector closures for both the economic model and the epidemiological model. Contacts associated with sectors -- between and among workers and customers -- are scaled down with closures. GVA per sector is scaled according to economic configurations in the economic model.
 
-
-For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the "heavy" configuration has higher stringency than the "light" configuration; the configurations are tabulated in Table \@ref(tab:eccon)). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. Tables \@ref(tab:rulesreactive) and \@ref(tab:ruleselimination) show the transitions and their conditions. RC1 and RC2 respond to hospital occupancy, allowing cases to rise and using closures to allow them to fall again. RC1 keeps school closed throughout, whereas RC2 has school open in the lighter configuration. RC3 aims to reduce cases and then to keep them low. All mitigation is suspended when the vaccine rollout has reached its target coverage (which is when 80% of the eligible population have been vaccinated). 
-
+For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the "heavy" configuration has higher stringency than the "light" configuration; the configurations are tabulated in Table \@ref(tab:eccon)). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. Tables \@ref(tab:rulesreactive) and \@ref(tab:ruleselimination) show the transitions and their conditions. RC1 and RC2 respond to hospital occupancy, allowing cases to rise and using closures to allow them to fall again. RC1 keeps schools closed throughout, whereas RC2 has schools open in the light configuration. RC3 aims to reduce cases and then to keep them low. All mitigation is suspended when the vaccine rollout has reached its target coverage (which is when 80% of the eligible population have been vaccinated). 
 
 
-```{tikz policies, fig.cap = "The four sector-closure policy options. No closures (NC) does not mandate any closures. The other three policies all implement reactive closures (RC), either in response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The difference between RC1 and RC2 is that in RC1 schools are closed throughout, whereas in RC2 schools are fully open during the ``light closure'' configuration.", fig.ext = 'png',echo=F,out.width="50%"}
+
+```{tikz policies, fig.cap = "The four sector-closure policy options. No closures (NC) does not mandate any closures. The other three policies all implement reactive closures (RC), either in response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The difference between RC1 and RC2 is that in RC1 schools are closed throughout, whereas in RC2 schools are fully open during the light configuration.", fig.ext = 'png',echo=F,out.width="50%"}
 \usetikzlibrary{shapes}
 \usetikzlibrary{fit}
 \usetikzlibrary{arrows}
@@ -1028,10 +1019,10 @@ The sector-closure policies are defined as follows:
 - NC: No closures are mandated. 
 - RC1: Schools are mandated to close to 10% of pre-epidemic levels throughout, and other economic sectors close to the heavy-closure economic configuration when hospital occupancy reaches 95% of its capacity, and change to the light configuration once occupancy is less than 25% capacity.
 - RC2: Sectors (including the education sector)  toggle between heavy and light closures reactively, as in RC1, albeit with slightly different economic configurations. 
-- RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when $R_t<0.95$. Closures are maintained until $R_t<1$ without closures, or vaccination coverage targets are reached. 
+- RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when $R_t<0.95$. Closures are maintained until $R_t<1$ without closures, or vaccination targets are reached. 
 
 
-All policies assume there is testing (Section \@ref(self-isolating)), working from home (Section \@ref(remote-working)), and uncosted transmission reductions from behavioural changes (Section \@ref(uncosted-transmission-reductions)), which impact epidemiological outcomes. They do not directly impact economic outcomes, but indirectly may reduce the need for closures because of reduced incidence. 
+All policies assume there is testing (Section \@ref(testing-and-self-isolating)), working from home (Section \@ref(remote-working)), and uncosted transmission reductions from behavioural changes (Section \@ref(uncosted-transmission-reductions)), which impact epidemiological outcomes. They do not directly impact economic outcomes, but indirectly may reduce the need for closures because of reduced incidence. 
 
 
 
@@ -1051,6 +1042,27 @@ Table: (\#tab:rulesreactive) State transition rules for policies RC1 and RC2. Se
 | **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$  | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t > 7 + last change time |  | 
 
 Table: (\#tab:ruleselimination) State transition rules for policy RC3. See Table \@ref(tab:eccon) for details of closures.
+
+
+
+```{r eccon,tab.cap='Economic configurations used to implement sector-closure policies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia; RC2 values are taken from the UK; RC1 values are taken from Indonesia, with data from OECD. Heavy closures are implemented in response to the epidemic. Thereafter, the level of closure is mandated in response to the state of the epidemic, reverting between states as necessary.',echo=F,warning=F,message=F}
+
+eccon <- readxl::read_xlsx('data/6.economic_closures.xlsx',sheet='configurations')
+for(j in 2:ncol(eccon)) eccon[,j] <- round(eccon[,j]*100)
+colorder <- c(4,5,2,3,2,1)
+eccon <- eccon[,c(0,colorder)+1]
+colnames(eccon) <- c('Sector',rep(c('Heavy closures','Light closures'),times=3))
+
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
+}else{
+    x <- knitr::kable(eccon,escape=F, "html",caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage.  RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
+  kable_styling(x,full_width = F,latex_options = "HOLD_position") %>%
+  add_header_above(c('',"RC1" = 2,"RC2" = 2,"RC3" = 2)) %>%
+  kable_classic()
+}
+
+```
 
 
 
@@ -1099,19 +1111,37 @@ R$_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 
 Table: (\#tab:pathogenparameters) Distributions for pathogen parameters used to sample synthetic pathogens. Distributions are built from values in Table \@ref(tab:pathogenprofile).
 
 
-<!-- ```{r ratesbyage,fig.cap='Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table \\@ref(tab:pathogenprofile).',echo=F,warning=F,message=F, out.width="50%"} -->
-
-<!-- knitr::include_graphics("ratesbyage.jpg") -->
-
-<!-- ``` -->
-
 ![(\#fig:ratesbyage) Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table \@ref(tab:pathogenprofile).](README_files/figure-gfm/ratesbyage.jpeg)
 
 
 
+# DAEDALUS model parameters
+
+In this section we list the parameters used to construct a country in order to run the model. We organise them by the way in which they are sampled. Fixed values are described elsewhere in the documentation.
+
+## Sampled
+
+The following quantities are sampled from the set of values belonging to countries from one income level and/or uniform distributions:
+
+- Population distribution by age
+- Life expectancy
+- Number of workers per sector
+- GVA per worker per sector
+- Community contact matrix
+- Testing rate
+- Scaling factors for all workplace-related contacts
+- The extent to which there is uncosted transmission reduction
+- Type of VSL calculation
+- PPP conversion and/or VSL elasticity
+- Remote teaching effectiveness
+- Date of importation
+- Response time
+- Size of epidemic seed
 
 
-# Parametric distributions
+## Parametric distributions informed by data
+
+The following are sampled from parametric distributions:
 
 
 ```{r paramdist,tab.cap='Parameter distributions.',echo=F,warning=F,message=F}
@@ -1146,7 +1176,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 ```
 
 
-## Hospital capacity
+### Hospital capacity
 
 ```{r hmax,fig.cap='Hospital capacity: available beds minus usual occupancy.',echo=F,warning=F,message=F, out.width="50%"}
 
@@ -1167,7 +1197,7 @@ llmic <- fitdistr(subset(hmaxi,!is.na(Hmax)&igroup%in%c('LMIC','LIC'))$Hmax,"gam
 
 We model these values with gamma distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape'],2)` and  `r round(llmic$estimate['rate'],2)`. For UMICs, we have parameters `r round(mic$estimate['shape'],2)` and  `r round(mic$estimate['rate'],2)`. For HICs, we have parameters `r round(hic$estimate['shape'],2)` and  `r round(hic$estimate['rate'],2)`. (Data sources: World Bank (beds); OECD, WHO euro (bed occupancy rates).)
 
-## Labour share of GVA
+### Labour share of GVA
 
 We estimate the average annual income per working-age adult as the total GVA multiplied by the fraction of GVA that goes to labour divided by the number of working-age adults. For the fraction of GVA that goes to labour we use PWT estimates from 2011 (Figure \@ref(fig:labsh)). 
 
@@ -1215,7 +1245,7 @@ llmic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup%in%c('Low income','
 
 We model these values with Beta distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape1'],2)` and  `r round(llmic$estimate['shape2'],2)`. For UMICs, we have parameters `r round(mic$estimate['shape1'],2)` and  `r round(mic$estimate['shape2'],2)`. For HICs, we have parameters `r round(hic$estimate['shape1'],2)` and  `r round(hic$estimate['shape2'],2)`.
 
-## Vaccine administration
+### Vaccine administration
 
 ```{r vaxrate,fig.cap='Vaccines administered per day, on average, in each country as a percent of population. Data source: fully vaccinated people from OWID (2022).',echo=F,warning=F,message=F, out.width="50%"}
 
@@ -1254,7 +1284,7 @@ knitr::include_graphics(path = "README_files/figure-gfm/vaccinationrates.png")
 
 ```
 
-## Compliance with the requirement to self isolate
+### Compliance with the requirement to self isolate
 
 We use a broad Beta distribution with parameters (5,5) to describe the compliance of the population with the requirement to isolate if symptomatic or positive. A YouGov survey [@jonessarahpImperialCollegeLondon2020] asked "If you were advised to do so by a healthcare professional or public health authority to what extent are you willing or not to self-isolate for 7 days?" The question was asked in 30 different countries (21 high income, five upper-middle income, four lower-middle income) and 63 different weeks of the COVID-19 pandemic to a total of 837,368 people.
 
