@@ -1097,7 +1097,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 # Pathogen profiles
 
-We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using sourced data (Table \@ref(tab:pathogenprofile)), and are described in Table \@ref(tab:pathogenparameters). Age profiles for severity rates are shown in Figure \@ref(fig:ratesbyage). We sample parameter values from distributions informed by the seven pathogen profiles. R$_0$ is truncated at 1.5 and 4 following @whittakerQuantifyingImpactBroadly2024. 
+We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using sourced data (Table \@ref(tab:pathogenprofile)), and are described in Table \@ref(tab:pathogenparameters). Age profiles for severity rates are shown in Figure \@ref(fig:ratesbyage). We sample parameter values from distributions informed by the seven pathogen profiles. $\text{R}_0$ is truncated at 1.5 and 4 following @whittakerQuantifyingImpactBroadly2024. 
 
 
 
@@ -1129,8 +1129,8 @@ Model parameter name | Distribution | Distribution parameter values | Correlatio
 Probability symptomatic | Beta | 14.68, 7.30 | None 
 Latent period | Gamma | 2.28, 1.06 | None 
 Asymptomatic infectious period | Gamma | 139.0, 0.017 | None 
-Time from symptom onset to recovery | Gamma | 18.61, 0.17 | 0.99 (time to hospitalisation); 0.60 (R$_0$) 
-Time from symptom onset to hospitalisation | Gamma | 21.21, 0.14 | 0.99 (time to recovery); 0.66 (R$_0$)
+Time from symptom onset to recovery | Gamma | 18.61, 0.17 | 0.99 (time to hospitalisation); 0.60 ($\text{R}_0$) 
+Time from symptom onset to hospitalisation | Gamma | 21.21, 0.14 | 0.99 (time to recovery); 0.66 ($\text{R}_0$)
 Time from hospitalisation to recovery | Gamma | 2.46, 3.75 | 0.997  
 Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 
 Time to immunity waning | Constant | Inf | None 

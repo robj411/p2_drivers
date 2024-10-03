@@ -2988,8 +2988,8 @@ parameters. The distributions are made using sourced data (Table
 <a href="#tab:pathogenparameters">6.2</a>. Age profiles for severity
 rates are shown in Figure <a href="#fig:ratesbyage">6.1</a>. We sample
 parameter values from distributions informed by the seven pathogen
-profiles. R$_0$ is truncated at 1.5 and 4 following Whittaker et al.
-(2024).
+profiles. $\text{R}_0$ is truncated at 1.5 and 4 following Whittaker et
+al. (2024).
 
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -4897,8 +4897,8 @@ basic reproduction number
 | Probability symptomatic                    | Beta             | 14.68, 7.30                   | None                                                    |
 | Latent period                              | Gamma            | 2.28, 1.06                    | None                                                    |
 | Asymptomatic infectious period             | Gamma            | 139.0, 0.017                  | None                                                    |
-| Time from symptom onset to recovery        | Gamma            | 18.61, 0.17                   | 0.99 (time to hospitalisation); 0.60 (R$_0$)            |
-| Time from symptom onset to hospitalisation | Gamma            | 21.21, 0.14                   | 0.99 (time to recovery); 0.66 (R$_0$)                   |
+| Time from symptom onset to recovery        | Gamma            | 18.61, 0.17                   | 0.99 (time to hospitalisation); 0.60 ($\text{R}_0$)     |
+| Time from symptom onset to hospitalisation | Gamma            | 21.21, 0.14                   | 0.99 (time to recovery); 0.66 ($\text{R}_0$)            |
 | Time from hospitalisation to recovery      | Gamma            | 2.46, 3.75                    | 0.997                                                   |
 | Time from hospitalisation to death         | Gamma            | 2.93, 2.96                    | 0.997                                                   |
 | Time to immunity waning                    | Constant         | Inf                           | None                                                    |
