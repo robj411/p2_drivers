@@ -1064,7 +1064,7 @@ $$p^6 z + p^7 = \frac{\alpha(z)}{\alpha(z)+\beta(z)}$$
 
 Here, $p^5$ controls the variance of the distribution and $p^6$ and
 $p^7$ the linear relationship between $z$ and $b$. Using an optimisation
-routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are
+routine in R we find $p^5=6.73$, $p^6=4.14$ and $p^7=0.05$. Results are
 shown in Figure <a href="#fig:sectortourism">4.4</a>. We use these
 values as inputs for all country models.
 
@@ -4940,7 +4940,7 @@ countries from one income level and/or uniform distributions:
 - Scaling factors for all workplace-related contacts
 - The extent to which there is uncosted transmission reduction
 - Type of VSL calculation
-- PPP conversion and/or VSL elasticity
+- VSL elasticity
 - Remote teaching effectiveness
 - Date of importation
 - Response time
@@ -4954,6 +4954,8 @@ The following are sampled from parametric distributions:
 <caption>
 
 <span id="tab:paramdist"></span>Table 7.1: Parameter distributions.
+Tourism parameters are those described in Section
+<a href="#dependence-on-international-tourism">4.1.4</a>.
 
 </caption>
 <thead>
@@ -5340,7 +5342,7 @@ Gamma
 <tr>
 <td style="text-align:left;">
 
-tourism P1+P2
+tourism parameter sum
 
 </td>
 <td style="text-align:left;">

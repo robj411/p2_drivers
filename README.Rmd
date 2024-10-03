@@ -918,8 +918,37 @@ where $z$ is the fraction of GDP coming from the Food and accommodation sector. 
 $$p^5 = \alpha(z)+\beta(z)$$
 
 $$p^6 z + p^7 = \frac{\alpha(z)}{\alpha(z)+\beta(z)}$$
-  
-Here, $p^5$ controls the variance of the distribution and $p^6$ and $p^7$ the linear relationship between $z$ and $b$. Using an optimisation routine in R we find $p^5=5.93$, $p^6=3.66$ and $p^7=0.099$. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
+
+
+
+```{r paramdist0,echo=F,warning=F,message=F}
+
+paramdist <- read.csv('data/parameter_distributions.csv')
+p5 <- paramdist$Parameter.1[paramdist$parameter_name=='tourism_pointiness']
+p6 <- paramdist$Parameter.1[paramdist$parameter_name=='sec_to_international']
+p7 <- paramdist$Parameter.2[paramdist$parameter_name=='sec_to_international']
+
+formula1 <- sprintf(
+  '$p^5=%s$',
+  round(p5,2)
+)
+formula2 <- sprintf(
+  '$p^6=%s$',
+  round(p6,2)
+)
+formula3 <- sprintf(
+  '$p^7=%s$',
+  round(p7,2)
+)
+
+
+```
+
+
+
+
+Here, $p^5$ controls the variance of the distribution and $p^6$ and $p^7$ the linear relationship between $z$ and $b$. Using an optimisation routine in R we find `r formula1`, 
+`r formula2` and `r formula3`. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
 
  ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=40% }
 
@@ -1132,7 +1161,7 @@ The following quantities are sampled from the set of values belonging to countri
 - Scaling factors for all workplace-related contacts
 - The extent to which there is uncosted transmission reduction
 - Type of VSL calculation
-- PPP conversion and/or VSL elasticity
+- VSL elasticity
 - Remote teaching effectiveness
 - Date of importation
 - Response time
@@ -1144,14 +1173,14 @@ The following quantities are sampled from the set of values belonging to countri
 The following are sampled from parametric distributions:
 
 
-```{r paramdist,tab.cap='Parameter distributions.',echo=F,warning=F,message=F}
+```{r paramdist,tab.cap='Parameter distributions',echo=F,warning=F,message=F}
 
 paramdist <- read.csv('data/parameter_distributions.csv')
 colnames(paramdist) <- c('Parameter','Income group','Distribution','Parameter 1','Parameter 2')
 paramdist <- subset(paramdist,Parameter!='bmi')
 rownames(paramdist) <- NULL
 paramdist$Parameter <- gsub('_',' ',paramdist$Parameter)
-paramdist$Parameter <- gsub('pointiness','P1+P2',paramdist$Parameter)
+paramdist$Parameter <- gsub('pointiness','parameter sum',paramdist$Parameter)
 paramdist$Parameter <- gsub('labsh','Labour share of GVA',paramdist$Parameter)
 paramdist$Parameter <- gsub('Hmax','Hospital capacity',paramdist$Parameter)
 paramdist$Parameter <- gsub('pt','Public transport frac',paramdist$Parameter)
@@ -1165,7 +1194,7 @@ paramdist$Distribution <- gsub('gaminv','Gamma',paramdist$Distribution)
 paramdist$`Parameter 1` <- round(paramdist$`Parameter 1`,2)
 paramdist$`Parameter 2` <- round(paramdist$`Parameter 2`,2)
 
-lg <- 'Parameter distributions. \\label{tab:paramdist}'
+lg <- 'Parameter distributions. Tourism parameters are those described in Section \\@ref(dependence-on-international-tourism). \\label{tab:paramdist}'
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(paramdist,caption=lg)
 }else{
