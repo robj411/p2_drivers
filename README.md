@@ -4955,7 +4955,20 @@ The following are sampled from parametric distributions:
 
 <span id="tab:paramdist"></span>Table 7.1: Parameter distributions.
 Tourism parameters are those described in Section
-<a href="#dependence-on-international-tourism">4.1.4</a>.
+<a href="#dependence-on-international-tourism">4.1.4</a>. “school1
+fraction” and “school2 fraction” are the fractions of contacts that
+pre-school children and school-age children make in nursery and school,
+respectively. Work fraction is the fraction of contacts people in the
+working-age age group make in the workplace. hospitality1 fraction,
+hospitality2 fraction, hospitality3 fraction and hospitality4 fraction
+are the fractions of non-work, non-school contacts made in the
+hospitality setting for the four ordered age groups. hospitality age1,
+hospitality age2, hospitality age3 and hospitality age4 give the
+fractions of hospitality contacts made with age groups 20–64 and 65 and
+over, for the four age groups in order. Workforce in place is the
+fraction of 20 to 64 year olds counted among sector workers. (Workforce
+in place + unemployed = Workforce.) Hospital capacity is beds per
+100,000 population.
 
 </caption>
 <thead>
