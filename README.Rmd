@@ -1135,7 +1135,7 @@ Time from hospitalisation to recovery | Gamma | 2.46, 3.75 | 0.997
 Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 
 Time to immunity waning | Constant | Inf | None 
 Relative infectiousness of asymptomatic | Constant | 0.58 | None 
-R$_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) 
+$\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) 
 
 Table: (\#tab:pathogenparameters) Distributions for pathogen parameters used to sample synthetic pathogens. Distributions are built from values in Table \@ref(tab:pathogenprofile).
 
