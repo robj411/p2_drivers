@@ -96,6 +96,8 @@ year; $K_2$ is the lost GDP over the period due to reduced economic
 activity; and $K_3$ is the number of school years lost and VSY the value
 of one school year.
 
+Test.
+
 ## 2.1 Lost lives
 
 To value lives lost, we make use of the expected remaining life years
