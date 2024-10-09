@@ -313,6 +313,8 @@ The value $p^{16}$ represents the effectiveness of remote teaching, which we sam
 
 # Epi model
 
+The epidemiological component of the DAEDALUS model is a deterministic compartmental model that consists of seven disease states (susceptible, exposed, asymptomatic infectious, symptomatic infectious, hospitalised, recovered, and deceased), in triplicate to represent vaccination states unvaccinated, vaccinated with the BPSV, and vaccinated with the SSV. The population is stratified by age (into four age groups: pre-school children, school-age children, working-age adults, and retirement-age adults). The working-age adults are further stratified into 46 groups: 45 economic sectors, plus one non-working group.
+
 ## Ordinary differential equations
 
 \begin{align}
@@ -1148,7 +1150,7 @@ Table: (\#tab:pathogenparameters) Distributions for pathogen parameters used to 
 
 In this section we list the parameters used to construct a country in order to run the model. We organise them by the way in which they are sampled. Fixed values are described elsewhere in the documentation.
 
-## Sampled
+## Sampling from empirical and uniform distributions
 
 The following quantities are sampled from the set of values belonging to countries from one income level and/or uniform distributions:
 
@@ -1168,7 +1170,44 @@ The following quantities are sampled from the set of values belonging to countri
 - Size of epidemic seed
 
 
-## Parametric distributions informed by data
+```{r ages,echo=F,warning=F,message=F}
+
+
+hmaxi <- setDT(read.csv('data/country_data.csv'))
+
+popcols <- which(grepl('Npop',colnames(hmaxi)))
+hmaxi$meanage <- apply(hmaxi[,popcols,with=F],1,function(x)sum(x*c(1:length(x)))/sum(x))*5-2.5
+hmaxi[,`Income group`:=igroup]
+hmaxi[igroup%in%c('LIC','LMIC'),`Income group`:='LLMIC']
+agedist <- hmaxi[,lapply(list(Mean=mean(meanage),Min=min(meanage),Max=max(meanage)),format_to_print2,3),by=`Income group`]
+
+lg <- 'Mean ages for all countries within each income-level group. \\label{tab:agedist}'
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(agedist,caption=lg)
+}else{
+    x <- knitr::kable(agedist,escape=F, "html",caption=lg)
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+}
+
+```
+
+```{r lifeexp,echo=F,warning=F,message=F}
+
+
+lifeexpdist <- hmaxi[,lapply(list(Mean=mean(la1,na.rm=T),Min=min(la1,na.rm=T),Max=max(la1,na.rm=T)),format_to_print2,3),by=`Income group`]
+
+lg <- 'Mean life expectancy for all countries within each income-level group. \\label{tab:agedist}'
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(lifeexpdist,caption=lg)
+}else{
+    x <- knitr::kable(lifeexpdist,escape=F, "html",caption=lg)
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")%>%
+  footnote(general = 'Life expectancy as given for the youngest age group (0 to 4 years old).', threeparttable = T, fixed_small_size = T)
+}
+
+```
+
+## Sampling from parametric distributions informed by data
 
 The following are sampled from parametric distributions:
 
@@ -1210,7 +1249,6 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 ```{r hmax,fig.cap='Hospital capacity: available beds minus usual occupancy.',echo=F,warning=F,message=F, out.width="50%"}
 
 
-hmaxi <- setDT(read.csv('data/country_data.csv'))
 ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) + 
   geom_histogram(aes(x=Hmax),colour='navyblue',fill='grey') +
   facet_wrap(~igroup) +

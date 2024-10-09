@@ -36,9 +36,10 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
   - [5.2 Implementation](#52-implementation)
 - [6 Pathogen profiles](#6-pathogen-profiles)
 - [7 DAEDALUS model parameters](#7-daedalus-model-parameters)
-  - [7.1 Sampled](#71-sampled)
-  - [7.2 Parametric distributions informed by
-    data](#72-parametric-distributions-informed-by-data)
+  - [7.1 Sampling from empirical and uniform
+    distributions](#71-sampling-from-empirical-and-uniform-distributions)
+  - [7.2 Sampling from parametric distributions informed by
+    data](#72-sampling-from-parametric-distributions-informed-by-data)
     - [7.2.1 Hospital capacity](#721-hospital-capacity)
     - [7.2.2 Labour share of GVA](#722-labour-share-of-gva)
     - [7.2.3 Vaccine administration](#723-vaccine-administration)
@@ -302,6 +303,16 @@ including education level, engagement and socio-economic status
 intra- rather than international modelling.
 
 # 3 Epi model
+
+The epidemiological component of the DAEDALUS model is a deterministic
+compartmental model that consists of seven disease states (susceptible,
+exposed, asymptomatic infectious, symptomatic infectious, hospitalised,
+recovered, and deceased), in triplicate to represent vaccination states
+unvaccinated, vaccinated with the BPSV, and vaccinated with the SSV. The
+population is stratified by age (into four age groups: pre-school
+children, school-age children, working-age adults, and retirement-age
+adults). The working-age adults are further stratified into 46 groups:
+45 economic sectors, plus one non-working group.
 
 ## 3.1 Ordinary differential equations
 
@@ -4926,7 +4937,7 @@ In this section we list the parameters used to construct a country in
 order to run the model. We organise them by the way in which they are
 sampled. Fixed values are described elsewhere in the documentation.
 
-## 7.1 Sampled
+## 7.1 Sampling from empirical and uniform distributions
 
 The following quantities are sampled from the set of values belonging to
 countries from one income level and/or uniform distributions:
@@ -4946,14 +4957,232 @@ countries from one income level and/or uniform distributions:
 - Response time
 - Size of epidemic seed
 
-## 7.2 Parametric distributions informed by data
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+
+<span id="tab:ages"></span>Table 7.1: Mean ages for all countries within
+each income-level group.
+
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+
+Income group
+
+</th>
+<th style="text-align:left;">
+
+Mean
+
+</th>
+<th style="text-align:left;">
+
+Min
+
+</th>
+<th style="text-align:left;">
+
+Max
+
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+26.1
+
+</td>
+<td style="text-align:left;">
+
+20.4
+
+</td>
+<td style="text-align:left;">
+
+41.5
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+33.8
+
+</td>
+<td style="text-align:left;">
+
+24
+
+</td>
+<td style="text-align:left;">
+
+43.9
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+40.1
+
+</td>
+<td style="text-align:left;">
+
+29.8
+
+</td>
+<td style="text-align:left;">
+
+50.7
+
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;border-bottom: 0;">
+<caption>
+
+<span id="tab:lifeexp"></span>Table 7.2: Mean life expectancy for all
+countries within each income-level group.
+
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+
+Income group
+
+</th>
+<th style="text-align:left;">
+
+Mean
+
+</th>
+<th style="text-align:left;">
+
+Min
+
+</th>
+<th style="text-align:left;">
+
+Max
+
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+
+LLMIC
+
+</td>
+<td style="text-align:left;">
+
+68.4
+
+</td>
+<td style="text-align:left;">
+
+53.6
+
+</td>
+<td style="text-align:left;">
+
+77.7
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+UMIC
+
+</td>
+<td style="text-align:left;">
+
+74.1
+
+</td>
+<td style="text-align:left;">
+
+63.3
+
+</td>
+<td style="text-align:left;">
+
+80.5
+
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+HIC
+
+</td>
+<td style="text-align:left;">
+
+79.2
+
+</td>
+<td style="text-align:left;">
+
+73
+
+</td>
+<td style="text-align:left;">
+
+83.4
+
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; " colspan="100%">
+
+<span style="font-style: italic;">Note:</span>
+
+</td>
+</tr>
+<tr>
+<td style="padding: 0; " colspan="100%">
+
+<sup></sup> Life expectancy as given for the youngest age group (0 to 4
+years old).
+
+</td>
+</tr>
+</tfoot>
+</table>
+
+## 7.2 Sampling from parametric distributions informed by data
 
 The following are sampled from parametric distributions:
 
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 
-<span id="tab:paramdist"></span>Table 7.1: Parameter distributions.
+<span id="tab:paramdist"></span>Table 7.3: Parameter distributions.
 Tourism parameters are those described in Section
 <a href="#dependence-on-international-tourism">4.1.4</a>. “school1
 fraction” and “school2 fraction” are the fractions of contacts that
