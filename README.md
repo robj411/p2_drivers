@@ -3,8 +3,8 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 
 - [1 Simulation rules](#1-simulation-rules)
 - [2 Socio-economic costs](#2-socio-economic-costs)
-  - [2.1 Lost lives](#21-lost-lives)
-  - [2.2 Lost economic activity](#22-lost-economic-activity)
+  - [2.1 Lost economic activity](#21-lost-economic-activity)
+  - [2.2 Lost lives](#22-lost-lives)
   - [2.3 Lost education](#23-lost-education)
 - [3 Epi model](#3-epi-model)
   - [3.1 Ordinary differential
@@ -49,54 +49,29 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 
 # 1 Simulation rules
 
-The following methodology is adopted for estimating the values of advance vaccine investments. 
-1. Create candidate epidemics
-(a) Draw the values for 2,048 pathogens based on historic pandemics (see Section 3.4)
-(b) Simulate one synthetic country per income level per pathogen (see Section 3.3.1), resulting in 3
-lots of 2,048 epidemics.
-(c) Evaluate societal losses associated with each epidemic (see Section 3.2.4):
-i. for each of the four investment scenarios and BAU (see Section 3.1.2)
-ii. for each sector-closure policy within each scenario (see Section 3.2.3), resulting in a range of
-societal loss estimates
-2. Create epidemic library
-(a) Keep the epidemic with the cost-minimising sector-closure policy from each set of four in the
-epidemic library
-(b) Calculate differences in the range of societal losses between investment scenarios (including BAU)
-to obtain societal losses averted by investment scenarios in synthetic countries
-3. Aggregate epidemics to pandemics
-(a) Resample epidemics from the library to construct pandemic outcomes for epidemics correlated
-across countries (Section A.1)
-(b) Use the number of deaths in the BAU scenario to estimate each pandemic’s exceedance probability
-[12] (Section A.2)
-(c) Calculate ranges of investment values for pandemics that have a once-in-thirty-years occurrence
-and for pandemics that have a once-in-one-hundred-years occurrence, as well as the expectation,
-or annualised value, for each investment scenario across pandemics of any severity
-
-Each epidemic simulation (as described under 1b) follows a set of rules and assumptions. 
-- Countries are instantiated with two random variables: the response
+- The country is instantiated with two random variables: the response
   time, and the pathogen importation time
-- The response time is the day at which the country reports
-  having seen X hospital cases, where X is a random number between 1 and
-  20 cases
-- The importation time is a random number between 0 and 20 days; importation time of 0
-  days characterizes the spillover, or origin, country
-- The simulation of the epidemic starts at the response or the
-  importation time, whichever is smaller
-- At the response time, the BPSV, if available in the scenario that is being simulated, starts to be given to people aged 65
-  and older; testing begins; working from home begins; economic
-  closures, if assumed for the simulated epidemic, are implemented
+- The response time is the day at which the country reports having seen
+  X hospital cases, where X is a random number between 1 and 20
+- The importation time is a random number between 0 and 20 days. An
+  importation time of 0 days would be equivalent to the spillover event.
+- The epidemic simulation starts at the response or the importation time
+  (the one that is smaller)
+- At the response time, testing begins; working from home begins; BPSV
+  administration begins (for investment scenarios assuming a BPSV), and
+  we assume an uptake of 80%
 - If closure policies (RC1, RC2, or RC3) are being implemented, the
   rules in Tables <a href="#tab:rulesreactive">5.1</a> or
   <a href="#tab:ruleselimination">5.2</a> are followed
 - At the importation time, five people are moved from compartment S to
   compartment E
-- The SARS-X–specific vaccine (SSV) is rolled out starting at least 107 days
-  after the response time, depending on the investment scenario
+- The SARS-X–specific vaccine (SSV) is rolled out starting at least 107
+  days after the response time, depending on the investment scenario
   being simulated
-- All people aged 15 and over, and irrespective of prior BPSV vaccination and/or infection status, are eligible for the SSV; we
-  assume 80% of the popualtion take up SSV;
-- WHAT ARE WE ASSUMING ON RELATION BETWEEN BPSV AND SSV, IN CASE BPSV ROLLOUT IS NOT COMPLETED ONCE SSV ARRIVES?
-- The administration rate (% of population vaccinated per week) depends on investment scenario assumptions
+- All people aged 15 and over (including those previously infected) are
+  eligible for vaccination. We assume an uptake of 80%.
+- The administration rate (% of population vaccinated per week) depends
+  on investment scenario assumptions
 - Closures, working from home and testing end when vaccine rollout
   completes (or if other stopping criteria are met, see Tables
   <a href="#tab:rulesreactive">5.1</a> and
@@ -107,116 +82,22 @@ Each epidemic simulation (as described under 1b) follows a set of rules and assu
 # 2 Socio-economic costs
 
 We assign monetary values to years of life lost (YLL) and to years of
-education lost in order to add health and education costs of closure
-policies to the costs of closing economic sectors. We define the total
-socio-economic cost (TSC) of an epidemic as the sum of three types of 
-costs:
+education in order to add health and education costs of sector-closure
+policies to the costs of economic closures. We define the total
+socio-economic loss (TSL) of an epidemic as the sum of the three types
+of loss:
 
 $$\begin{equation}
-\text{TSC} = K_1\text{VLY} + K_2 + K_3\text{VSY},
+\text{TSL} = K_1\text{VLY} + K_2 + K_3\text{VSY},
 \label{eq:swf}
 \end{equation}$$
 
 where $K_1$ is the number of life years lost and VLY the value of a life
-year; $K_2$ is the sum of lost GDP over the period due to reduced economic
-activity of sectors; and $K_3$ is the number of school years lost and VSY the value
-of one school year.
+year; $K_2$ is the sum of lost GDP over the period due to reduced
+economic activity of sectors; and $K_3$ is the number of school years
+lost and VSY the value of one school year.
 
-## 2.1 Lost lives
-
-To value lives lost, we make use of the expected remaining life years
-per age group estimated by the GBD (Global Burden of Disease Collaborative Network 2021).
-These are used to estimate the expected number of years of life lost per
-death, and to estimate the value of a life year. We map the remaining
-life expectancy $\tilde{l}_a$ for the GBD age groups $a$ to $l_g$ to the (different) age groups $g$ of our model, as a population-weighted average, taking into
-account the size of each age group, $`\tilde{N}_a`$, for each synthetic country (BY COUNTRY: IS THIS CORRECT?). To estimate the expected
-number of life years lost per SARS-X death for each age group, we also take into account
-the probability to die given infection, $P(D|I,a)$:
-
-``` math
-l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
-```
-where the expected number of live years lived for each age group is given by:
-``` math
-l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}.
-```
-
-The aggregate number of years lost given $D_g$ deaths due to COVID-19 for each age
-group in the model is
-
-``` math
-K_1=\sum_gD_gl_g^{\text{(death)}}.
-```
-
-The VLY reflects individuals' willingness to trade wealth for mortality risk reductions. 
-We rely on the intrinsic rather than instrumental interpretation of the valuation of
-life (Cutler and Summers 2020), and we use existing estimates of the
-value of a statistical life (VSL) to estimate VLY. We interpret the VSL
-as a population-weighted average (Ananthapavan et al. 2021; Robinson,
-Sullivan, and Shogren 2021), where each age group has a VSL defined by
-the number of expected life years remaining, and where each year has the
-same value:
-
-(Add: Ananthapavan J, Moodie M, Milat AJ, Carter R. Systematic Review to Update 'Value of a Statistical Life' Estimates for Australia. Int J Environ Res Public Health. 2021 Jun 7;18(11):6168. doi: 10.3390/ijerph18116168. PMID: 34200344; PMCID: PMC8201370.)
-(Add: 
-
-$$\begin{equation}
-\text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
-\end{equation}$$
-
-Following The Global Fund (2022), “In this way, we made a choice to
-value deaths proportionally to the remaining life expectancy associated
-with the counterfactual of that death (how long they would live if they
-had not died)”. (add: The Global Fund. Fight for What Counts. Investment Case. Seventh Replenishment 2022. https://www.theglobalfund.org/media/11798/publication_seventh-replenishment-investment-case_report_en.pdf)
-
-We calculate VSL values by synthetic country. We transfer the USA VSL to synthetic countries by adjusting for the difference in income between the USA and other countries. We also adjust for the elasticity of willingness-to-pay for reductions in mortality risk relative to income. For lower income countries, the income elasticity is likely larger than one because the opportunity cost of spending on basic necessities becomes large if incomes are at or below subsistence levels (Hammitt and Robinson 2011). ADD: Hammitt, J.K., and L.A. Robinson, “The Income Elasticity of the Value per Statistical Life: Transferring Estimates Between High and Low Income Populations,” Journal of Benefit-Cost Analysis 2(1): Article 1, DOI: 10.2202/2152-2812.1009, 2011.
-
-We estimate VSL as a function of GDP, relative to values for the USA:
-
-``` math
-\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{\text{GDP}}{\text{GDP}_{\text{USA}}}\right)^{r_e}.
-```
-
-Here, $`\text{VSL}_{\text{USA}}`$ is the 2019 estimate of VSL for the USA (10.9 million
-\$), $`\text{GDP}`$ the sampled GDP value for each simulated country epidemic, and $`\text{GDP}_{\text{USA}}`$ is the value of the USA GDP. We sample two random variables to
-encode a choice of two alternative methods from the OECD/IHME/World Bank and Viscusi & Masterman, respectively, as discussed in Robinson, Sullivan, and Shogren (2021):
-The parameter $r_p$ is a conversion rate from GDP based on market exchange rates (MER) to GDP based on purchasing power parity (PPP). We specify that the conversion is 1, i.e. equivalence and effective valuation at MER, with
-probability of 0.5, and an income-level–specific random conversion variable sampled from World Bank Data with
-probability 0.5. The parameter $r_e$ is the income elasticity; with a probability of 0.5 it is sampled from a uniform distribution bound by 0.9 and 1.2 for all countries except HICs, for which it is set at 0.8; with a probability of 0.5 it is set at 1 for LLMICs and lower income UMICs, and sampled from a uniform distribution for higher income UMICs and HICs, see Table
-<a href="#tab:ruleselimination">5.2</a>. (CORRECT REFERENCE TO TABLE??). With this approach, we effectively allow for uncertainty in the appropriate method for VSL calculation to carry over into our overall findings. 
-
-| Method               | Probability | $r_p$                | $r_e$ (LLMIC)     | $r_e$ (UMIC, GNIpc \< \$8,809) | $r_e$ (UMIC, GNIpc \> \$8,809) | $r_e$ (HIC)      |
-|:---------------------|:------------|:---------------------|:------------------|:-------------------------------|:-------------------------------|:-----------------|
-| OECD/IHME/World Bank | 0.5         | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2)              | Uniform(0.9, 1.2)              | 0.8              |
-| Viscusi/Masterman    | 0.5         | 1                    | 1                 | 1                              | Uniform(0.85, 1)               | Uniform(0.85, 1) |
-
-<span id="tab:vslrules"></span>Table 2.1: values for elasticities, from
-Robinson, Sullivan, and Shogren (2021), Table 2 (page 25)
-
-We note that the two methods presented in Table <a href="#tab:vslrules">2.1</a> specify different relationships between exchange rate and elasticity, in that the flatter
-elasticities of Viscusi/Masterman are matched with GDP based on MER, whereas the more graduated elasticities of the
-OECD/IHME/World Bank method are matched with GDP based on PPP. This
-might be because these choices enact inverse transformations of low VSL
-values for GDP (Figure <a href="#fig:pppelasticity">2.1</a>). (I HAVE DELETED HERE REFERENCE TO GDPp.c. AND ALSO GNI THAT YOU SOMETIMES USE, TO REDUCE READER CONFUSION)
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/pppelasticity-1.png" alt="Association between VSL valuations and GDP, two different methods for estimating VSL from GDP per capita relative to the USA. On the y-axis is VSL expressed as a percentage of GDP per capita. The grey line indicates the VSL of the USA. We compare GDP per capita based on market exchange rates (MER) vs. purchasing power parity (PPP), and an income elasticity of 1 vs. 1.5. Data source: World Bank."  />
-
-<p class="caption">
-
-<span id="fig:pppelasticity"></span>Figure 2.1: Exposition of different
-methods to estimate VSL from GNI per capita relative to the USA. On the
-y axis is VSL expressed as a percentage of GDP per capita. The grey line
-indicates the USA. We compare GNI per capita expressed using market
-exchange rates vs. purchasing power parity, and an elasticity of 1
-vs. 1.5. Data source: World Bank.
-
-</p>
-
-</div>
-
-## 2.2 Lost economic activity
+## 2.1 Lost economic activity
 
 We measure the cost of economic closures in terms of lost gross value
 added (GVA): the GDP generated by an economic configuration is the
@@ -272,6 +153,125 @@ Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_S}y_j\int_{t=0}^{\tau}\hat{x}_{j}(t
 and the GDP loss compared to the maximum is
 
 $$K_2=Y_0-Y.$$
+
+## 2.2 Lost lives
+
+To value lives lost, we make use of the expected remaining life years
+per age group estimated by the Global Burden of Disease Network (Global
+Burden of Disease Collaborative Network 2021). These are used to
+estimate the expected number of years of life lost per death, and to
+estimate the value of a life year. We map the remaining life expectancy
+$\tilde{l}_a$ for the GBD age groups $a$ to $l_g$ for the (different)
+age groups $g$ of our model as a population-weighted average, taking
+into account the size of each age group, $`\tilde{N}_a`$:
+
+``` math
+l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; 
+```
+
+To estimate the expected number of life years lost per SARS-X death, we
+take into account the probability to die given infection, $P(D|I,a)$:
+
+``` math
+l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
+```
+
+The total number of years lost given $D_g$ deaths due to COVID-19 for
+each age group is
+
+``` math
+K_1=\sum_gD_gl_g^{\text{(death)}}.
+```
+
+The VLY reflects individuals’ willingness to trade wealth for reductions
+in risk of mortality. We rely on the intrinsic rather than instrumental
+interpretation of the valuation of life (Cutler and Summers 2020), and
+we use existing estimates of the value of a statistical life (VSL) to
+estimate VLY. We interpret the VSL as a population-weighted average
+(Ananthapavan et al. 2021; Robinson, Sullivan, and Shogren 2021), where
+each age group has a VSL defined by the number of expected life years
+remaining, and where each year has the same value:
+
+$$\begin{equation}
+\text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
+\end{equation}$$
+
+Following The Global Fund (2022), “In this way, we made a choice to
+value deaths proportionally to the remaining life expectancy associated
+with the counterfactual of that death (how long they would live if they
+had not died)”.
+
+We estimate a country’s VSL using the VSL of the USA, adjusting for the
+difference in income. We also adjust for the elasticity of willingness
+to pay for reductions in mortality risk relative to income. The income
+elasticity is likely larger in lower-income countries than in
+higher-income countries because the opportunity cost of spending on
+basic necessities becomes large if incomes are at or below subsistence
+levels (Hammitt 2020).
+
+We estimate VSL as a function of GDP, relative to values for the USA:
+
+``` math
+\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{Y_0}{\text{GDP}_{\text{USA}}}\right)^{r_e}.
+```
+
+Here, $`\text{VSL}_{\text{USA}}`$ is a 2019 estimate of VSL for the USA
+(10.9 million \$) and $`\text{GDP}_{\text{USA}}`$ is its GDP. We choose
+randomly between two alternative methods, OECD/IHME/World Bank and
+Viscusi & Masterman, to map from USA’s VSL to the VSL of our country, as
+discussed in Robinson, Sullivan, and Shogren (2021). We implement the
+methods using approximations to the presentations therein, which we
+summarise in see Table <a href="#tab:ruleselimination">5.2</a>.
+
+Parameter $r_p$ is a conversion rate from GDP based on market exchange
+rates (MER) to GDP based on purchasing power parity (PPP). We specify
+that the conversion is 1, i.e. equivalence and effective valuation at
+MER, for the Viscusi & Masterman method, and an income-level–specific
+random conversion variable sampled from World Bank Data for the
+OECD/IHME/World Bank method.
+
+Parameter $r_e$ is the income elasticity. For an HIC we set it to 0.8,
+and otherwise we draw it from a uniform distribution between 0.9 and 1.2
+with the OECD/IHME/World Bank method. For the Viscusi & Masterman
+method, we set it to 1 if the GDP per capita (GDPpc) is less than
+\$8,809, and sample from a uniform distribution between 0.85 and 1
+otherwise. We use this approach in order to represent our uncertainty
+about the appropriate method to calculate the VSL for one country using
+the VSL from another.
+
+| Method               | Probability | $r_p$                | $r_e$ (LLMIC)     | $r_e$ (UMIC, GDPpc \< \$8,809) | $r_e$ (UMIC, GDPpc \> \$8,809) | $r_e$ (HIC)      |
+|:---------------------|:------------|:---------------------|:------------------|:-------------------------------|:-------------------------------|:-----------------|
+| OECD/IHME/World Bank | 0.5         | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2)              | Uniform(0.9, 1.2)              | 0.8              |
+| Viscusi/Masterman    | 0.5         | 1                    | 1                 | 1                              | Uniform(0.85, 1)               | Uniform(0.85, 1) |
+
+<span id="tab:vslrules"></span>Table 2.1: values for elasticities,
+adapted from Robinson, Sullivan, and Shogren (2021), Table 2 (page 25)
+
+We note that in the methods presented in Table
+<a href="#tab:vslrules">2.1</a> there is a relationship between exchange
+rate and elasticity, in that the flatter elasticities of
+Viscusi/Masterman are matched with GDP based on MER, whereas the more
+graduated elasticities of the OECD/IHME/World Bank method are matched
+with GDP based on PPP. This might be because these choices enact inverse
+transformations of low VSL values for GDP (Figure
+<a href="#fig:pppelasticity">2.1</a>).
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/pppelasticity-1.png" alt="Exposition of different methods to estimate VSL from GDP per capita relative to the USA. On the y axis is VSL expressed as a percentage of GDP per capita. The grey line indicates the VSL of the USA. We compare GDP per capita expressed using market exchange rates (MER) vs. purchasing power parity (PPP), and an income elasticity of 1 vs. 1.5. Data source: World Bank."  />
+
+<p class="caption">
+
+<span id="fig:pppelasticity"></span>Figure 2.1: Exposition of different
+methods to estimate VSL from GDP per capita relative to the USA. On the
+y axis is VSL expressed as a percentage of GDP per capita. The grey line
+indicates the VSL of the USA. We compare GDP per capita expressed using
+market exchange rates (MER) vs. purchasing power parity (PPP), and an
+income elasticity of 1 vs. 1.5. Data source: World Bank.
+
+</p>
+
+</div>
 
 ## 2.3 Lost education
 
@@ -527,8 +527,8 @@ vaccination status. $u$: final vaccination status.
 <span id="tab:vaccineeffects"></span>Table 3.1: Vaccine effects. The
 Time to develop immunity is the average time it takes a person to go
 from the Susceptible compartment to the Vaccinated equivalent
-compartment, such that the rate of transition 1/21 per day. The
-Effectiveness against transmission is one minus the relative risk of
+compartment, such that the rate of transition is 1/21 per day. The
+Effectiveness against infection is one minus the relative risk of
 infection of a vaccinated person compared to an unvaccinated person. The
 Effectiveness against hospitalisation is one minus the relative risk of
 hospitalisation of a vaccinated person compared to an unvaccinated
@@ -962,7 +962,7 @@ $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 
 The economic model is measuring GDP by summing GVA over sectors and over
 time taking into account the extent to which sectors are open, as
-described in Section <a href="#lost-economic-activity">2.2</a>.
+described in Section <a href="#lost-economic-activity">2.1</a>.
 
 The economy is stratified by sector following the International Standard
 Industrial Classification of All Economic Activities (ISIC) Rev. 4 as
@@ -975,7 +975,7 @@ Openness comes primarily from the economic configuration which is a
 policy choice, mandated in response to the epidemic (see Section
 <a href="#closure-policies">5</a>). There are potentially additional
 losses due to worker sickness and death (see Section
-<a href="#lost-economic-activity">2.2</a>) and due to lost tourism,
+<a href="#lost-economic-activity">2.1</a>) and due to lost tourism,
 which is an exogenous random variable (see Section
 <a href="#impact-of-tourism">4.1</a>). We do not model changes to supply
 or demand, reductions in consumption and labour supply due to infection
@@ -5082,11 +5082,13 @@ HIC
 </tr>
 </tbody>
 </table>
-<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;border-bottom: 0;">
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 
 <span id="tab:lifeexp"></span>Table 7.2: Mean life expectancy for all
-countries within each income-level group.
+countries within each income-level group. Life expectancy as given
+“Expected years of life remaining” for the youngest age group (0 to 4
+years old).
 
 </caption>
 <thead>
@@ -5181,23 +5183,6 @@ HIC
 </td>
 </tr>
 </tbody>
-<tfoot>
-<tr>
-<td style="padding: 0; " colspan="100%">
-
-<span style="font-style: italic;">Note:</span>
-
-</td>
-</tr>
-<tr>
-<td style="padding: 0; " colspan="100%">
-
-<sup></sup> Life expectancy as given for the youngest age group (0 to 4
-years old).
-
-</td>
-</tr>
-</tfoot>
 </table>
 
 ## 7.2 Sampling from parametric distributions informed by data
@@ -6514,6 +6499,14 @@ States of America: Institute for Health Metrics and Evaluation (IHME).
 Gottlieb, Charles, Jan Grobovšek, Markus Poschke, and Fernando Saltiel.
 2021. “Working from Home in Developing Countries.” *European Economic
 Review* 133: 103679. <https://doi.org/10.1016/j.euroecorev.2021.103679>.
+
+</div>
+
+<div id="ref-Hammitt2020" class="csl-entry">
+
+Hammitt, James K. 2020. “Valuing Mortality Risk in the Time of
+COVID-19.” *Journal of Risk and Uncertainty* 61 (2): 129–54.
+<https://doi.org/10.1007/s11166-020-09338-1>.
 
 </div>
 

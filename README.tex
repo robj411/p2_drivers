@@ -142,7 +142,7 @@
 \usepackage{threeparttable}
 \usepackage{threeparttablex}
 \usepackage[normalem]{ulem}
-%\usepackage{makecell}
+\usepackage{makecell}
 \usepackage{xcolor}
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
@@ -169,51 +169,45 @@
 \begin{itemize}
 \tightlist
 \item
-  Countries are instantiated with two random variables: the response time, and their importation time
+  Countries are instantiated with two random variables: the response time, and the pathogen importation time
 \item
-  The response time is the time at which the reporting country reports having seen X hospital cases, where X is a random number between 1 and 20
+  The response time is the day at which the country reports having seen X hospital cases, where X is a random number between 1 and 20
 \item
-  The importation time is a random number between 0 and 20 days, where 0 days would be equivalent to the spillover, or origin, country
+  The importation time is a random number between 0 and 20 days. An importation time of 0 days would be equivalent to the the spillover, or origin, country
 \item
-  The simulation starts at the minimum between the response time and the importation time
+  The epidemic simulation starts at the response or the importation time (the one that is smaller)
 \item
-  At the response time, the BPSV, if present, is given to people aged 65 and older; testing begins; working from home begins; economic closures, if in use, are implemented
-\item
-  At the importation time, five people are moved from compartment S to compartment E
+  At the response time, testing begins; working from home begins; BPSV administration begins (for investment scenarios assuming a BPSV), and we assume an uptake of 80\%
 \item
   If closure policies (RC1, RC2, or RC3) are being implemented, the rules in Tables \ref{tab:rulesreactive} or \ref{tab:ruleselimination} are followed
 \item
-  The SARS-X--specific vaccine is rolled out starting at least day 107 after the response time, depending on the investment scenario assumption
+  At the importation time, five people are moved from compartment S to compartment E
 \item
-  All people aged 15 and over are eligible for vaccination, and we assume 80\% take it up
+  The SARS-X--specific vaccine (SSV) is rolled out starting at least 107 days after the response time, depending on the investment scenario being simulated
 \item
-  Distribution rate depends on investment scenario assumptions
+  All people aged 15 and over (including those previously infected) are eligible for vaccination. We assume an uptake of 80\%.
 \item
-  Once vaccine rollout is complete, closures, working from home and testing end
+  The administration rate (\% of population vaccinated per week) depends on investment scenario assumptions
+\item
+  Closures, working from home and testing end when vaccine rollout completes (or if other stopping criteria are met, see Tables \ref{tab:rulesreactive} and \ref{tab:ruleselimination})
 \item
   When the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends.
 \end{itemize}
 
 \section{Socio-economic costs}\label{socio-economic-costs}
 
-We assign monetary values to YLLs and to years of education in order to add health and education costs of sector-closure policies to the costs of economic closures. We define the total socio-economic costs TSC of an epidemic as the sum of the individual costs:
+We assign monetary values to years of life lost (YLL) and to years of education in order to add health and education costs of sector-closure policies to the costs of economic closures. We define the total socio-economic loss (TSL) of an epidemic as the sum of the three types of loss:
 
 \begin{equation}
-\text{TSC} = K_1\text{VLY} + K_2 + K_3\text{VSY},
+\text{TSL} = K_1\text{VLY} + K_2 + K_3\text{VSY},
 \label{eq:swf}
 \end{equation}
 
-where \(K_1\) is the number of discounted life years lost and VLY the value of a life year; \(K_2\) is the lost GDP over the period due to reduced economic activity; and \(K_3\) is the number of school years lost and VSY the value of one school year.
+where \(K_1\) is the number of life years lost and VLY the value of a life year; \(K_2\) is the sum of lost GDP over the period due to reduced economic activity of sectors; and \(K_3\) is the number of school years lost and VSY the value of one school year.
 
 \subsection{Lost lives}\label{lost-lives}
 
-To value lives lost, we make use of the expected remaining life years per age group \citep{GlobalBurdenofDiseaseCollaborativeNetwork2021}. These are used to estimate the expected number of years of life lost per death, and to estimate the value of a life year. We map the remaining life expectancy \(\tilde{l}_a\) for the GBD age groups \(a\) to \(l_g\) for the model age groups \(g\) as a population-weighted average, taking into account the size of each age group, \(`\tilde{N}_a`\). For the expected number of life years lost per death, we take into account also the probability to die given infection, \(P(D|I,a)\):
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{l\_g\^{}\{\textbackslash{}text\{(death)\}\} = \textbackslash{}frac\{\textbackslash{}sum\_\{a\textbackslash{}in g\}N\_a\textbackslash{}tilde\{l\}\_aP(D|I,a)\}\{\textbackslash{}sum\_\{a\textbackslash{}in g\}N\_aP(D|I,a)\}; }
-\end{Highlighting}
-\end{Shaded}
+To value lives lost, we make use of the expected remaining life years per age group estimated by the Global Burden of Disease Network \citep{GlobalBurdenofDiseaseCollaborativeNetwork2021}. These are used to estimate the expected number of years of life lost per death, and to estimate the value of a life year. We map the remaining life expectancy \(\tilde{l}_a\) for the GBD age groups \(a\) to \(l_g\) for the (different) age groups \(g\) of our model as a population-weighted average, taking into account the size of each age group, \(`\tilde{N}_a`\):
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -221,7 +215,15 @@ To value lives lost, we make use of the expected remaining life years per age gr
 \end{Highlighting}
 \end{Shaded}
 
-The number of years lost given \(D_g\) deaths due to COVID-19 for each age group is
+To estimate the expected number of life years lost per SARS-X death, we take into account the probability to die given infection, \(P(D|I,a)\):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{l\_g\^{}\{\textbackslash{}text\{(death)\}\} = \textbackslash{}frac\{\textbackslash{}sum\_\{a\textbackslash{}in g\}N\_a\textbackslash{}tilde\{l\}\_aP(D|I,a)\}\{\textbackslash{}sum\_\{a\textbackslash{}in g\}N\_aP(D|I,a)\}; }
+\end{Highlighting}
+\end{Shaded}
+
+The total number of years lost given \(D_g\) deaths due to COVID-19 for each age group is
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -229,8 +231,7 @@ The number of years lost given \(D_g\) deaths due to COVID-19 for each age group
 \end{Highlighting}
 \end{Shaded}
 
-The VLY used by policy makers should reflect the value that members of the society place on reductions of their own mortality.
-We rely on the intrinsic rather than instrumental interpretation of the valuation of life \citep{Cutler2020}, and we use existing estimates of the value of a statistical life (VSL) to estimate VLY. We interpret the VSL as a population-weighted average \citep{Ananthapavan2021, Robinson2021}, where each age group has a VSL defined by the number of expected life years remaining, and where each year has the same value:
+The VLY reflects individuals' willingness to trade wealth for reductions in risk of mortality. We rely on the intrinsic rather than instrumental interpretation of the valuation of life \citep{Cutler2020}, and we use existing estimates of the value of a statistical life (VSL) to estimate VLY. We interpret the VSL as a population-weighted average \citep{Ananthapavan2021, Robinson2021}, where each age group has a VSL defined by the number of expected life years remaining, and where each year has the same value:
 
 \begin{equation}
 \text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
@@ -238,15 +239,19 @@ We rely on the intrinsic rather than instrumental interpretation of the valuatio
 
 Following \citet{TheGlobalFund2022}, ``In this way, we made a choice to value deaths proportionally to the remaining life expectancy associated with the counterfactual of that death (how long they would live if they had not died)''.
 
-We estimate VSL as a function of GDP:
+We estimate a country's VSL using the VSL of the USA, adjusting for the difference in income. We also adjust for the elasticity of willingness to pay for reductions in mortality risk relative to income. The income elasticity is likely larger in lower-income countries than in higher-income countries because the opportunity cost of spending on basic necessities becomes large if incomes are at or below subsistence levels \citep{Hammitt2020}.
+
+We estimate VSL as a function of GDP, relative to values for the USA:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\textbackslash{}text\{VSL\}=\textbackslash{}text\{VSL\}\_\{\textbackslash{}text\{USA\}\}\textbackslash{}left(r\_p\textbackslash{}frac\{\textbackslash{}text\{GDP\}\}\{\textbackslash{}text\{GDP\}\_\{\textbackslash{}text\{USA\}\}\}\textbackslash{}right)\^{}\{r\_e\}.}
+\NormalTok{\textbackslash{}text\{VSL\}=\textbackslash{}text\{VSL\}\_\{\textbackslash{}text\{USA\}\}\textbackslash{}left(r\_p\textbackslash{}frac\{\textbackslash{}text\{Y\_0\}\}\{\textbackslash{}text\{GDP\}\_\{\textbackslash{}text\{USA\}\}\}\textbackslash{}right)\^{}\{r\_e\}.}
 \end{Highlighting}
 \end{Shaded}
 
-Here, \(`\text{VSL}_{\text{USA}}`\) is the VSL of the USA (10.9 million \$) and \(`\text{GDP}_{\text{USA}}`\). We sample two random variables to encode a choice of method from \citet{Robinson2021}: \(r_p\) is a conversion from GDP to GDP with PPP, which is 1 with probability 0.5 and an income-level--specific random variable with probability 0.5. \(r_e\) is an elasticity relating VSL to GDP, whose definition depends on income level, given in Table \ref{tab:ruleselimination}.
+Here, \(`\text{VSL}_{\text{USA}}`\) is a 2019 estimate of VSL for the USA (10.9 million \$) and \(`\text{GDP}_{\text{USA}}`\) is its GDP. We choose randomly between two alternative methods, OECD/IHME/World Bank and Viscusi \& Masterman, to map from USA's VSL to the VSL of our country, as discussed in \citet{Robinson2021}. We implement the methods using approximations to the presentations therein, which we summarise in see Table \ref{tab:ruleselimination}.\\
+Parameter \(r_p\) is a conversion rate from GDP based on market exchange rates (MER) to GDP based on purchasing power parity (PPP). We specify that the conversion is 1, i.e.~equivalence and effective valuation at MER, for the Viscusi \& Masterman method, and an income-level--specific random conversion variable sampled from World Bank Data for the OECD/IHME/World Bank method.
+Parameter \(r_e\) is the income elasticity. For an HIC we set it to 0.8, and otherwise we draw it from a uniform distribution between 0.9 and 1.2 with the OECD/IHME/World Bank method. For the Viscusi \& Masterman method, we set it to 1 if the GNI per capita is less than \$8,809, and sample from a uniform distribution between 0.85 and 1 otherwise. We use this approach in order to represent our uncertainty about the appropriate method to calculate the VSL for one country using the VSL from another.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
@@ -299,12 +304,12 @@ OECD/IHME/World Bank & 0.5 & Sampled from WB data & Uniform(0.9, 1.2) & Uniform(
 Viscusi/Masterman & 0.5 & 1 & 1 & 1 & Uniform(0.85, 1) & Uniform(0.85, 1) \\
 \end{longtable}
 
-We note that in Table \ref{tab:vslrules} there is a relationship between exchange rate and elasticity, in that the flatter elasticity of Viscusi/Masterman is accompanied by market exchange rate expression of GNI per capita, whereas the more graduated elasticities of OECD/IHME/World Bank are accompanied by purchasing power parity. This might be because these choices enact inverse transformations of low values for GNI per capita (Figure \ref{fig:pppelasticity}).
+We note that in the methods presented in Table \ref{tab:vslrules} there is a relationship between exchange rate and elasticity, in that the flatter elasticities of Viscusi/Masterman are matched with GDP based on MER, whereas the more graduated elasticities of the OECD/IHME/World Bank method are matched with GDP based on PPP. This might be because these choices enact inverse transformations of low VSL values for GDP (Figure \ref{fig:pppelasticity}).
 
 \begin{figure}
 \centering
 \includegraphics{README_files/figure-latex/pppelasticity-1.pdf}
-\caption{\label{fig:pppelasticity}Exposition of different methods to estimate VSL from GNI per capita relative to the USA. On the y axis is VSL expressed as a percentage of GDP per capita. The grey line indicates the USA. We compare GNI per capita expressed using market exchange rates vs.~purchasing power parity, and an elasticity of 1 vs.~1.5. Data source: World Bank.}
+\caption{\label{fig:pppelasticity}Exposition of different methods to estimate VSL from GDP per capita relative to the USA. On the y axis is VSL expressed as a percentage of GDP per capita. The grey line indicates the VSL of the USA. We compare GDP per capita expressed using market exchange rates (MER) vs.~purchasing power parity (PPP), and an income elasticity of 1 vs.~1.5. Data source: World Bank.}
 \end{figure}
 
 \subsection{Lost economic activity}\label{lost-economic-activity}
@@ -369,11 +374,13 @@ For the value of a year of education, we use the method of \citep{Psacharopoulos
 
 \[p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_Y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)\]
 
-for discount rate \(r=0.03\), number \(\tilde{N}_a\) students currently age \(a\), and expected number of years of work \(m_Y=45\). \(p^{13}\) is mean annual earnings, \(p^{15}=0.08\) is the rate of return for one year.
+for discount rate \(r=0.03\), number \(\tilde{N}_a\) students currently age \(a\), and expected number of years of work \(m_Y=45\). \(p^{13}\) is mean annual earnings, and \(p^{15}=0.08\) is the rate of return for one year of education.
 
-The value \(p^{16}\) represents the effectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified \citep{Patrinos2023}. We assume that losses are linear in duration of school closure, although there is not consensus even on this \citep{Betthauser2023}. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status \citep{Moscoviz2022}. However, these factors might be more pertinent to intra- rather than international modelling.
+The value \(p^{16}\) represents the effectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified \citep{Patrinos2023}. We assume that losses are linear in duration of school closure, although there is not consensus even on this \citep{Betthauser2023}. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status \citep{Moscoviz2022}. These factors might be more pertinent to intra- rather than international modelling.
 
 \section{Epi model}\label{epi-model}
+
+The epidemiological component of the DAEDALUS model is a deterministic compartmental model that consists of seven disease states (susceptible, exposed, asymptomatic infectious, symptomatic infectious, hospitalised, recovered, and deceased), in triplicate to represent vaccination states unvaccinated, vaccinated with the BPSV, and vaccinated with the SSV. The population is stratified by age (into four age groups: pre-school children, school-age children, working-age adults, and retirement-age adults). The working-age adults are further stratified into 46 groups: 45 economic sectors, plus one non-working group.
 
 \subsection{Ordinary differential equations}\label{ordinary-differential-equations}
 
@@ -508,7 +515,7 @@ In our model, \(v=0\) refers to unvaccinated people, \(v=1\) to people who have 
 \subsubsection{Vaccine effects}\label{vaccine-effects}
 
 \begin{longtable}[]{@{}lll@{}}
-\caption{\label{tab:vaccineeffects} Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition 1/21 per day. The Effectiveness against transmission is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time.}\tabularnewline
+\caption{\label{tab:vaccineeffects} Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition is 1/21 per day. The Effectiveness against infection is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time.}\tabularnewline
 \toprule\noalign{}
 Quantity & BPSV & SSV \\
 \midrule\noalign{}
@@ -795,7 +802,8 @@ where \(z\) is the fraction of GDP coming from the Food and accommodation sector
 
 \[p^6 z + p^7 = \frac{\alpha(z)}{\alpha(z)+\beta(z)}\]
 
-Here, \(p^5\) controls the variance of the distribution and \(p^6\) and \(p^7\) the linear relationship between \(z\) and \(b\). Using an optimisation routine in R we find \(p^5=5.93\), \(p^6=3.66\) and \(p^7=0.099\). Results are shown in Figure \ref{fig:sectortourism}. We use these values as inputs for all country models.
+Here, \(p^5\) controls the variance of the distribution and \(p^6\) and \(p^7\) the linear relationship between \(z\) and \(b\). Using an optimisation routine in R we find \(p^5=6.73\),
+\(p^6=4.14\) and \(p^7=0.05\). Results are shown in Figure \ref{fig:sectortourism}. We use these values as inputs for all country models.
 
 \begin{figure}
 \centering
@@ -827,15 +835,19 @@ We assume that remote working happens to its fullest extent for the whole period
 
 Impacts of mandated closures of businesses and schools on epidemics can be described using three factors: length, stringency, and frequency. We model mandated closures using a discrete set of predefined policies, which specify the \emph{stringency} of closures in each sector. The policies we use are the same for each country. The length and frequency of economic closures are endogenous to the model (via its epidemiology), and therefore depend on the dynamics of the epidemic that is being modelled.
 
+\subsection{Policy specifications}\label{policy-specifications}
+
 We define four generic policies that might be adopted once a novel pathogen has been identified. The policies represent possible choices that range from very stringent to laissez faire, and are grounded in real-life observations. We name the policies no closures (NC) and reactive closures 1 to 3 (RC1 to RC3), and they are depicted in Figure \ref{fig:policies}, structured by the qualities that distinguish them.
 
 The three sector-closure policies are each defined by a pair of economic configurations, and rules for moving between them. An economic configuration is a vector specifying the extent to which each sector is open, expressed as a percentage. Our economic configurations are constructed using data from three countries (Indonesia (RC1), the United Kingdom (RC2), and Australia (RC3)), via the manifest economic impacts in the wake of the COVID-19 pandemic. We take the sectoral GVA observed the COVID-19 pandemic expressed as a percentage of the values observed in the year before (OECD), i.e.~we assume that the relative GVA reflects the degree to which sectors were open.
 
-In reality, the observed effects combined mandated closures, reductions in consumption and labour supply due to infection avoidance of individuals, interruptions in supply chains, and changes in imports and exports. However, these effects cannot be disentangled in accounts, and we do not model all of them: we use the data to represent the mandate alone. Thus we neglect two factors in our model: first, population behaviour, and second, international trade, and we ignore their impacts in the COVID-19 pandemic by subsuming all effects into the mandate. (e.g.~a pandemic that does not originate in or impact greatly China might have a much smaller economic cost).
+In reality, the observed effects combined mandated closures, reductions in consumption and labour supply due to infection avoidance of individuals, interruptions in supply chains, and changes in imports and exports. However, these effects have not been disentangled, and in DAEDALUS we model only the mandate. This is equivalent to saying that we assume the mandate alone determined economic outcomes and we simulate their repeated application. Thus we neglect two factors in our model: first, population behaviour, and second, international trade, and we ignore their impacts in the COVID-19 pandemic by subsuming all effects into the mandate. (e.g.~a pandemic that does not originate in or impact greatly China might have a much smaller economic cost).
+
+\subsection{Implementation}\label{implementation}
 
 The economic configurations define the sector closures for both the economic model and the epidemiological model. Contacts associated with sectors -- between and among workers and customers -- are scaled down with closures. GVA per sector is scaled according to economic configurations in the economic model.
 
-For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the ``heavy'' configuration has higher stringency than the ``light'' configuration; the configurations are tabulated in Table \ref{tab:eccon}). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. Tables \ref{tab:rulesreactive} and \ref{tab:ruleselimination} show the transitions and their conditions. RC1 and RC2 respond to hospital occupancy, allowing cases to rise and using closures to allow them to fall again. RC1 keeps school closed throughout, whereas RC2 has school open in the light configuration. RC3 aims to reduce cases and then to keep them low. All mitigation is suspended when the vaccine rollout has reached its target coverage (which is when 80\% of the eligible population have been vaccinated).
+For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the ``heavy'' configuration has higher stringency than the ``light'' configuration; the configurations are tabulated in Table \ref{tab:eccon}). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. Tables \ref{tab:rulesreactive} and \ref{tab:ruleselimination} show the transitions and their conditions. RC1 and RC2 respond to hospital occupancy, allowing cases to rise and using closures to allow them to fall again. RC1 keeps schools closed throughout, whereas RC2 has schools open in the light configuration. RC3 aims to reduce cases and then to keep them low. All mitigation is suspended when the vaccine rollout has reached its target coverage (which is when 80\% of the eligible population have been vaccinated).
 
 \begin{figure}
 \includegraphics[width=0.5\linewidth]{README_files/figure-latex/policies-1} \caption{The four sector-closure policy options. No closures (NC) does not mandate any closures. The other three policies all implement reactive closures (RC), either in response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The difference between RC1 and RC2 is that in RC1 schools are closed throughout, whereas in RC2 schools are fully open during the light configuration.}\label{fig:policies}
@@ -978,90 +990,90 @@ Light closures
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Agriculture, hunting, forestry & 86 & 100 & 86 & 88 & 100 & 100 \\
-Fishing and aquaculture & 86 & 100 & 86 & 88 & 100 & 100 \\
+Agriculture, hunting, forestry & 100 & 100 & 86 & 88 & 86 & 100 \\
+Fishing and aquaculture & 100 & 100 & 86 & 88 & 86 & 100 \\
 Mining and quarrying, energy
-producing products & 90 & 100 & 90 & 91 & 67 & 79 \\
+producing products & 67 & 79 & 90 & 91 & 90 & 100 \\
 Mining and quarrying,
-non-energy producing products & 90 & 100 & 90 & 91 & 100 & 100 \\
+non-energy producing products & 100 & 100 & 90 & 91 & 90 & 100 \\
 Mining support service
-activities & 90 & 100 & 90 & 91 & 100 & 100 \\
+activities & 100 & 100 & 90 & 91 & 90 & 100 \\
 Food products, beverages and
-tobacco & 70 & 100 & 70 & 94 & 100 & 100 \\
+tobacco & 100 & 100 & 70 & 94 & 70 & 100 \\
 Textiles, textile products,
-leather and footwear & 70 & 98 & 70 & 94 & 89 & 92 \\
+leather and footwear & 89 & 92 & 70 & 94 & 70 & 98 \\
 Wood and products of wood and
-cork & 70 & 98 & 70 & 94 & 100 & 95 \\
-Paper products and printing & 70 & 98 & 70 & 94 & 100 & 98 \\
+cork & 100 & 95 & 70 & 94 & 70 & 98 \\
+Paper products and printing & 100 & 98 & 70 & 94 & 70 & 98 \\
 Coke and refined petroleum
-products & 70 & 88 & 70 & 94 & 87 & 88 \\
-Chemical and chemical products & 70 & 88 & 70 & 94 & 100 & 100 \\
+products & 87 & 88 & 70 & 94 & 70 & 88 \\
+Chemical and chemical products & 100 & 100 & 70 & 94 & 70 & 88 \\
 Pharmaceuticals, medicinal
 chemical and botanical
-products & 70 & 88 & 70 & 94 & 100 & 100 \\
-Rubber and plastics products & 70 & 88 & 70 & 94 & 87 & 100 \\
+products & 100 & 100 & 70 & 94 & 70 & 88 \\
+Rubber and plastics products & 87 & 100 & 70 & 94 & 70 & 88 \\
 Other non-metallic mineral
-products & 70 & 88 & 70 & 94 & 92 & 89 \\
-Basic metals & 70 & 100 & 70 & 94 & 100 & 100 \\
-Fabricated metal products & 70 & 100 & 70 & 94 & 90 & 100 \\
+products & 92 & 89 & 70 & 94 & 70 & 88 \\
+Basic metals & 100 & 100 & 70 & 94 & 70 & 100 \\
+Fabricated metal products & 90 & 100 & 70 & 94 & 70 & 100 \\
 Computer, electronic and
-optical equipment & 70 & 100 & 70 & 94 & 90 & 100 \\
-Electrical equipment & 70 & 100 & 70 & 94 & 90 & 100 \\
-Machinery and equipment, nec & 70 & 100 & 70 & 94 & 89 & 95 \\
+optical equipment & 90 & 100 & 70 & 94 & 70 & 100 \\
+Electrical equipment & 90 & 100 & 70 & 94 & 70 & 100 \\
+Machinery and equipment, nec & 89 & 95 & 70 & 94 & 70 & 100 \\
 Motor vehicles, trailers and
-semi-trailers & 70 & 100 & 70 & 94 & 66 & 82 \\
-Other transport equipment & 70 & 100 & 70 & 94 & 66 & 82 \\
+semi-trailers & 66 & 82 & 70 & 94 & 70 & 100 \\
+Other transport equipment & 66 & 82 & 70 & 94 & 70 & 100 \\
 Manufacturing nec; repair and
 installation of machinery and
-equipment & 70 & 98 & 70 & 94 & 98 & 100 \\
+equipment & 98 & 100 & 70 & 94 & 70 & 98 \\
 Electricity, gas, steam and
-air conditioning supply & 89 & 97 & 89 & 100 & 94 & 94 \\
+air conditioning supply & 94 & 94 & 89 & 100 & 89 & 97 \\
 Water supply; sewerage, waste
 management and remediation
-activities & 92 & 97 & 92 & 98 & 100 & 100 \\
-Construction & 56 & 94 & 56 & 92 & 95 & 95 \\
+activities & 100 & 100 & 92 & 98 & 92 & 97 \\
+Construction & 95 & 95 & 56 & 92 & 56 & 94 \\
 Wholesale and retail trade;
-repair of motor vehicles & 64 & 100 & 64 & 100 & 92 & 97 \\
+repair of motor vehicles & 92 & 97 & 64 & 100 & 64 & 100 \\
 Land transport and transport
-via pipelines & 63 & 100 & 63 & 82 & 83 & 100 \\
-Water transport & 63 & 100 & 63 & 82 & 81 & 98 \\
-Air transport & 63 & 18 & 63 & 82 & 16 & 42 \\
+via pipelines & 83 & 100 & 63 & 82 & 63 & 100 \\
+Water transport & 81 & 98 & 63 & 82 & 63 & 100 \\
+Air transport & 16 & 42 & 63 & 82 & 63 & 18 \\
 Warehousing and support
-activities for transportation & 63 & 91 & 63 & 82 & 64 & 91 \\
-Postal and courier activities & 63 & 91 & 63 & 82 & 64 & 91 \\
+activities for transportation & 64 & 91 & 63 & 82 & 63 & 91 \\
+Postal and courier activities & 64 & 91 & 63 & 82 & 63 & 91 \\
 Accommodation and food service
-activities & 10 & 92 & 10 & 85 & 77 & 91 \\
+activities & 77 & 91 & 10 & 85 & 10 & 92 \\
 Publishing, audiovisual and
-broadcasting activities & 88 & 100 & 88 & 91 & 100 & 100 \\
-Telecommunications & 88 & 100 & 88 & 91 & 100 & 100 \\
+broadcasting activities & 100 & 100 & 88 & 91 & 88 & 100 \\
+Telecommunications & 100 & 100 & 88 & 91 & 88 & 100 \\
 IT and other information
-services & 88 & 100 & 88 & 91 & 100 & 100 \\
+services & 100 & 100 & 88 & 91 & 88 & 100 \\
 Financial and insurance
-activities & 94 & 100 & 94 & 96 & 100 & 100 \\
-Real estate activities & 98 & 100 & 98 & 98 & 100 & 100 \\
+activities & 100 & 100 & 94 & 96 & 94 & 100 \\
+Real estate activities & 100 & 100 & 98 & 98 & 98 & 100 \\
 Professional, scientific and
-technical activities & 85 & 100 & 85 & 92 & 90 & 95 \\
+technical activities & 90 & 95 & 85 & 92 & 85 & 100 \\
 Administrative and support
-services & 66 & 90 & 66 & 80 & 90 & 95 \\
+services & 90 & 95 & 66 & 80 & 66 & 90 \\
 Public administration and
 defence; compulsory social
-security & 100 & 100 & 100 & 100 & 96 & 100 \\
-Education & 10 & 100 & 10 & 100 & 10 & 10 \\
+security & 96 & 100 & 100 & 100 & 100 & 100 \\
+Education & 10 & 10 & 10 & 100 & 10 & 100 \\
 Human health and social work
-activities & 75 & 100 & 75 & 92 & 100 & 100 \\
+activities & 100 & 100 & 75 & 92 & 75 & 100 \\
 Arts, entertainment and
-recreation & 55 & 94 & 55 & 71 & 90 & 96 \\
-Other service activities & 54 & 94 & 54 & 83 & 90 & 96 \\
+recreation & 90 & 96 & 55 & 71 & 55 & 94 \\
+Other service activities & 90 & 96 & 54 & 83 & 54 & 94 \\
 Activities of households as
 employers; undifferentiated
 goods- and services-producing
 activities of households for
-own use & 49 & 94 & 49 & 53 & 90 & 96 \\
+own use & 90 & 96 & 49 & 53 & 49 & 94 \\
 \end{longtable}
 
 \section{Pathogen profiles}\label{pathogen-profiles}
 
-We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using sourced data (Table \ref{tab:pathogenprofile}), and are described in Table \ref{tab:pathogenparameters}. Age profiles for severity rates are shown in Figure \ref{fig:ratesbyage}. We sample parameter values from distributions informed by the seven pathogen profiles. R\(_0\) is truncated at 1.5 and 4 following \citet{whittakerQuantifyingImpactBroadly2024}.
+We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using sourced data (Table \ref{tab:pathogenprofile}), and are described in Table \ref{tab:pathogenparameters}. Age profiles for severity rates are shown in Figure \ref{fig:ratesbyage}. We sample parameter values from distributions informed by the seven pathogen profiles. \(\text{R}_0\) is truncated at 1.5 and 4 following \citet{whittakerQuantifyingImpactBroadly2024}.
 
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1988}}
@@ -1204,13 +1216,13 @@ Correlations
 Probability symptomatic & Beta & 14.68, 7.30 & None \\
 Latent period & Gamma & 2.28, 1.06 & None \\
 Asymptomatic infectious period & Gamma & 139.0, 0.017 & None \\
-Time from symptom onset to recovery & Gamma & 18.61, 0.17 & 0.99 (time to hospitalisation); 0.60 (R\(_0\)) \\
-Time from symptom onset to hospitalisation & Gamma & 21.21, 0.14 & 0.99 (time to recovery); 0.66 (R\(_0\)) \\
+Time from symptom onset to recovery & Gamma & 18.61, 0.17 & 0.99 (time to hospitalisation); 0.60 (\(\text{R}_0\)) \\
+Time from symptom onset to hospitalisation & Gamma & 21.21, 0.14 & 0.99 (time to recovery); 0.66 (\(\text{R}_0\)) \\
 Time from hospitalisation to recovery & Gamma & 2.46, 3.75 & 0.997 \\
 Time from hospitalisation to death & Gamma & 2.93, 2.96 & 0.997 \\
 Time to immunity waning & Constant & Inf & None \\
 Relative infectiousness of asymptomatic & Constant & 0.58 & None \\
-R\(_0\) & Truncated normal & 2.45, 1.32; (1.5, 4) & 0.60 (time to recovery); 0.66 (time to hospitalisation) \\
+\(\text{R}_0\) & Truncated normal & 2.45, 1.32; (1.5, 4) & 0.60 (time to recovery); 0.66 (time to hospitalisation) \\
 \end{longtable}
 
 \begin{figure}
@@ -1219,7 +1231,123 @@ R\(_0\) & Truncated normal & 2.45, 1.32; (1.5, 4) & 0.60 (time to recovery); 0.6
 \caption{\label{fig:ratesbyage} Infection hospitalisation and fatality ratios are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Colours: seven example profiles. Grey: sampled profiles. Profiles are built from values in Table \ref{tab:pathogenprofile}.}
 \end{figure}
 
-\section{Parametric distributions}\label{parametric-distributions}
+\section{DAEDALUS model parameters}\label{daedalus-model-parameters}
+
+In this section we list the parameters used to construct a country in order to run the model. We organise them by the way in which they are sampled. Fixed values are described elsewhere in the documentation.
+
+\subsection{Sampling from empirical and uniform distributions}\label{sampling-from-empirical-and-uniform-distributions}
+
+The following quantities are sampled from the set of values belonging to countries from one income level and/or uniform distributions:
+
+\begin{itemize}
+\tightlist
+\item
+  Population distribution by age
+\item
+  Life expectancy
+\item
+  Number of workers per sector
+\item
+  GVA per worker per sector
+\item
+  Community contact matrix
+\item
+  Testing rate
+\item
+  Scaling factors for all workplace-related contacts
+\item
+  The extent to which there is uncosted transmission reduction
+\item
+  Type of VSL calculation
+\item
+  VSL elasticity
+\item
+  Remote teaching effectiveness
+\item
+  Date of importation
+\item
+  Response time
+\item
+  Size of epidemic seed
+\end{itemize}
+
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2083}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0972}}@{}}
+\caption{Mean ages for all countries within each income-level group. \label{tab:agedist}}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Income group
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mean
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Min
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Max
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Income group
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mean
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Min
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Max
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+LLMIC & 26.1 & 20.4 & 41.5 \\
+UMIC & 33.8 & 24 & 43.9 \\
+HIC & 40.1 & 29.8 & 50.7 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2083}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0972}}@{}}
+\caption{Mean life expectancy for all countries within each income-level group. Life expectancy as given ``Expected years of life remaining'' for the youngest age group (0 to 4 years old). \label{tab:agedist}}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Income group
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mean
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Min
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Max
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Income group
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mean
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Min
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Max
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+LLMIC & 68.4 & 53.6 & 77.7 \\
+UMIC & 74.1 & 63.3 & 80.5 \\
+HIC & 79.2 & 73 & 83.4 \\
+\end{longtable}
+
+\subsection{Sampling from parametric distributions informed by data}\label{sampling-from-parametric-distributions-informed-by-data}
+
+The following are sampled from parametric distributions:
 
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.3176}}
@@ -1227,7 +1355,7 @@ R\(_0\) & Truncated normal & 2.45, 1.32; (1.5, 4) & 0.60 (time to recovery); 0.6
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1765}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1647}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1647}}@{}}
-\caption{Parameter distributions. \label{tab:paramdist}}\tabularnewline
+\caption{Parameter distributions. Tourism parameters are those described in Section \ref{dependence-on-international-tourism}. ``school1 fraction'' and ``school2 fraction'' are the fractions of contacts that pre-school children and school-age children make in nursery and school, respectively. Work fraction is the fraction of contacts people in the working-age age group make in the workplace. hospitality1 fraction, hospitality2 fraction, hospitality3 fraction and hospitality4 fraction are the fractions of non-work, non-school contacts made in the hospitality setting for the four ordered age groups. hospitality age1, hospitality age2, hospitality age3 and hospitality age4 give the fractions of hospitality contacts made with age groups 20--64 and 65 and over, for the four age groups in order. Workforce in place is the fraction of 20 to 64 year olds counted among sector workers. (Workforce in place + unemployed = Workforce.) Hospital capacity is beds per 100,000 population. \label{tab:paramdist}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parameter
@@ -1272,7 +1400,7 @@ gdp to gnippp & HIC & Gamma & 11.89 & 0.12 \\
 Hospital capacity & LLMIC & Gamma & 1.3 & 20.2 \\
 Hospital capacity & UMIC & Gamma & 1.73 & 40.73 \\
 Hospital capacity & HIC & Gamma & 2.05 & 46.57 \\
-tourism P1+P2 & all & NA & 6.73 & NA \\
+tourism parameter sum & all & NA & 6.73 & NA \\
 Tourism to international & all & NA & 4.14 & 0.05 \\
 pupil teacher ratio & LLMIC & Gamma & 9.15 & 3.11 \\
 pupil teacher ratio & UMIC & Gamma & 13.29 & 1.22 \\
@@ -1293,7 +1421,7 @@ workforce in place & UMIC & Beta & 5.72 & 2.64 \\
 workforce in place & HIC & Beta & 9.26 & 2.01 \\
 \end{longtable}
 
-\subsection{Hospital capacity}\label{hospital-capacity}
+\subsubsection{Hospital capacity}\label{hospital-capacity}
 
 \begin{figure}
 \includegraphics[width=0.5\linewidth]{README_files/figure-latex/hmax-1} \caption{Hospital capacity: available beds minus usual occupancy.}\label{fig:hmax}
@@ -1301,7 +1429,7 @@ workforce in place & HIC & Beta & 9.26 & 2.01 \\
 
 We model these values with gamma distributions. For LLMICs, we have parameters 1.3 and 0.05. For UMICs, we have parameters 1.73 and 0.02. For HICs, we have parameters 2.05 and 0.02. (Data sources: World Bank (beds); OECD, WHO euro (bed occupancy rates).)
 
-\subsection{Labour share of GVA}\label{labour-share-of-gva}
+\subsubsection{Labour share of GVA}\label{labour-share-of-gva}
 
 We estimate the average annual income per working-age adult as the total GVA multiplied by the fraction of GVA that goes to labour divided by the number of working-age adults. For the fraction of GVA that goes to labour we use PWT estimates from 2011 (Figure \ref{fig:labsh}).
 
@@ -1311,7 +1439,7 @@ We estimate the average annual income per working-age adult as the total GVA mul
 
 We model these values with Beta distributions. For LLMICs, we have parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18. For HICs, we have parameters 7.97 and 6.87.
 
-\subsection{Vaccine administration}\label{vaccine-administration}
+\subsubsection{Vaccine administration}\label{vaccine-administration}
 
 \begin{figure}
 \includegraphics[width=0.5\linewidth]{README_files/figure-latex/vaxrate-1} \caption{Vaccines administered per day, on average, in each country as a percent of population. Data source: fully vaccinated people from OWID (2022).}\label{fig:vaxrate}
@@ -1333,7 +1461,7 @@ Figure \ref{fig:vaxratewho} shows that in 40\% of vaccination campaigns in LLMIC
 \includegraphics[width=0.8\linewidth]{README_files/figure-gfm/vaccinationrates} \caption{Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the \% of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more [@whoSummaryMeaslesRubellaSupplementary2022]. The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up.}\label{fig:vaxratewho}
 \end{figure}
 
-\subsection{Compliance with the requirement to self isolate}\label{compliance-with-the-requirement-to-self-isolate}
+\subsubsection{Compliance with the requirement to self isolate}\label{compliance-with-the-requirement-to-self-isolate}
 
 We use a broad Beta distribution with parameters (5,5) to describe the compliance of the population with the requirement to isolate if symptomatic or positive. A YouGov survey \citep{jonessarahpImperialCollegeLondon2020} asked ``If you were advised to do so by a healthcare professional or public health authority to what extent are you willing or not to self-isolate for 7 days?'' The question was asked in 30 different countries (21 high income, five upper-middle income, four lower-middle income) and 63 different weeks of the COVID-19 pandemic to a total of 837,368 people.
 
