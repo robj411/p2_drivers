@@ -47,6 +47,13 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
       isolate](#724-compliance-with-the-requirement-to-self-isolate)
 - [8 Notation](#8-notation)
 
+This document describes the DAEDALUS model that is used in the CEPI
+application. The DAEDALUS model simulates a single epidemic in a single
+country. Details of how the DAEDALUS model is used as a part of the
+methodology of the CEPI application is presented in a separate report,
+which also details the scenarios which are expressed as vaccination
+rates and are inputs to the DAEDALUS model.
+
 # 1 Simulation rules
 
 - The country is instantiated with two random variables: the response
@@ -57,27 +64,28 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
   importation time of 0 days would be equivalent to the spillover event.
 - The epidemic simulation starts at the response or the importation time
   (the one that is smaller)
-- At the response time, testing begins; working from home begins; BPSV
-  administration begins (for investment scenarios assuming a BPSV), and
-  we assume an uptake of 80%
+- At the importation time, five people are moved from compartment S to
+  compartment E
+- At the response time, testing begins and working from home begins
 - If closure policies (RC1, RC2, or RC3) are being implemented, the
   rules in Tables <a href="#tab:rulesreactive">5.1</a> or
   <a href="#tab:ruleselimination">5.2</a> are followed
-- At the importation time, five people are moved from compartment S to
-  compartment E
-- The SARS-X–specific vaccine (SSV) is rolled out starting at least 107
-  days after the response time, depending on the investment scenario
-  being simulated
-- All people aged 15 and over (including those previously infected) are
-  eligible for vaccination. We assume an uptake of 80%.
-- The administration rate (% of population vaccinated per week) depends
-  on investment scenario assumptions
+  <!-- ; BPSV administration begins (for investment scenarios assuming a BPSV), and we assume an uptake of 80%  -->
+  <!-- - The SARS-X--specific vaccine (SSV) is rolled out starting at least 107 days after the response time, depending on the investment scenario being simulated -->
+  <!-- - All people aged 15 and over (including those previously infected) are eligible for vaccination. We assume an uptake of 80%. -->
+  <!-- - The administration rate (% of population vaccinated per week) depends on investment scenario assumptions -->
+- Vaccination is a model input whose details depend on the scenario. The
+  model allows for two vaccines to be administered flexibly, in that the
+  first is not a prerequisite for the second. In the CEPI application,
+  the first vaccine is a broadly protective sarbecovirus vaccine (BPSV)
+  and the second is a strain-specific vaccine (SSV).
 - Closures, working from home and testing end when vaccine rollout
   completes (or if other stopping criteria are met, see Tables
   <a href="#tab:rulesreactive">5.1</a> and
   <a href="#tab:ruleselimination">5.2</a>)
-- When the doubling time is more than 30 days and there are fewer than
-  1,000 people in hospital, the simulation ends.
+- When vaccine rollout is complete, the doubling time is more than 30
+  days and there are fewer than 1,000 people in hospital, the simulation
+  ends.
 
 # 2 Socio-economic costs
 
@@ -186,7 +194,7 @@ K_1=\sum_gD_gl_g^{\text{(death)}}.
 The VLY reflects individuals’ willingness to trade wealth for reductions
 in risk of mortality. We rely on the intrinsic rather than instrumental
 interpretation of the valuation of life (Cutler and Summers 2020), and
-we use existing estimates of the value of a statistical life (VSL) to
+we use an existing estimate of the value of a statistical life (VSL) to
 estimate VLY. We interpret the VSL as a population-weighted average
 (Ananthapavan et al. 2021; Robinson, Sullivan, and Shogren 2021), where
 each age group has a VSL defined by the number of expected life years
