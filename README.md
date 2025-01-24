@@ -191,14 +191,15 @@ each age group is
 K_1=\sum_gD_gl_g^{\text{(death)}}.
 ```
 
-The VLY reflects individuals’ willingness to trade wealth for reductions
-in risk of mortality. We rely on the intrinsic rather than instrumental
-interpretation of the valuation of life (Cutler and Summers 2020), and
-we use an existing estimate of the value of a statistical life (VSL) to
-estimate VLY. We interpret the VSL as a population-weighted average
-(Ananthapavan et al. 2021; Robinson, Sullivan, and Shogren 2021), where
-each age group has a VSL defined by the number of expected life years
-remaining, and where each year has the same value:
+The value of a statistical life (VSL) reflects individuals’ willingness
+to trade wealth for reductions in risk of mortality. We rely on the
+intrinsic rather than instrumental interpretation of the valuation of
+life (Cutler and Summers 2020), and we use an existing estimate of the
+VSL to estimate the value of a life year (VLY). We interpret the VSL as
+a population-weighted average (Ananthapavan et al. 2021; Robinson,
+Sullivan, and Shogren 2021), where each age group has a VSL defined by
+the number of expected life years remaining, and where each year has the
+same value:
 
 $$\begin{equation}
 \text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
@@ -465,8 +466,10 @@ $`p^{D}_{j}(t)=\tilde{p}^{D}_{j}f_H(t)`$ is the baseline probability to
 die given hospitalisation, adjusted by a factor encoding the increase in
 fatality rate as hospital occupancy increases:
 
+<!-- (1 + 0.87*max(0, occ - Hmax) / occ)*pd; -->
+
 ``` math
-f_H(t)=\max\{1,1+1.87(H_{\text{tot}}(t)-H_{\text{max}})/H_{\text{max}}\},
+f_H(t)=1 + 1.87\frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
 ```
 
 ``` math

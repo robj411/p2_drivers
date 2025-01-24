@@ -136,10 +136,10 @@ schoolfracp <- ggplot() + geom_histogram(aes(x=rbeta(100000,allcs[1],allcs[2]),y
   labs(x='Fraction contacts from school (0-4)',y='')
 ggsave(schoolfracp,filename='store/school1frac.png',width=6,height=5)
 (school1_distributions <- data.frame(parameter_name='school1_frac',
-                                      igroup=c('all'),
-                                      distribution='betainv',
-                                      `Parameter 1`=allcs[1],
-                                      `Parameter 2`=allcs[2]))
+                                     igroup=c('all'),
+                                     distribution='betainv',
+                                     `Parameter 1`=allcs[1],
+                                     `Parameter 2`=allcs[2]))
 
 allcs <- betavals(subset(meltsum,variable=='school'&dae_age=='[5,18)')$value)
 schoolfracp <- ggplot() + geom_histogram(aes(x=rbeta(100000,allcs[1],allcs[2]),y=..density..),fill='navyblue') + 
@@ -149,10 +149,10 @@ schoolfracp <- ggplot() + geom_histogram(aes(x=rbeta(100000,allcs[1],allcs[2]),y
 ggsave(schoolfracp,filename='store/school2frac.png',width=6,height=5)
 
 (school2_distributions <- data.frame(parameter_name='school2_frac',
-                                      igroup=c('all'),
-                                      distribution='betainv',
-                                      `Parameter 1`=allcs[1],
-                                      `Parameter 2`=allcs[2]))
+                                     igroup=c('all'),
+                                     distribution='betainv',
+                                     `Parameter 1`=allcs[1],
+                                     `Parameter 2`=allcs[2]))
 
 ## frac work contacts #######################
 # use time at work to extend frac of contacts at work
