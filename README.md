@@ -322,8 +322,9 @@ $$p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}
 
 for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age
 $a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean
-annual earnings, and $p^{15}=0.08$ is the rate of return for one year of
-education.
+annual earnings (estimated using GDP multiplied by labour share of
+income (Feenstra, Inklaar, and Timmer 2015)), and $p^{15}=0.08$ is the
+rate of return for one year of education.
 
 The value $p^{16}$ represents the effectiveness of remote teaching,
 which we sample as a standard uniform random variable. We note that no
@@ -6493,6 +6494,14 @@ During the COVID-19 Pandemic.” *Nature Human Behaviour* 7 (March).
 Cutler, David M., and Lawrence H. Summers. 2020. “The COVID-19 Pandemic
 and the \$16 Trillion Virus.” *JAMA* 324 (15).
 <https://doi.org/10.1257/pol.20170046>.
+
+</div>
+
+<div id="ref-Feenstra2015" class="csl-entry">
+
+Feenstra, Robert C., Robert Inklaar, and Marcel P. Timmer. 2015. “The
+Next Generation of the Penn World Table.” *American Economic Review* 105
+(10): 3150–82.
 
 </div>
 

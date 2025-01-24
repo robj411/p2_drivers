@@ -313,7 +313,7 @@ $p^{12}$ is the present value of lost earnings:
 
 $$p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_Y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
-for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age $a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean annual earnings, and $p^{15}=0.08$ is the rate of return for one year of education.
+for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age $a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean annual earnings (estimated using GDP multiplied by labour share of income [@Feenstra2015]), and $p^{15}=0.08$ is the rate of return for one year of education.
 
 The value $p^{16}$ represents the effectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified [@Patrinos2023]. We assume that losses are linear in duration of school closure, although there is not consensus even on this [@Betthauser2023]. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status [@Moscoviz2022]. These factors might be more pertinent to intra- rather than international modelling.
 
