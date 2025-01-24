@@ -2,12 +2,6 @@
 title: "DAEDALUS for CEPI's 100-day mission: code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::pdf_document2: 
     toc: false
     keep_tex: yes
@@ -20,6 +14,12 @@ output:
     fig_caption: yes
     includes:
       in_header: "preamble.tex"
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true

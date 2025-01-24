@@ -1,3 +1,8 @@
 # List of untracked files to ignore
 figures/
- README.pdf README.tex README.log README_files/figure-latex/* README.aux
+README.pdf
+README.tex
+README.log
+README_files/figure-latex/*
+README.aux
+
