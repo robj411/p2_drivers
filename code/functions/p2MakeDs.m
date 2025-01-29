@@ -54,30 +54,35 @@ function contact_matrix = p2MakeDs(data,NN,openness,home_working)
 
     effective_openness = max(0, openness - home_working');
     effective_openness(nSectors+1:nStrata)    = 0;
-    effective_openness_mat = repmat(effective_openness.^2,1,nStrata);
+    effective_openness_mat = repmat(effective_openness,1,nStrata);
+    effective_openness_t = effective_openness_mat';
+    
 
     % customer to worker
-    communitytoworker_mat          = contacts.community_to_worker_mat .* effective_openness_mat;
+    community_worker_mat = contacts.community_to_worker_mat .* effective_openness_mat.^2 + contacts.worker_to_community_mat .* effective_openness_t.^2;
+    
+    % worker--worker
+    workerworker_mat = contacts.worker_worker_mat .* effective_openness_mat .* effective_openness_t;
 
     % get return contacts
     % communitytoworker_mat = contacts.work_scalar*communitytoworker_mat;
-    contacts_between_workers_and_community = communitytoworker_mat .* repmat(NN,1,nStrata);
-    worker_back = contacts_between_workers_and_community' ./ repmat(NN,1,nStrata);
+%     contacts_between_workers_and_community = communitytoworker_mat .* repmat(NN,1,nStrata);
+%     worker_back = contacts_between_workers_and_community' ./ repmat(NN,1,nStrata);
 
     % worker--worker contacts
-    wwcontacts = zeros(size(community_mat));
-    wwcontacts(1:nSectors,1:nSectors) = (communitytoworker_mat(1:nSectors,1:nSectors) + worker_back(1:nSectors,1:nSectors))/2;
+%     wwcontacts = zeros(size(community_mat));
+%     wwcontacts(1:nSectors,1:nSectors) = (communitytoworker_mat(1:nSectors,1:nSectors) + worker_back(1:nSectors,1:nSectors))/2;
 
     % community--worker contacts
-    cwcontacts = zeros(size(community_mat));
-    cwcontacts(1:nSectors,(nSectors+1):end) = communitytoworker_mat(1:nSectors,(nSectors+1):end) ;
-    cwcontacts((nSectors+1):end, 1:nSectors) = worker_back((nSectors+1):end,1:nSectors);
+%     cwcontacts = zeros(size(community_mat));
+%     cwcontacts(1:nSectors,(nSectors+1):end) = communitytoworker_mat(1:nSectors,(nSectors+1):end) ;
+%     cwcontacts((nSectors+1):end, 1:nSectors) = worker_back((nSectors+1):end,1:nSectors);
 
     %% add all together
-    contact_matrix = community_mat + wwcontacts + cwcontacts;
+    contact_matrix = community_mat +  workerworker_mat + community_worker_mat;
 
-%     forward        = collapse_cm(communitytoworker_mat,data.NNs);
-%     back        = collapse_cm(worker_back,data.NNs);
+    collapse_cm(contact_matrix,data.NNs)
+    
 
 end
 
