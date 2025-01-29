@@ -1,7 +1,7 @@
 function [namevec, vals] = tabulate_inputs(ldata,p2,dis2)
 
     % contacts
-    leavenames = {'CM','basic_contact_matrix','community_to_worker_mat'};
+    leavenames = {'CM','basic_contact_matrix','community_to_worker_mat','worker_to_community_mat','worker_worker_mat'};
     [contactname, contactvals] = get_struct_names_vals(ldata.contacts,leavenames);
 
     % dis
