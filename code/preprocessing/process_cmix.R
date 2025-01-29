@@ -112,30 +112,30 @@ secnames88 <- colnames(soc2sic88)[-c(1,ncol(soc2sic88))]
   sectornames88 <- gsub('\\.',' ',sectornames88)
   sectornames88 <- gsub('Manufacture of ','',sectornames88)
   joinstr <- origstr <- 1:88
-joinstr[2] <- 1
-joinstr[5] <- 4
-joinstr[7] <- 6
-joinstr[9:11] <- 9
-joinstr[12:14] <- 12
-joinstr[17] <- 16
-joinstr[30:32] <- 30
-joinstr[35:37] <- 34
-joinstr[39:40] <- 38
-joinstr[42:43] <- 41
-joinstr[50] <- 49
-joinstr[52:53] <- 51
-joinstr[56] <- 55
-joinstr[58:59] <- 57
-joinstr[62:67] <- 61
-joinstr[68:73] <- 68
-# http://siccodesupport.co.uk/sic-division.php?division=99
-joinstr[88] <- 74
-joinstr[77:78] <- 76
-joinstr[80:83] <- 79
-joinstr[84:85] <- 84
-joinstr[87] <- 86
-mapids <- joinstr
-dups <- duplicated(joinstr)
+  joinstr[2] <- 1
+  joinstr[5] <- 4
+  joinstr[7] <- 6
+  joinstr[9:11] <- 9
+  joinstr[12:14] <- 12
+  joinstr[17] <- 16
+  joinstr[30:32] <- 30
+  joinstr[35:37] <- 34
+  joinstr[39:40] <- 38
+  joinstr[42:43] <- 41
+  joinstr[50] <- 49
+  joinstr[52:53] <- 51
+  joinstr[56] <- 55
+  joinstr[58:59] <- 57
+  joinstr[62:67] <- 61
+  joinstr[68:73] <- 68
+  # http://siccodesupport.co.uk/sic-division.php?division=99
+  joinstr[88] <- 74
+  joinstr[77:78] <- 76
+  joinstr[80:83] <- 79
+  joinstr[84:85] <- 84
+  joinstr[87] <- 86
+  mapids <- joinstr
+  dups <- duplicated(joinstr)
 }
 to_numeric <- function(x){
   x <- as.numeric(x)
@@ -166,11 +166,11 @@ soccodes <- soc2sic45$soc[-c(nrow(soc2sic45))]
 
 get_occ_codes <- function(dt, colname){
   dt[tolower(get(colname))%in%om$major_label,
-            occcode:=om$major[match(tolower(get(colname)),om$major_label)],by=.(get(colname))]
+     occcode:=om$major[match(tolower(get(colname)),om$major_label)],by=.(get(colname))]
   dt[tolower(get(colname))%in%om$sub_major_label,
-            occcode:=om$sub_major[match(tolower(get(colname)),om$sub_major_label)],by=.(get(colname))]
+     occcode:=om$sub_major[match(tolower(get(colname)),om$sub_major_label)],by=.(get(colname))]
   dt[tolower(get(colname))%in%om$minor_label,
-            occcode:=om$minor[match(tolower(get(colname)),om$minor_label)],by=.(get(colname))]
+     occcode:=om$minor[match(tolower(get(colname)),om$minor_label)],by=.(get(colname))]
   dt[tolower(get(colname))%in%om$description,
      occcode:=om$unit[match(tolower(get(colname)),om$description)],by=.(get(colname))]
   
@@ -360,7 +360,7 @@ for(j in 1:length(dtlist)){
   
   write.csv(per_sec1[match(sec45names,per_sec1$sector),.(sector,n_cnt)],
             file.path(datapath,'sectorcontacts.csv'),row.names = F)
-
+  
   # occupation
   per_occ1 <- get_mean2(dtworkers, "occcode1", cnt_var = "n_cnt_work")
   per_occ2 <- get_mean2(dtworkers, "occcode2", cnt_var = "n_cnt_work")
@@ -405,5 +405,5 @@ nrow(dt[(!is.na(ch01occr)&tolower(ch01occr)%in%occuptions|
            !is.na(part_occupation)&tolower(part_occupation)%in%occuptions|
            !is.na(nl01occr)&tolower(nl01occr)%in%occuptions|
            !is.na(be02occhi)&tolower(be02occhi)%in%be_set[-c(1:3),get])&survey_round == 1000,.(country)])
-  
+
 

@@ -2,12 +2,6 @@
 title: "DAEDALUS for CEPI's 100-day mission: code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::pdf_document2: 
     toc: false
     keep_tex: yes
@@ -20,6 +14,12 @@ output:
     fig_caption: yes
     includes:
       in_header: "preamble.tex"
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -31,6 +31,7 @@ bibliography:
 always_allow_html: true
 ---
 
+This document describes the DAEDALUS model that is used in the CEPI application. The DAEDALUS model simulates a single epidemic in a single country. Details of how the DAEDALUS model is used as a part of the methodology of the CEPI application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the DAEDALUS model.
 
 ```{r setup, include=FALSE}
 library(ggplot2)  
@@ -51,6 +52,7 @@ library(MASS)
 library(kableExtra)
 library(wbstats)
 library("cowplot")
+library(latex2exp)
 
 
 panderOptions('round',2)
@@ -117,125 +119,33 @@ bpsv_levels <- c(0,1)
 
 # Simulation rules
 
-- Countries are instantiated with two random variables: the response time, and their importation time
-- The response time is the time at which the reporting country reports having seen X hospital cases, where X is a random number between 1 and 20
-- The importation time is a random number between 0 and 20 days, where 0 days would be equivalent to the spillover, or origin, country
-- The simulation starts at the minimum between the response time and the importation time
-- At the response time, the BPSV, if present, is given to people aged 65 and older; testing begins; working from home begins; economic closures, if in use, are implemented
-- If closure policies (RC1, RC2, or RC3) are being implemented, the rules in Tables \@ref(tab:rulesreactive) or \@ref(tab:ruleselimination) are followed
+- The country is instantiated with two random variables: the response time, and the pathogen importation time
+- The response time is the day at which the country reports having seen X hospital cases, where X is a random number between 1 and 20
+- The importation time is a random number between 0 and 20 days. An importation time of 0 days would be equivalent to the spillover event.
+- The epidemic simulation starts at the response or the importation time (the one that is smaller)
 - At the importation time, five people are moved from compartment S to compartment E
-- The SARS-X--specific vaccine is rolled out starting at least 107 days after the response time, depending on the investment scenario assumption
-- All people aged 15 and over are eligible for vaccination, and we assume 80% take it up
-- Distribution rate depends on investment scenario assumptions
+- At the response time, testing begins and working from home begins 
+- If closure policies (RC1, RC2, or RC3) are being implemented, the rules in Tables \@ref(tab:rulesreactive) or \@ref(tab:ruleselimination) are followed
+<!-- ; BPSV administration begins (for investment scenarios assuming a BPSV), and we assume an uptake of 80%  -->
+<!-- - The SARS-X--specific vaccine (SSV) is rolled out starting at least 107 days after the response time, depending on the investment scenario being simulated -->
+<!-- - All people aged 15 and over (including those previously infected) are eligible for vaccination. We assume an uptake of 80%. -->
+<!-- - The administration rate (% of population vaccinated per week) depends on investment scenario assumptions -->
+- Vaccination is a model input whose details depend on the scenario. The model allows for two vaccines to be administered flexibly, in that the first is not a prerequisite for the second. In the CEPI application, the first vaccine is a broadly protective sarbecovirus vaccine (BPSV) and the second is a strain-specific vaccine (SSV).
 - Closures, working from home and testing end when vaccine rollout completes (or if other stopping criteria are met, see Tables \@ref(tab:rulesreactive) and \@ref(tab:ruleselimination))
-- When the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends.
+- When vaccine rollout is complete, the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends.
 
 
 # Socio-economic costs
 
 
-We assign monetary values to years of life lost (YLL) and to years of education in order to add health and education costs of sector-closure policies to the costs of economic closures. We define the total socio-economic cost (TSC) of an epidemic as the sum of the individual costs:
+We assign monetary values to years of life lost (YLL) and to years of education in order to add health and education costs of sector-closure policies to the costs of economic closures. We define the total socio-economic loss (TSL) of an epidemic as the sum of the three types of loss:
 
 \begin{equation}
-\text{TSC} = K_1\text{VLY} + K_2 + K_3\text{VSY},
+\text{TSL} = K_1\text{VLY} + K_2 + K_3\text{VSY},
 \label{eq:swf}
 \end{equation}
 
-where $K_1$ is the number of life years lost and VLY the value of a life year; $K_2$ is the lost GDP over the period due to reduced economic activity; and $K_3$ is the number of school years lost and VSY the value of one school year.
-
-
-## Lost lives
-
-To value lives lost, we make use of the expected remaining life years per age group [@GlobalBurdenofDiseaseCollaborativeNetwork2021]. These are used to estimate the expected number of years of life lost per death, and to estimate the value of a life year. We map the remaining life expectancy $\tilde{l}_a$ for the GBD age groups $a$ to $l_g$ for the model age groups $g$ as a population-weighted average, taking into account the size of each age group, $`\tilde{N}_a`$. For the expected number of life years lost per SARS-X death, we take into account also the probability to die given infection, $P(D|I,a)$:
-
-```math
-l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
-```
-
-```math
-l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; 
-```
-
-The number of years lost given $D_g$ deaths due to COVID-19 for each age group is 
-```math
-K_1=\sum_gD_gl_g^{\text{(death)}}.
-```
-
-The VLY used by policy makers should reflect the value that members of the society place on reductions of their own mortality. 
-We rely on the intrinsic rather than instrumental interpretation of the valuation of life [@Cutler2020], and we use existing estimates of the value of a statistical life (VSL) to estimate VLY. We interpret the VSL as a population-weighted average [@Ananthapavan2021; @Robinson2021], where each age group has a VSL defined by the number of expected life years remaining, and where each year has the same value: 
-
-\begin{equation}
-\text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
-\end{equation}
-
-Following @TheGlobalFund2022, "In this way, we made a choice to value deaths proportionally to the remaining life expectancy associated with the counterfactual of that death (how long they would live if they had not died)".
-
-We estimate VSL as a function of GDP:
-
-```math
-\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{\text{GDP}}{\text{GDP}_{\text{USA}}}\right)^{r_e}.
-```
-
-Here, $`\text{VSL}_{\text{USA}}`$ is the VSL of the USA (10.9 million \$) and $`\text{GDP}_{\text{USA}}`$. We sample two random variables to encode a choice of method from @Robinson2021: $r_p$ is a conversion from GDP to GDP with PPP, which is 1 with probability 0.5 and an income-level--specific random variable with probability 0.5. $r_e$ is an elasticity relating VSL to GDP, whose definition depends on income level, given in Table \@ref(tab:ruleselimination). 
-
-
-| Method | Probability | $r_p$ | $r_e$ (LLMIC) | $r_e$ (UMIC, GNIpc < \$8,809) | $r_e$ (UMIC, GNIpc > \$8,809) | $r_e$ (HIC) | 
-|:----- |:----- |:----- |:----- |:----- |:----- |:----- |
-| OECD/IHME/World Bank | 0.5 | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | 0.8 |
-| Viscusi/Masterman | 0.5 | 1 | 1 | 1 | Uniform(0.85, 1) | Uniform(0.85, 1) |
-
-Table: (\#tab:vslrules) values for elasticities, from @Robinson2021, Table 2 (page 25)
-
-We note that in Table \@ref(tab:vslrules) there is a relationship between exchange rate and elasticity, in that the flatter elasticity of Viscusi/Masterman is accompanied by market exchange rate expression of GNI per capita, whereas the more graduated elasticities of OECD/IHME/World Bank are accompanied by purchasing power parity. This might be because these choices enact inverse transformations of low values for GNI per capita (Figure \@ref(fig:pppelasticity)).
-
-
-
-```{r pppelasticity,fig.cap='Exposition of different methods to estimate VSL from GNI per capita relative to the USA. On the y axis is VSL expressed as a percentage of GDP per capita. The grey line indicates the USA. We compare GNI per capita expressed using market exchange rates vs. purchasing power parity, and an elasticity of 1 vs. 1.5. Data source: World Bank.',echo=F,warning=F,message=F}
-
-gdpdata <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
-gnipppdata <- setDT(wb_data("NY.GDP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
-joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata[,.(iso3c,country,date,NY.GDP.PCAP.PP.CD)],by=c('iso3c','country','date'))
-joineddata <- subset(joineddata,!is.na(NY.GDP.PCAP.PP.CD)&!is.na(NY.GDP.PCAP.CD))
-joineddata[,mostrecent:=max(date),by=country]
-joineddata <- subset(joineddata,date==mostrecent)
-joineddata[,gdp_to_gnippp:=NY.GDP.PCAP.PP.CD/NY.GDP.PCAP.CD]
-joineddata <- left_join(joineddata,setDT(incomelevels)[,.(Country.Code,IncomeGroup)],by=c('iso3c'="Country.Code"))
-
-
-joineddata[,gnippp:=gdp_to_gnippp*NY.GDP.PCAP.CD]
-usagdppc <- with(subset(joineddata,iso3c=='USA'),NY.GDP.PCAP.CD)
-yint <- with(subset(joineddata,iso3c=='USA'),(10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.)/NY.GDP.PCAP.CD)
-joineddata[,minvsl:=20*NY.GDP.PCAP.CD]
-joineddata[,basicvsl:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.),by=iso3c]
-joineddata[,vsle:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.5),by=iso3c]
-joineddata[,vslpppe:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.5),by=iso3c]
-joineddata[,vslppp:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.),by=iso3c]
-
-p11 <- ggplot(joineddata,aes(x=NY.GDP.PCAP.CD,y=basicvsl/NY.GDP.PCAP.CD)) + 
-  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
-  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
-  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
-  labs(x='GDP pc',y='VSL/GDPpc',title='MER, e=1',colour='') 
-p12 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vslppp/NY.GDP.PCAP.CD)) + 
-  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
-  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
-  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
-  labs(x='GDP pc',y='VSL/GDPpc',title='PPP, e=1',colour='') 
-p21 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vsle/NY.GDP.PCAP.CD)) + 
-  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
-  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
-  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
-  labs(x='GDP pc',y='VSL/GDPpc',title='MER, e=1.5',colour='') 
-p22 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vslpppe/NY.GDP.PCAP.CD)) + 
-  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
-  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
-  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
-  labs(x='GDP pc',y='VSL/GDPpc',title='PPP, e=1.5',colour='') 
-
-
-plot_grid(p11,p21,p12,p22,ncol = 2, nrow = 2)
-```
-
+where $K_1$ is the number of life years lost and VLY the value of a life year; $K_2$ is the sum of lost GDP over the period due to reduced economic activity of sectors; and $K_3$ is the number of school years lost and VSY the value of one school year.
 
 ## Lost economic activity
 
@@ -275,6 +185,108 @@ $$K_2=Y_0-Y.$$
 
 
 
+
+
+## Lost lives
+
+To value lives lost, we make use of the expected remaining life years per age group estimated by the Global Burden of Disease Network [@GlobalBurdenofDiseaseCollaborativeNetwork2021]. These are used to estimate the expected number of years of life lost per death, and to estimate the value of a life year. We map the remaining life expectancy $\tilde{l}_a$ for the GBD age groups $a$ to $l_g$ for the (different) age groups $g$ of our model as a population-weighted average, taking into account the size of each age group, $`\tilde{N}_a`$:
+
+```math
+l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; 
+```
+
+To estimate the expected number of life years lost per SARS-X death, we take into account the probability to die given infection, $P(D|I,a)$:
+
+```math
+l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
+```
+
+The total number of years lost given $D_g$ deaths due to COVID-19 for each age group is 
+```math
+K_1=\sum_gD_gl_g^{\text{(death)}}.
+```
+
+The value of a statistical life (VSL) reflects individuals' willingness to trade wealth for reductions in risk of mortality. We rely on the intrinsic rather than instrumental interpretation of the valuation of life [@Cutler2020], and we use an existing estimate of the VSL to estimate the value of a life year (VLY). We interpret the VSL as a population-weighted average [@Ananthapavan2021; @Robinson2021], where each age group has a VSL defined by the number of expected life years remaining, and where each year has the same value: 
+
+\begin{equation}
+\text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
+\end{equation}
+
+Following @TheGlobalFund2022, "In this way, we made a choice to value deaths proportionally to the remaining life expectancy associated with the counterfactual of that death (how long they would live if they had not died)".
+
+We estimate a country's VSL using the VSL of the USA, adjusting for the difference in income. We also adjust for the elasticity of willingness to pay for reductions in mortality risk relative to income. The income elasticity is likely larger in lower-income countries than in higher-income countries because the opportunity cost of spending on basic necessities becomes large if incomes are at or below subsistence levels [@Hammitt2020].
+
+
+We estimate VSL as a function of GDP, relative to values for the USA:
+
+```math
+\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{Y_0}{\text{GDP}_{\text{USA}}}\right)^{r_e}.
+```
+
+Here, $`\text{VSL}_{\text{USA}}`$ is a 2019 estimate of VSL for the USA (10.9 million \$) and $`\text{GDP}_{\text{USA}}`$ is its GDP. We choose randomly between two alternative methods, OECD/IHME/World Bank and Viscusi & Masterman, to map from USA's VSL to the VSL of our country, as discussed in @Robinson2021. We implement the methods using approximations to the presentations therein, which we summarise in see Table \@ref(tab:ruleselimination).  
+
+Parameter $r_p$ is a conversion rate from GDP based on market exchange rates (MER) to GDP based on purchasing power parity (PPP). We specify that the conversion is 1, i.e. equivalence and effective valuation at MER, for the Viscusi & Masterman method, and an income-level--specific random conversion variable sampled from World Bank Data for the OECD/IHME/World Bank method. 
+
+Parameter $r_e$ is the income elasticity. For an HIC we set it to 0.8, and otherwise we draw it from a uniform distribution between 0.9 and 1.2 with the OECD/IHME/World Bank method. For the Viscusi & Masterman method, we set it to 1 if the GDP per capita (GDPpc) is less than $8,809, and sample from a uniform distribution between 0.85 and 1 otherwise. We use this approach in order to represent our uncertainty about the appropriate method to calculate the VSL for one country using the VSL from another.
+
+| Method | Probability | $r_p$ | $r_e$ (LLMIC) | $r_e$ (UMIC, GDPpc < \$8,809) | $r_e$ (UMIC, GDPpc > \$8,809) | $r_e$ (HIC) | 
+|:----- |:----- |:----- |:----- |:----- |:----- |:----- |
+| OECD/IHME/World Bank | 0.5 | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | 0.8 |
+| Viscusi/Masterman | 0.5 | 1 | 1 | 1 | Uniform(0.85, 1) | Uniform(0.85, 1) |
+
+Table: (\#tab:vslrules) values for elasticities, adapted from @Robinson2021, Table 2 (page 25)
+
+
+We note that in the methods presented in Table \@ref(tab:vslrules) there is a relationship between exchange rate and elasticity, in that the flatter elasticities of Viscusi/Masterman are matched with GDP based on MER, whereas the more graduated elasticities of the OECD/IHME/World Bank method are matched with GDP based on PPP. This might be because these choices enact inverse transformations of low VSL values for GDP (Figure \@ref(fig:pppelasticity)). 
+
+
+```{r pppelasticity,fig.cap='Exposition of different methods to estimate VSL from GDP per capita relative to the USA. On the y axis is VSL expressed as a percentage of GDP per capita. The grey line indicates the VSL of the USA. We compare GDP per capita expressed using market exchange rates (MER) vs. purchasing power parity (PPP), and an income elasticity of 1 vs. 1.5. Data source: World Bank.',echo=F,warning=F,message=F}
+
+gdpdata <- setDT(wb_data("NY.GDP.PCAP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+gnipppdata <- setDT(wb_data("NY.GDP.PCAP.PP.CD",country = "countries_only", start_date = 2018, end_date = 2024))
+joineddata <- left_join(gdpdata[,.(iso3c,country,date,NY.GDP.PCAP.CD)],gnipppdata[,.(iso3c,country,date,NY.GDP.PCAP.PP.CD)],by=c('iso3c','country','date'))
+joineddata <- subset(joineddata,!is.na(NY.GDP.PCAP.PP.CD)&!is.na(NY.GDP.PCAP.CD))
+joineddata[,mostrecent:=max(date),by=country]
+joineddata <- subset(joineddata,date==mostrecent)
+joineddata[,gdp_to_gnippp:=NY.GDP.PCAP.PP.CD/NY.GDP.PCAP.CD]
+joineddata <- left_join(joineddata,setDT(incomelevels)[,.(Country.Code,IncomeGroup)],by=c('iso3c'="Country.Code"))
+
+
+joineddata[,gnippp:=gdp_to_gnippp*NY.GDP.PCAP.CD]
+usagdppc <- with(subset(joineddata,iso3c=='USA'),NY.GDP.PCAP.CD)
+yint <- with(subset(joineddata,iso3c=='USA'),(10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.)/NY.GDP.PCAP.CD)
+joineddata[,minvsl:=20*NY.GDP.PCAP.CD]
+joineddata[,basicvsl:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.),by=iso3c]
+joineddata[,vsle:=max(minvsl,10^6*10*(NY.GDP.PCAP.CD/usagdppc)^1.5),by=iso3c]
+joineddata[,vslpppe:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.5),by=iso3c]
+joineddata[,vslppp:=max(minvsl,10^6*10*(gnippp/usagdppc)^1.),by=iso3c]
+
+p11 <- ggplot(joineddata,aes(x=NY.GDP.PCAP.CD,y=basicvsl/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title=TeX('MER, $r_e$=1'),colour='') 
+p12 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vslppp/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title=TeX('PPP, $r_e$=1'),colour='') 
+p21 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vsle/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title=TeX('MER, $r_e$=1.5'),colour='') 
+p22 <- ggplot(joineddata,aes(x=(NY.GDP.PCAP.CD),y=vslpppe/NY.GDP.PCAP.CD)) + 
+  geom_hline(yintercept=yint,linewidth=2,colour='grey') +
+  # annotate('rect',ymin=10^(1.5),ymax=10^(2),xmin=-Inf,xmax=Inf,fill='goldenrod',alpha=.25) +
+  geom_point(aes(colour=IncomeGroup),show.legend=F) + theme_bw(base_size = 13) +
+  labs(x='GDP pc',y='VSL/GDPpc',title=TeX('PPP, $r_e$=1.5'),colour='') 
+
+
+plot_grid(p11,p21,p12,p22,ncol = 2, nrow = 2)
+```
+
+
 ## Lost education
 
 
@@ -301,7 +313,7 @@ $p^{12}$ is the present value of lost earnings:
 
 $$p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_Y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
-for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age $a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean annual earnings, and $p^{15}=0.08$ is the rate of return for one year of education.
+for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age $a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean annual earnings (estimated using GDP multiplied by labour share of income [@Feenstra2015]), and $p^{15}=0.08$ is the rate of return for one year of education.
 
 The value $p^{16}$ represents the effectiveness of remote teaching, which we sample as a standard uniform random variable. We note that no strong predictors of effectiveness of remote teaching have been identified [@Patrinos2023]. We assume that losses are linear in duration of school closure, although there is not consensus even on this [@Betthauser2023]. Important factors to include in future work might be those relating to parental circumstances including education level, engagement and socio-economic status [@Moscoviz2022]. These factors might be more pertinent to intra- rather than international modelling.
 
@@ -312,6 +324,8 @@ The value $p^{16}$ represents the effectiveness of remote teaching, which we sam
 
 
 # Epi model
+
+The epidemiological component of the DAEDALUS model is a deterministic compartmental model that consists of seven disease states (susceptible, exposed, asymptomatic infectious, symptomatic infectious, hospitalised, recovered, and deceased), in triplicate to represent vaccination states unvaccinated, vaccinated with the BPSV, and vaccinated with the SSV. The population is stratified by age (into four age groups: pre-school children, school-age children, working-age adults, and retirement-age adults). The working-age adults are further stratified into 46 groups: 45 economic sectors, plus one non-working group.
 
 ## Ordinary differential equations
 
@@ -438,8 +452,11 @@ k^{7}_{j}(t) = (1-p^{D}_{j}(t)) / T_j^{H}(t)
 
   is the rate of recovery of hospitalised patients, where $`p^{D}_{j}(t)=\tilde{p}^{D}_{j}f_H(t)`$ is the baseline probability to die given hospitalisation, adjusted by a factor encoding the increase in fatality rate as hospital occupancy increases:
   
+<!-- (1 + 0.87*max(0, occ - Hmax) / occ)*pd; -->
+
+  
 ```math
-f_H(t)=\max\{1,1+1.87(H_{\text{tot}}(t)-H_{\text{max}})/H_{\text{max}}\},
+f_H(t)=1 + 1.87\frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
 ```
 
 ```math
@@ -537,7 +554,7 @@ Effectiveness against hospitalisation | 0.8 | 0.9
 Effect on transmission | 0 | 0 
 Rate of waning | 0 | 0 
 
-Table: (\#tab:vaccineeffects) Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition 1/21 per day. The Effectiveness against transmission is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time.
+Table: (\#tab:vaccineeffects) Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition is 1/21 per day. The Effectiveness against infection is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time.
 
 
 ## Contact rates
@@ -1097,7 +1114,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 # Pathogen profiles
 
-We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using sourced data (Table \@ref(tab:pathogenprofile)), and are described in Table \@ref(tab:pathogenparameters). Age profiles for severity rates are shown in Figure \@ref(fig:ratesbyage). We sample parameter values from distributions informed by the seven pathogen profiles. R$_0$ is truncated at 1.5 and 4 following @whittakerQuantifyingImpactBroadly2024. 
+We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using sourced data (Table \@ref(tab:pathogenprofile)), and are described in Table \@ref(tab:pathogenparameters). Age profiles for severity rates are shown in Figure \@ref(fig:ratesbyage). We sample parameter values from distributions informed by the seven pathogen profiles. $\text{R}_0$ is truncated at 1.5 and 4 following @whittakerQuantifyingImpactBroadly2024. 
 
 
 
@@ -1129,13 +1146,13 @@ Model parameter name | Distribution | Distribution parameter values | Correlatio
 Probability symptomatic | Beta | 14.68, 7.30 | None 
 Latent period | Gamma | 2.28, 1.06 | None 
 Asymptomatic infectious period | Gamma | 139.0, 0.017 | None 
-Time from symptom onset to recovery | Gamma | 18.61, 0.17 | 0.99 (time to hospitalisation); 0.60 (R$_0$) 
-Time from symptom onset to hospitalisation | Gamma | 21.21, 0.14 | 0.99 (time to recovery); 0.66 (R$_0$)
+Time from symptom onset to recovery | Gamma | 18.61, 0.17 | 0.99 (time to hospitalisation); 0.60 ($\text{R}_0$) 
+Time from symptom onset to hospitalisation | Gamma | 21.21, 0.14 | 0.99 (time to recovery); 0.66 ($\text{R}_0$)
 Time from hospitalisation to recovery | Gamma | 2.46, 3.75 | 0.997  
 Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 
 Time to immunity waning | Constant | Inf | None 
 Relative infectiousness of asymptomatic | Constant | 0.58 | None 
-R$_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) 
+$\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) 
 
 Table: (\#tab:pathogenparameters) Distributions for pathogen parameters used to sample synthetic pathogens. Distributions are built from values in Table \@ref(tab:pathogenprofile).
 
@@ -1148,7 +1165,7 @@ Table: (\#tab:pathogenparameters) Distributions for pathogen parameters used to 
 
 In this section we list the parameters used to construct a country in order to run the model. We organise them by the way in which they are sampled. Fixed values are described elsewhere in the documentation.
 
-## Sampled
+## Sampling from empirical and uniform distributions
 
 The following quantities are sampled from the set of values belonging to countries from one income level and/or uniform distributions:
 
@@ -1168,7 +1185,44 @@ The following quantities are sampled from the set of values belonging to countri
 - Size of epidemic seed
 
 
-## Parametric distributions informed by data
+```{r ages,echo=F,warning=F,message=F}
+
+
+hmaxi <- setDT(read.csv('data/country_data.csv'))
+
+popcols <- which(grepl('Npop',colnames(hmaxi)))
+hmaxi$meanage <- apply(hmaxi[,popcols,with=F],1,function(x)sum(x*c(1:length(x)))/sum(x))*5-2.5
+hmaxi[,`Income group`:=igroup]
+hmaxi[igroup%in%c('LIC','LMIC'),`Income group`:='LLMIC']
+agedist <- hmaxi[,lapply(list(Mean=mean(meanage),Min=min(meanage),Max=max(meanage)),format_to_print2,3),by=`Income group`]
+
+lg <- 'Mean ages for all countries within each income-level group. \\label{tab:agedist}'
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(agedist,caption=lg)
+}else{
+    x <- knitr::kable(agedist,escape=F, "html",caption=lg)
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+}
+
+```
+
+```{r lifeexp,echo=F,warning=F,message=F}
+
+
+lifeexpdist <- hmaxi[,lapply(list(Mean=mean(la1,na.rm=T),Min=min(la1,na.rm=T),Max=max(la1,na.rm=T)),format_to_print2,3),by=`Income group`]
+
+lg <- 'Mean life expectancy for all countries within each income-level group. Life expectancy as given "Expected years of life remaining" for the youngest age group (0 to 4 years old). \\label{tab:agedist}'
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(lifeexpdist,caption=lg)
+}else{
+    x <- knitr::kable(lifeexpdist,escape=F, "html",caption=lg)
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")#%>%
+  #footnote(general = 'Life expectancy as given "Expected years of life remaining" for the youngest age group (0 to 4 years old).', threeparttable = T, fixed_small_size = T)
+}
+
+```
+
+## Sampling from parametric distributions informed by data
 
 The following are sampled from parametric distributions:
 
@@ -1194,7 +1248,7 @@ paramdist$Distribution <- gsub('gaminv','Gamma',paramdist$Distribution)
 paramdist$`Parameter 1` <- round(paramdist$`Parameter 1`,2)
 paramdist$`Parameter 2` <- round(paramdist$`Parameter 2`,2)
 
-lg <- 'Parameter distributions. Tourism parameters are those described in Section \\@ref(dependence-on-international-tourism). \\label{tab:paramdist}'
+lg <- 'Parameter distributions. Tourism parameters are those described in Section \\@ref(dependence-on-international-tourism). "school1 fraction" and "school2 fraction" are the fractions of contacts that pre-school children and school-age children make in nursery and school, respectively. Work fraction is the fraction of contacts people in the working-age age group make in the workplace. hospitality1 fraction, hospitality2 fraction, hospitality3 fraction and hospitality4 fraction are the fractions of non-work, non-school contacts made in the hospitality setting for the four ordered age groups. hospitality age1, hospitality age2, hospitality age3 and hospitality age4 give the fractions of hospitality contacts made with age groups 20--64 and 65 and over, for the four age groups in order. Workforce in place is the fraction of 20 to 64 year olds counted among sector workers. (Workforce in place + unemployed = Workforce.)  Hospital capacity is beds per 100,000 population. \\label{tab:paramdist}'
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(paramdist,caption=lg)
 }else{
@@ -1210,7 +1264,6 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 ```{r hmax,fig.cap='Hospital capacity: available beds minus usual occupancy.',echo=F,warning=F,message=F, out.width="50%"}
 
 
-hmaxi <- setDT(read.csv('data/country_data.csv'))
 ggplot(subset(hmaxi,!is.na(igroup)&igroup!='')) + 
   geom_histogram(aes(x=Hmax),colour='navyblue',fill='grey') +
   facet_wrap(~igroup) +

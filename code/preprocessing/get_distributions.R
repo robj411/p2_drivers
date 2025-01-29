@@ -33,10 +33,10 @@ umic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Upper middl
 llmic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Low income','Lower middle income'))$internet/100,"beta",start=list(shape1=1,shape2=1))
 
 internet_distributions <- data.frame(parameter_name='internet_coverage',
-                                 igroup=c('LLMIC','UMIC','HIC'),
-                                 distribution='betainv',
-                                 `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape1']]),
-                                 `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape2']]))
+                                     igroup=c('LLMIC','UMIC','HIC'),
+                                     distribution='betainv',
+                                     `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape1']]),
+                                     `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape2']]))
 
 ## labour share ####################
 print('labour share')
@@ -51,10 +51,10 @@ umic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup%in%c('Upper middle i
 llmic <- fitdistr(subset(labincome,!is.na(labsh)&IncomeGroup%in%c('Low income','Lower middle income'))$labsh,"beta",start=list(shape1=1,shape2=1))
 
 labsh_distributions <- data.frame(parameter_name='labsh',
-                                     igroup=c('LLMIC','UMIC','HIC'),
-                                     distribution='betainv',
-                                     `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape1']]),
-                                     `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape2']]))
+                                  igroup=c('LLMIC','UMIC','HIC'),
+                                  distribution='betainv',
+                                  `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape1']]),
+                                  `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape2']]))
 
 ## bmi ##########################
 print('bmi')
@@ -72,10 +72,10 @@ umic <- fitdistr(subset(bmi,!is.na(FactValueNumeric)&IncomeGroup%in%c('Upper mid
 llmic <- fitdistr(subset(bmi,!is.na(FactValueNumeric)&IncomeGroup%in%c('Lower middle income','Low income'))$FactValueNumeric,"normal")
 
 bmi_distributions <- data.frame(parameter_name='bmi',
-                                 igroup=c('LLMIC','UMIC','HIC'),
-                                 distribution='norminv',
-                                 `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['mean']]),
-                                 `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['sd']]))
+                                igroup=c('LLMIC','UMIC','HIC'),
+                                distribution='norminv',
+                                `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['mean']]),
+                                `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['sd']]))
 
 ## hosp capacity #####################
 print('hosp capacity')
@@ -85,10 +85,10 @@ umic <- fitdistr(subset(p2data,!is.na(Hmax)&igroup%in%c('UMIC'))$Hmax,"gamma")
 llmic <- fitdistr(subset(p2data,!is.na(Hmax)&igroup%in%c('LMIC','LIC'))$Hmax,"gamma")
 
 Hmax_distributions <- data.frame(parameter_name='Hmax',
-                                  igroup=c('LLMIC','UMIC','HIC'),
-                                  distribution='gaminv',
-                                  `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape']]),
-                                  `Parameter 2`=sapply(list(llmic,umic,hic),function(x)1/x$estimate[['rate']]))
+                                 igroup=c('LLMIC','UMIC','HIC'),
+                                 distribution='gaminv',
+                                 `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape']]),
+                                 `Parameter 2`=sapply(list(llmic,umic,hic),function(x)1/x$estimate[['rate']]))
 
 
 ## workforce in place ##########################
@@ -104,10 +104,10 @@ for(igp in 1:3){
   fits[[igp]] <- fitdistr(na.omit(workersinplace/workeragetotal),"beta",start=list(shape1=1,shape2=1))
 }
 workforce_in_place <- data.frame(parameter_name='workforce_in_place',
-                               igroup=c('LLMIC','UMIC','HIC'),
-                               distribution='betainv',
-                               `Parameter 1`=sapply(fits,function(x)x$estimate[['shape1']]),
-                               `Parameter 2`=sapply(fits,function(x)x$estimate[['shape2']]))
+                                 igroup=c('LLMIC','UMIC','HIC'),
+                                 distribution='betainv',
+                                 `Parameter 1`=sapply(fits,function(x)x$estimate[['shape1']]),
+                                 `Parameter 2`=sapply(fits,function(x)x$estimate[['shape2']]))
 
 ## public transport ###################
 print('public transport')
@@ -224,10 +224,10 @@ llmic <- fitdistr(subset(a2,!is.na(frac_school_contacts)&igroup%in%c('LMIC','LIC
 dist2 <- fitdistr(subset(a2,!is.na(frac_school_contacts))$frac_school_contacts,"beta",start=list(shape1=1,shape2=1))
 
 schoolA2_distributions <- data.frame(parameter_name='schoolA2_frac',
-                                 igroup=c('LLMIC','UMIC','HIC'),
-                                 distribution='betainv',
-                                 `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape1']]),
-                                 `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape2']]))
+                                     igroup=c('LLMIC','UMIC','HIC'),
+                                     distribution='betainv',
+                                     `Parameter 1`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape1']]),
+                                     `Parameter 2`=sapply(list(llmic,umic,hic),function(x)x$estimate[['shape2']]))
 
 
 ## school a1 #################################
@@ -300,10 +300,10 @@ x <- seq(0,max(dat),length=10000)
 fit <- dlnorm(x, fit_params$estimate['meanlog'], fit_params$estimate['sdlog'])
 
 tourism_distribution <- data.frame(parameter_name='remaining_international_tourism',
-                                     igroup=c('all'),
-                                     distribution='logninv',
-                                     `Parameter 1`=fit_params$estimate[['meanlog']],
-                                     `Parameter 2`=fit_params$estimate[['sdlog']])
+                                   igroup=c('all'),
+                                   distribution='logninv',
+                                   `Parameter 1`=fit_params$estimate[['meanlog']],
+                                   `Parameter 2`=fit_params$estimate[['sdlog']])
 
 
 ggplot(data) + geom_point(aes(x=`International tourism as share of total tourism (%)`,y=`Tourism as a share of GDP (%)`))
@@ -331,10 +331,10 @@ pointiness <- optimfit$par[1]
 betaparams <- optimfit$par[2:3]
 
 tourism_pointiness <- data.frame(parameter_name='tourism_pointiness',
-                                   igroup=c('all'),
-                                   distribution=NA,
-                                   `Parameter 1`=pointiness,
-                                   `Parameter 2`=NA)
+                                 igroup=c('all'),
+                                 distribution=NA,
+                                 `Parameter 1`=pointiness,
+                                 `Parameter 2`=NA)
 
 sec_to_international <- data.frame(parameter_name='sec_to_international',
                                    igroup=c('all'),
@@ -484,22 +484,22 @@ source('workplace_related_contacts.R')
 ## end ############################################
 
 (parameter_distributions <- rbind(internet_distributions,
-                                 tourism_distribution,
-                                 labsh_distributions,
-                                 gdp_to_gnippp_distributions,
-                                 Hmax_distributions,
-                                 bmi_distributions,
-                                 # pt_distributions,
-                                 tourism_pointiness,
-                                 sec_to_international,
-                                 ptr_distributions,
-                                 school1_distributions,
-                                 school2_distributions,
-                                 work_frac_distributions,
-                                 hospitality_frac_distributions,
-                                 hospitality_age_distributions,
-                                 workforce_in_place
-                                 ))
+                                  tourism_distribution,
+                                  labsh_distributions,
+                                  gdp_to_gnippp_distributions,
+                                  Hmax_distributions,
+                                  bmi_distributions,
+                                  # pt_distributions,
+                                  tourism_pointiness,
+                                  sec_to_international,
+                                  ptr_distributions,
+                                  school1_distributions,
+                                  school2_distributions,
+                                  work_frac_distributions,
+                                  hospitality_frac_distributions,
+                                  hospitality_age_distributions,
+                                  workforce_in_place
+))
 
 write.csv(parameter_distributions,file.path(datapath,'parameter_distributions.csv'),row.names = F)
 
