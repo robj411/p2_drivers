@@ -14,16 +14,22 @@ function dis2 = update_hosp_dis_parameters(occ, p2, dis, t)
     
     % only apply before vaccination programme completes (prevents expensive
     % exit waves)
-    if t<max(p2.tpoints)
+    %if t<max(p2.tpoints)
     
         Hmax  = p2.Hmax;
-        SHmax = 2*Hmax;
+%         SHmax = 2*Hmax;
+%         excess_H = max(0, occ - Hmax);
+%         p_excess = excess_H ./ occ;
+%         (1 + 0.87*max(0, occ - Hmax) / occ)*pd;
+%         new_pd = ((1 - p_excess) + p_excess.*1.87).*dis.pd;
+        new_pd = (1 + 1.*max(0, occ - Hmax) / occ).*dis.pd;
 
         %Amplitudes
-        th0 = max(1,1+1.87*((occ-Hmax)./(SHmax-Hmax)));
+%         th0 = max(1,1+1.87*((occ-Hmax)./(SHmax-Hmax)));
+%         new_pd = th0.*dis.pd;
 
         %Probabilities
-        pd = min(th0*dis.pd,1);
+        pd = min(new_pd,1);
 
         %Calculations
         Threc = dis.Threc;
@@ -32,7 +38,7 @@ function dis2 = update_hosp_dis_parameters(occ, p2, dis, t)
         Th = ((1-pd).*Threc) + (pd.*Thd);
         dis2.g3   = (1-pd)./Th;
         dis2.mu   = pd./Th;
-    end
+    %end
 
 end
 
