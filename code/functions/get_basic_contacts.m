@@ -68,7 +68,7 @@ function contacts = get_basic_contacts(data, contacts)
     sectoragedist(:,nSectors+4) = sectorcontactfracs.x65plus;
     sectoragedist(:,workage_indices) = sectorcontactfracs.workingage .* [NNrelsec(1:nSectors)'.*w1,w2]./worker_contacts_adults;
     
-    scale_contacts = NN(1:nSectors)' * sectorcontacts / sum(NN(1:nSectors)) / target_work_contacts;
+    scale_contacts = target_work_contacts / ( NN(1:nSectors)' * sectorcontacts / sum(NN(1:nSectors)));
     contacts_per_sector = sectorcontacts * scale_contacts;
     community_to_worker_mat = sectoragedist .* repmat(contacts_per_sector,1,nStrata) ;
     community_to_worker_mat = [community_to_worker_mat; zeros(4,nStrata)];
@@ -101,7 +101,8 @@ function contacts = get_basic_contacts(data, contacts)
     contacts.community_to_worker_mat = community_to_worker_mat;    
     
     % get marginal contacts by age for workers
-    av_workerage_cn = NNrel' * community_to_worker_mat(workage_indices,:);
+    total_worker = worker_to_community_mat + community_to_worker_mat + worker_worker_mat;
+    av_workerage_cn = NNrel' * total_worker(workage_indices,:);
     av_workerage_contacts_collapsed = [av_workerage_cn(:,nSectors+1), av_workerage_cn(:,nSectors+2), sum(av_workerage_cn(:,workage_indices)), av_workerage_cn(:,nSectors+4)];
   
     c_to_w_back = av_workerage_contacts_collapsed * Npop4(adInd) ./ Npop4;
