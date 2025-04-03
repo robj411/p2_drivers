@@ -81,7 +81,7 @@ function contact_matrix = p2MakeDs(data,NN,openness,home_working)
     %% add all together
     contact_matrix = community_mat +  workerworker_mat + community_worker_mat;
 
-    collapse_cm(contact_matrix,data.NNs)
+%     collapse_cm(contact_matrix,data.NNs)
     
 
 end
