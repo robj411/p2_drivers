@@ -201,6 +201,6 @@ for il = 1:n_income
     end
 end
 
-!\Progra~1\R\R-4.4.1\bin\x64\Rscript cepi_voi.R
+% !\Progra~1\R\R-4.4.1\bin\x64\Rscript cepi_voi.R
 !\Progra~1\R\R-4.4.1\bin\x64\Rscript exceedance_probabilities.R
 
