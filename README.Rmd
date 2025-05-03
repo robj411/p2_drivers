@@ -31,6 +31,31 @@ bibliography:
 always_allow_html: true
 ---
 
+
+```{r,fig.cap='All results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/dominance.png")
+```
+
+```{r,fig.cap='BPSV results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig1bpsv.png")
+```
+
+```{r,fig.cap='R&D results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig2rnd.png")
+```
+
+```{r,fig.cap='Capacity reservation results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig3capres.png")
+```
+
+```{r,fig.cap='Combinations results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig4comb.png")
+```
+
+```{r,fig.cap='Equity results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig5eq.png")
+```
+
 This document describes the DAEDALUS model that is used in the CEPI application. The DAEDALUS model simulates a single epidemic in a single country. Details of how the DAEDALUS model is used as a part of the methodology of the CEPI application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the DAEDALUS model.
 
 ```{r setup, include=FALSE}
@@ -456,7 +481,7 @@ k^{7}_{j}(t) = (1-p^{D}_{j}(t)) / T_j^{H}(t)
 
   
 ```math
-f_H(t)=1 + 1.87\frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
+f_H(t)=1 + 5\frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
 ```
 
 ```math
