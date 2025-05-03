@@ -117,16 +117,17 @@ end
 
 %% set up simulation
 
-outputcolumnnames = {'State_changes','Breach_before','Breach_after','Mitigated_deaths','End_mitigation','End_simulation', 'Remaining_susceptible','End_hosp','Exit_wave',...
+outputcolumnnames = {'State_changes','Breach_before','Breach_after','Mitigated_deaths',...
+    'End_mitigation','End_simulation', 'Remaining_susceptible','End_hosp','Exit_wave','Unvaccinated','BPSV','Vaccinated','Peak_BPSV',...
     'Deaths1','Deaths2','Deaths3','Deaths4','Deaths','Cost','YLL','School','GDP_loss'};
 columnnames = [outputcolumnnames ];
 outputs   = zeros(nsamples,length(outputcolumnnames));
 
 %% simulate
 
-for il = 1:n_income
-    income_level = income_levels{il};
-    for sl = 1:nScen
+for sl = 2:nScen
+    for il = 1:n_income
+        income_level = income_levels{il};
         allcosts = zeros(nsamples,length(strategies));
         for ms = 1:length(strategies)        
             strategy = strategies{ms};
@@ -139,7 +140,8 @@ for il = 1:n_income
                     %% run model
                     [dataout,returned] = p2Run(ldata,dis2,strategy,p2);
     %                         figure('Position', [100 100 400 300]); plot(returned.Tout,returned.Htot)
-
+                    returned.v_dist(4);
+                    ldata.Npop4(4);
                     %% outputs: costs
                     costs    = p2Cost(ldata,dis2,p2,returned);
                                         
@@ -178,7 +180,9 @@ for il = 1:n_income
                     breach_after = max(returned.Htot(exitwave:end)) - p2.Hmax;
 
                     %% store outputs
-                    outputs(i,:) = [size(returned.isequence,1) breach_before breach_after mitdeaths endmit endsim endsusc endhosp exitwavefrac deaths1 deaths2 deaths3 deaths4 total_deaths sec];
+                    outputs(i,:) = [size(returned.isequence,1) breach_before breach_after mitdeaths...
+                        endmit endsim endsusc endhosp exitwavefrac returned.v_dist...
+                        deaths1 deaths2 deaths3 deaths4 total_deaths sec];
 
                     if any(sec<0)
                         disp(strcat(string(strategy),'_',string(income_level),'_scen',string(sl),'_',string(i),' 0'))
@@ -192,7 +196,7 @@ for il = 1:n_income
             % write results
             T = array2table(outputs);
             T.Properties.VariableNames = columnnames;
-            writetable(T,strcat('results/outputs_',string(strategy),'_',string(income_level),'_scen',string(sl),'.csv'));
+            writetable(T,strcat('results/outputs/outputs_',string(strategy),'_',string(income_level),'_scen',string(sl),'.csv'));
             allcosts(:,ms) = T.Cost;
         end
         disp([il sl]);
@@ -201,6 +205,6 @@ for il = 1:n_income
     end
 end
 
-!\Progra~1\R\R-4.4.1\bin\x64\Rscript cepi_voi.R
-!\Progra~1\R\R-4.4.1\bin\x64\Rscript exceedance_probabilities.R
-
+% !\Progra~1\R\R-4.4.1\bin\x64\Rscript cepi_voi.R
+exe_path = '"C:\Program Files\R\R-4.5.0\bin\x64\Rscript.exe"';
+system([exe_path,' exceedance_probabilities.R'])
