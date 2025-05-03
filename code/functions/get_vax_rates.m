@@ -49,8 +49,9 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
         end
         
         start_sarsx = p2.t_vax2;
+
         if t > start_sarsx
-%             disp(t)
+            % disp(t)
             rate_today = p2.sarsx_per_day(ceil(t - start_sarsx));
             total_to_vax = targets.*NNnext.*rate_today;
             if current_group == 4
@@ -75,6 +76,8 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
             end
             
         elseif t <= tpoints(2)
+            % disp(t)
+            % disp(tpoints(1))
             rate_today = p2.bpsv_per_day(ceil(t - tpoints(1)));
             total_to_vax = targets.*NNnext.*rate_today;
             % populate v1 from S, R
@@ -82,7 +85,6 @@ function [v1rates, v1rater, v2rates, v2rater, v12rates, v12rater] = ...
             v1rate = total_to_vax ./ denom;
             v1rates = v1rate.*S;
             v1rater = v1rate.*R;
-%         disp([t tpoints(1:2) DE(end)])
         end
     end
 end

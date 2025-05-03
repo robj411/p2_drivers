@@ -24,7 +24,7 @@
 % data: struct containing fixed values, with potential for updated state-6
 % variables
 
-function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,still_susc,data]=...
+function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,still_susc,data, peak_bpsv]=...
           integr8(data,contact_matrix,i,t0,tend,dis,y0,p2)
       
     %% copy over only required items
@@ -75,28 +75,32 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     
     % ie is the index ("value") returned
     % inext is the value it maps to (from get_strategy_design)
-%     disp([max(tout) i ie' ie'])
-    iee = ie(end);
-    if tout(end)<tend
-        if iee <= 6
-            inext = data.inext(iee);
-%             disp(data.rel_stringency(inext))
-        elseif iee == 8 % importation event
-            % keep the same i
-            inext = i;
-            % move 5 people from S to E
-            current_S = y_mat(:,S_index(1));
-            imported = 5/sum(current_S)*current_S;
-            new_E = y_mat(:,E_index(1)) + imported;
-            new_S = current_S - imported;
-            y_mat(:,S_index(1)) = new_S;
-            y_mat(:,E_index(1)) = new_E;
-            y0new = reshape(y_mat,[],1);
-        else %end
-            inext = 0;
+    %     disp([max(tout) i ie' ie'])
+    if ~isempty(ie)
+        iee = ie(end);
+        if tout(end)<data.tvec(end)
+            if iee <= 6
+                inext = data.inext(iee);
+    %             disp(data.rel_stringency(inext))
+            elseif iee == 8 % importation event
+                % keep the same i
+                inext = i;
+                % move 5 people from S to E
+                current_S = y_mat(:,S_index(1));
+                imported = 5/sum(current_S)*current_S;
+                new_E = y_mat(:,E_index(1)) + imported;
+                new_S = current_S - imported;
+                y_mat(:,S_index(1)) = new_S;
+                y_mat(:,E_index(1)) = new_E;
+                y0new = reshape(y_mat,[],1);
+            else %end
+                inext = 0;
+            end
+        else
+            inext = NaN;
         end
     else
-        inext = NaN;
+        inext = i;
     end
     
 
@@ -146,57 +150,9 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     Isclass(:,:,2) = Isv1; 
     Isclass(:,:,3) = Isv2; 
     
-    %% get exit status variables
-
-%     if inext==5 
-%         
-%         t = tout(end);
-%         S    = y_mat(:,compindex.S_index(1));
-%         Sn   = y_mat(:,compindex.S_index(2));
-%         S01   = y_mat(:,compindex.S_index(3));
-%         Sv1   = y_mat(:,compindex.S_index(4));
-%         Sv2   = y_mat(:,compindex.S_index(5));
-%         S02   = y_mat(:,compindex.S_index(6));
-%         S12   = y_mat(:,compindex.S_index(7));
-%         
-%         Isum = sum(y_mat(:,compindex.I_index)')';
-% 
-%         dis2 = update_vax_dis_parameters(dis2, S, Sn, compindex, y_mat);
-%         
-%         R5 = get_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), deaths_per_mill(end), data,5, t, Isum);
-%     
-%         closure = 1 - data.workerConfigMat(:,i);   
-%         trial_vals = 0:0.25:1;
-%         Rthresh = log(2)*dis.generation_time/(p2.final_doubling_time_threshold/4) + 1;
-%         Rs = zeros(1, length(trial_vals));
-%         for j =1:length(trial_vals)
-%             trial_val = trial_vals(j);
-%             openness = 1 - trial_val*closure;
-%             Rs(j) = get_trial_R(nStrata,dis2,S+S01+S02,Sv1+S12,Sv2,dis.beta,p3(end),p4(end), deaths_per_mill(end), data,openness,data.hw(2,:),5, t, Isum);
-%             if Rs(j) < Rthresh
-%                 break;
-%             end
-%         end
-%             
-%         if min(Rs>Rthresh)
-%             index = length(trial_vals);
-%         else
-%             index = find(Rs<Rthresh,1);
-%         end
-%         if data.exittype==2
-%             index=1;
-%         end
-% %         disp([t/1000, Rthresh, Rs(index) index R5])
-%         openness = 1 - trial_vals(index)*closure;
-%         data.workerConfigMat(:,6) = openness;
-%         data.hw(6,:) = data.hw(2,:); % this can go into setup
-%         Dtemp = p2MakeDs(data,data.NNs,openness,data.hw(6,:));
-%         % store matrix in list
-%         data.Dvec(:,:,6) = Dtemp;
-%         if data.exittype > 0 & R5>Rthresh % if not in exit mode, save data for restart
-%             inext = 6;
-%         end
-%     end 
+    mat3 = reshape(yout,[],nStrata,size(y_mat,2));
+    elders = mat3(:,end,:);
+    peak_bpsv = max(sum(elders(:,compindex.vaccine)'));
 
 end
 
