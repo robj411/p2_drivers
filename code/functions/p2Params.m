@@ -65,17 +65,18 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
     sarsx_sched = scentab(:,2);
     cumdoses = cumsum(sarsx_sched*50000000);
     endrollout = find(cumdoses > doses,1);
-
+    first_bpsv_nonzero = find(bpsv_sched>0,1);
 
     vaccine_day = find(sarsx_sched>0,1);
     p2.t_vax2 = p2.Tres + 7 + vaccine_day;  
 
     if bpsv == 1
-        t_vax = p2.Tres;
         cum_bpsv = cumsum(bpsv_sched*50000000);
         keep_indices = find(diff([0; cum_bpsv])>0);
         interptime = interp1([0; cum_bpsv(keep_indices)],[0; keep_indices],doses4(4));
-        t_bpsv = min(interptime, find(bpsv_sched~=0,1,'last'));
+        find(cum_bpsv>doses4(4),1)
+        t_bpsv = min(interptime, find(bpsv_sched~=0,1,'last')) - first_bpsv_nonzero + 1;
+        t_vax = p2.Tres + first_bpsv_nonzero;
     else
         t_vax = 10*365;
     end
@@ -126,8 +127,8 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
     end    
     tpoints    = cumsum([min(t_vax, p2.t_vax2), t_ages]);
     p2.tpoints = tpoints;
-    p2.sarsx_per_day = sarsx_sched(find(sarsx_sched>0,1):end)*sum(Npop);
-    p2.bpsv_per_day = bpsv_sched(find(bpsv_sched>0,1):end)*sum(Npop);
+    p2.sarsx_per_day = sarsx_sched(vaccine_day:end)*sum(Npop);
+    p2.bpsv_per_day = bpsv_sched(first_bpsv_nonzero:end)*sum(Npop);
 
     
 
