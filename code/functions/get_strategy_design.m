@@ -49,6 +49,11 @@ function data = get_strategy_design(data,strategy,p2)
     data.tvec = [-0.1 data.tvec(end)];
     data.tvec = data.tvec + min(data.t_import,p2.Tres);
     data.configuration = configuration;
+
+    if diff(p2.group_order(1:2))==-4
+        % disp(data.tvec)
+        data.tvec = [data.tvec(1), p2.tpoints(1) + 1e-5, data.tvec(2)];
+    end
 end
                
                

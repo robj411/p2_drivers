@@ -58,13 +58,16 @@ function data = data_start()
     data.compindex = compindex;
     
     %% vaccine rollout
-    fulltable = readtable('../data/20240611 LB Daily Vaccine Delivery.xlsx','FileType','spreadsheet','Sheet',1);
-    colnames = regexprep(fulltable.Properties.VariableNames(3:5),'s','');
+    fulltable = readtable('../data/20250422 pandemic delivery scenarios - for ICL.xlsx','FileType','spreadsheet','Sheet',1);
+    % fulltable = readtable('../data/20250328 pandemic delivery scenarios - for ICL.xlsx','FileType','spreadsheet','Sheet',1);
+%     fulltable = readtable('../data/20240611 LB Daily Vaccine Delivery.xlsx','FileType','spreadsheet','Sheet',1);
+    colnames = regexprep(fulltable.Properties.VariableNames(2+[1:3]),'s','');
     vaxtab = table2array(fulltable);
-    scenarios = cell(1,5);
-    for i = 1:length(scenarios)
-        scenbpsv = array2table(vaxtab(:, 2 + (i-1)*6 + [1:3]));
-        scenspec = array2table(vaxtab(:, 2 + (i-1)*6 + [4:6]));
+    nScen = (length(fulltable.Properties.VariableNames)-2)/6;
+    scenarios = cell(1,nScen);
+    for i = 1:nScen
+        scenbpsv = array2table(vaxtab(:, 2+(i-1)*6 + [1:3]));
+        scenspec = array2table(vaxtab(:, 2+(i-1)*6 + [4:6]));
         scenbpsv.Properties.VariableNames = colnames;
         scenspec.Properties.VariableNames = colnames;
         scenarios{i} = {scenbpsv, scenspec};        
