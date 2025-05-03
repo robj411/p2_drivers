@@ -60,7 +60,7 @@ function [param_struct, R0_dist] = sample_disease_parameters(nsamples)
     U = normcdf(Z,0,1);     %Compute the CDF
 
     R0_lower = 1.5;
-    R0_upper = 4;
+    R0_upper = 3.5;
 
     for i = 1:size(disparams,2)
         thisparam = disparams.Properties.VariableNames{i};

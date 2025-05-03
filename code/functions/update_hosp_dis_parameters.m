@@ -22,7 +22,7 @@ function dis2 = update_hosp_dis_parameters(occ, p2, dis, t)
 %         p_excess = excess_H ./ occ;
 %         (1 + 0.87*max(0, occ - Hmax) / occ)*pd;
 %         new_pd = ((1 - p_excess) + p_excess.*1.87).*dis.pd;
-        new_pd = (1 + 1.*max(0, occ - Hmax) / occ).*dis.pd;
+        new_pd = (1 + 9*max(0, occ - Hmax) / occ).*dis.pd;
 
         %Amplitudes
 %         th0 = max(1,1+1.87*((occ-Hmax)./(SHmax-Hmax)));
