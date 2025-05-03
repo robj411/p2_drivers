@@ -28,7 +28,7 @@ function contacts = get_basic_contacts(data, contacts)
     CMav      = pop_props*sum(CM_4,2);
     contact_props = CM_4(3,:)/sum(CM_4(3,:));
     workage_total = sum(CM_4(3,:));
-    disp(CM_4)
+%     disp(CM_4)
 
     %% indices
 
