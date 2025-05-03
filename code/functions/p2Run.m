@@ -78,6 +78,7 @@ function [data, returnobject] = p2SimVax(data, dis, p2)
     betamodout = 1;
     Sout       = sum(S0);
     rout       = 0;
+    peak_bpsv = 0;
 
     %% LOOP
 
@@ -101,9 +102,10 @@ function [data, returnobject] = p2SimVax(data, dis, p2)
         p2.NNnext = NNnext;
 
         isequence = [isequence; [t0 i]];
+        tnext = data.tvec(find(data.tvec>t0,1));
         
-        [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0,inext,still_susc,data]=...
-         integr8(data,contact_matrix,i,t0,tend,dis,y0,p2);
+        [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0,inext,still_susc,data, peak_bpsv_t]=...
+         integr8(data,contact_matrix,i,t0,tnext,dis,y0,p2);
         if inext==0
             tend = tout(end);
         end
@@ -122,9 +124,10 @@ function [data, returnobject] = p2SimVax(data, dis, p2)
         p4out    = [p4out;p4(2:end)];
         betamodout = [betamodout;betamod(2:end)];
         Sout       = [Sout;still_susc(2:end,:)];
+        peak_bpsv = max(peak_bpsv, peak_bpsv_t);
         
         if Tout(end)<tend
-            data.tvec = [data.tvec(1:end-1),Tout(end),tend];
+            data.tvec = [data.tvec(1:find(data.tvec>t0,1)),Tout(end),tend];
             t0 = Tout(end);
             i                     = inext;
             if i==5
@@ -162,6 +165,12 @@ function [data, returnobject] = p2SimVax(data, dis, p2)
     pout.p4 = p4out;
     returnobject.selfisolation = pout;
     returnobject.isequence = isequence; 
+
+    y0_mat = reshape(y0,nStrata,nODEs);
+    tv1 = sum(sum(y0_mat(:,compindex.vaccine)));
+    tv2 = sum(sum(y0_mat(:,compindex.booster)));
+    unv = sum(y0) - sum(sum(y0_mat(:,[compindex.S_index(2) compindex.V_index]))) - tv1 - tv2;
+    returnobject.v_dist = [unv, tv1, tv2, peak_bpsv];
 %     returnobject.y0 = ysave;
   
 end
