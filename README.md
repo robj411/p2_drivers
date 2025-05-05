@@ -47,6 +47,61 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
       isolate](#724-compliance-with-the-requirement-to-self-isolate)
 - [8 Notation](#8-notation)
 
+<div class="figure">
+
+<img src="cepi_results/dominance.png" alt="All results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-1"></span>Figure 0.1: All results.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="cepi_results/fig1bpsv.png" alt="BPSV results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-2"></span>Figure 0.2: BPSV results.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="cepi_results/fig2rnd.png" alt="R&amp;D results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-3"></span>Figure 0.3: R&D results.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="cepi_results/fig3capres.png" alt="Capacity reservation results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-4"></span>Figure 0.4: Capacity reservation
+results.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="cepi_results/fig4comb.png" alt="Combinations results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-5"></span>Figure 0.5: Combinations results.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="cepi_results/fig5eq.png" alt="Equity results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-6"></span>Figure 0.6: Equity results.
+</p>
+
+</div>
+
 This document describes the DAEDALUS model that is used in the CEPI
 application. The DAEDALUS model simulates a single epidemic in a single
 country. Details of how the DAEDALUS model is used as a part of the
@@ -248,10 +303,10 @@ otherwise. We use this approach in order to represent our uncertainty
 about the appropriate method to calculate the VSL for one country using
 the VSL from another.
 
-| Method               | Probability | $r_p$                | $r_e$ (LLMIC)     | $r_e$ (UMIC, GDPpc \< \$8,809) | $r_e$ (UMIC, GDPpc \> \$8,809) | $r_e$ (HIC)      |
-|:---------------------|:------------|:---------------------|:------------------|:-------------------------------|:-------------------------------|:-----------------|
-| OECD/IHME/World Bank | 0.5         | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2)              | Uniform(0.9, 1.2)              | 0.8              |
-| Viscusi/Masterman    | 0.5         | 1                    | 1                 | 1                              | Uniform(0.85, 1)               | Uniform(0.85, 1) |
+| Method | Probability | $r_p$ | $r_e$ (LLMIC) | $r_e$ (UMIC, GDPpc \< \$8,809) | $r_e$ (UMIC, GDPpc \> \$8,809) | $r_e$ (HIC) |
+|:---|:---|:---|:---|:---|:---|:---|
+| OECD/IHME/World Bank | 0.5 | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | 0.8 |
+| Viscusi/Masterman | 0.5 | 1 | 1 | 1 | Uniform(0.85, 1) | Uniform(0.85, 1) |
 
 <span id="tab:vslrules"></span>Table 2.1: values for elasticities,
 adapted from Robinson, Sullivan, and Shogren (2021), Table 2 (page 25)
@@ -268,16 +323,13 @@ transformations of low VSL values for GDP (Figure
 <div class="figure">
 
 <img src="README_files/figure-gfm/pppelasticity-1.png" alt="Exposition of different methods to estimate VSL from GDP per capita relative to the USA. On the y axis is VSL expressed as a percentage of GDP per capita. The grey line indicates the VSL of the USA. We compare GDP per capita expressed using market exchange rates (MER) vs. purchasing power parity (PPP), and an income elasticity of 1 vs. 1.5. Data source: World Bank."  />
-
 <p class="caption">
-
 <span id="fig:pppelasticity"></span>Figure 2.1: Exposition of different
 methods to estimate VSL from GDP per capita relative to the USA. On the
 y axis is VSL expressed as a percentage of GDP per capita. The grey line
 indicates the VSL of the USA. We compare GDP per capita expressed using
 market exchange rates (MER) vs. purchasing power parity (PPP), and an
 income elasticity of 1 vs. 1.5. Data source: World Bank.
-
 </p>
 
 </div>
@@ -367,14 +419,11 @@ $$\begin{align}
 <div class="figure">
 
 <img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status." width="50%" />
-
 <p class="caption">
-
 <span id="fig:statetransitions"></span>Figure 3.1: Disease state
 transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic
 infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$:
 recovered. $D$: died. $j$: stratum. $v$: vaccination status.
-
 </p>
 
 </div>
@@ -470,7 +519,7 @@ fatality rate as hospital occupancy increases:
 <!-- (1 + 0.87*max(0, occ - Hmax) / occ)*pd; -->
 
 ``` math
-f_H(t)=1 + 1.87\frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
+f_H(t)=1 + 5\frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
 ```
 
 ``` math
@@ -513,15 +562,12 @@ pathway of the lower vaccination level.
 <div class="figure">
 
 <img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status."  />
-
 <p class="caption">
-
 <span id="fig:vaccinetransitions"></span>Figure 3.2: Vaccine state
 transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently
 vaccinated but has not yet seroconverted (i.e. is not protected by most
 recent vaccination). $R$: recovered. $j$: stratum. $v$: initial
 vaccination status. $u$: final vaccination status.
-
 </p>
 
 </div>
@@ -666,16 +712,13 @@ you talk to.)
 <div class="figure">
 
 <img src="README_files/figure-gfm/workfrac.png" alt="Fraction of contacts made at work, from [@Jarvis2023]. Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%))." width="50%" />
-
 <p class="caption">
-
 <span id="fig:workfrac"></span>Figure 3.3: Fraction of contacts made at
 work, from (Jarvis et al. 2023). Extrapolated from three countries (UK,
 Belgium, Netherlands), whose values are all close to 40%, using time-use
 survey results for fraction of time spent at work (OECD, last updated
 December 2023, 33 countries, with values ranging from 12 to 25% (and the
 three reference countries have values 16 to 18%)).
-
 </p>
 
 </div>
@@ -683,16 +726,13 @@ three reference countries have values 16 to 18%)).
 <div class="figure">
 
 <img src="README_files/figure-gfm/allsector45.png" alt="Number of contacts made at work, from [@Jarvis2023]. Diamonds show average numbers and ranges are 50% quantile intervals. We sample values from half to double the average. Data come from UK, Netherlands and Switzerland, with occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using ONS data." width="50%" />
-
 <p class="caption">
-
 <span id="fig:allsector"></span>Figure 3.4: Number of contacts made at
 work, from (Jarvis et al. 2023). Diamonds show average numbers and
 ranges are 50% quantile intervals. We sample values from half to double
 the average. Data come from UK, Netherlands and Switzerland, with
 occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using
 ONS data.
-
 </p>
 
 </div>
@@ -700,12 +740,9 @@ ONS data.
 <div class="figure">
 
 <img src="README_files/figure-gfm/uksec_dist_age.png" alt="Fraction of contacts made at work by age, from [@Jarvis2023]." width="50%" />
-
 <p class="caption">
-
 <span id="fig:uksecdistage"></span>Figure 3.5: Fraction of contacts made
 at work by age, from (Jarvis et al. 2023).
-
 </p>
 
 </div>
@@ -713,12 +750,9 @@ at work by age, from (Jarvis et al. 2023).
 <div class="figure">
 
 <img src="README_files/figure-gfm/school1frac.png" alt="Fraction of contacts made at school for ages 0 to 4, from [@Jarvis2023]." width="50%" />
-
 <p class="caption">
-
 <span id="fig:school1frac"></span>Figure 3.6: Fraction of contacts made
 at school for ages 0 to 4, from (Jarvis et al. 2023).
-
 </p>
 
 </div>
@@ -726,12 +760,9 @@ at school for ages 0 to 4, from (Jarvis et al. 2023).
 <div class="figure">
 
 <img src="README_files/figure-gfm/school2frac.png" alt="Fraction of contacts made at school for ages 5 to 19, from [@Jarvis2023]." width="50%" />
-
 <p class="caption">
-
 <span id="fig:school2frac"></span>Figure 3.7: Fraction of contacts made
 at school for ages 5 to 19, from (Jarvis et al. 2023).
-
 </p>
 
 </div>
@@ -739,13 +770,10 @@ at school for ages 5 to 19, from (Jarvis et al. 2023).
 <div class="figure">
 
 <img src="README_files/figure-gfm/hospfrac.png" alt="Fraction of non-school and non-work contacts made in hospitality settings, by age group, from [@Jarvis2023]." width="50%" />
-
 <p class="caption">
-
 <span id="fig:hospfrac"></span>Figure 3.8: Fraction of non-school and
 non-work contacts made in hospitality settings, by age group, from
 (Jarvis et al. 2023).
-
 </p>
 
 </div>
@@ -753,13 +781,10 @@ non-work contacts made in hospitality settings, by age group, from
 <div class="figure">
 
 <img src="README_files/figure-gfm/conagefrac.png" alt="Distribution of non-school and non-work contacts made in hospitality settings by age group, from [@Jarvis2023]." width="50%" />
-
 <p class="caption">
-
 <span id="fig:conagefrac"></span>Figure 3.9: Distribution of non-school
 and non-work contacts made in hospitality settings by age group, from
 (Jarvis et al. 2023).
-
 </p>
 
 </div>
@@ -851,15 +876,12 @@ reduction in transmission, with the reduction in mobility.
 <div class="figure">
 
 <img src="README_files/figure-gfm/smoothmobility.png" alt="Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over &quot;Retail and recreation&quot;, &quot;Transit stations&quot; and &quot;Workplaces&quot; and smoothed with a spline of 80 knots." width="50%" />
-
 <p class="caption">
-
 <span id="fig:smoothmobility"></span>Figure 3.10: Mobility trajectories
 in 2020 for all countries, with points showing the point at which the
 largest drop was observed. Trajectories are averaged over “Retail and
 recreation”, “Transit stations” and “Workplaces” and smoothed with a
 spline of 80 knots.
-
 </p>
 
 </div>
@@ -867,12 +889,9 @@ spline of 80 knots.
 <div class="figure">
 
 <img src="README_files/figure-gfm/mobilitydrop.png" alt="The largest drop in mobility plotted against the stringency on that date." width="50%" />
-
 <p class="caption">
-
 <span id="fig:mobilitydrop"></span>Figure 3.11: The largest drop in
 mobility plotted against the stringency on that date.
-
 </p>
 
 </div>
@@ -914,11 +933,8 @@ Finally, we assume that the effect wanes over time, with the minimum
 <div class="figure">
 
 <img src="README_files/figure-gfm/mobilityfitted.png" alt="Fit of model to data." width="50%" />
-
 <p class="caption">
-
 <span id="fig:mobilityfitted"></span>Figure 3.12: Fit of model to data.
-
 </p>
 
 </div>
@@ -926,12 +942,9 @@ Finally, we assume that the effect wanes over time, with the minimum
 <div class="figure">
 
 <img src="README_files/figure-gfm/mobilityposterior.png" alt="Posterior distribution for parameters $p^9$ and $p^8$." width="50%" />
-
 <p class="caption">
-
 <span id="fig:mobilityposterior"></span>Figure 3.13: Posterior
 distribution for parameters $p^9$ and $p^8$.
-
 </p>
 
 </div>
@@ -939,12 +952,9 @@ distribution for parameters $p^9$ and $p^8$.
 <div class="figure">
 
 <img src="README_files/figure-gfm/mobilitycurves.png" alt="Sampled curves for four levels of mitigation. Data shown as points." width="50%" />
-
 <p class="caption">
-
 <span id="fig:mobilitycurves"></span>Figure 3.14: Sampled curves for
 four levels of mitigation. Data shown as points.
-
 </p>
 
 </div>
@@ -1015,13 +1025,10 @@ little correlation with tourism in terms of % of GDP. (See Figure
 <div class="figure" style="text-align: center">
 
 <img src="README_files/figure-gfm/pairs-1.png" alt="Correlations between tourism-related data. First: @untourismKeyTourismStatistics2023. Second to fourth: @untourismInternationalTourismCOVID192023. Fifth to seventh: OECD."  />
-
 <p class="caption">
-
 <span id="fig:pairs"></span>Figure 4.1: Correlations between
 tourism-related data. First: UN Tourism (2023b). Second to fourth: UN
 Tourism (2023a). Fifth to seventh: OECD.
-
 </p>
 
 </div>
@@ -1068,13 +1075,10 @@ as inputs for all country models.
 <div class="figure" style="text-align: center">
 
 <img src="README_files/figure-gfm/tourismhist-1.png" alt="Distributions of tourism-related data from @untourismInternationalTourismCOVID192023. In grey are the subset of countries for which we have GVA data by sector." width="50%" />
-
 <p class="caption">
-
 <span id="fig:tourismhist"></span>Figure 4.2: Distributions of
 tourism-related data from UN Tourism (2023a). In grey are the subset of
 countries for which we have GVA data by sector.
-
 </p>
 
 </div>
@@ -1082,12 +1086,9 @@ countries for which we have GVA data by sector.
 <div class="figure" style="text-align: center">
 
 <img src="README_files/figure-gfm/ytd-1.png" alt="Fit of log-normal distribution to loss-of-tourism data."  />
-
 <p class="caption">
-
 <span id="fig:ytd"></span>Figure 4.3: Fit of log-normal distribution to
 loss-of-tourism data.
-
 </p>
 
 </div>
@@ -1220,9 +1221,7 @@ vaccinated).
 <div class="figure">
 
 <img src="README_files/figure-gfm/policies-1.png" alt="The four sector-closure policy options. No closures (NC) does not mandate any closures. The other three policies all implement reactive closures (RC), either in response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The difference between RC1 and RC2 is that in RC1 schools are closed throughout, whereas in RC2 schools are fully open during the light configuration." width="50%" />
-
 <p class="caption">
-
 <span id="fig:policies"></span>Figure 5.1: The four sector-closure
 policy options. No closures (NC) does not mandate any closures. The
 other three policies all implement reactive closures (RC), either in
@@ -1230,7 +1229,6 @@ response to hospital occupancy (RC1 and RC2) or $R_t$ (RC3). The
 difference between RC1 and RC2 is that in RC1 schools are closed
 throughout, whereas in RC2 schools are fully open during the light
 configuration.
-
 </p>
 
 </div>
@@ -1259,21 +1257,21 @@ epidemiological outcomes. They do not directly impact economic outcomes,
 but indirectly may reduce the need for closures because of reduced
 incidence.
 
-| From/to            | No closures                                                                                                           | Light closures                                                   | Heavy closures                     |
-|:-------------------|:----------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------|:-----------------------------------|
-| **No closures**    |                                                                                                                       | t $\geq$ response time AND Hospital occupancy \> 95% capacity    |                                    |
-| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                  | Hospital occupancy \> 95% capacity |
-| **Heavy closures** |                                                                                                                       | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |                                    |
+| From/to | No closures | Light closures | Heavy closures |
+|:---|:---|:---|:---|
+| **No closures** |  | t $\geq$ response time AND Hospital occupancy \> 95% capacity |  |
+| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |  | Hospital occupancy \> 95% capacity |
+| **Heavy closures** |  | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |  |
 
 <span id="tab:rulesreactive"></span>Table 5.1: State transition rules
 for policies RC1 and RC2. See Table <a href="#tab:eccon">5.3</a> for
 details of closures.
 
-| From/to            | No closures                                          | Light closures                                                          | Heavy closures |
-|:-------------------|:-----------------------------------------------------|:------------------------------------------------------------------------|:---------------|
-| **No closures**    |                                                      | t $\geq$ response time OR Hospital occupancy \> 95% capacity            |                |
-| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |                                                                         | $R_t > 1.2$    |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t \> 7 + last change time |                |
+| From/to | No closures | Light closures | Heavy closures |
+|:---|:---|:---|:---|
+| **No closures** |  | t $\geq$ response time OR Hospital occupancy \> 95% capacity |  |
+| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |  | $R_t > 1.2$ |
+| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t \> 7 + last change time |  |
 
 <span id="tab:ruleselimination"></span>Table 5.2: State transition rules
 for policy RC3. See Table <a href="#tab:eccon">5.3</a> for details of
@@ -1281,12 +1279,10 @@ closures.
 
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-
 <span id="tab:eccon"></span>Table 5.3: Economic configurations used to
 implement strategies. Values are the openness of the sector expressed as
 a percentage. RC3 values are taken from Australia. Lockdown and RC2
 values are taken from the UK. RC1 values are taken from Indonesia.
-
 </caption>
 <thead>
 <tr>
@@ -1322,1707 +1318,1063 @@ RC3
 </tr>
 <tr>
 <th style="text-align:left;">
-
 Sector
-
 </th>
 <th style="text-align:right;">
-
 Heavy closures
-
 </th>
 <th style="text-align:right;">
-
 Light closures
-
 </th>
 <th style="text-align:right;">
-
 Heavy closures
-
 </th>
 <th style="text-align:right;">
-
 Light closures
-
 </th>
 <th style="text-align:right;">
-
 Heavy closures
-
 </th>
 <th style="text-align:right;">
-
 Light closures
-
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-
 Agriculture, hunting, forestry
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 86
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 <td style="text-align:right;">
-
 86
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Fishing and aquaculture
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 86
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 <td style="text-align:right;">
-
 86
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Mining and quarrying, energy producing products
-
 </td>
 <td style="text-align:right;">
-
 67
-
 </td>
 <td style="text-align:right;">
-
 79
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Mining and quarrying, non-energy producing products
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Mining support service activities
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Food products, beverages and tobacco
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Textiles, textile products, leather and footwear
-
 </td>
 <td style="text-align:right;">
-
 89
-
 </td>
 <td style="text-align:right;">
-
 92
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Wood and products of wood and cork
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 95
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Paper products and printing
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Coke and refined petroleum products
-
 </td>
 <td style="text-align:right;">
-
 87
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Chemical and chemical products
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Pharmaceuticals, medicinal chemical and botanical products
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Rubber and plastics products
-
 </td>
 <td style="text-align:right;">
-
 87
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Other non-metallic mineral products
-
 </td>
 <td style="text-align:right;">
-
 92
-
 </td>
 <td style="text-align:right;">
-
 89
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Basic metals
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Fabricated metal products
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Computer, electronic and optical equipment
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Electrical equipment
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Machinery and equipment, nec
-
 </td>
 <td style="text-align:right;">
-
 89
-
 </td>
 <td style="text-align:right;">
-
 95
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Motor vehicles, trailers and semi-trailers
-
 </td>
 <td style="text-align:right;">
-
 66
-
 </td>
 <td style="text-align:right;">
-
 82
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Other transport equipment
-
 </td>
 <td style="text-align:right;">
-
 66
-
 </td>
 <td style="text-align:right;">
-
 82
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Manufacturing nec; repair and installation of machinery and equipment
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 70
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Electricity, gas, steam and air conditioning supply
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 89
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 89
-
 </td>
 <td style="text-align:right;">
-
 97
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Water supply; sewerage, waste management and remediation activities
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 92
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 <td style="text-align:right;">
-
 92
-
 </td>
 <td style="text-align:right;">
-
 97
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Construction
-
 </td>
 <td style="text-align:right;">
-
 95
-
 </td>
 <td style="text-align:right;">
-
 95
-
 </td>
 <td style="text-align:right;">
-
 56
-
 </td>
 <td style="text-align:right;">
-
 92
-
 </td>
 <td style="text-align:right;">
-
 56
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Wholesale and retail trade; repair of motor vehicles
-
 </td>
 <td style="text-align:right;">
-
 92
-
 </td>
 <td style="text-align:right;">
-
 97
-
 </td>
 <td style="text-align:right;">
-
 64
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 64
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Land transport and transport via pipelines
-
 </td>
 <td style="text-align:right;">
-
 83
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 82
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Water transport
-
 </td>
 <td style="text-align:right;">
-
 81
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 82
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Air transport
-
 </td>
 <td style="text-align:right;">
-
 16
-
 </td>
 <td style="text-align:right;">
-
 42
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 82
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 18
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Warehousing and support activities for transportation
-
 </td>
 <td style="text-align:right;">
-
 64
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 82
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Postal and courier activities
-
 </td>
 <td style="text-align:right;">
-
 64
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 82
-
 </td>
 <td style="text-align:right;">
-
 63
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Accommodation and food service activities
-
 </td>
 <td style="text-align:right;">
-
 77
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 <td style="text-align:right;">
-
 10
-
 </td>
 <td style="text-align:right;">
-
 85
-
 </td>
 <td style="text-align:right;">
-
 10
-
 </td>
 <td style="text-align:right;">
-
 92
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Publishing, audiovisual and broadcasting activities
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Telecommunications
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IT and other information services
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 <td style="text-align:right;">
-
 91
-
 </td>
 <td style="text-align:right;">
-
 88
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Financial and insurance activities
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 96
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Real estate activities
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 <td style="text-align:right;">
-
 98
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Professional, scientific and technical activities
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 95
-
 </td>
 <td style="text-align:right;">
-
 85
-
 </td>
 <td style="text-align:right;">
-
 92
-
 </td>
 <td style="text-align:right;">
-
 85
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Administrative and support services
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 95
-
 </td>
 <td style="text-align:right;">
-
 66
-
 </td>
 <td style="text-align:right;">
-
 80
-
 </td>
 <td style="text-align:right;">
-
 66
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Public administration and defence; compulsory social security
-
 </td>
 <td style="text-align:right;">
-
 96
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Education
-
 </td>
 <td style="text-align:right;">
-
 10
-
 </td>
 <td style="text-align:right;">
-
 10
-
 </td>
 <td style="text-align:right;">
-
 10
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 10
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Human health and social work activities
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 <td style="text-align:right;">
-
 75
-
 </td>
 <td style="text-align:right;">
-
 92
-
 </td>
 <td style="text-align:right;">
-
 75
-
 </td>
 <td style="text-align:right;">
-
 100
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Arts, entertainment and recreation
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 96
-
 </td>
 <td style="text-align:right;">
-
 55
-
 </td>
 <td style="text-align:right;">
-
 71
-
 </td>
 <td style="text-align:right;">
-
 55
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Other service activities
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 96
-
 </td>
 <td style="text-align:right;">
-
 54
-
 </td>
 <td style="text-align:right;">
-
 83
-
 </td>
 <td style="text-align:right;">
-
 54
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Activities of households as employers; undifferentiated goods- and
 services-producing activities of households for own use
-
 </td>
 <td style="text-align:right;">
-
 90
-
 </td>
 <td style="text-align:right;">
-
 96
-
 </td>
 <td style="text-align:right;">
-
 49
-
 </td>
 <td style="text-align:right;">
-
 53
-
 </td>
 <td style="text-align:right;">
-
 49
-
 </td>
 <td style="text-align:right;">
-
 94
-
 </td>
 </tr>
 </tbody>
@@ -3041,1917 +2393,1197 @@ al. (2024).
 
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-
 <span id="tab:pathogenprofile"></span>Table 6.1: Pathogen profiles. IHR:
 infection hospitalisation rate. IFR: infection fatality rate.
-
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
 </th>
 <th style="text-align:left;">
-
 SARS-CoV-1
-
 </th>
 <th style="text-align:left;">
-
 Influenza 2009
-
 </th>
 <th style="text-align:left;">
-
 Influenza 1957
-
 </th>
 <th style="text-align:left;">
-
 Influenza 1918
-
 </th>
 <th style="text-align:left;">
-
 SARS-CoV-2 pre-alpha
-
 </th>
 <th style="text-align:left;">
-
 SARS-CoV-2 omicron
-
 </th>
 <th style="text-align:left;">
-
 SARS-CoV-2 delta
-
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-
 IHR in 0-4 age group
-
 </td>
 <td style="text-align:left;">
-
 0.058
-
 </td>
 <td style="text-align:left;">
-
 0.0047
-
 </td>
 <td style="text-align:left;">
-
 0.0009
-
 </td>
 <td style="text-align:left;">
-
 0.12
-
 </td>
 <td style="text-align:left;">
-
 0.000016
-
 </td>
 <td style="text-align:left;">
-
 0.000033
-
 </td>
 <td style="text-align:left;">
-
 0.00003
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 5-9 age group
-
 </td>
 <td style="text-align:left;">
-
 0.058
-
 </td>
 <td style="text-align:left;">
-
 0.0018
-
 </td>
 <td style="text-align:left;">
-
 0.0009
-
 </td>
 <td style="text-align:left;">
-
 0.021
-
 </td>
 <td style="text-align:left;">
-
 0.000016
-
 </td>
 <td style="text-align:left;">
-
 0.000033
-
 </td>
 <td style="text-align:left;">
-
 0.00003
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 10-14 age group
-
 </td>
 <td style="text-align:left;">
-
 0.058
-
 </td>
 <td style="text-align:left;">
-
 0.0018
-
 </td>
 <td style="text-align:left;">
-
 0.0009
-
 </td>
 <td style="text-align:left;">
-
 0.026
-
 </td>
 <td style="text-align:left;">
-
 0.00041
-
 </td>
 <td style="text-align:left;">
-
 0.00059
-
 </td>
 <td style="text-align:left;">
-
 0.00075
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 15-19 age group
-
 </td>
 <td style="text-align:left;">
-
 0.058
-
 </td>
 <td style="text-align:left;">
-
 0.0018
-
 </td>
 <td style="text-align:left;">
-
 0.0009
-
 </td>
 <td style="text-align:left;">
-
 0.053
-
 </td>
 <td style="text-align:left;">
-
 0.00041
-
 </td>
 <td style="text-align:left;">
-
 0.00059
-
 </td>
 <td style="text-align:left;">
-
 0.00075
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 20-24 age group
-
 </td>
 <td style="text-align:left;">
-
 0.082
-
 </td>
 <td style="text-align:left;">
-
 0.0018
-
 </td>
 <td style="text-align:left;">
-
 0.0009
-
 </td>
 <td style="text-align:left;">
-
 0.091
-
 </td>
 <td style="text-align:left;">
-
 0.01
-
 </td>
 <td style="text-align:left;">
-
 0.0083
-
 </td>
 <td style="text-align:left;">
-
 0.019
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 25-29 age group
-
 </td>
 <td style="text-align:left;">
-
 0.082
-
 </td>
 <td style="text-align:left;">
-
 0.0038
-
 </td>
 <td style="text-align:left;">
-
 0.0009
-
 </td>
 <td style="text-align:left;">
-
 0.16
-
 </td>
 <td style="text-align:left;">
-
 0.01
-
 </td>
 <td style="text-align:left;">
-
 0.0083
-
 </td>
 <td style="text-align:left;">
-
 0.019
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 30-34 age group
-
 </td>
 <td style="text-align:left;">
-
 0.082
-
 </td>
 <td style="text-align:left;">
-
 0.0038
-
 </td>
 <td style="text-align:left;">
-
 0.0009
-
 </td>
 <td style="text-align:left;">
-
 0.13
-
 </td>
 <td style="text-align:left;">
-
 0.034
-
 </td>
 <td style="text-align:left;">
-
 0.02
-
 </td>
 <td style="text-align:left;">
-
 0.063
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 35-39 age group
-
 </td>
 <td style="text-align:left;">
-
 0.082
-
 </td>
 <td style="text-align:left;">
-
 0.0038
-
 </td>
 <td style="text-align:left;">
-
 0.0009
-
 </td>
 <td style="text-align:left;">
-
 0.12
-
 </td>
 <td style="text-align:left;">
-
 0.034
-
 </td>
 <td style="text-align:left;">
-
 0.02
-
 </td>
 <td style="text-align:left;">
-
 0.063
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 40-44 age group
-
 </td>
 <td style="text-align:left;">
-
 0.3
-
 </td>
 <td style="text-align:left;">
-
 0.0038
-
 </td>
 <td style="text-align:left;">
-
 0.0009
-
 </td>
 <td style="text-align:left;">
-
 0.088
-
 </td>
 <td style="text-align:left;">
-
 0.042
-
 </td>
 <td style="text-align:left;">
-
 0.016
-
 </td>
 <td style="text-align:left;">
-
 0.079
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 45-49 age group
-
 </td>
 <td style="text-align:left;">
-
 0.3
-
 </td>
 <td style="text-align:left;">
-
 0.0038
-
 </td>
 <td style="text-align:left;">
-
 0.023
-
 </td>
 <td style="text-align:left;">
-
 0.064
-
 </td>
 <td style="text-align:left;">
-
 0.042
-
 </td>
 <td style="text-align:left;">
-
 0.016
-
 </td>
 <td style="text-align:left;">
-
 0.079
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 50-54 age group
-
 </td>
 <td style="text-align:left;">
-
 0.3
-
 </td>
 <td style="text-align:left;">
-
 0.0071
-
 </td>
 <td style="text-align:left;">
-
 0.023
-
 </td>
 <td style="text-align:left;">
-
 0.088
-
 </td>
 <td style="text-align:left;">
-
 0.082
-
 </td>
 <td style="text-align:left;">
-
 0.021
-
 </td>
 <td style="text-align:left;">
-
 0.15
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 55-59 age group
-
 </td>
 <td style="text-align:left;">
-
 0.3
-
 </td>
 <td style="text-align:left;">
-
 0.0071
-
 </td>
 <td style="text-align:left;">
-
 0.023
-
 </td>
 <td style="text-align:left;">
-
 0.063
-
 </td>
 <td style="text-align:left;">
-
 0.082
-
 </td>
 <td style="text-align:left;">
-
 0.021
-
 </td>
 <td style="text-align:left;">
-
 0.15
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 60-64 age group
-
 </td>
 <td style="text-align:left;">
-
 0.87
-
 </td>
 <td style="text-align:left;">
-
 0.0071
-
 </td>
 <td style="text-align:left;">
-
 0.023
-
 </td>
 <td style="text-align:left;">
-
 0.16
-
 </td>
 <td style="text-align:left;">
-
 0.12
-
 </td>
 <td style="text-align:left;">
-
 0.031
-
 </td>
 <td style="text-align:left;">
-
 0.22
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 65-69 age group
-
 </td>
 <td style="text-align:left;">
-
 0.87
-
 </td>
 <td style="text-align:left;">
-
 0.01
-
 </td>
 <td style="text-align:left;">
-
 0.18
-
 </td>
 <td style="text-align:left;">
-
 0.22
-
 </td>
 <td style="text-align:left;">
-
 0.12
-
 </td>
 <td style="text-align:left;">
-
 0.031
-
 </td>
 <td style="text-align:left;">
-
 0.22
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 70-74 age group
-
 </td>
 <td style="text-align:left;">
-
 0.87
-
 </td>
 <td style="text-align:left;">
-
 0.01
-
 </td>
 <td style="text-align:left;">
-
 0.18
-
 </td>
 <td style="text-align:left;">
-
 0.26
-
 </td>
 <td style="text-align:left;">
-
 0.17
-
 </td>
 <td style="text-align:left;">
-
 0.061
-
 </td>
 <td style="text-align:left;">
-
 0.31
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 75-79 age group
-
 </td>
 <td style="text-align:left;">
-
 0.87
-
 </td>
 <td style="text-align:left;">
-
 0.01
-
 </td>
 <td style="text-align:left;">
-
 0.18
-
 </td>
 <td style="text-align:left;">
-
 0.26
-
 </td>
 <td style="text-align:left;">
-
 0.17
-
 </td>
 <td style="text-align:left;">
-
 0.061
-
 </td>
 <td style="text-align:left;">
-
 0.31
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IHR in 80+ age group
-
 </td>
 <td style="text-align:left;">
-
 0.6
-
 </td>
 <td style="text-align:left;">
-
 0.01
-
 </td>
 <td style="text-align:left;">
-
 0.18
-
 </td>
 <td style="text-align:left;">
-
 0.26
-
 </td>
 <td style="text-align:left;">
-
 0.18
-
 </td>
 <td style="text-align:left;">
-
 0.11
-
 </td>
 <td style="text-align:left;">
-
 0.34
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 0-4 age group
-
 </td>
 <td style="text-align:left;">
-
 0.015
-
 </td>
 <td style="text-align:left;">
-
 0.00018
-
 </td>
 <td style="text-align:left;">
-
 0.000067
-
 </td>
 <td style="text-align:left;">
-
 0.015
-
 </td>
 <td style="text-align:left;">
-
 0.000016
-
 </td>
 <td style="text-align:left;">
-
 0.000033
-
 </td>
 <td style="text-align:left;">
-
 0.00003
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 5-9 age group
-
 </td>
 <td style="text-align:left;">
-
 0.015
-
 </td>
 <td style="text-align:left;">
-
 0.000074
-
 </td>
 <td style="text-align:left;">
-
 0.000067
-
 </td>
 <td style="text-align:left;">
-
 0.0027
-
 </td>
 <td style="text-align:left;">
-
 0.000016
-
 </td>
 <td style="text-align:left;">
-
 0.000033
-
 </td>
 <td style="text-align:left;">
-
 0.00003
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 10-14 age group
-
 </td>
 <td style="text-align:left;">
-
 0.015
-
 </td>
 <td style="text-align:left;">
-
 0.000074
-
 </td>
 <td style="text-align:left;">
-
 0.000067
-
 </td>
 <td style="text-align:left;">
-
 0.0032
-
 </td>
 <td style="text-align:left;">
-
 0.00007
-
 </td>
 <td style="text-align:left;">
-
 0.0001
-
 </td>
 <td style="text-align:left;">
-
 0.00013
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 15-19 age group
-
 </td>
 <td style="text-align:left;">
-
 0.015
-
 </td>
 <td style="text-align:left;">
-
 0.00008
-
 </td>
 <td style="text-align:left;">
-
 0.000067
-
 </td>
 <td style="text-align:left;">
-
 0.0066
-
 </td>
 <td style="text-align:left;">
-
 0.00007
-
 </td>
 <td style="text-align:left;">
-
 0.0001
-
 </td>
 <td style="text-align:left;">
-
 0.00013
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 20-24 age group
-
 </td>
 <td style="text-align:left;">
-
 0.021
-
 </td>
 <td style="text-align:left;">
-
 0.00008
-
 </td>
 <td style="text-align:left;">
-
 0.000067
-
 </td>
 <td style="text-align:left;">
-
 0.011
-
 </td>
 <td style="text-align:left;">
-
 0.00031
-
 </td>
 <td style="text-align:left;">
-
 0.00025
-
 </td>
 <td style="text-align:left;">
-
 0.00057
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 25-29 age group
-
 </td>
 <td style="text-align:left;">
-
 0.021
-
 </td>
 <td style="text-align:left;">
-
 0.0002
-
 </td>
 <td style="text-align:left;">
-
 0.000067
-
 </td>
 <td style="text-align:left;">
-
 0.02
-
 </td>
 <td style="text-align:left;">
-
 0.00031
-
 </td>
 <td style="text-align:left;">
-
 0.00025
-
 </td>
 <td style="text-align:left;">
-
 0.00057
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 30-34 age group
-
 </td>
 <td style="text-align:left;">
-
 0.021
-
 </td>
 <td style="text-align:left;">
-
 0.0002
-
 </td>
 <td style="text-align:left;">
-
 0.000067
-
 </td>
 <td style="text-align:left;">
-
 0.017
-
 </td>
 <td style="text-align:left;">
-
 0.00084
-
 </td>
 <td style="text-align:left;">
-
 0.00048
-
 </td>
 <td style="text-align:left;">
-
 0.0016
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 35-39 age group
-
 </td>
 <td style="text-align:left;">
-
 0.021
-
 </td>
 <td style="text-align:left;">
-
 0.0002
-
 </td>
 <td style="text-align:left;">
-
 0.000067
-
 </td>
 <td style="text-align:left;">
-
 0.015
-
 </td>
 <td style="text-align:left;">
-
 0.00084
-
 </td>
 <td style="text-align:left;">
-
 0.00048
-
 </td>
 <td style="text-align:left;">
-
 0.0016
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 40-44 age group
-
 </td>
 <td style="text-align:left;">
-
 0.077
-
 </td>
 <td style="text-align:left;">
-
 0.0002
-
 </td>
 <td style="text-align:left;">
-
 0.000067
-
 </td>
 <td style="text-align:left;">
-
 0.011
-
 </td>
 <td style="text-align:left;">
-
 0.0016
-
 </td>
 <td style="text-align:left;">
-
 0.0006
-
 </td>
 <td style="text-align:left;">
-
 0.003
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 45-49 age group
-
 </td>
 <td style="text-align:left;">
-
 0.077
-
 </td>
 <td style="text-align:left;">
-
 0.00043
-
 </td>
 <td style="text-align:left;">
-
 0.0017
-
 </td>
 <td style="text-align:left;">
-
 0.008
-
 </td>
 <td style="text-align:left;">
-
 0.0016
-
 </td>
 <td style="text-align:left;">
-
 0.0006
-
 </td>
 <td style="text-align:left;">
-
 0.003
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 50-54 age group
-
 </td>
 <td style="text-align:left;">
-
 0.077
-
 </td>
 <td style="text-align:left;">
-
 0.00043
-
 </td>
 <td style="text-align:left;">
-
 0.0017
-
 </td>
 <td style="text-align:left;">
-
 0.011
-
 </td>
 <td style="text-align:left;">
-
 0.006
-
 </td>
 <td style="text-align:left;">
-
 0.0015
-
 </td>
 <td style="text-align:left;">
-
 0.011
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 55-59 age group
-
 </td>
 <td style="text-align:left;">
-
 0.077
-
 </td>
 <td style="text-align:left;">
-
 0.00043
-
 </td>
 <td style="text-align:left;">
-
 0.0017
-
 </td>
 <td style="text-align:left;">
-
 0.0078
-
 </td>
 <td style="text-align:left;">
-
 0.006
-
 </td>
 <td style="text-align:left;">
-
 0.0015
-
 </td>
 <td style="text-align:left;">
-
 0.011
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 60-64 age group
-
 </td>
 <td style="text-align:left;">
-
 0.22
-
 </td>
 <td style="text-align:left;">
-
 0.00043
-
 </td>
 <td style="text-align:left;">
-
 0.0017
-
 </td>
 <td style="text-align:left;">
-
 0.021
-
 </td>
 <td style="text-align:left;">
-
 0.019
-
 </td>
 <td style="text-align:left;">
-
 0.005
-
 </td>
 <td style="text-align:left;">
-
 0.036
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 65-69 age group
-
 </td>
 <td style="text-align:left;">
-
 0.22
-
 </td>
 <td style="text-align:left;">
-
 0.0066
-
 </td>
 <td style="text-align:left;">
-
 0.013
-
 </td>
 <td style="text-align:left;">
-
 0.028
-
 </td>
 <td style="text-align:left;">
-
 0.019
-
 </td>
 <td style="text-align:left;">
-
 0.005
-
 </td>
 <td style="text-align:left;">
-
 0.036
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 70-74 age group
-
 </td>
 <td style="text-align:left;">
-
 0.22
-
 </td>
 <td style="text-align:left;">
-
 0.0066
-
 </td>
 <td style="text-align:left;">
-
 0.013
-
 </td>
 <td style="text-align:left;">
-
 0.033
-
 </td>
 <td style="text-align:left;">
-
 0.043
-
 </td>
 <td style="text-align:left;">
-
 0.016
-
 </td>
 <td style="text-align:left;">
-
 0.079
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 75-79 age group
-
 </td>
 <td style="text-align:left;">
-
 0.22
-
 </td>
 <td style="text-align:left;">
-
 0.0066
-
 </td>
 <td style="text-align:left;">
-
 0.013
-
 </td>
 <td style="text-align:left;">
-
 0.033
-
 </td>
 <td style="text-align:left;">
-
 0.043
-
 </td>
 <td style="text-align:left;">
-
 0.016
-
 </td>
 <td style="text-align:left;">
-
 0.079
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 IFR in 80+ age group
-
 </td>
 <td style="text-align:left;">
-
 0.15
-
 </td>
 <td style="text-align:left;">
-
 0.0066
-
 </td>
 <td style="text-align:left;">
-
 0.013
-
 </td>
 <td style="text-align:left;">
-
 0.033
-
 </td>
 <td style="text-align:left;">
-
 0.078
-
 </td>
 <td style="text-align:left;">
-
 0.048
-
 </td>
 <td style="text-align:left;">
-
 0.14
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 probability symptomatic
-
 </td>
 <td style="text-align:left;">
-
 0.87
-
 </td>
 <td style="text-align:left;">
-
 0.67
-
 </td>
 <td style="text-align:left;">
-
 0.67
-
 </td>
 <td style="text-align:left;">
-
 0.67
-
 </td>
 <td style="text-align:left;">
-
 0.6
-
 </td>
 <td style="text-align:left;">
-
 0.6
-
 </td>
 <td style="text-align:left;">
-
 0.6
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 latent period
-
 </td>
 <td style="text-align:left;">
-
 4.6
-
 </td>
 <td style="text-align:left;">
-
 1.1
-
 </td>
 <td style="text-align:left;">
-
 1.1
-
 </td>
 <td style="text-align:left;">
-
 1.1
-
 </td>
 <td style="text-align:left;">
-
 4.6
-
 </td>
 <td style="text-align:left;">
-
 4
-
 </td>
 <td style="text-align:left;">
-
 4
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 duration asymptomatic
-
 </td>
 <td style="text-align:left;">
-
 2.1
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 2.1
-
 </td>
 <td style="text-align:left;">
-
 2.1
-
 </td>
 <td style="text-align:left;">
-
 2.1
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 duration infectious and symptomatic given recovery without
 hospitalisation
-
 </td>
 <td style="text-align:left;">
-
 4
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 4
-
 </td>
 <td style="text-align:left;">
-
 4
-
 </td>
 <td style="text-align:left;">
-
 4
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 duration infectious and symptomatic given hospitalisation
-
 </td>
 <td style="text-align:left;">
-
 3.8
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 4
-
 </td>
 <td style="text-align:left;">
-
 4
-
 </td>
 <td style="text-align:left;">
-
 4
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 duration hospitalised given recovery
-
 </td>
 <td style="text-align:left;">
-
 23
-
 </td>
 <td style="text-align:left;">
-
 5
-
 </td>
 <td style="text-align:left;">
-
 5
-
 </td>
 <td style="text-align:left;">
-
 5
-
 </td>
 <td style="text-align:left;">
-
 12
-
 </td>
 <td style="text-align:left;">
-
 5.5
-
 </td>
 <td style="text-align:left;">
-
 7.6
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 duration hospitalised given death
-
 </td>
 <td style="text-align:left;">
-
 20
-
 </td>
 <td style="text-align:left;">
-
 5
-
 </td>
 <td style="text-align:left;">
-
 5
-
 </td>
 <td style="text-align:left;">
-
 5
-
 </td>
 <td style="text-align:left;">
-
 12
-
 </td>
 <td style="text-align:left;">
-
 5.5
-
 </td>
 <td style="text-align:left;">
-
 7.6
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 duration of infection-acquired immunity
-
 </td>
 <td style="text-align:left;">
-
 360
-
 </td>
 <td style="text-align:left;">
-
 360
-
 </td>
 <td style="text-align:left;">
-
 360
-
 </td>
 <td style="text-align:left;">
-
 360
-
 </td>
 <td style="text-align:left;">
-
 360
-
 </td>
 <td style="text-align:left;">
-
 360
-
 </td>
 <td style="text-align:left;">
-
 360
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 relative infectiousness of asymptomatic
-
 </td>
 <td style="text-align:left;">
-
 0.58
-
 </td>
 <td style="text-align:left;">
-
 0.58
-
 </td>
 <td style="text-align:left;">
-
 0.58
-
 </td>
 <td style="text-align:left;">
-
 0.58
-
 </td>
 <td style="text-align:left;">
-
 0.58
-
 </td>
 <td style="text-align:left;">
-
 0.58
-
 </td>
 <td style="text-align:left;">
-
 0.58
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 basic reproduction number
-
 </td>
 <td style="text-align:left;">
-
 1.8
-
 </td>
 <td style="text-align:left;">
-
 1.6
-
 </td>
 <td style="text-align:left;">
-
 1.8
-
 </td>
 <td style="text-align:left;">
-
 2.5
-
 </td>
 <td style="text-align:left;">
-
 2.9
-
 </td>
 <td style="text-align:left;">
-
 5.9
-
 </td>
 <td style="text-align:left;">
-
 5.1
-
 </td>
 </tr>
 </tbody>
 </table>
 
-| Model parameter name                       | Distribution     | Distribution parameter values | Correlations                                            |
-|:-------------------------------------------|:-----------------|:------------------------------|:--------------------------------------------------------|
-| Probability symptomatic                    | Beta             | 14.68, 7.30                   | None                                                    |
-| Latent period                              | Gamma            | 2.28, 1.06                    | None                                                    |
-| Asymptomatic infectious period             | Gamma            | 139.0, 0.017                  | None                                                    |
-| Time from symptom onset to recovery        | Gamma            | 18.61, 0.17                   | 0.99 (time to hospitalisation); 0.60 ($\text{R}_0$)     |
-| Time from symptom onset to hospitalisation | Gamma            | 21.21, 0.14                   | 0.99 (time to recovery); 0.66 ($\text{R}_0$)            |
-| Time from hospitalisation to recovery      | Gamma            | 2.46, 3.75                    | 0.997                                                   |
-| Time from hospitalisation to death         | Gamma            | 2.93, 2.96                    | 0.997                                                   |
-| Time to immunity waning                    | Constant         | Inf                           | None                                                    |
-| Relative infectiousness of asymptomatic    | Constant         | 0.58                          | None                                                    |
-| $\text{R}_0$                               | Truncated normal | 2.45, 1.32; (1.5, 4)          | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
+| Model parameter name | Distribution | Distribution parameter values | Correlations |
+|:---|:---|:---|:---|
+| Probability symptomatic | Beta | 14.68, 7.30 | None |
+| Latent period | Gamma | 2.28, 1.06 | None |
+| Asymptomatic infectious period | Gamma | 139.0, 0.017 | None |
+| Time from symptom onset to recovery | Gamma | 18.61, 0.17 | 0.99 (time to hospitalisation); 0.60 ($\text{R}_0$) |
+| Time from symptom onset to hospitalisation | Gamma | 21.21, 0.14 | 0.99 (time to recovery); 0.66 ($\text{R}_0$) |
+| Time from hospitalisation to recovery | Gamma | 2.46, 3.75 | 0.997 |
+| Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 |
+| Time to immunity waning | Constant | Inf | None |
+| Relative infectiousness of asymptomatic | Constant | 0.58 | None |
+| $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
 
 <span id="tab:pathogenparameters"></span>Table 6.2: Distributions for
 pathogen parameters used to sample synthetic pathogens. Distributions
@@ -4996,202 +3628,134 @@ countries from one income level and/or uniform distributions:
 
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
-
 <span id="tab:ages"></span>Table 7.1: Mean ages for all countries within
 each income-level group.
-
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-
 Income group
-
 </th>
 <th style="text-align:left;">
-
 Mean
-
 </th>
 <th style="text-align:left;">
-
 Min
-
 </th>
 <th style="text-align:left;">
-
 Max
-
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-
 LLMIC
-
 </td>
 <td style="text-align:left;">
-
 26.1
-
 </td>
 <td style="text-align:left;">
-
 20.4
-
 </td>
 <td style="text-align:left;">
-
 41.5
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 UMIC
-
 </td>
 <td style="text-align:left;">
-
 33.8
-
 </td>
 <td style="text-align:left;">
-
 24
-
 </td>
 <td style="text-align:left;">
-
 43.9
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 HIC
-
 </td>
 <td style="text-align:left;">
-
 40.1
-
 </td>
 <td style="text-align:left;">
-
 29.8
-
 </td>
 <td style="text-align:left;">
-
 50.7
-
 </td>
 </tr>
 </tbody>
 </table>
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
-
 <span id="tab:lifeexp"></span>Table 7.2: Mean life expectancy for all
 countries within each income-level group. Life expectancy as given
 “Expected years of life remaining” for the youngest age group (0 to 4
 years old).
-
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-
 Income group
-
 </th>
 <th style="text-align:left;">
-
 Mean
-
 </th>
 <th style="text-align:left;">
-
 Min
-
 </th>
 <th style="text-align:left;">
-
 Max
-
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-
 LLMIC
-
 </td>
 <td style="text-align:left;">
-
 68.4
-
 </td>
 <td style="text-align:left;">
-
 53.6
-
 </td>
 <td style="text-align:left;">
-
 77.7
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 UMIC
-
 </td>
 <td style="text-align:left;">
-
 74.1
-
 </td>
 <td style="text-align:left;">
-
 63.3
-
 </td>
 <td style="text-align:left;">
-
 80.5
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 HIC
-
 </td>
 <td style="text-align:left;">
-
 79.2
-
 </td>
 <td style="text-align:left;">
-
 73
-
 </td>
 <td style="text-align:left;">
-
 83.4
-
 </td>
 </tr>
 </tbody>
@@ -5203,7 +3767,6 @@ The following are sampled from parametric distributions:
 
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
-
 <span id="tab:paramdist"></span>Table 7.3: Parameter distributions.
 Tourism parameters are those described in Section
 <a href="#dependence-on-international-tourism">4.1.4</a>. “school1
@@ -5220,900 +3783,569 @@ over, for the four age groups in order. Workforce in place is the
 fraction of 20 to 64 year olds counted among sector workers. (Workforce
 in place + unemployed = Workforce.) Hospital capacity is beds per
 100,000 population.
-
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-
 Parameter
-
 </th>
 <th style="text-align:left;">
-
 Income group
-
 </th>
 <th style="text-align:left;">
-
 Distribution
-
 </th>
 <th style="text-align:right;">
-
 Parameter 1
-
 </th>
 <th style="text-align:right;">
-
 Parameter 2
-
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-
 internet coverage
-
 </td>
 <td style="text-align:left;">
-
 LLMIC
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 1.78
-
 </td>
 <td style="text-align:right;">
-
 3.11
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 internet coverage
-
 </td>
 <td style="text-align:left;">
-
 UMIC
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 14.32
-
 </td>
 <td style="text-align:right;">
-
 6.44
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 internet coverage
-
 </td>
 <td style="text-align:left;">
-
 HIC
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 9.57
-
 </td>
 <td style="text-align:right;">
-
 1.39
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 remaining international tourism
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 Log normal
-
 </td>
 <td style="text-align:right;">
-
 -1.39
-
 </td>
 <td style="text-align:right;">
-
 0.39
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Labour share of GVA
-
 </td>
 <td style="text-align:left;">
-
 LLMIC
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 5.09
-
 </td>
 <td style="text-align:right;">
-
 4.51
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Labour share of GVA
-
 </td>
 <td style="text-align:left;">
-
 UMIC
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 7.06
-
 </td>
 <td style="text-align:right;">
-
 8.18
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Labour share of GVA
-
 </td>
 <td style="text-align:left;">
-
 HIC
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 7.97
-
 </td>
 <td style="text-align:right;">
-
 6.87
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 gdp to gnippp
-
 </td>
 <td style="text-align:left;">
-
 LLMIC
-
 </td>
 <td style="text-align:left;">
-
 Gamma
-
 </td>
 <td style="text-align:right;">
-
 9.40
-
 </td>
 <td style="text-align:right;">
-
 0.33
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 gdp to gnippp
-
 </td>
 <td style="text-align:left;">
-
 UMIC
-
 </td>
 <td style="text-align:left;">
-
 Gamma
-
 </td>
 <td style="text-align:right;">
-
 16.40
-
 </td>
 <td style="text-align:right;">
-
 0.14
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 gdp to gnippp
-
 </td>
 <td style="text-align:left;">
-
 HIC
-
 </td>
 <td style="text-align:left;">
-
 Gamma
-
 </td>
 <td style="text-align:right;">
-
 11.89
-
 </td>
 <td style="text-align:right;">
-
 0.12
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Hospital capacity
-
 </td>
 <td style="text-align:left;">
-
 LLMIC
-
 </td>
 <td style="text-align:left;">
-
 Gamma
-
 </td>
 <td style="text-align:right;">
-
 1.30
-
 </td>
 <td style="text-align:right;">
-
 20.20
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Hospital capacity
-
 </td>
 <td style="text-align:left;">
-
 UMIC
-
 </td>
 <td style="text-align:left;">
-
 Gamma
-
 </td>
 <td style="text-align:right;">
-
 1.73
-
 </td>
 <td style="text-align:right;">
-
 40.73
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Hospital capacity
-
 </td>
 <td style="text-align:left;">
-
 HIC
-
 </td>
 <td style="text-align:left;">
-
 Gamma
-
 </td>
 <td style="text-align:right;">
-
 2.05
-
 </td>
 <td style="text-align:right;">
-
 46.57
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 tourism parameter sum
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 NA
-
 </td>
 <td style="text-align:right;">
-
 6.73
-
 </td>
 <td style="text-align:right;">
-
 NA
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 Tourism to international
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 NA
-
 </td>
 <td style="text-align:right;">
-
 4.14
-
 </td>
 <td style="text-align:right;">
-
 0.05
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 pupil teacher ratio
-
 </td>
 <td style="text-align:left;">
-
 LLMIC
-
 </td>
 <td style="text-align:left;">
-
 Gamma
-
 </td>
 <td style="text-align:right;">
-
 9.15
-
 </td>
 <td style="text-align:right;">
-
 3.11
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 pupil teacher ratio
-
 </td>
 <td style="text-align:left;">
-
 UMIC
-
 </td>
 <td style="text-align:left;">
-
 Gamma
-
 </td>
 <td style="text-align:right;">
-
 13.29
-
 </td>
 <td style="text-align:right;">
-
 1.22
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 pupil teacher ratio
-
 </td>
 <td style="text-align:left;">
-
 HIC
-
 </td>
 <td style="text-align:left;">
-
 Gamma
-
 </td>
 <td style="text-align:right;">
-
 14.53
-
 </td>
 <td style="text-align:right;">
-
 0.86
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 school1 fraction
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 2.14
-
 </td>
 <td style="text-align:right;">
-
 3.38
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 school2 fraction
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 13.23
-
 </td>
 <td style="text-align:right;">
-
 10.85
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 work fraction
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 10.94
-
 </td>
 <td style="text-align:right;">
-
 13.83
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 hospitality1 fraction
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 21.08
-
 </td>
 <td style="text-align:right;">
-
 381.22
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 hospitality2 fraction
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 3.71
-
 </td>
 <td style="text-align:right;">
-
 88.67
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 hospitality3 fraction
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 19.44
-
 </td>
 <td style="text-align:right;">
-
 149.44
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 hospitality4 fraction
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 7.69
-
 </td>
 <td style="text-align:right;">
-
 62.33
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 hospitality age1
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 NA
-
 </td>
 <td style="text-align:right;">
-
 0.63
-
 </td>
 <td style="text-align:right;">
-
 0.09
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 hospitality age2
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 NA
-
 </td>
 <td style="text-align:right;">
-
 0.57
-
 </td>
 <td style="text-align:right;">
-
 0.06
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 hospitality age3
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 NA
-
 </td>
 <td style="text-align:right;">
-
 0.85
-
 </td>
 <td style="text-align:right;">
-
 0.08
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 hospitality age4
-
 </td>
 <td style="text-align:left;">
-
 all
-
 </td>
 <td style="text-align:left;">
-
 NA
-
 </td>
 <td style="text-align:right;">
-
 0.56
-
 </td>
 <td style="text-align:right;">
-
 0.41
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 workforce in place
-
 </td>
 <td style="text-align:left;">
-
 LLMIC
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 3.69
-
 </td>
 <td style="text-align:right;">
-
 2.16
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 workforce in place
-
 </td>
 <td style="text-align:left;">
-
 UMIC
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 5.72
-
 </td>
 <td style="text-align:right;">
-
 2.64
-
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-
 workforce in place
-
 </td>
 <td style="text-align:left;">
-
 HIC
-
 </td>
 <td style="text-align:left;">
-
 Beta
-
 </td>
 <td style="text-align:right;">
-
 9.26
-
 </td>
 <td style="text-align:right;">
-
 2.01
-
 </td>
 </tr>
 </tbody>
@@ -6124,12 +4356,9 @@ Beta
 <div class="figure">
 
 <img src="README_files/figure-gfm/hmax-1.png" alt="Hospital capacity: available beds minus usual occupancy." width="50%" />
-
 <p class="caption">
-
 <span id="fig:hmax"></span>Figure 7.1: Hospital capacity: available beds
 minus usual occupancy.
-
 </p>
 
 </div>
@@ -6152,12 +4381,9 @@ labour we use PWT estimates from 2011 (Figure
 <div class="figure">
 
 <img src="README_files/figure-gfm/labsh-1.png" alt="Fraction of GVA that goes to labour (PWT, 2011)." width="50%" />
-
 <p class="caption">
-
 <span id="fig:labsh"></span>Figure 7.2: Fraction of GVA that goes to
 labour (PWT, 2011).
-
 </p>
 
 </div>
@@ -6171,13 +4397,10 @@ For HICs, we have parameters 7.97 and 6.87.
 <div class="figure">
 
 <img src="README_files/figure-gfm/vaxrate-1.png" alt="Vaccines administered per day, on average, in each country as a percent of population. Data source: fully vaccinated people from OWID (2022)." width="50%" />
-
 <p class="caption">
-
 <span id="fig:vaxrate"></span>Figure 7.3: Vaccines administered per day,
 on average, in each country as a percent of population. Data source:
 fully vaccinated people from OWID (2022).
-
 </p>
 
 </div>
@@ -6199,14 +4422,11 @@ and 5% of LLMICs.
 <div class="figure">
 
 <img src="README_files/figure-gfm/vax_rate_MX.png" alt="Vaccine administration in Mexico. The blue line shows the average rate over the whole vaccination campaign. The yellow line shows the average rate when administration was rate limiting." width="50%" />
-
 <p class="caption">
-
 <span id="fig:vaxratemx"></span>Figure 7.4: Vaccine administration in
 Mexico. The blue line shows the average rate over the whole vaccination
 campaign. The yellow line shows the average rate when administration was
 rate limiting.
-
 </p>
 
 </div>
@@ -6226,9 +4446,7 @@ countries.
 <div class="figure">
 
 <img src="README_files/figure-gfm/vaccinationrates.png" alt="Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more [@whoSummaryMeaslesRubellaSupplementary2022]. The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up." width="80%" />
-
 <p class="caption">
-
 <span id="fig:vaxratewho"></span>Figure 7.5: Vaccine administration
 rates in LLMICs. Shown is the cumulative distribution of delivery rate,
 measured as the % of the population vaccinated per day. The data consist
@@ -6237,7 +4455,6 @@ LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR
 vaccines, lasting two weeks or more (WHO 2022). The types of programme
 include campaigns and outbreak response as well as catch up, follow up,
 speed up, and mop up.
-
 </p>
 
 </div>
@@ -6273,97 +4490,97 @@ that numerical superscripts are attached to letters $k$ for rates and
 $p$ for parameters. Where a power is applied to one of these letters,
 the letter will be enclosed in parentheses for clarity.
 
-|      Letter       |                     Script                      |   Subscript   |          Superscript          |
-|:-----------------:|:-----------------------------------------------:|:-------------:|:-----------------------------:|
-|        $A$        |                                                 |               |                               |
-|        $B$        |                                                 |               |                               |
-|        $C$        |                   consumption                   |               |     community (contacts)      |
-|        $D$        |                COMPARTMENT: Died                |               |    related to death state     |
-|        $E$        |              COMPARTMENT: Exposed               |               |   related to exposed state    |
-|        $F$        |                                                 |               |                               |
-|        $G$        |                                                 |               |                               |
-|       $GDP$       |                       GDP                       |               |                               |
-|        $H$        |            COMPARTMENT: Hospitalised            |               | related to hospitalised state |
-| $H_{\text{max}}$  |                hospital capacity                |               |                               |
-|        $I$        |                   Infectious                    |               |                               |
-|      $I^{a}$      |      COMPARTMENT: Infectious asymptomatic       |               | related to asymptomatic state |
-|      $I^{s}$      |       COMPARTMENT: Infectious symptomatic       |               | related to symptomatic state  |
-|        $J$        |                                                 |  MAX: strata  |                               |
-|        $K$        |             Loss (cost calculation)             |               |                               |
-|        $L$        | number of people by sector (workforce in place) |               |                               |
-| $M^{\text{com}}$  |               CONTACTS: community               |               |                               |
-| $M^{\text{home}}$ |            CONTACTS: community, home            |               |                               |
-|  $M^{\text{CC}}$  |         CONTACTS: community, customers          |               |                               |
-| $M^{\text{trav}}$ |      CONTACTS: community, public transport      |               |                               |
-| $M^{\text{sch}}$  |           CONTACTS: community, school           |               |                               |
-|  $M^{\text{WC}}$  |       CONTACTS: work, worker to customer        |               |                               |
-|  $M^{\text{CW}}$  |       CONTACTS: work, customer to worker        |               |                               |
-|        $M$        |                 CONTACTS: total                 |               |                               |
-|    $\tilde{M}$    |      Total contacts by five-year age bands      |               |                               |
-|     $\hat{M}$     |      Total contacts by DAEDALUS age groups      |               |                               |
-|        $N$        |           number of people by stratum           |               |                               |
-|    $\tilde{N}$    |     Number of people by five-year age bands     |               |                               |
-|     $\hat{N}$     |     Number of people in DAEDALUS age groups     |               |                               |
-|        $O$        |                        –                        |               |                               |
-|        $P$        |                  (probability)                  |               |                               |
-|        $Q$        |                                                 |               |                               |
-|        $R$        |             COMPARTMENT: Recovered              |               |  related to recovered state   |
-|       $R_0$       |            Basic reproduction number            |               |                               |
-|       $R_t$       |          Effective reproduction number          |               |                               |
-|        $S$        |            COMPARTMENT: Susceptible             | MAX: sectors  |                               |
-|      $S^{c}$      |     COMPARTMENT: Susceptible seroconverting     |               |                               |
-|       $T^c$       |     duration from vaccination to protection     |               |                               |
-|       $T^H$       |              duration in hospital               |               |                               |
-|     $T^{H:D}$     |        duration in hospital given death         |               |                               |
-|     $T^{H:R}$     |       duration in hospital given recovery       |               |                               |
-|     $T^{I^a}$     |              duration asymptomatic              |               |                               |
-|     $T^{I^s}$     |              duration symptomatic               |               |                               |
-|    $T^{I^s:H}$    |     duration symptomatic given hospitalised     |               |                               |
-|    $T^{I^s:R}$    |       duration symptomatic given recovery       |               |                               |
-|     $T^{E:I}$     |                  latent period                  |               |                               |
-|        $U$        |                                                 |               |                               |
-|        $V$        |                                                 | MAX: vaccines |                               |
-|        $W$        |                                                 |               |       worker (contacts)       |
-|        $X$        |                                                 |               |                               |
-|        $Y$        |                       GDP                       |  MAX: years   |                               |
-|       $Y_0$       |                     max GDP                     |               |                               |
-|        $Z$        |                                                 |               |                               |
+| Letter | Script | Subscript | Superscript |
+|:--:|:--:|:--:|:--:|
+| $A$ |  |  |  |
+| $B$ |  |  |  |
+| $C$ | consumption |  | community (contacts) |
+| $D$ | COMPARTMENT: Died |  | related to death state |
+| $E$ | COMPARTMENT: Exposed |  | related to exposed state |
+| $F$ |  |  |  |
+| $G$ |  |  |  |
+| $GDP$ | GDP |  |  |
+| $H$ | COMPARTMENT: Hospitalised |  | related to hospitalised state |
+| $H_{\text{max}}$ | hospital capacity |  |  |
+| $I$ | Infectious |  |  |
+| $I^{a}$ | COMPARTMENT: Infectious asymptomatic |  | related to asymptomatic state |
+| $I^{s}$ | COMPARTMENT: Infectious symptomatic |  | related to symptomatic state |
+| $J$ |  | MAX: strata |  |
+| $K$ | Loss (cost calculation) |  |  |
+| $L$ | number of people by sector (workforce in place) |  |  |
+| $M^{\text{com}}$ | CONTACTS: community |  |  |
+| $M^{\text{home}}$ | CONTACTS: community, home |  |  |
+| $M^{\text{CC}}$ | CONTACTS: community, customers |  |  |
+| $M^{\text{trav}}$ | CONTACTS: community, public transport |  |  |
+| $M^{\text{sch}}$ | CONTACTS: community, school |  |  |
+| $M^{\text{WC}}$ | CONTACTS: work, worker to customer |  |  |
+| $M^{\text{CW}}$ | CONTACTS: work, customer to worker |  |  |
+| $M$ | CONTACTS: total |  |  |
+| $\tilde{M}$ | Total contacts by five-year age bands |  |  |
+| $\hat{M}$ | Total contacts by DAEDALUS age groups |  |  |
+| $N$ | number of people by stratum |  |  |
+| $\tilde{N}$ | Number of people by five-year age bands |  |  |
+| $\hat{N}$ | Number of people in DAEDALUS age groups |  |  |
+| $O$ | – |  |  |
+| $P$ | (probability) |  |  |
+| $Q$ |  |  |  |
+| $R$ | COMPARTMENT: Recovered |  | related to recovered state |
+| $R_0$ | Basic reproduction number |  |  |
+| $R_t$ | Effective reproduction number |  |  |
+| $S$ | COMPARTMENT: Susceptible | MAX: sectors |  |
+| $S^{c}$ | COMPARTMENT: Susceptible seroconverting |  |  |
+| $T^c$ | duration from vaccination to protection |  |  |
+| $T^H$ | duration in hospital |  |  |
+| $T^{H:D}$ | duration in hospital given death |  |  |
+| $T^{H:R}$ | duration in hospital given recovery |  |  |
+| $T^{I^a}$ | duration asymptomatic |  |  |
+| $T^{I^s}$ | duration symptomatic |  |  |
+| $T^{I^s:H}$ | duration symptomatic given hospitalised |  |  |
+| $T^{I^s:R}$ | duration symptomatic given recovery |  |  |
+| $T^{E:I}$ | latent period |  |  |
+| $U$ |  |  |  |
+| $V$ |  | MAX: vaccines |  |
+| $W$ |  |  | worker (contacts) |
+| $X$ |  |  |  |
+| $Y$ | GDP | MAX: years |  |
+| $Y_0$ | max GDP |  |  |
+| $Z$ |  |  |  |
 
 Capital letters
 
-|     Letter      |                                   Script                                   |               Subscript               |  Superscript   |
-|:---------------:|:--------------------------------------------------------------------------:|:-------------------------------------:|:--------------:|
-|       $a$       |                                                                            | INDEX: age index, five-year age bands |  asymptomatic  |
-|       $b$       |                proportion of tourism that is international                 |                                       |                |
-|       $c$       | fraction international tourism reduces to as a consequence of the pandemic |                                       | seroconverting |
-|       $d$       |                             deaths per million                             |                                       |                |
-|       $e$       |                             government mandate                             |                                       |                |
-|   $\text{ed}$   |                                                                            |      education sector (j index)       |                |
-|       $f$       |                      functions: UTR, hospitalisation                       |                                       |                |
-|       $g$       |                                                                            | INDEX: age index, DAEDALUS age groups |                |
-|       $h$       |                                                                            |          INDEX: dummy index           |                |
-|       $i$       |                                                                            |                                       | self isolating |
-|       $j$       |                                                                            |         INDEX: stratum index          |                |
-|       $k$       |                           state transition rates                           |                                       |                |
-|       $l$       |                              life expectancy                               |                                       |                |
-|      $m_J$      |                              number of strata                              |                                       |                |
-|      $m_S$      |                             number of sectors                              |                                       |                |
-|      $m_V$      |                             number of vaccines                             |                                       |                |
-|      $m_Y$      |                          number of years in work                           |                                       |                |
-|       $n$       |                                                                            |                                       |                |
-|       $o$       |                                     –                                      |                                       |                |
-|       $p$       |                                 parameters                                 |                                       |                |
-|       $q$       |                       proportions working from home                        |                                       |                |
-|       $r$       |                               discount rate                                |                                       |                |
-|       $s$       |                                                                            |                                       |  symptomatic   |
-| $\text{school}$ |                                                                            |       student strata (j index)        |                |
-|       $t$       |                                 time (day)                                 |                                       |                |
-|       $u$       |                               dummy variable                               |          INDEX: dummy index           |                |
-|       $v$       |                                                                            |       INDEX: vaccination status       |                |
-|       $w$       |                                                                            |                                       |                |
-|       $x$       |                              sector openness                               |                                       |                |
-|       $y$       |                                    GVA                                     |              INDEX: year              |                |
-|       $z$       |       fraction of GDP coming from the Food and accommodation sector        |                                       |                |
+| Letter | Script | Subscript | Superscript |
+|:--:|:--:|:--:|:--:|
+| $a$ |  | INDEX: age index, five-year age bands | asymptomatic |
+| $b$ | proportion of tourism that is international |  |  |
+| $c$ | fraction international tourism reduces to as a consequence of the pandemic |  | seroconverting |
+| $d$ | deaths per million |  |  |
+| $e$ | government mandate |  |  |
+| $\text{ed}$ |  | education sector (j index) |  |
+| $f$ | functions: UTR, hospitalisation |  |  |
+| $g$ |  | INDEX: age index, DAEDALUS age groups |  |
+| $h$ |  | INDEX: dummy index |  |
+| $i$ |  |  | self isolating |
+| $j$ |  | INDEX: stratum index |  |
+| $k$ | state transition rates |  |  |
+| $l$ | life expectancy |  |  |
+| $m_J$ | number of strata |  |  |
+| $m_S$ | number of sectors |  |  |
+| $m_V$ | number of vaccines |  |  |
+| $m_Y$ | number of years in work |  |  |
+| $n$ |  |  |  |
+| $o$ | – |  |  |
+| $p$ | parameters |  |  |
+| $q$ | proportions working from home |  |  |
+| $r$ | discount rate |  |  |
+| $s$ |  |  | symptomatic |
+| $\text{school}$ |  | student strata (j index) |  |
+| $t$ | time (day) |  |  |
+| $u$ | dummy variable | INDEX: dummy index |  |
+| $v$ |  | INDEX: vaccination status |  |
+| $w$ |  |  |  |
+| $x$ | sector openness |  |  |
+| $y$ | GVA | INDEX: year |  |
+| $z$ | fraction of GDP coming from the Food and accommodation sector |  |  |
 
 Lower-case letters
 
@@ -6419,40 +4636,40 @@ Greek letters
 
 Rates
 
-|    Letter     |                                  Definition                                   |
-|:-------------:|:-----------------------------------------------------------------------------:|
-|   $p^{I^S}$   |                         probability to be symptomatic                         |
-| $\tilde{p}^H$ |                     Basic probability to be hospitalised                      |
-|     $p^H$     |                    Adjusted probability to be hospitalised                    |
-| $\tilde{p}^D$ |                           Basic probability to die                            |
-|     $p^D$     |                          Adjusted probability to die                          |
-|     $p^1$     |                Compliance with the instruction to self isolate                |
-|     $p^2$     |                    fraction of cases identified by testing                    |
-|     $p^3$     |    proportion of asymptomatic infectiousness averted due to self isolating    |
-|     $p^4$     |    proportion of symptomatic infectiousness averted due to self isolating     |
-|     $p^5$     |                               tourism parameter                               |
-|     $p^6$     |                               tourism parameter                               |
-|     $p^7$     |                               tourism parameter                               |
-|     $p^8$     |                               minimum mobility                                |
-|     $p^9$     |                        deaths coefficient for mobility                        |
-|   $p^{10}$    |                       mandate coefficient for mobility                        |
-|   $p^{11}$    |                           mobility mixing parameter                           |
-|   $p^{12}$    |                        present value of lost earnings                         |
-|   $p^{13}$    |                             mean annual earnings                              |
-|   $p^{14}$    |                effective amount of education lost per student                 |
-|   $p^{15}$    |                   rate of return for one year of education                    |
-|   $p^{16}$    |                  relative effectiveness of remote education                   |
-|   $p^{17}$    |         number of days from onset of infectiousness to self isolation         |
-|   $p^{18}$    | number of asymptomatic days spent in self isolation per day of infectiousness |
-|   $p^{19}$    | number of symptomatic days spent in self isolation per day of infectiousness  |
-|   $p^{20}$    |            number of days from onset of symptoms to self isolation            |
-|   $p^{21}$    |                          public transport mode share                          |
-|   $p^{22}$    |                 work absence, asymptomatic (cost calculation)                 |
-|   $p^{23}$    |                 work absence, symptomatic (cost calculation)                  |
-|   $p^{24}$    |                school absence, asymptomatic (cost calculation)                |
-|   $p^{25}$    |                school absence, symptomatic (cost calculation)                 |
-|   $p^{26}$    |         fraction of symptomatic infectiousness that is presymptomatic         |
-|   $p^{27}$    |                             hospitality openness                              |
+| Letter | Definition |
+|:--:|:--:|
+| $p^{I^S}$ | probability to be symptomatic |
+| $\tilde{p}^H$ | Basic probability to be hospitalised |
+| $p^H$ | Adjusted probability to be hospitalised |
+| $\tilde{p}^D$ | Basic probability to die |
+| $p^D$ | Adjusted probability to die |
+| $p^1$ | Compliance with the instruction to self isolate |
+| $p^2$ | fraction of cases identified by testing |
+| $p^3$ | proportion of asymptomatic infectiousness averted due to self isolating |
+| $p^4$ | proportion of symptomatic infectiousness averted due to self isolating |
+| $p^5$ | tourism parameter |
+| $p^6$ | tourism parameter |
+| $p^7$ | tourism parameter |
+| $p^8$ | minimum mobility |
+| $p^9$ | deaths coefficient for mobility |
+| $p^{10}$ | mandate coefficient for mobility |
+| $p^{11}$ | mobility mixing parameter |
+| $p^{12}$ | present value of lost earnings |
+| $p^{13}$ | mean annual earnings |
+| $p^{14}$ | effective amount of education lost per student |
+| $p^{15}$ | rate of return for one year of education |
+| $p^{16}$ | relative effectiveness of remote education |
+| $p^{17}$ | number of days from onset of infectiousness to self isolation |
+| $p^{18}$ | number of asymptomatic days spent in self isolation per day of infectiousness |
+| $p^{19}$ | number of symptomatic days spent in self isolation per day of infectiousness |
+| $p^{20}$ | number of days from onset of symptoms to self isolation |
+| $p^{21}$ | public transport mode share |
+| $p^{22}$ | work absence, asymptomatic (cost calculation) |
+| $p^{23}$ | work absence, symptomatic (cost calculation) |
+| $p^{24}$ | school absence, asymptomatic (cost calculation) |
+| $p^{25}$ | school absence, symptomatic (cost calculation) |
+| $p^{26}$ | fraction of symptomatic infectiousness that is presymptomatic |
+| $p^{27}$ | hospitality openness |
 
 Parameters
 
