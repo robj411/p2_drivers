@@ -47,11 +47,13 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
       isolate](#724-compliance-with-the-requirement-to-self-isolate)
 - [8 Notation](#8-notation)
 
+# Figures (temporary)
+
 <div class="figure">
 
 <img src="cepi_results/dominance.png" alt="All results." width="50%" />
 <p class="caption">
-<span id="fig:unnamed-chunk-1"></span>Figure 0.1: All results.
+<span id="fig:dom"></span>Figure 0.1: All results.
 </p>
 
 </div>
@@ -60,7 +62,7 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 
 <img src="cepi_results/fig1bpsv.png" alt="BPSV results." width="50%" />
 <p class="caption">
-<span id="fig:unnamed-chunk-2"></span>Figure 0.2: BPSV results.
+<span id="fig:fig1bpsv"></span>Figure 0.2: BPSV results.
 </p>
 
 </div>
@@ -69,7 +71,7 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 
 <img src="cepi_results/fig2rnd.png" alt="R&amp;D results." width="50%" />
 <p class="caption">
-<span id="fig:unnamed-chunk-3"></span>Figure 0.3: R&D results.
+<span id="fig:fig2rnd"></span>Figure 0.3: R&D results.
 </p>
 
 </div>
@@ -78,7 +80,7 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 
 <img src="cepi_results/fig3capres.png" alt="Capacity reservation results." width="50%" />
 <p class="caption">
-<span id="fig:unnamed-chunk-4"></span>Figure 0.4: Capacity reservation
+<span id="fig:fig3capres"></span>Figure 0.4: Capacity reservation
 results.
 </p>
 
@@ -88,7 +90,7 @@ results.
 
 <img src="cepi_results/fig4comb.png" alt="Combinations results." width="50%" />
 <p class="caption">
-<span id="fig:unnamed-chunk-5"></span>Figure 0.5: Combinations results.
+<span id="fig:fig4comb"></span>Figure 0.5: Combinations results.
 </p>
 
 </div>
@@ -97,10 +99,34 @@ results.
 
 <img src="cepi_results/fig5eq.png" alt="Equity results." width="50%" />
 <p class="caption">
-<span id="fig:unnamed-chunk-6"></span>Figure 0.6: Equity results.
+<span id="fig:fig5eq"></span>Figure 0.6: Equity results.
 </p>
 
 </div>
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/cumulativevax-1.png" alt="Cumulative doses given weighted by population (where the number comes from supply, and BPSV counts for half a dose)."  />
+<p class="caption">
+<span id="fig:cumulativevax"></span>Figure 0.7: Cumulative doses given
+weighted by population (where the number comes from supply, and BPSV
+counts for half a dose).
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/t50vscoverage-1.png" alt="Time taken to get to 50% coverage vs final coverage (where coverage comes from supply, and BPSV counts for half a dose)."  />
+<p class="caption">
+<span id="fig:t50vscoverage"></span>Figure 0.8: Time taken to get to 50%
+coverage vs final coverage (where coverage comes from supply, and BPSV
+counts for half a dose).
+</p>
+
+</div>
+
+# Methods
 
 This document describes the DAEDALUS model that is used in the CEPI
 application. The DAEDALUS model simulates a single epidemic in a single

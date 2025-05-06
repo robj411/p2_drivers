@@ -31,126 +31,8 @@ bibliography:
 always_allow_html: true
 ---
 
+# Figures (temporary) {.unlisted .unnumbered}
 
-```{r,fig.cap='All results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/dominance.png")
-```
-
-```{r,fig.cap='BPSV results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig1bpsv.png")
-```
-
-```{r,fig.cap='R&D results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig2rnd.png")
-```
-
-```{r,fig.cap='Capacity reservation results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig3capres.png")
-```
-
-```{r,fig.cap='Combinations results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig4comb.png")
-```
-
-```{r,fig.cap='Equity results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig5eq.png")
-```
-
-```{r}
-tab <- readxl::read_xlsx('../data/20250422 pandemic delivery scenarios - for ICL.xlsx')
-# tab <- readxl::read_xlsx('../data/20250328 pandemic delivery scenarios - for ICL.xlsx')
-nScen = (ncol(tab)-2)/6
-tab[1,c(is.na(tab[1,]))] = ''
-
-df_list <- list()
-for(scen in 1:nScen){
-  for(il in 1:3){
-    start_index <- (scen-1)*6 + 1 + 2
-    # print(any(tab[-c(1,2),start_index]>0 & tab[-c(1,2),start_index + 3]>0))
-    get_index <- start_index - 1 + il
-    ilevel <- gsub('s','',tab[2,get_index])
-    scenario <- colnames(tab)[start_index]
-    for(i in c(0,3)){
-      vaccine <- tab[1,start_index+i][[1]]
-      vindex <- get_index + i
-      vals <- as.numeric(tab[-c(1:2),vindex][[1]])
-      df_list[[length(df_list)+1]] <- data.frame(Day=1:length(vals), Percent=cumsum(as.numeric(vals))*100, Vaccine=vaccine,Scenario=scenario, Income=ilevel)
-    }
-  }
-}
-for(scen in 2:nScen){
-  for(scen2 in 1:(scen-1)){
-    difference = 0
-    for(il in 1:3){
-      scen1index = (scen-1)*6 + (il-1)*2 + 1
-      scen2index = (scen2-1)*6 + (il-1)*2 + 1
-      comp1 = df_list[[scen1index]]$Percent
-      comp2 = df_list[[scen1index+1]]$Percent
-      old1 = df_list[[scen2index]]$Percent
-      old2 = df_list[[scen2index+1]]$Percent
-      difference = difference + sum(abs(comp1-old1)+abs(comp2-old2))
-    }
-    if(difference<1e-10)  print(c(scen2, scen))
-  }
-}
-
-library(ggplot2)
-
-
-plotscens <- do.call(rbind,df_list)
-plotscens$Percent[plotscens$Percent>80] <- 80
-plotscens$Percent[plotscens$Percent>25&plotscens$Vaccine=='BPSV'] <- 25
-ggplot(subset(plotscens,Scenario%in%scenario_names[1:4])) + 
-  geom_line(aes(x=Day,y=Percent,colour=Scenario),linewidth=2,alpha=.5) +
-  facet_grid(Vaccine~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
-  theme_bw(base_size=15) + labs(colour='') +
-  theme(legend.position = 'top')
-
-
-popsizes <- c(718255072+3398187527, 2503136362, 1240629858)
-popsizes = popsizes/sum(popsizes)
-tvaxlist <- list()
-colourlists <- list(bpsv = 1+c(1,2,3,13:15,28,29), rnd = 1+c(4,5,16:19), capres = 1+c(6:9,20:27),
-                    del = 1+c(10:11), eq = 1+c(0,12))
-
-for(scen in 1:nScen){
-  tvax = 0
-  for(il in 1:3){
-    scen1index = (scen-1)*6 + (il-1)*2 + 1
-    scen2index = scen1index + 1
-    comp1 = df_list[[scen1index]]$Percent
-    old1 = df_list[[scen2index]]$Percent
-    tvax = tvax + rev(popsizes)[il]*(0.5*comp1 + old1)
-    print(c(scen,scen1index,scen2index))
-  }
-  tvaxlist[[scen]] = data.frame(Day=1:length(tvax),Scenario=scenario_names[scen],Percent=tvax,
-                                col=names(colourlists)[sapply(colourlists,function(x)scen%in%x)])
-}
-
-plotscens <- do.call(rbind,tvaxlist)
-cscheme = 'plasma'
-ggplot(plotscens) + 
-  geom_line(aes(x=Day,y=Percent,colour=col,group=Scenario),linewidth=2,alpha=.75,show.legend=F) +
-  geom_line(data=subset(plotscens,Scenario=='S00/BAU'),aes(x=Day,y=Percent,colour=col,group=Scenario),linewidth=2,show.legend=F) +
-  theme_bw(base_size=15) + labs(colour='') +
-  scale_colour_viridis_d(option = cscheme) +
-  theme(legend.position = 'top')
-midpoint <- setDT(do.call(rbind,lapply(tvaxlist,function(x)x[c(which.min(abs(x$Percent-50)),nrow(x)),])))
-midpoint[,t50:=min(Day),by=Scenario]
-midpoint[,coverage:=max(Percent),by=Scenario]
-ggplot(unique(midpoint[,.(Scenario,t50,coverage,col)])) + 
-  ggrepel::geom_label_repel(aes(x=t50,y=coverage,label=Scenario,fill=col,
-                                color = after_scale(prismatic::best_contrast(fill))),
-                            force=.001,vjust = 0,hjust = 0,show.legend = F) +
-  # geom_point(aes(x=t50,y=coverage,colour=col,group=Scenario),show.legend=F,size=3) +
-  theme_bw(base_size=15) + labs(colour='') +
-  scale_fill_viridis_d(option = cscheme) +
-  theme(legend.position = 'top') +
-  labs(x='Time to 50% coverage, days',y='Final coverage, %')
-```
-
-
-This document describes the DAEDALUS model that is used in the CEPI application. The DAEDALUS model simulates a single epidemic in a single country. Details of how the DAEDALUS model is used as a part of the methodology of the CEPI application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the DAEDALUS model.
 
 ```{r setup, include=FALSE}
 library(ggplot2)  
@@ -198,7 +80,140 @@ format_to_print2 <- function(x,z=2){
 
 ```
 
-```{r,echo=F,warning=F,message=F}
+
+```{r dom,fig.cap='All results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/dominance.png")
+```
+
+```{r fig1bpsv,fig.cap='BPSV results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig1bpsv.png")
+```
+
+```{r fig2rnd,fig.cap='R&D results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig2rnd.png")
+```
+
+```{r fig3capres,fig.cap='Capacity reservation results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig3capres.png")
+```
+
+```{r fig4comb,fig.cap='Combinations results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig4comb.png")
+```
+
+```{r fig5eq,fig.cap='Equity results.',echo=F,warning=F,message=F, out.width="50%"}
+knitr::include_graphics(path = "cepi_results/fig5eq.png")
+```
+
+```{r cumulativevax,fig.cap="Cumulative doses given weighted by population (where the number comes from supply, and BPSV counts for half a dose).",message=F,echo=F,warning=F}
+tab <- readxl::read_xlsx('data/20250422 pandemic delivery scenarios - for ICL.xlsx')
+# tab <- readxl::read_xlsx('../data/20250328 pandemic delivery scenarios - for ICL.xlsx')
+nScen = (ncol(tab)-2)/6
+scenario_levels <- 1:nScen
+scenario_names <- colnames(tab)[!grepl('^\\.',colnames(tab))]
+scen_to_keep <- 1+c(0,1,4,5,8,9,12)
+tab[1,c(is.na(tab[1,]))] = ''
+
+df_list <- list()
+for(scen in 1:nScen){
+  for(il in 1:3){
+    start_index <- (scen-1)*6 + 1 + 2
+    # print(any(tab[-c(1,2),start_index]>0 & tab[-c(1,2),start_index + 3]>0))
+    get_index <- start_index - 1 + il
+    ilevel <- gsub('s','',tab[2,get_index])
+    scenario <- colnames(tab)[start_index]
+    for(i in c(0,3)){
+      vaccine <- tab[1,start_index+i][[1]]
+      vindex <- get_index + i
+      vals <- as.numeric(tab[-c(1:2),vindex][[1]])
+      df_list[[length(df_list)+1]] <- data.frame(Day=1:length(vals), Percent=cumsum(as.numeric(vals))*100, Vaccine=vaccine,Scenario=scenario, Income=ilevel)
+    }
+  }
+}
+for(scen in 2:nScen){
+  for(scen2 in 1:(scen-1)){
+    difference = 0
+    for(il in 1:3){
+      scen1index = (scen-1)*6 + (il-1)*2 + 1
+      scen2index = (scen2-1)*6 + (il-1)*2 + 1
+      comp1 = df_list[[scen1index]]$Percent
+      comp2 = df_list[[scen1index+1]]$Percent
+      old1 = df_list[[scen2index]]$Percent
+      old2 = df_list[[scen2index+1]]$Percent
+      difference = difference + sum(abs(comp1-old1)+abs(comp2-old2))
+    }
+    # if(difference<1e-10)  print(c(scen2, scen))
+  }
+}
+
+
+
+# plotscens <- do.call(rbind,df_list)
+# plotscens$Percent[plotscens$Percent>80] <- 80
+# plotscens$Percent[plotscens$Percent>25&plotscens$Vaccine=='BPSV'] <- 25
+# ggplot(subset(plotscens,Scenario%in%scenario_names[1:4])) + 
+#   geom_line(aes(x=Day,y=Percent,colour=Scenario),linewidth=2,alpha=.5) +
+#   facet_grid(Vaccine~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
+#   theme_bw(base_size=15) + labs(colour='') +
+#   theme(legend.position = 'top')
+
+
+popsizes <- c(718255072+3398187527, 2503136362, 1240629858)
+popsizes = popsizes/sum(popsizes)
+tvaxlist <- list()
+colourlists <- list(bpsv = 1+c(1,2,3,13:15,28,29), rnd = 1+c(4,5,16:19), capres = 1+c(6:9,20:27),
+                    del = 1+c(10:11), eq = 1+c(0,12))
+
+for(scen in 1:nScen){
+  tvax = 0
+  for(il in 1:3){
+    scen1index = (scen-1)*6 + (il-1)*2 + 1
+    scen2index = scen1index + 1
+    comp1 = df_list[[scen1index]]$Percent
+    old1 = df_list[[scen2index]]$Percent
+    tvax = tvax + rev(popsizes)[il]*(0.5*comp1 + old1)
+    # print(c(scen,scen1index,scen2index))
+  }
+  tvaxlist[[scen]] = data.frame(Day=1:length(tvax),Scenario=scenario_names[scen],Percent=tvax,
+                                col=names(colourlists)[sapply(colourlists,function(x)scen%in%x)])
+}
+
+plotscens <- do.call(rbind,tvaxlist)
+cscheme = 'plasma'
+ggplot(plotscens) + 
+  geom_line(aes(x=Day,y=Percent,colour=col,group=Scenario),linewidth=2,alpha=.75,show.legend=F) +
+  geom_line(data=subset(plotscens,Scenario=='S00/BAU'),aes(x=Day,y=Percent,colour=col,group=Scenario),linewidth=2,show.legend=F) +
+  theme_bw(base_size=15) + labs(colour='') +
+  scale_colour_viridis_d(option = cscheme) +
+  theme(legend.position = 'top')
+
+```
+
+```{r t50vscoverage,fig.cap="Time taken to get to 50% coverage vs final coverage (where coverage comes from supply, and BPSV counts for half a dose).",message=F,echo=F,warning=F}
+
+midpoint <- setDT(do.call(rbind,lapply(tvaxlist,function(x)x[c(which.min(abs(x$Percent-50)),nrow(x)),])))
+midpoint[,t50:=min(Day),by=Scenario]
+midpoint[,coverage:=max(Percent),by=Scenario]
+ggplot(unique(midpoint[,.(Scenario,t50,coverage,col)])) + 
+  ggrepel::geom_label_repel(aes(x=t50,y=coverage,label=Scenario,fill=col,
+                                color = after_scale(prismatic::best_contrast(fill))),
+                            force=.001,vjust = 0,hjust = 0,show.legend = F) +
+  # geom_point(aes(x=t50,y=coverage,colour=col,group=Scenario),show.legend=F,size=3) +
+  theme_bw(base_size=15) + labs(colour='') +
+  scale_fill_viridis_d(option = cscheme) +
+  theme(legend.position = 'top') +
+  labs(x='Time to 50% coverage, days',y='Final coverage, %')
+```
+
+
+
+# Methods {.unlisted .unnumbered}
+
+
+This document describes the DAEDALUS model that is used in the CEPI application. The DAEDALUS model simulates a single epidemic in a single country. Details of how the DAEDALUS model is used as a part of the methodology of the CEPI application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the DAEDALUS model.
+
+
+```{r internetfile,echo=F,warning=F,message=F}
 
 internet <- read.csv('data/API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv',header = F) ## more recent
 internet <- internet[-c(1:3),-c(3:63,65:nrow(internet))]
@@ -1493,7 +1508,7 @@ The possible answers were 'Very unwilling', 'Somewhat unwilling', 'Neither willi
 
 \newpage
 
-```{r,echo=F,warning=F,message=F,include=F}
+```{r tvradio,echo=F,warning=F,message=F,include=F}
 
 tvradio <- readxl::read_xlsx('data/DHS_MICS_MIS_assets-for-remote-learning_nat_subnat-1.xlsx')
 tvradio <- tvradio[,c(2,13,21,29,56)]
