@@ -31,6 +31,7 @@ bibliography:
 always_allow_html: true
 ---
 
+# Figures (temporary) {.unlisted .unnumbered}
 
 ```{r setup, include=FALSE}
 library(ggplot2)  
@@ -142,7 +143,15 @@ just_scen_names = scenario_names[scen_scens]
 nbscens = length(bau_names)
 ncscens = length(scen_scens)
 
+
+tab <- readxl::read_xlsx('data/20250422 pandemic delivery scenarios - for ICL.xlsx')
+# tab <- readxl::read_xlsx('../data/20250328 pandemic delivery scenarios - for ICL.xlsx')
+nScen = (ncol(tab)-2)/6
+scenario_levels <- 1:nScen
+scenario_names <- colnames(tab)[!grepl('^\\.',colnames(tab))]
+scen_to_keep <- 1+c(0,1,4,5,8,9,12)
 tab[1,c(is.na(tab[1,]))] = ''
+
 df_list <- list()
 for(scen in 1:nScen){
   for(il in 1:3){
@@ -213,6 +222,26 @@ first_scen = 2
                       del = c(10:11), eq = c(12,19)),function(x) just_scen_names[x])
   colourlists$bau = bau_names
   getsixty = matrix(0,nrow=nScen,ncol=2)
+    # if(difference<1e-10)  print(c(scen2, scen))
+
+
+
+# plotscens <- do.call(rbind,df_list)
+# plotscens$Percent[plotscens$Percent>80] <- 80
+# plotscens$Percent[plotscens$Percent>25&plotscens$Vaccine=='BPSV'] <- 25
+# ggplot(subset(plotscens,Scenario%in%scenario_names[1:4])) + 
+#   geom_line(aes(x=Day,y=Percent,colour=Scenario),linewidth=2,alpha=.5) +
+#   facet_grid(Vaccine~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
+#   theme_bw(base_size=15) + labs(colour='') +
+#   theme(legend.position = 'top')
+
+
+popsizes <- c(718255072+3398187527, 2503136362, 1240629858)
+popsizes = popsizes/sum(popsizes)
+tvaxlist <- list()
+colourlists <- list(bpsv = 1+c(1,2,3,13:15,28,29), rnd = 1+c(4,5,16:19), capres = 1+c(6:9,20:27),
+                    del = 1+c(10:11), eq = 1+c(0,12))
+
 for(scen in 1:nScen){
   tvax = 0
   for(il in 1:3){
@@ -239,18 +268,13 @@ ggplot(plotscens) +
   theme_bw(base_size=15) + labs(colour='') +
   scale_colour_viridis_d(option = cscheme) +
   theme(legend.position = 'top')
-sixty <- setDT(do.call(rbind,lapply(tvaxlist,function(x)x[c(which.min(abs(x$Percent-60)),nrow(x)),])))
-sixty[,t50:=min(Day),by=Scenario]
-sixty[,coverage:=max(Percent),by=Scenario]
-ggplot(unique(sixty[,.(Scenario,t50,coverage,col)])) + 
-  ggrepel::geom_label_repel(aes(x=t50,y=coverage,label=Scenario,fill=col,
-                                color = after_scale(prismatic::best_contrast(fill))),
-                            force=.001,vjust = 0,hjust = 0,show.legend = F) +
-  # geom_point(aes(x=t50,y=coverage,colour=col,group=Scenario),show.legend=F,size=3) +
-  theme_bw(base_size=15) + labs(colour='') +
-  scale_fill_viridis_d(option = cscheme) +
-  theme(legend.position = 'top') +
-  labs(x='Time to 50% coverage, days',y='Final coverage, %')
+
+
+```
+
+```{r t50vscoverage,fig.cap="Time taken to get to 50% coverage vs final coverage (where coverage comes from supply, and BPSV counts for half a dose).",message=F,echo=F,warning=F}
+
+
 
 getsixty = as.data.frame(getsixty)
 getsixty$Scenario = scenario_names
@@ -275,7 +299,14 @@ ggplot(getsixty) +
 This document describes the DAEDALUS model that is used in the CEPI application. The DAEDALUS model simulates a single epidemic in a single country. Details of how the DAEDALUS model is used as a part of the methodology of the CEPI application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the DAEDALUS model.
 
 
-```{r,echo=F,warning=F,message=F}
+
+# Methods {.unlisted .unnumbered}
+
+
+This document describes the DAEDALUS model that is used in the CEPI application. The DAEDALUS model simulates a single epidemic in a single country. Details of how the DAEDALUS model is used as a part of the methodology of the CEPI application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the DAEDALUS model.
+
+
+```{r internetfile,echo=F,warning=F,message=F}
 
 internet <- read.csv('data/API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv',header = F) ## more recent
 internet <- internet[-c(1:3),-c(3:63,65:nrow(internet))]
@@ -1570,7 +1601,7 @@ The possible answers were 'Very unwilling', 'Somewhat unwilling', 'Neither willi
 
 \newpage
 
-```{r,echo=F,warning=F,message=F,include=F}
+```{r tvradio,echo=F,warning=F,message=F,include=F}
 
 tvradio <- readxl::read_xlsx('data/DHS_MICS_MIS_assets-for-remote-learning_nat_subnat-1.xlsx')
 tvradio <- tvradio[,c(2,13,21,29,56)]
