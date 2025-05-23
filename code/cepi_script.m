@@ -125,7 +125,7 @@ outputs   = zeros(nsamples,length(outputcolumnnames));
 
 %% simulate
 
-for sl = 2:nScen
+for sl = nScen
     for il = 1:n_income
         income_level = income_levels{il};
         allcosts = zeros(nsamples,length(strategies));
@@ -207,5 +207,5 @@ end
 
 % !\Progra~1\R\R-4.4.1\bin\x64\Rscript cepi_voi.R
 exe_path = '"C:\Program Files\R\R-4.5.0\bin\x64\Rscript.exe"';
-system([exe_path,' exceedance_probabilities.R'])
+% system([exe_path,' exceedance_probabilities.R'])
 
