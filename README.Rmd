@@ -128,8 +128,8 @@ knitr::include_graphics(path = "cepi_results/fig4comb_BAU2.png")
 knitr::include_graphics(path = "cepi_results/fig5eq_BAU2.png")
 ```
 
-```{r}
-tab2 <- readxl::read_xlsx('data/20250522 pandemic delivery scenarios - BAU2.xlsx')
+```{r,message=F,echo=F,warning=F}
+# tab2 <- readxl::read_xlsx('data/20250522 pandemic delivery scenarios - BAU2.xlsx')
 tab <- readxl::read_xlsx('data/20250520 pandemic delivery scenarios - BAU1.xlsx')
 scenario_names <- colnames(tab)[!grepl('^\\.',colnames(tab))]
 
@@ -144,11 +144,6 @@ nbscens = length(bau_names)
 ncscens = length(scen_scens)
 
 
-tab <- readxl::read_xlsx('data/20250422 pandemic delivery scenarios - for ICL.xlsx')
-# tab <- readxl::read_xlsx('../data/20250328 pandemic delivery scenarios - for ICL.xlsx')
-nScen = (ncol(tab)-2)/6
-scenario_levels <- 1:nScen
-scenario_names <- colnames(tab)[!grepl('^\\.',colnames(tab))]
 scen_to_keep <- 1+c(0,1,4,5,8,9,12)
 tab[1,c(is.na(tab[1,]))] = ''
 
@@ -211,11 +206,10 @@ ggplot(subset(plotscens,Scenario%in%c('BAU1',scenario_names[c(1,19,20)]))) +
   theme(legend.position = 'top')
 ```
 
-```{r}
+```{r,message=F,echo=F,warning=F}
 popsizes <- c(718255072+3398187527, 2503136362, 1240629858)
 popsizes = popsizes/sum(popsizes)
 tvaxlist <- list()
-first_scen = 2
 # group scenarios by colour
   colourlists <- lapply(list(bpsv = c(1,2,3,13:15,28:31), rnd = c(4,5,16:18), 
                       capres = c(6:9,20:27),
@@ -223,24 +217,6 @@ first_scen = 2
   colourlists$bau = bau_names
   getsixty = matrix(0,nrow=nScen,ncol=2)
     # if(difference<1e-10)  print(c(scen2, scen))
-
-
-
-# plotscens <- do.call(rbind,df_list)
-# plotscens$Percent[plotscens$Percent>80] <- 80
-# plotscens$Percent[plotscens$Percent>25&plotscens$Vaccine=='BPSV'] <- 25
-# ggplot(subset(plotscens,Scenario%in%scenario_names[1:4])) + 
-#   geom_line(aes(x=Day,y=Percent,colour=Scenario),linewidth=2,alpha=.5) +
-#   facet_grid(Vaccine~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
-#   theme_bw(base_size=15) + labs(colour='') +
-#   theme(legend.position = 'top')
-
-
-popsizes <- c(718255072+3398187527, 2503136362, 1240629858)
-popsizes = popsizes/sum(popsizes)
-tvaxlist <- list()
-colourlists <- list(bpsv = 1+c(1,2,3,13:15,28,29), rnd = 1+c(4,5,16:19), capres = 1+c(6:9,20:27),
-                    del = 1+c(10:11), eq = 1+c(0,12))
 
 for(scen in 1:nScen){
   tvax = 0
@@ -254,7 +230,7 @@ for(scen in 1:nScen){
       getsixty[scen,1] = which.min(abs(old1-60))
     if (il==3) # LLMIC
       getsixty[scen,2] = which.min(abs(old1-60))
-    print(c(scen,scen1index,scen2index))
+    # print(c(scen,scen1index,scen2index))
   }
   tvaxlist[[scen]] = data.frame(Day=1:length(tvax),Scenario=scenario_names[scen],Percent=tvax,
                                 col=names(colourlists)[sapply(colourlists,function(x)scenario_names[scen]%in%x)])
@@ -263,7 +239,7 @@ for(scen in 1:nScen){
 plotscens <- do.call(rbind,tvaxlist)
 cscheme = 'plasma'
 ggplot(plotscens) + 
-  geom_line(aes(x=Day,y=Percent,colour=col,group=Scenario),linewidth=2,alpha=.75,show.legend=F) +
+  geom_line(aes(x=Day,y=Percent,colour=col,group=Scenario),linewidth=1.5,alpha=.75,show.legend=F) +
   # geom_line(data=subset(plotscens,Scenario=='S00/BAU'),aes(x=Day,y=Percent,colour=col,group=Scenario),linewidth=2,show.legend=F) +
   theme_bw(base_size=15) + labs(colour='') +
   scale_colour_viridis_d(option = cscheme) +

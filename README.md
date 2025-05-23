@@ -51,36 +51,36 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 
 <div class="figure">
 
-<img src="cepi_results/dominance.png" alt="All results." width="50%" />
+<img src="cepi_results/dominance_BAU1.png" alt="All results." width="50%" />
 <p class="caption">
-<span id="fig:dom"></span>Figure 0.1: All results.
+<span id="fig:unnamed-chunk-1"></span>Figure 0.1: All results.
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="cepi_results/fig1bpsv.png" alt="BPSV results." width="50%" />
+<img src="cepi_results/fig1bpsv_BAU1.png" alt="BPSV results." width="50%" />
 <p class="caption">
-<span id="fig:fig1bpsv"></span>Figure 0.2: BPSV results.
+<span id="fig:unnamed-chunk-2"></span>Figure 0.2: BPSV results.
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="cepi_results/fig2rnd.png" alt="R&amp;D results." width="50%" />
+<img src="cepi_results/fig2rnd_BAU1.png" alt="R&amp;D results." width="50%" />
 <p class="caption">
-<span id="fig:fig2rnd"></span>Figure 0.3: R&D results.
+<span id="fig:unnamed-chunk-3"></span>Figure 0.3: R&D results.
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="cepi_results/fig3capres.png" alt="Capacity reservation results." width="50%" />
+<img src="cepi_results/fig3capres_BAU1.png" alt="Capacity reservation results." width="50%" />
 <p class="caption">
-<span id="fig:fig3capres"></span>Figure 0.4: Capacity reservation
+<span id="fig:unnamed-chunk-4"></span>Figure 0.4: Capacity reservation
 results.
 </p>
 
@@ -88,43 +88,99 @@ results.
 
 <div class="figure">
 
-<img src="cepi_results/fig4comb.png" alt="Combinations results." width="50%" />
+<img src="cepi_results/fig4comb_BAU1.png" alt="Combinations results." width="50%" />
 <p class="caption">
-<span id="fig:fig4comb"></span>Figure 0.5: Combinations results.
+<span id="fig:unnamed-chunk-5"></span>Figure 0.5: Combinations results.
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="cepi_results/fig5eq.png" alt="Equity results." width="50%" />
+<img src="cepi_results/fig5eq_BAU1.png" alt="Equity results." width="50%" />
 <p class="caption">
-<span id="fig:fig5eq"></span>Figure 0.6: Equity results.
+<span id="fig:unnamed-chunk-6"></span>Figure 0.6: Equity results.
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/cumulativevax-1.png" alt="Cumulative doses given weighted by population (where the number comes from supply, and BPSV counts for half a dose)."  />
+<img src="cepi_results/dominance_BAU2.png" alt="All results." width="50%" />
 <p class="caption">
-<span id="fig:cumulativevax"></span>Figure 0.7: Cumulative doses given
-weighted by population (where the number comes from supply, and BPSV
-counts for half a dose).
+<span id="fig:unnamed-chunk-7"></span>Figure 0.7: All results.
 </p>
 
 </div>
+
+<div class="figure">
+
+<img src="cepi_results/fig1bpsv_BAU2.png" alt="BPSV results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-8"></span>Figure 0.8: BPSV results.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="cepi_results/fig2rnd_BAU2.png" alt="R&amp;D results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-9"></span>Figure 0.9: R&D results.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="cepi_results/fig3capres_BAU2.png" alt="Capacity reservation results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-10"></span>Figure 0.10: Capacity reservation
+results.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="cepi_results/fig4comb_BAU2.png" alt="Combinations results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-11"></span>Figure 0.11: Combinations
+results.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="cepi_results/fig5eq_BAU2.png" alt="Equity results." width="50%" />
+<p class="caption">
+<span id="fig:unnamed-chunk-12"></span>Figure 0.12: Equity results.
+</p>
+
+</div>
+
+$$1$$ 19 20 ![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/t50vscoverage-1.png" alt="Time taken to get to 50% coverage vs final coverage (where coverage comes from supply, and BPSV counts for half a dose)."  />
 <p class="caption">
-<span id="fig:t50vscoverage"></span>Figure 0.8: Time taken to get to 50%
-coverage vs final coverage (where coverage comes from supply, and BPSV
-counts for half a dose).
+<span id="fig:t50vscoverage"></span>Figure 0.13: Time taken to get to
+50% coverage vs final coverage (where coverage comes from supply, and
+BPSV counts for half a dose).
 </p>
 
 </div>
+
+This document describes the DAEDALUS model that is used in the CEPI
+application. The DAEDALUS model simulates a single epidemic in a single
+country. Details of how the DAEDALUS model is used as a part of the
+methodology of the CEPI application is presented in a separate report,
+which also details the scenarios which are expressed as vaccination
+rates and are inputs to the DAEDALUS model.
 
 # Methods
 
