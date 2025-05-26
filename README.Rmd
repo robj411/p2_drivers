@@ -128,7 +128,7 @@ knitr::include_graphics(path = "cepi_results/fig4comb_BAU2.png")
 knitr::include_graphics(path = "cepi_results/fig5eq_BAU2.png")
 ```
 
-```{r,message=F,echo=F,warning=F}
+```{r,message=F,echo=F,warning=F,fig.cap='Vaccine coverage over time by income level.'}
 # tab2 <- readxl::read_xlsx('data/20250522 pandemic delivery scenarios - BAU2.xlsx')
 tab <- readxl::read_xlsx('data/20250520 pandemic delivery scenarios - BAU1.xlsx')
 scenario_names <- colnames(tab)[!grepl('^\\.',colnames(tab))]
@@ -206,7 +206,7 @@ ggplot(subset(plotscens,Scenario%in%c('BAU1',scenario_names[c(1,19,20)]))) +
   theme(legend.position = 'top')
 ```
 
-```{r,message=F,echo=F,warning=F}
+```{r,message=F,echo=F,warning=F,fig.cap='Total SSV coverage over time.'}
 popsizes <- c(718255072+3398187527, 2503136362, 1240629858)
 popsizes = popsizes/sum(popsizes)
 tvaxlist <- list()
@@ -248,7 +248,7 @@ ggplot(plotscens) +
 
 ```
 
-```{r t50vscoverage,fig.cap="Time taken to get to 50% coverage vs final coverage (where coverage comes from supply, and BPSV counts for half a dose).",message=F,echo=F,warning=F}
+```{r t50vscoverage,fig.cap="Time taken to get to 60% coverage with SSV second doses for HIC vs LLMIC.",message=F,echo=F,warning=F}
 
 
 

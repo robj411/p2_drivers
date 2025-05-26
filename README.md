@@ -160,17 +160,34 @@ results.
 
 </div>
 
-$$1$$ 19 20 ![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
-
-![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+$$1$$ 19 20
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/t50vscoverage-1.png" alt="Time taken to get to 50% coverage vs final coverage (where coverage comes from supply, and BPSV counts for half a dose)."  />
+<img src="README_files/figure-gfm/unnamed-chunk-13-1.png" alt="Vaccine coverage over time by income level."  />
 <p class="caption">
-<span id="fig:t50vscoverage"></span>Figure 0.13: Time taken to get to
-50% coverage vs final coverage (where coverage comes from supply, and
-BPSV counts for half a dose).
+<span id="fig:unnamed-chunk-13"></span>Figure 0.13: Vaccine coverage
+over time by income level.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/unnamed-chunk-14-1.png" alt="Total SSV coverage over time."  />
+<p class="caption">
+<span id="fig:unnamed-chunk-14"></span>Figure 0.14: Total SSV coverage
+over time.
+</p>
+
+</div>
+
+<div class="figure">
+
+<img src="README_files/figure-gfm/t50vscoverage-1.png" alt="Time taken to get to 60% coverage with SSV second doses for HIC vs LLMIC."  />
+<p class="caption">
+<span id="fig:t50vscoverage"></span>Figure 0.15: Time taken to get to
+60% coverage with SSV second doses for HIC vs LLMIC.
 </p>
 
 </div>
