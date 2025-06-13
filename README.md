@@ -51,132 +51,19 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
 
 <div class="figure">
 
-<img src="cepi_results/dominance_BAU1.png" alt="All results." width="50%" />
+<img src="README_files/figure-gfm/scenarios-1.png" alt="Vaccine coverage over time by income level."  />
 <p class="caption">
-<span id="fig:unnamed-chunk-1"></span>Figure 0.1: All results.
+<span id="fig:scenarios"></span>Figure 0.1: Vaccine coverage over time
+by income level.
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="cepi_results/fig1bpsv_BAU1.png" alt="BPSV results." width="50%" />
+<img src="README_files/figure-gfm/unnamed-chunk-1-1.png" alt="Total SSV coverage over time."  />
 <p class="caption">
-<span id="fig:unnamed-chunk-2"></span>Figure 0.2: BPSV results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/fig2rnd_BAU1.png" alt="R&amp;D results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-3"></span>Figure 0.3: R&D results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/fig3capres_BAU1.png" alt="Capacity reservation results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-4"></span>Figure 0.4: Capacity reservation
-results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/fig4comb_BAU1.png" alt="Combinations results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-5"></span>Figure 0.5: Combinations results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/fig5eq_BAU1.png" alt="Equity results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-6"></span>Figure 0.6: Equity results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/dominance_BAU2.png" alt="All results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-7"></span>Figure 0.7: All results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/fig1bpsv_BAU2.png" alt="BPSV results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-8"></span>Figure 0.8: BPSV results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/fig2rnd_BAU2.png" alt="R&amp;D results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-9"></span>Figure 0.9: R&D results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/fig3capres_BAU2.png" alt="Capacity reservation results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-10"></span>Figure 0.10: Capacity reservation
-results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/fig4comb_BAU2.png" alt="Combinations results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-11"></span>Figure 0.11: Combinations
-results.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="cepi_results/fig5eq_BAU2.png" alt="Equity results." width="50%" />
-<p class="caption">
-<span id="fig:unnamed-chunk-12"></span>Figure 0.12: Equity results.
-</p>
-
-</div>
-
-$$1$$ 19 20
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/unnamed-chunk-13-1.png" alt="Vaccine coverage over time by income level."  />
-<p class="caption">
-<span id="fig:unnamed-chunk-13"></span>Figure 0.13: Vaccine coverage
-over time by income level.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/unnamed-chunk-14-1.png" alt="Total SSV coverage over time."  />
-<p class="caption">
-<span id="fig:unnamed-chunk-14"></span>Figure 0.14: Total SSV coverage
+<span id="fig:unnamed-chunk-1"></span>Figure 0.2: Total SSV coverage
 over time.
 </p>
 
@@ -186,8 +73,8 @@ over time.
 
 <img src="README_files/figure-gfm/t50vscoverage-1.png" alt="Time taken to get to 60% coverage with SSV second doses for HIC vs LLMIC."  />
 <p class="caption">
-<span id="fig:t50vscoverage"></span>Figure 0.15: Time taken to get to
-60% coverage with SSV second doses for HIC vs LLMIC.
+<span id="fig:t50vscoverage"></span>Figure 0.3: Time taken to get to 60%
+coverage with SSV second doses for HIC vs LLMIC.
 </p>
 
 </div>
@@ -974,7 +861,11 @@ reduction in transmission, with the reduction in mobility.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/smoothmobility.png" alt="Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over &quot;Retail and recreation&quot;, &quot;Transit stations&quot; and &quot;Workplaces&quot; and smoothed with a spline of 80 knots." width="50%" />
+\<img src=“README_files/figure-gfm/smoothmobility.png” alt=“Mobility
+trajectories in 2020 for all countries, with points showing the point at
+which the largest drop was observed. Trajectories are averaged
+over”Retail and recreation”, “Transit stations” and “Workplaces” and
+smoothed with a spline of 80 knots.” width=“50%” /\>
 <p class="caption">
 <span id="fig:smoothmobility"></span>Figure 3.10: Mobility trajectories
 in 2020 for all countries, with points showing the point at which the

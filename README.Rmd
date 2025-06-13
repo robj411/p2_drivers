@@ -2,12 +2,6 @@
 title: "DAEDALUS for CEPI's 100-day mission: code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::pdf_document2: 
     toc: false
     keep_tex: yes
@@ -20,6 +14,12 @@ output:
     fig_caption: yes
     includes:
       in_header: "preamble.tex"
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -31,7 +31,7 @@ bibliography:
 always_allow_html: true
 ---
 
-# Figures (temporary) {.unlisted .unnumbered}
+<!-- # Figures (temporary) {.unlisted .unnumbered} -->
 
 ```{r setup, include=FALSE}
 library(ggplot2)  
@@ -80,196 +80,7 @@ format_to_print2 <- function(x,z=2){
 ```
 
 
-```{r,fig.cap='All results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/dominance_BAU1.png")
-```
 
-```{r,fig.cap='BPSV results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig1bpsv_BAU1.png")
-```
-
-```{r,fig.cap='R&D results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig2rnd_BAU1.png")
-```
-
-```{r,fig.cap='Capacity reservation results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig3capres_BAU1.png")
-```
-
-```{r,fig.cap='Combinations results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig4comb_BAU1.png")
-```
-
-```{r,fig.cap='Equity results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig5eq_BAU1.png")
-```
-
-```{r,fig.cap='All results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/dominance_BAU2.png")
-```
-
-```{r,fig.cap='BPSV results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig1bpsv_BAU2.png")
-```
-
-```{r,fig.cap='R&D results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig2rnd_BAU2.png")
-```
-
-```{r,fig.cap='Capacity reservation results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig3capres_BAU2.png")
-```
-
-```{r,fig.cap='Combinations results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig4comb_BAU2.png")
-```
-
-```{r,fig.cap='Equity results.',echo=F,warning=F,message=F, out.width="50%"}
-knitr::include_graphics(path = "cepi_results/fig5eq_BAU2.png")
-```
-
-```{r,message=F,echo=F,warning=F,fig.cap='Vaccine coverage over time by income level.'}
-# tab2 <- readxl::read_xlsx('data/20250522 pandemic delivery scenarios - BAU2.xlsx')
-tab <- readxl::read_xlsx('data/20250520 pandemic delivery scenarios - BAU1.xlsx')
-scenario_names <- colnames(tab)[!grepl('^\\.',colnames(tab))]
-
-nScen = length(scenario_names)
-scenario_levels <- 1:nScen
-bau_scens = which(grepl('BAU',scenario_names))
-scen_scens = which(!grepl('BAU',scenario_names))
-bau_names = scenario_names[bau_scens]
-just_scen_names = scenario_names[scen_scens]
-
-nbscens = length(bau_names)
-ncscens = length(scen_scens)
-
-
-scen_to_keep <- 1+c(0,1,4,5,8,9,12)
-tab[1,c(is.na(tab[1,]))] = ''
-
-df_list <- list()
-for(scen in 1:nScen){
-  for(il in 1:3){
-    start_index <- (scen-1)*6 + 1 + 2
-    # print(any(tab[-c(1,2),start_index]>0 & tab[-c(1,2),start_index + 3]>0))
-    get_index <- start_index - 1 + il
-    ilevel <- gsub('s','',tab[2,get_index])
-    scenario <- colnames(tab)[start_index]
-    for(i in c(0,3)){
-      vaccine <- tab[1,start_index+i][[1]]
-      vindex <- get_index + i
-      vals <- as.numeric(tab[-c(1:2),vindex][[1]])
-      df_list[[length(df_list)+1]] <- data.frame(Day=1:length(vals), Percent=cumsum(as.numeric(vals))*100, Vaccine=vaccine,Scenario=scenario, Income=ilevel)
-    }
-  }
-}
-for(scen in 2:nScen){
-  for(scen2 in 1:(scen-1)){
-    difference = 0
-    for(il in 1:3){
-      scen1index = (scen-1)*6 + (il-1)*2 + 1
-      scen2index = (scen2-1)*6 + (il-1)*2 + 1
-      comp1 = df_list[[scen1index]]$Percent
-      comp2 = df_list[[scen1index+1]]$Percent
-      old1 = df_list[[scen2index]]$Percent
-      old2 = df_list[[scen2index+1]]$Percent
-      difference = difference + sum(abs(comp1-old1)+abs(comp2-old2))
-    }
-    if(difference<1e-10)  print(c(scen2, scen))
-  }
-}
-# df_list2 = df_list
-# for(scen in 2:nScen){
-#     difference = 0
-#     for(il in 1:3){
-#       scen1index = (scen-1)*6 + (il-1)*2 + 1
-#       scen2index = (scen-1)*6 + (il-1)*2 + 1
-#       comp1 = df_list2[[scen1index]]$Percent
-#       comp2 = df_list2[[scen1index+1]]$Percent
-#       old1 = df_list[[scen2index]]$Percent
-#       old2 = df_list[[scen2index+1]]$Percent
-#       difference = difference + sum(abs(comp1-old1)+abs(comp2-old2))
-#     }
-#     if(difference>1e-10)  print(c(scen))
-# }
-
-library(ggplot2)
-
-
-plotscens <- do.call(rbind,df_list)
-plotscens$Percent[plotscens$Percent>80] <- 80
-plotscens$Percent[plotscens$Percent>25&plotscens$Vaccine=='BPSV'] <- 25
-ggplot(subset(plotscens,Scenario%in%c('BAU1',scenario_names[c(1,19,20)]))) + 
-  geom_line(aes(x=Day,y=Percent,colour=Scenario),linewidth=2,alpha=.5) +
-  facet_grid(Vaccine~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
-  theme_bw(base_size=15) + labs(colour='') +
-  theme(legend.position = 'top')
-```
-
-```{r,message=F,echo=F,warning=F,fig.cap='Total SSV coverage over time.'}
-popsizes <- c(718255072+3398187527, 2503136362, 1240629858)
-popsizes = popsizes/sum(popsizes)
-tvaxlist <- list()
-# group scenarios by colour
-  colourlists <- lapply(list(bpsv = c(1,2,3,13:15,28:31), rnd = c(4,5,16:18), 
-                      capres = c(6:9,20:27),
-                      del = c(10:11), eq = c(12,19)),function(x) just_scen_names[x])
-  colourlists$bau = bau_names
-  getsixty = matrix(0,nrow=nScen,ncol=2)
-    # if(difference<1e-10)  print(c(scen2, scen))
-
-for(scen in 1:nScen){
-  tvax = 0
-  for(il in 1:3){
-    scen1index = (scen-1)*6 + (il-1)*2 + 1
-    scen2index = scen1index + 1
-    # comp1 = df_list[[scen1index]]$Percent
-    old1 = df_list[[scen2index]]$Percent
-    tvax = tvax + rev(popsizes)[il]*(old1)
-    if (il==1) # HIC
-      getsixty[scen,1] = which.min(abs(old1-60))
-    if (il==3) # LLMIC
-      getsixty[scen,2] = which.min(abs(old1-60))
-    # print(c(scen,scen1index,scen2index))
-  }
-  tvaxlist[[scen]] = data.frame(Day=1:length(tvax),Scenario=scenario_names[scen],Percent=tvax,
-                                col=names(colourlists)[sapply(colourlists,function(x)scenario_names[scen]%in%x)])
-}
-
-plotscens <- do.call(rbind,tvaxlist)
-cscheme = 'plasma'
-ggplot(plotscens) + 
-  geom_line(aes(x=Day,y=Percent,colour=col,group=Scenario),linewidth=1.5,alpha=.75,show.legend=F) +
-  # geom_line(data=subset(plotscens,Scenario=='S00/BAU'),aes(x=Day,y=Percent,colour=col,group=Scenario),linewidth=2,show.legend=F) +
-  theme_bw(base_size=15) + labs(colour='') +
-  scale_colour_viridis_d(option = cscheme) +
-  theme(legend.position = 'top')
-
-
-```
-
-```{r t50vscoverage,fig.cap="Time taken to get to 60% coverage with SSV second doses for HIC vs LLMIC.",message=F,echo=F,warning=F}
-
-
-
-getsixty = as.data.frame(getsixty)
-getsixty$Scenario = scenario_names
-getsixty$col = sapply(scenario_names,function(scen) names(colourlists)[sapply(colourlists,function(x)scen%in%x)])
-ggplot(getsixty) +
-  geom_abline(intercept=0,slope=1,col='grey',linewidth=2) + 
-  ggrepel::geom_label_repel(aes(x=V1,y=V2,label=Scenario,fill=col,
-                                color = after_scale(prismatic::best_contrast(fill))),
-                            force=.001,vjust = 0,hjust = 0,show.legend = F) +
-  # geom_point(aes(x=t50,y=coverage,colour=col,group=Scenario),show.legend=F,size=3) +
-  theme_bw(base_size=15) + labs(colour='') +
-  scale_fill_viridis_d(option = cscheme) +
-  theme(legend.position = 'top') +
-  labs(x='HIC days to 60% coverage',y='LLMIC days to 60% coverage')  +
-  annotate(geom='text',x=900,y=900,angle=34,label='Line of equality',vjust = 1.3,colour='darkgrey',size=6) +
-  coord_fixed(2/3)
-
-
-```
 
 
 This document describes the DAEDALUS model that is used in the CEPI application. The DAEDALUS model simulates a single epidemic in a single country. Details of how the DAEDALUS model is used as a part of the methodology of the CEPI application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the DAEDALUS model.
