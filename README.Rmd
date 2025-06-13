@@ -2,6 +2,12 @@
 title: "DAEDALUS for CEPI's 100-day mission: code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::pdf_document2: 
     toc: false
     keep_tex: yes
@@ -14,12 +20,6 @@ output:
     fig_caption: yes
     includes:
       in_header: "preamble.tex"
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -779,9 +779,9 @@ We assume that infectious people who know their status have a compliance $p^1\si
 <!-- frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5); -->
 <!-- frac_cases_found = max(frac_cases_found, trate/10^5 ); -->
 
-# Econ model 
+# Econ component 
 
-The economic model is measuring GDP by summing GVA over sectors and over time taking into account the extent to which sectors are open, as described in Section \@ref(lost-economic-activity). 
+The economic component is measuring GDP by summing GVA over sectors and over time taking into account the extent to which sectors are open, as described in Section \@ref(lost-economic-activity). 
 
 The economy is stratified by sector following the International Standard Industrial Classification of All Economic Activities (ISIC) Rev. 4 as used by the OECD [@un]. Economic output is measured as the sum of gross value added (GVA) of all sectors over the epidemic period, expressed as a percentage of pre-epidemic GVA summed over the same period. 
 
@@ -1019,7 +1019,7 @@ In reality, the observed effects combined mandated closures, reductions in consu
 
 ## Implementation
 
-The economic configurations define the sector closures for both the economic model and the epidemiological model. Contacts associated with sectors -- between and among workers and customers -- are scaled down with closures. GVA per sector is scaled according to economic configurations in the economic model.
+The economic configurations define the sector closures for both economic and epidemiological parts of the model. Contacts associated with sectors -- between and among workers and customers -- are scaled down with closures. GVA per sector is scaled according to economic configurations in the economic part of the model.
 
 For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the "heavy" configuration has higher stringency than the "light" configuration; the configurations are tabulated in Table \@ref(tab:eccon)). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. Tables \@ref(tab:rulesreactive) and \@ref(tab:ruleselimination) show the transitions and their conditions. RC1 and RC2 respond to hospital occupancy, allowing cases to rise and using closures to allow them to fall again. RC1 keeps schools closed throughout, whereas RC2 has schools open in the light configuration. RC3 aims to reduce cases and then to keep them low. All mitigation is suspended when the vaccine rollout has reached its target coverage (which is when 80% of the eligible population have been vaccinated). 
 

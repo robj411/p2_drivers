@@ -20,7 +20,7 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
   - [3.5 Uncosted transmission
     reductions](#35-uncosted-transmission-reductions)
   - [3.6 Testing and self isolating](#36-testing-and-self-isolating)
-- [4 Econ model](#4-econ-model)
+- [4 Econ component](#4-econ-component)
   - [4.1 Impact of tourism](#41-impact-of-tourism)
     - [4.1.1 Food and accommodation services
       sector](#411-food-and-accommodation-services-sector)
@@ -47,37 +47,7 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
       isolate](#724-compliance-with-the-requirement-to-self-isolate)
 - [8 Notation](#8-notation)
 
-# Figures (temporary)
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/scenarios-1.png" alt="Vaccine coverage over time by income level."  />
-<p class="caption">
-<span id="fig:scenarios"></span>Figure 0.1: Vaccine coverage over time
-by income level.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/unnamed-chunk-1-1.png" alt="Total SSV coverage over time."  />
-<p class="caption">
-<span id="fig:unnamed-chunk-1"></span>Figure 0.2: Total SSV coverage
-over time.
-</p>
-
-</div>
-
-<div class="figure">
-
-<img src="README_files/figure-gfm/t50vscoverage-1.png" alt="Time taken to get to 60% coverage with SSV second doses for HIC vs LLMIC."  />
-<p class="caption">
-<span id="fig:t50vscoverage"></span>Figure 0.3: Time taken to get to 60%
-coverage with SSV second doses for HIC vs LLMIC.
-</p>
-
-</div>
+<!-- # Figures (temporary) {.unlisted .unnumbered} -->
 
 This document describes the DAEDALUS model that is used in the CEPI
 application. The DAEDALUS model simulates a single epidemic in a single
@@ -861,11 +831,7 @@ reduction in transmission, with the reduction in mobility.
 
 <div class="figure">
 
-\<img src=“README_files/figure-gfm/smoothmobility.png” alt=“Mobility
-trajectories in 2020 for all countries, with points showing the point at
-which the largest drop was observed. Trajectories are averaged
-over”Retail and recreation”, “Transit stations” and “Workplaces” and
-smoothed with a spline of 80 knots.” width=“50%” /\>
+<img src="README_files/figure-gfm/smoothmobility.png" alt="Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over &quot;Retail and recreation&quot;, &quot;Transit stations&quot; and &quot;Workplaces&quot; and smoothed with a spline of 80 knots." width="50%" />
 <p class="caption">
 <span id="fig:smoothmobility"></span>Figure 3.10: Mobility trajectories
 in 2020 for all countries, with points showing the point at which the
@@ -970,10 +936,10 @@ $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 <!-- frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5); -->
 <!-- frac_cases_found = max(frac_cases_found, trate/10^5 ); -->
 
-# 4 Econ model
+# 4 Econ component
 
-The economic model is measuring GDP by summing GVA over sectors and over
-time taking into account the extent to which sectors are open, as
+The economic component is measuring GDP by summing GVA over sectors and
+over time taking into account the extent to which sectors are open, as
 described in Section <a href="#lost-economic-activity">2.1</a>.
 
 The economy is stratified by sector following the International Standard
@@ -1183,11 +1149,11 @@ greatly China might have a much smaller economic cost).
 
 ## 5.2 Implementation
 
-The economic configurations define the sector closures for both the
-economic model and the epidemiological model. Contacts associated with
-sectors – between and among workers and customers – are scaled down with
+The economic configurations define the sector closures for both economic
+and epidemiological parts of the model. Contacts associated with sectors
+– between and among workers and customers – are scaled down with
 closures. GVA per sector is scaled according to economic configurations
-in the economic model.
+in the economic part of the model.
 
 For their dynamic implementation in the model, the three closure
 policies follow the same general pattern: they are defined by two
@@ -4484,7 +4450,7 @@ the letter will be enclosed in parentheses for clarity.
 |:--:|:--:|:--:|:--:|
 | $A$ |  |  |  |
 | $B$ |  |  |  |
-| $C$ | consumption |  | community (contacts) |
+| $C$ |  |  | community (contacts) |
 | $D$ | COMPARTMENT: Died |  | related to death state |
 | $E$ | COMPARTMENT: Exposed |  | related to exposed state |
 | $F$ |  |  |  |
