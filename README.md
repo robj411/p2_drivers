@@ -355,7 +355,8 @@ unvaccinated, vaccinated with the BPSV, and vaccinated with the SSV. The
 population is stratified by age (into four age groups: pre-school
 children, school-age children, working-age adults, and retirement-age
 adults). The working-age adults are further stratified into 46 groups:
-45 economic sectors, plus one non-working group.
+45 economic sectors, plus one non-working group. Population count data
+were assembled in Doohan et al. (2025).
 
 ## 3.1 Ordinary differential equations
 
@@ -387,7 +388,10 @@ recovered. $D$: died. $j$: stratum. $v$: vaccination status.
 Possible transitions between disease states are shown in Figure
 <a href="#fig:statetransitions">3.1</a>. Transition rates are functions
 of time $t$, vaccination status $v$, and group identity $j$ (where the
-groups are the 45 sectors and the four age groups).
+groups are the 45 sectors and the four age groups). Nominal natural
+history parameters (i.e. those not modified by circumstance) for seven
+historic respiratory pathogens with pandemic potential were assembled in
+Doohan et al. (2025).
 
 The rate of infection of susceptible individuals, $`k^{1}_{j,v}(t)`$, is
 defined as
@@ -549,7 +553,8 @@ hospitalisation of a vaccinated person compared to an unvaccinated
 person. The Effect on transmission is one minus the relative
 infectiousness of an infectious vaccinated person compared to an
 infectious unvaccinated person. The Rate of waning is the rate at which
-the vaccine effects decay over time.
+the vaccine effects decay over time. Parameter choices were made to
+align with Whittaker et al. (2024).
 
 ## 3.4 Contact rates
 
@@ -563,11 +568,11 @@ groups for different reasons:
 - Customer absence due to sector closure: impact on workers
 - Customer absence due to sector closure: impact on customers
 
-We approach this differently from (Haw et al. 2022). Instead of contact
-matrices from (Prem et al. 2021), we use those from (Walker et al.
-2020). Instead of work contacts from (Béraud et al. 2015), we use those
-from (Jarvis et al. 2023). (Haw et al. 2022) modelled closures using a
-combination of moving workers between sector compartments and a
+We approach this differently from Doohan et al. (2025). Instead of
+contact matrices from Prem et al. (2021), we use those from Walker et
+al. (2020). Instead of work contacts from Béraud et al. (2015), we use
+those from Jarvis et al. (2023). Haw et al. (2022) modelled closures
+using a combination of moving workers between sector compartments and a
 non-working compartment, and scaling of contacts. Here, we only use
 contacts to model closures, and do not move workers out of their
 compartments. An advantage of this is that workers within sectors retain
@@ -578,13 +583,13 @@ $M^{\text{com}}(x)$ (community contacts), $M^{\text{CW}}(x)$
 (community-to-worker contacts), and $M^{\text{WC}}(x)$
 (worker-to-community contacts). We construct peacetime matrices
 ($x=\textbf{1}$) beginning with a “target matrix”, which the three
-matrices should add up to, which is taken from (Walker et al. 2020). By
+matrices should add up to, which is taken from Walker et al. (2020). By
 sampling relevant values, we decompose the whole matrix into its
 component parts. To incorporate closures, each matrix is transformed
 independently, before they are all added together again.
 
 Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix
-from (Walker et al. 2020). These are 16-by-16 matrices, $\tilde{M}$, for
+from Walker et al. (2020). These are 16-by-16 matrices, $\tilde{M}$, for
 five-year age bands $a$ up to age group 75+. We map the matrix to a
 four-by-four matrix $\hat{M}$ corresponding to the four age groups $g$
 used in the DAEDALUS model, using population sizes $\tilde{N}_a$:
@@ -2339,13 +2344,13 @@ services-producing activities of households for own use
 # 6 Pathogen profiles
 
 We sample pathogen profiles by defining distributions over the pathogen
-parameters. The distributions are made using sourced data (Table
-<a href="#tab:pathogenprofile">6.1</a>), and are described in Table
-<a href="#tab:pathogenparameters">6.2</a>. Age profiles for severity
-rates are shown in Figure <a href="#fig:ratesbyage">6.1</a>. We sample
-parameter values from distributions informed by the seven pathogen
-profiles. $\text{R}_0$ is truncated at 1.5 and 4 following Whittaker et
-al. (2024).
+parameters. The distributions are made using data sourced by Doohan et
+al. (2025) (shown in Table <a href="#tab:pathogenprofile">6.1</a>), and
+are described in Table <a href="#tab:pathogenparameters">6.2</a>. Age
+profiles for severity rates are shown in Figure
+<a href="#fig:ratesbyage">6.1</a>. We sample parameter values from
+distributions informed by the seven pathogen profiles. $\text{R}_0$ is
+truncated at 1.5 and 3.5 following Whittaker et al. (2024).
 
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -3567,12 +3572,12 @@ sampled. Fixed values are described elsewhere in the documentation.
 The following quantities are sampled from the set of values belonging to
 countries from one income level and/or uniform distributions:
 
-- Population distribution by age
-- Life expectancy
-- Number of workers per sector
-- GVA per worker per sector
-- Community contact matrix
-- Testing rate
+- Population distribution by age (Doohan et al. 2025)
+- Life expectancy (Doohan et al. 2025)
+- Number of workers per sector (Doohan et al. 2025)
+- GVA per worker per sector (Doohan et al. 2025)
+- Community contact matrix (Walker et al. 2020)
+- Testing rate (Doohan et al. 2025)
 - Scaling factors for all workplace-related contacts
 - The extent to which there is uncosted transmission reduction
 - Type of VSL calculation
@@ -3738,7 +3743,7 @@ fractions of hospitality contacts made with age groups 20–64 and 65 and
 over, for the four age groups in order. Workforce in place is the
 fraction of 20 to 64 year olds counted among sector workers. (Workforce
 in place + unemployed = Workforce.) Hospital capacity is beds per
-100,000 population.
+100,000 population (Doohan et al. 2025).
 </caption>
 <thead>
 <tr>
@@ -4329,8 +4334,8 @@ For HICs, we have parameters 2.05 and 0.02. (Data sources: World Bank
 We estimate the average annual income per working-age adult as the total
 GVA multiplied by the fraction of GVA that goes to labour divided by the
 number of working-age adults. For the fraction of GVA that goes to
-labour we use PWT estimates from 2011 (Figure
-<a href="#fig:labsh">7.2</a>).
+labour we use PWT estimates from 2011 (Feenstra, Inklaar, and Timmer
+2015) (Figure <a href="#fig:labsh">7.2</a>).
 
 <!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is 207% of GDP. For a UMIC, the cost of a lost school year is 73% of GDP. For an HIC, the cost of a lost school year is 30% of GDP. -->
 
@@ -4670,6 +4675,15 @@ and the \$16 Trillion Virus.” *JAMA* 324 (15).
 
 </div>
 
+<div id="ref-Doohan2025" class="csl-entry">
+
+Doohan, P, R Johnson, A Lochen, D Haw, C Morgenstern, G Forchini, and K
+Hauck. 2025. “Mitigating Future Respiratory Pandemics in Low- Middle-
+and High-Income Countries: A Modelling Study of Health, Economic and
+Educational Losses.” Imperial College London.
+
+</div>
+
 <div id="ref-Feenstra2015" class="csl-entry">
 
 Feenstra, Robert C., Robert Inklaar, and Marcel P. Timmer. 2015. “The
@@ -4709,7 +4723,7 @@ Haw, David, Giovanni Forchini, Patrick Doohan, Paula Christen, Matteo
 Pianella, Rob Johnson, Sumali Bajaj, et al. 2022. “Optimizing Social and
 Economic Activity While Containing SARS-CoV-2 Transmission Using
 DAEDALUS.” *Nature Computational Science* 2: 223–33.
-<https://doi.org/10.25561/83928>.
+<https://doi.org/10.1038/s43588-022-00233-0>.
 
 </div>
 

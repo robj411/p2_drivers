@@ -339,7 +339,7 @@ The value $p^{16}$ represents the effectiveness of remote teaching, which we sam
 
 # Epi model
 
-The epidemiological component of the DAEDALUS model is a deterministic compartmental model that consists of seven disease states (susceptible, exposed, asymptomatic infectious, symptomatic infectious, hospitalised, recovered, and deceased), in triplicate to represent vaccination states unvaccinated, vaccinated with the BPSV, and vaccinated with the SSV. The population is stratified by age (into four age groups: pre-school children, school-age children, working-age adults, and retirement-age adults). The working-age adults are further stratified into 46 groups: 45 economic sectors, plus one non-working group.
+The epidemiological component of the DAEDALUS model is a deterministic compartmental model that consists of seven disease states (susceptible, exposed, asymptomatic infectious, symptomatic infectious, hospitalised, recovered, and deceased), in triplicate to represent vaccination states unvaccinated, vaccinated with the BPSV, and vaccinated with the SSV. The population is stratified by age (into four age groups: pre-school children, school-age children, working-age adults, and retirement-age adults). The working-age adults are further stratified into 46 groups: 45 economic sectors, plus one non-working group. Population count data were assembled in @Doohan2025.
 
 ## Ordinary differential equations
 
@@ -407,7 +407,7 @@ minimum size=15pt, font=\fontsize{10}{10}\selectfont, node distance=1]
 ```
 
 
-Possible transitions between disease states are shown in Figure \@ref(fig:statetransitions). Transition rates are functions of time $t$, vaccination status $v$, and group identity $j$ (where the groups are the 45 sectors and the four age groups).
+Possible transitions between disease states are shown in Figure \@ref(fig:statetransitions). Transition rates are functions of time $t$, vaccination status $v$, and group identity $j$ (where the groups are the 45 sectors and the four age groups). Nominal natural history parameters (i.e. those not modified by circumstance) for seven historic respiratory pathogens with pandemic potential were assembled in @Doohan2025.
 
 The rate of infection of susceptible individuals, $`k^{1}_{j,v}(t)`$, is defined as
 
@@ -568,7 +568,7 @@ Effectiveness against hospitalisation | 0.8 | 0.9
 Effect on transmission | 0 | 0 
 Rate of waning | 0 | 0 
 
-Table: (\#tab:vaccineeffects) Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition is 1/21 per day. The Effectiveness against infection is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time.
+Table: (\#tab:vaccineeffects) Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition is 1/21 per day. The Effectiveness against infection is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time. Parameter choices were made to align with @whittakerQuantifyingImpactBroadly2024.
 
 
 ## Contact rates
@@ -581,11 +581,11 @@ The configuration $x$ and the proportion of workers working from home $q$ determ
 - Customer absence due to sector closure: impact on workers
 - Customer absence due to sector closure: impact on customers
 
-We approach this differently from [@Haw2020]. Instead of contact matrices from [@Prem2021], we use those from [@Walker2020]. Instead of work contacts from [@Beraud2015], we use those from [@Jarvis2023]. [@Haw2020] modelled closures using a combination of moving workers between sector compartments and a non-working compartment, and scaling of contacts. Here, we only use contacts to model closures, and do not move workers out of their compartments. An advantage of this is that workers within sectors retain their infection histories. 
+We approach this differently from @Doohan2025. Instead of contact matrices from @Prem2021, we use those from @Walker2020. Instead of work contacts from @Beraud2015, we use those from @Jarvis2023. @Haw2020 modelled closures using a combination of moving workers between sector compartments and a non-working compartment, and scaling of contacts. Here, we only use contacts to model closures, and do not move workers out of their compartments. An advantage of this is that workers within sectors retain their infection histories. 
 
-We construct contact matrix $M(x)$ as the sum of three matrices: $M^{\text{com}}(x)$ (community contacts), $M^{\text{CW}}(x)$ (community-to-worker contacts), and  $M^{\text{WC}}(x)$ (worker-to-community contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning with a "target matrix", which the three matrices should add up to, which is taken from [@Walker2020]. By sampling relevant values, we decompose the whole matrix into its component parts. To incorporate closures, each matrix is transformed independently, before they are all added together again.
+We construct contact matrix $M(x)$ as the sum of three matrices: $M^{\text{com}}(x)$ (community contacts), $M^{\text{CW}}(x)$ (community-to-worker contacts), and  $M^{\text{WC}}(x)$ (worker-to-community contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning with a "target matrix", which the three matrices should add up to, which is taken from @Walker2020. By sampling relevant values, we decompose the whole matrix into its component parts. To incorporate closures, each matrix is transformed independently, before they are all added together again.
 
-Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix from [@Walker2020]. These are 16-by-16 matrices, $\tilde{M}$, for five-year age bands $a$ up to age group 75+. We map the matrix to a four-by-four matrix $\hat{M}$ corresponding to the four age groups $g$ used in the DAEDALUS model, using population sizes $\tilde{N}_a$:
+Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix from @Walker2020. These are 16-by-16 matrices, $\tilde{M}$, for five-year age bands $a$ up to age group 75+. We map the matrix to a four-by-four matrix $\hat{M}$ corresponding to the four age groups $g$ used in the DAEDALUS model, using population sizes $\tilde{N}_a$:
 
 ```math
 \hat{M}_{gg'} = \frac{\sum_{a\in g}\tilde{N}_{a}\sum_{a'\in g'}\tilde{M}_{a,a'}}{\sum_{a\in g}\tilde{N}_{a}},
@@ -1128,7 +1128,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 # Pathogen profiles
 
-We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using sourced data (Table \@ref(tab:pathogenprofile)), and are described in Table \@ref(tab:pathogenparameters). Age profiles for severity rates are shown in Figure \@ref(fig:ratesbyage). We sample parameter values from distributions informed by the seven pathogen profiles. $\text{R}_0$ is truncated at 1.5 and 4 following @whittakerQuantifyingImpactBroadly2024. 
+We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using data sourced by @Doohan2025 (shown in Table \@ref(tab:pathogenprofile)), and are described in Table \@ref(tab:pathogenparameters). Age profiles for severity rates are shown in Figure \@ref(fig:ratesbyage). We sample parameter values from distributions informed by the seven pathogen profiles. $\text{R}_0$ is truncated at 1.5 and 3.5 following @whittakerQuantifyingImpactBroadly2024. 
 
 
 
@@ -1183,12 +1183,12 @@ In this section we list the parameters used to construct a country in order to r
 
 The following quantities are sampled from the set of values belonging to countries from one income level and/or uniform distributions:
 
-- Population distribution by age
-- Life expectancy
-- Number of workers per sector
-- GVA per worker per sector
-- Community contact matrix
-- Testing rate
+- Population distribution by age [@Doohan2025]
+- Life expectancy [@Doohan2025]
+- Number of workers per sector [@Doohan2025]
+- GVA per worker per sector [@Doohan2025]
+- Community contact matrix [@Walker2020]
+- Testing rate [@Doohan2025]
 - Scaling factors for all workplace-related contacts
 - The extent to which there is uncosted transmission reduction
 - Type of VSL calculation
@@ -1262,7 +1262,7 @@ paramdist$Distribution <- gsub('gaminv','Gamma',paramdist$Distribution)
 paramdist$`Parameter 1` <- round(paramdist$`Parameter 1`,2)
 paramdist$`Parameter 2` <- round(paramdist$`Parameter 2`,2)
 
-lg <- 'Parameter distributions. Tourism parameters are those described in Section \\@ref(dependence-on-international-tourism). "school1 fraction" and "school2 fraction" are the fractions of contacts that pre-school children and school-age children make in nursery and school, respectively. Work fraction is the fraction of contacts people in the working-age age group make in the workplace. hospitality1 fraction, hospitality2 fraction, hospitality3 fraction and hospitality4 fraction are the fractions of non-work, non-school contacts made in the hospitality setting for the four ordered age groups. hospitality age1, hospitality age2, hospitality age3 and hospitality age4 give the fractions of hospitality contacts made with age groups 20--64 and 65 and over, for the four age groups in order. Workforce in place is the fraction of 20 to 64 year olds counted among sector workers. (Workforce in place + unemployed = Workforce.)  Hospital capacity is beds per 100,000 population. \\label{tab:paramdist}'
+lg <- 'Parameter distributions. Tourism parameters are those described in Section \\@ref(dependence-on-international-tourism). "school1 fraction" and "school2 fraction" are the fractions of contacts that pre-school children and school-age children make in nursery and school, respectively. Work fraction is the fraction of contacts people in the working-age age group make in the workplace. hospitality1 fraction, hospitality2 fraction, hospitality3 fraction and hospitality4 fraction are the fractions of non-work, non-school contacts made in the hospitality setting for the four ordered age groups. hospitality age1, hospitality age2, hospitality age3 and hospitality age4 give the fractions of hospitality contacts made with age groups 20--64 and 65 and over, for the four age groups in order. Workforce in place is the fraction of 20 to 64 year olds counted among sector workers. (Workforce in place + unemployed = Workforce.)  Hospital capacity is beds per 100,000 population [@Doohan2025]. \\label{tab:paramdist}'
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(paramdist,caption=lg)
 }else{
@@ -1295,7 +1295,7 @@ We model these values with gamma distributions. For LLMICs, we have parameters `
 
 ### Labour share of GVA
 
-We estimate the average annual income per working-age adult as the total GVA multiplied by the fraction of GVA that goes to labour divided by the number of working-age adults. For the fraction of GVA that goes to labour we use PWT estimates from 2011 (Figure \@ref(fig:labsh)). 
+We estimate the average annual income per working-age adult as the total GVA multiplied by the fraction of GVA that goes to labour divided by the number of working-age adults. For the fraction of GVA that goes to labour we use PWT estimates from 2011 [@Feenstra2015] (Figure \@ref(fig:labsh)). 
 
 <!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is `r round(62*3/.9)`% of GDP. For a UMIC, the cost of a lost school year is `r round(22*3/.9)`% of GDP. For an HIC, the cost of a lost school year is `r round(9*3/.9)`% of GDP. -->
 
