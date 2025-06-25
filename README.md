@@ -166,6 +166,10 @@ $D$, and probability to be hospitalised $p^H$.
 Then the total GDP is
 
 ``` math
+Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_S}y_j\int_{t=0}^{  au}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
+```
+
+``` math
 Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_S}y_j\int_{t=0}^{\tau}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
 ```
 
