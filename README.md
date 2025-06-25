@@ -169,10 +169,6 @@ Then the total GDP is
 Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_S}y_j\int_{t=0}^{  au}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
 ```
 
-``` math
-Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_S}y_j\int_{t=0}^{\tau}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
-```
-
 and the GDP loss compared to the maximum is
 
 $$K_2=Y_0-Y.$$
@@ -236,7 +232,7 @@ levels (Hammitt 2020).
 We estimate VSL as a function of GDP, relative to values for the USA:
 
 ``` math
-\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{Y_0}{\text{GDP}_{\text{USA}}}\right)^{r_e}.
+\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{Y_0}{\text{GDP}_{\text{USA}}}\right)^{r_e}. 
 ```
 
 Here, $`\text{VSL}_{\text{USA}}`$ is a 2019 estimate of VSL for the USA
@@ -408,7 +404,7 @@ k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_J}M_{j,h}(x) I_h(t)
 with $m_J=49$ strata and
 
 ``` math
- I_h(t)=\sum_{v=0}^{m_V}\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
+I_h(t)=\sum_{v=0}^{m_V}\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
 ```
 
 Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given
@@ -483,7 +479,7 @@ fatality rate as hospital occupancy increases:
 <!-- (1 + 0.87*max(0, occ - Hmax) / occ)*pd; -->
 
 ``` math
-f_H(t)=1 + 5\frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
+f_H(t)=1 + \frac{9\cdot\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
 ```
 
 ``` math
@@ -575,7 +571,7 @@ groups for different reasons:
 We approach this differently from Doohan et al. (2025). Instead of
 contact matrices from Prem et al. (2021), we use those from Walker et
 al. (2020). Instead of work contacts from Béraud et al. (2015), we use
-those from Jarvis et al. (2023). Haw et al. (2022) modelled closures
+those from Jarvis et al. (2024). Haw et al. (2022) modelled closures
 using a combination of moving workers between sector compartments and a
 non-working compartment, and scaling of contacts. Here, we only use
 contacts to model closures, and do not move workers out of their
@@ -671,15 +667,15 @@ $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure
 Community contacts in consumption settings includes contacts made on
 public transport, as these contacts are small in number and are most
 correlated with consumption (and not work or school) (Jarvis et al.
-2023). (This might be because contacts are counted by how many people
+2024). (This might be because contacts are counted by how many people
 you talk to.)
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/workfrac.png" alt="Fraction of contacts made at work, from [@Jarvis2023]. Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%))." width="50%" />
+<img src="README_files/figure-gfm/workfrac.png" alt="Fraction of contacts made at work, from @Jarvis2024. Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%))." width="50%" />
 <p class="caption">
 <span id="fig:workfrac"></span>Figure 3.3: Fraction of contacts made at
-work, from (Jarvis et al. 2023). Extrapolated from three countries (UK,
+work, from Jarvis et al. (2024). Extrapolated from three countries (UK,
 Belgium, Netherlands), whose values are all close to 40%, using time-use
 survey results for fraction of time spent at work (OECD, last updated
 December 2023, 33 countries, with values ranging from 12 to 25% (and the
@@ -690,10 +686,10 @@ three reference countries have values 16 to 18%)).
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/allsector45.png" alt="Number of contacts made at work, from [@Jarvis2023]. Diamonds show average numbers and ranges are 50% quantile intervals. We sample values from half to double the average. Data come from UK, Netherlands and Switzerland, with occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using ONS data." width="50%" />
+<img src="README_files/figure-gfm/allsector45.png" alt="Number of contacts made at work, from @Jarvis2024. Diamonds show average numbers and ranges are 50% quantile intervals. We sample values from half to double the average. Data come from UK, Netherlands and Switzerland, with occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using ONS data." width="50%" />
 <p class="caption">
 <span id="fig:allsector"></span>Figure 3.4: Number of contacts made at
-work, from (Jarvis et al. 2023). Diamonds show average numbers and
+work, from Jarvis et al. (2024). Diamonds show average numbers and
 ranges are 50% quantile intervals. We sample values from half to double
 the average. Data come from UK, Netherlands and Switzerland, with
 occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using
@@ -704,52 +700,52 @@ ONS data.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/uksec_dist_age.png" alt="Fraction of contacts made at work by age, from [@Jarvis2023]." width="50%" />
+<img src="README_files/figure-gfm/uksec_dist_age.png" alt="Fraction of contacts made at work by age, from @Jarvis2024." width="50%" />
 <p class="caption">
 <span id="fig:uksecdistage"></span>Figure 3.5: Fraction of contacts made
-at work by age, from (Jarvis et al. 2023).
+at work by age, from Jarvis et al. (2024).
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/school1frac.png" alt="Fraction of contacts made at school for ages 0 to 4, from [@Jarvis2023]." width="50%" />
+<img src="README_files/figure-gfm/school1frac.png" alt="Fraction of contacts made at school for ages 0 to 4, from @Jarvis2024." width="50%" />
 <p class="caption">
 <span id="fig:school1frac"></span>Figure 3.6: Fraction of contacts made
-at school for ages 0 to 4, from (Jarvis et al. 2023).
+at school for ages 0 to 4, from Jarvis et al. (2024).
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/school2frac.png" alt="Fraction of contacts made at school for ages 5 to 19, from [@Jarvis2023]." width="50%" />
+<img src="README_files/figure-gfm/school2frac.png" alt="Fraction of contacts made at school for ages 5 to 19, from @Jarvis2024." width="50%" />
 <p class="caption">
 <span id="fig:school2frac"></span>Figure 3.7: Fraction of contacts made
-at school for ages 5 to 19, from (Jarvis et al. 2023).
+at school for ages 5 to 19, from Jarvis et al. (2024).
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/hospfrac.png" alt="Fraction of non-school and non-work contacts made in hospitality settings, by age group, from [@Jarvis2023]." width="50%" />
+<img src="README_files/figure-gfm/hospfrac.png" alt="Fraction of non-school and non-work contacts made in hospitality settings, by age group, from @Jarvis2024." width="50%" />
 <p class="caption">
 <span id="fig:hospfrac"></span>Figure 3.8: Fraction of non-school and
 non-work contacts made in hospitality settings, by age group, from
-(Jarvis et al. 2023).
+Jarvis et al. (2024).
 </p>
 
 </div>
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/conagefrac.png" alt="Distribution of non-school and non-work contacts made in hospitality settings by age group, from [@Jarvis2023]." width="50%" />
+<img src="README_files/figure-gfm/conagefrac.png" alt="Distribution of non-school and non-work contacts made in hospitality settings by age group, from @Jarvis2024." width="50%" />
 <p class="caption">
 <span id="fig:conagefrac"></span>Figure 3.9: Distribution of non-school
 and non-work contacts made in hospitality settings by age group, from
-(Jarvis et al. 2023).
+Jarvis et al. (2024).
 </p>
 
 </div>
@@ -4731,12 +4727,13 @@ DAEDALUS.” *Nature Computational Science* 2: 223–33.
 
 </div>
 
-<div id="ref-Jarvis2023" class="csl-entry">
+<div id="ref-Jarvis2024" class="csl-entry">
 
-Jarvis, Christopher I, Pietro Coletti, Jantien A Backer, James D Munday,
-Christel Faes, Philippe Beutels, Christian L. Althaus, et al. 2023.
-“Social Contact Patterns Following the COVID-19 Pandemic: A Snapshot of
-Post-Pandemic Behaviour from the CoMix Study.” *MedRxiv*.
+Jarvis, Christopher I., Pietro Coletti, Jantien A. Backer, James D.
+Munday, Christel Faes, Philippe Beutels, Christian L. Althaus, et al.
+2024. “Social Contact Patterns Following the COVID-19 Pandemic: A
+Snapshot of Post-Pandemic Behaviour from the CoMix Study.” *Epidemics*
+48 (September): 100778. <https://doi.org/10.1016/j.epidem.2024.100778>.
 
 </div>
 
