@@ -199,7 +199,7 @@ The total number of years lost given $D_g$ deaths due to COVID-19 for
 each age group is
 
 ``` math
-K_1=\sum_gD_gl_g^{\text{(death)}}.
+K_1 = \sum_g D_g l_g^{\text{(death)}}.
 ```
 
 The value of a statistical life (VSL) reflects individuals’ willingness
