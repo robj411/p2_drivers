@@ -1,0 +1,690 @@
+---
+title: "Supplementary results"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+geometry: margin=1cm
+header-includes:
+  - \usepackage{eso-pic,graphicx,transparent}
+  - \usepackage{fancyhdr}
+  - \usepackage{lastpage}
+output:
+  bookdown::pdf_document2: 
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
+    keep_tex: true
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
+  md_document:
+    variant: markdown_github
+  bookdown::word_document2: default
+  bookdown::github_document2:
+    toc: true
+    appendix: true
+    fig_caption: yes
+    number_sections: yes
+    toc_float: true
+    pandoc_args: --webtex
+always_allow_html: yes 
+params:
+  lbfile: './data/20250612 updated scenario delivery and costing.xlsx'
+---
+
+\fancypagestyle{plain}{%
+  \renewcommand{\headrulewidth}{0pt}%
+  \fancyhf{}%
+  \fancyfoot[R]{\footnotesize \thepage}
+  \setlength\footskip{0pt}
+}
+\pagestyle{plain}
+  
+
+```{r setup, include=FALSE}
+library(knitr) 
+library(bookdown)
+library(pander)    
+library(data.table)
+library(haven)
+library(tidyr)
+library(dplyr)
+library(stringi)
+library(ggplot2)  
+library(RColorBrewer)
+# library(splines)
+library(viridis)
+library(hrbrthemes)
+# library(MASS)
+library(evmix)
+library(scales)
+library(patchwork)
+library(ggh4x)
+library(purrr)
+
+
+panderOptions('round',2)
+panderOptions('table.split.table', Inf)
+
+knitr::opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, echo=F, results='asis')
+
+decimalplaces <- function(x) {
+    if ((x %% 1) != 0) {
+        nchar(strsplit(sub('0+$', '', as.character(format(x,scientific = F))), ".", fixed=TRUE)[[1]][[2]])
+    } else {
+        return(0)
+    }
+}
+
+format_to_print2 <- function(x,z=2){
+  v <- signif(x,z)
+  sapply(v, function(i)  formatC(i, format="f", digits=decimalplaces(i), big.mark=","))
+}
+
+```
+
+```{r scentab,echo=F,warning=F,message=F}
+
+tab <- readxl::read_xlsx(params$lbfile)
+strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
+newpolicies <- c('NC','RC1','RC2','RC3')
+income_levels <- c('LLMIC','UMIC','HIC')
+nScen = (ncol(tab)-2)/6
+scenario_levels <- 1:nScen
+scenario_names <- colnames(tab)[!grepl('^\\.',colnames(tab))]
+scen_to_keep <- 1+c(0,1,4,5,8,9,12)
+bau_scens = which(grepl('BAU',scenario_names))
+scen_scens = which(!grepl('BAU',scenario_names))
+bau_names = scenario_names[bau_scens]
+# just_scen_names = scenario_names[scen_scens]
+
+# nbscens = length(bau_names)
+ncscens = length(scen_scens)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r resultsBAU,echo=F,warning=F,message=F}
+
+
+result_cols <- c('Cost','YLL','School','GDP_loss')
+
+allresults <- data.frame()
+
+for (i in 1:length(income_levels)){
+    income_level <- income_levels[i];
+    inputtab <- read.csv(paste0('code/results/inputs_',income_level,'.csv'),header=T);
+    for (k in 1:length(strategies)){
+        inp3 <- strategies[k];
+        results <- read.csv(paste0('code/results/outputs/outputs_',inp3,'_',income_level,'_scen1.csv'),header=T);
+        results$gdp <- inputtab$gdp
+        results$Policy <- inp3
+        results$igroup <- income_level
+        allresults <- rbind(allresults,results)
+    }
+}
+nvar <- ncol(results) - 2
+for(i in 1:nvar){
+  allresults[,i] = as.numeric(allresults[,i]);
+}
+for(i in (nvar-3):nvar){
+  allresults[,i] = allresults[,i]/allresults$gdp*100;
+  # allresults[,i] = log(allresults[,i]);
+}
+vioplot <- reshape2::melt(allresults[,(nvar-3):ncol(allresults)],id.vars=c('Policy','igroup'))
+vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
+vioplot$Policy <- factor(vioplot$Policy,levels=strategies, labels=newpolicies)
+vioplot$variable <- factor(vioplot$variable,
+                           levels=c('Cost','YLL','School','GDP_loss'),
+                           labels=c('Total loss','YLL','Education','GDP'))
+
+
+```
+
+\newpage
+
+# Results for all income levels and best policy option
+
+
+```{r tabres,echo=F,warning=F,message=F,results='asis'}
+
+meltmeantab <- c()
+allallresults <- tabresall <- data.frame()
+nsamples <- nrow(results)
+vsls <- gdps <- p <- topresults <- list()
+for(sl in scenario_levels){
+  scenario <- scenario_names[sl]
+  p[[sl]] <- list()
+
+  allresults <- data.frame()
+  for (i in 1:length(income_levels)){
+    income_level <- income_levels[i];
+    inputtab <- read.csv(paste0('code/results/inputs_',income_level,'.csv'),header=T);
+    vsls[[i]] <- inputtab$vsl * inputtab$gdp
+    gdps[[i]] <- 1e6 * inputtab$gdp
+    for (k in 1:length(strategies)){
+      inp3 <- strategies[k];
+      
+      results <- read.csv(paste0('code/results/outputs/outputs_',inp3,'_',income_level,'_scen',sl,'.csv'),header=T);
+      results$Policy <- newpolicies[k]
+      results$igroup <- income_level
+      results$samplei <- 1:nrow(results)
+      # results <- cbind(results,inputtab)
+      results$Costsl <- results$Cost/(inputtab$vsl * inputtab$gdp)
+      results$Costpc <- 100 * results$Cost/inputtab$gdp
+      results$gdp <- inputtab$gdp
+      allresults <- rbind(allresults,results)
+    }
+  }
+  nvar <- which(colnames(results)=='GDP_loss')
+  outcomenames <- colnames(results)[ (nvar-3):nvar]
+  for(i in 1:nvar){
+    allresults[,i] = as.numeric(allresults[,i]);
+  }
+  for(i in (nvar-3):nvar){
+    allresults[,i] = allresults[,i]/allresults$gdp*100;
+    # allresults[,i] = log(allresults[,i]);
+  }
+  vioplot <- reshape2::melt(allresults[,c(outcomenames,'Policy','igroup')],id.vars=c('Policy','igroup'))
+  vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
+  vioplot$Policy <- factor(vioplot$Policy,levels=newpolicies, labels=newpolicies)
+  vioplot$variable <- factor(vioplot$variable,
+                             levels=c('Cost','YLL','School','GDP_loss'),
+                             labels=c('Total loss','YLL','Education','GDP'))
+  
+  p[[sl]] <- ggplot(vioplot,aes(fill=Policy,colour=Policy, y=value, x=Policy)) + 
+    geom_violin(position="dodge", scale='width') +
+    facet_grid(variable~igroup, scales="free") + 
+      scale_fill_viridis(discrete=T, name="",option='inferno',end=.925,direction=-1) +
+      scale_colour_viridis(discrete=T, name="",option='inferno',end=.925,direction=-1) +
+      theme_bw(base_size = 12)  +
+      xlab("") +
+      ylab("Percent of GDP") +
+    scale_x_discrete(labels=c('','','',''))+ 
+    theme(axis.ticks.x=element_blank(),
+          panel.spacing = unit(0.5, "lines"),
+          legend.position = 'bottom',
+          legend.margin=margin(t=-30))
+
+  if(sl==1){
+    var_names <- vioplot$variable %>% unique()
+    facet_lims <- purrr::map(1:4, function(x){
+      lims <- ggplot_build(p[[sl]])$layout$panel_scales_y[[x]]$range$range
+      set_names(lims, c("Lower", "Upper"))
+  }) %>%
+      `names<-`(var_names) %>%
+      bind_rows(.id = "Facet")
+  }else{
+    p[[sl]] <- p[[sl]] + ggh4x::facetted_pos_scales(y = list(
+      variable == 'Total loss' ~ scale_y_continuous(limits = unlist(facet_lims[facet_lims$Facet=='Total loss',2:3])),
+      variable == 'YLL' ~ scale_y_continuous(limits = unlist(facet_lims[facet_lims$Facet=='YLL',2:3])),
+      variable == 'Education' ~ scale_y_continuous(limits = unlist(facet_lims[facet_lims$Facet=='Education',2:3])),
+      variable == 'GDP' ~ scale_y_continuous(limits = unlist(facet_lims[facet_lims$Facet=='GDP',2:3]))
+    ))
+  }
+  
+  allresults$scenario <- scenario
+  
+  allallresults <- rbind(allallresults,allresults)
+  
+  setDT(allresults)
+  allresults[,Costrnd:=Cost]
+  allresults[Policy!='NC',Costrnd:=Cost*(1+runif(sum(allresults$Policy!='NC'))*1e-8)]
+  allresults[,mincost:=Costrnd==min(Costrnd),by=.(igroup,samplei)]
+  
+  meantab <- allresults[,.(yll=mean(YLL),
+                          education=mean(School),
+                          gdp=mean(GDP_loss),
+                          nmin=sum(mincost)),by=.(Policy,igroup)]
+  meltmean <- reshape2::melt(meantab,id.vars=c('Policy','igroup','nmin'))
+  meltmean$scen <- scenario
+  meltmeantab <- rbind(meltmeantab,meltmean)
+  
+  topresults[[sl]] <- subset(allresults,mincost)
+  setorder(topresults[[sl]],samplei)
+  appendtopres <- copy(topresults[[sl]])
+  appendtopres$Policy <- 'Loss minimising'
+  allresults <- rbind(allresults,appendtopres)
+  allresults[,iqr:=rank(Cost)%in%c(round(nsamples/4):round(3*nsamples/4)),by=.(Policy,igroup)]
+  tabres <- allresults[iqr==T,list(costs=paste0(round(range(Cost),1),collapse='--\u200B'),
+                          yll=paste0(round(mean(YLL/Cost*100),1),collapse='--\u200B'),
+                          education=paste0(round(mean(School/Cost*100),1),collapse='--\u200B'),
+                          gdp=paste0(round(mean(GDP_loss/Cost*100),1),collapse='--\u200B')
+                          ),by=.(Policy,igroup)]
+  colnames(tabres) <- c('Policy','Income group','Total loss','YLL','Education','GDP')
+  tabres$Scenario <- scenario
+  tabresall <- rbind(tabresall,tabres)
+  
+
+}
+
+tabresall$Policy <- factor(tabresall$Policy,levels=c(newpolicies,'Loss minimising'))
+tabresall$`Income group` <- factor(tabresall$`Income group`,levels=c(income_levels,'Loss minimising'))
+setorder(tabresall,Scenario,`Income group`,Policy)
+# tabresall[,Scenario:=paste0(`SARS-X vaccine`,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(`SARS-X vaccine`,BPSV)]
+tabresall <- cbind(tabresall[,7],tabresall[,-c(7)])
+lg <- paste0('Results for all vaccination levels, scenarios and country types. Mean values and 95% prediction intervals. \\label{tab:tabres}')
+# if (!knitr::is_html_output(excludes = "markdown")) { 
+#   cat(pander(tabresall,caption=lg))
+# }else{
+#   x <- knitr::kable(tabresall,escape=F, "html",caption=lg)
+#   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+# }
+lmtabresall <- subset(tabresall,Policy=='Loss minimising')
+lmtabresall$Policy <- NULL
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(lmtabresall,caption=lg))
+}else{
+  x <- knitr::kable(lmtabresall,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
+
+\newpage
+
+# Results for all income levels and policy options
+
+
+
+```{r tabresall,echo=F,warning=F,message=F,results='asis'}
+lmtabresall <- subset(tabresall,Policy!='Loss minimising')
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(lmtabresall,caption=lg))
+}else{
+  x <- knitr::kable(lmtabresall,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
+
+
+
+
+\newpage
+
+# Violin plots
+
+
+```{r violintop,fig.cap='Model results for the cost-minimising responses.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+
+alltopresults <- do.call(rbind,topresults)
+vioplot <- reshape2::melt(alltopresults[,c(outcomenames,'igroup','scenario'),with=F],id.vars=c('igroup','scenario'))
+vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
+# vioplot$Policy <- factor(vioplot$Policy,levels=newpolicies)
+vioplot$variable <- factor(vioplot$variable,
+                           levels=c('Cost','YLL','School','GDP_loss'),
+                           labels=c('Total loss','YLL','Education','GDP'))
+
+ggplot(subset(vioplot,scenario%in%scenario_names[scen_to_keep]),aes(y=value, x=scenario, fill=scenario,colour=scenario)) + 
+  geom_violin(position="dodge", scale='width') +
+  facet_grid(variable~igroup, scales="free") + 
+    scale_fill_viridis(discrete=T, name="",option='inferno',end=.925,direction=-1) +
+    scale_colour_viridis(discrete=T, name="",option='inferno',end=.925,direction=-1) +
+    theme_bw(base_size = 12)  +
+    xlab("") +
+    ylab("Percent of GDP") +
+  scale_x_discrete(labels=NULL)+ 
+  theme(axis.ticks.x=element_blank(),
+        panel.spacing = unit(0.5, "lines"),
+        legend.position = 'bottom',
+        legend.margin=margin(t=-30))
+```
+
+
+\newpage
+## Scenario violin plots
+
+```{r violinBAU,fig.cap='Model results for the 365-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+p[[scen_to_keep[1]]]
+
+# ggsave(p[[1]][[1]] + theme_bw(base_size=15),filename='BAUviolinspill.png',width=9,height=6.5)
+# 
+# p[[1]][[1]]
+
+```
+
+```{r violinscen1,fig.cap='Model results for the 100-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+p[[scen_to_keep[2]]]
+```
+
+```{r violinscen2,fig.cap='Model results for the 365-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+p[[scen_to_keep[3]]]
+```
+
+```{r violinscen3,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+p[[scen_to_keep[4]]]
+```
+
+```{r violinscen4,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+p[[scen_to_keep[5]]]
+```
+
+
+\newpage
+
+# Expected value by policy choice
+
+```{r expectedvaluesbar,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=6,fig.width=6,eval=T}
+
+# meltmeantab$scen <- factor((meltmeantab$scen), 
+#                                     levels=c('365, No BPSV','365, BPSV',
+#                                              '100, No BPSV','100, BPSV'))
+setDT(meltmeantab)
+# meltmeantab[,cost:=sum(value),by=.(scen,igroup,Policy)]
+# meltmeantab[,mincost:=cost==min(cost),by=.(scen,igroup)]
+meltmeantab[,mincost:=nmin==max(nmin),by=.(scen,igroup)]
+ggplot(subset(meltmeantab,scen%in%scenario_names[scen_to_keep])) + 
+      geom_bar(aes(x=factor(Policy,levels=newpolicies,labels=newpolicies),
+                   y=value,fill=factor(variable,levels=c('education','yll','gdp'),labels=c('Education','YLL','GDP')),
+                   alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scen) + 
+      theme_bw(base_size=15) +
+        scale_fill_viridis(discrete=T, name="") +
+      labs(x='',y='Loss, % of GDP',fill='Loss type') +
+        theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+              legend.position = 'top') 
+    # ggsave(p,filename='figures/expectedcosts.pdf',height=10)
+# subset(meltmeantab,igroup=='HIC'&scen=='100, BPSV')
+
+# ggplot(subset(meltmeantab,grepl('Secondary',igroupcountry))) + 
+#       geom_bar(aes(x=factor(Policy,levels=c('No Closures','School Closures','Economic Closures','Elimination')),
+#                    y=value,fill=factor(variable,levels=c('education','yll','gdp'),labels=c('Education','YLL','GDP')),
+#                    alpha=I(as.numeric(mincost)*.5+.5)),stat='identity') + 
+#   facet_grid(factor(igroupcountry,labels=c('LLMIC','UMIC','HIC'))~factor(scen,levels=c('BAU','100 days','BPSV'))) + 
+#       theme_bw(base_size=15) +
+#         scale_fill_viridis(discrete=T, name="",option='inferno',end=.925) +
+#       labs(x='',y='Loss, % of GDP',fill='Loss type') +
+#         theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+#               legend.position = 'right') -> p
+# 
+# ggsave(p,filename = 'expectedvaluesbar.png',height=6,width=8)
+
+
+```
+
+
+
+
+
+```{r resultsdiff,echo=F,warning=F,message=F}
+
+difflist <- c()
+alldiffs <- list()
+for(sl in scen_scens){
+  scenario <- scenario_names[sl]
+  alldiffs[[length(alldiffs)+1]] <- list()
+  for(refsl in bau_scens){
+    refscen <- scenario_names[refsl]
+    difftab <- as.data.frame(readRDS(paste0('code/results/differences/difftab_',refsl,'_',sl,'.Rds')))
+    alldiffs[[length(alldiffs)]][[which(bau_scens==refsl)]] <- difftab
+    difftab$Cost = difftab$Cost/difftab$gdp*100;
+    difftab$scen <- paste0(refscen,' to ',scenario)
+    difftab$fromscen <- refscen
+    difftab$toscen <- scenario
+    difflist <- rbind(difflist,difftab)
+  }
+}
+
+```
+
+\newpage
+
+# Violin plot of difference
+
+
+```{r diffviolin,fig.cap='Model results for losses saved by 100-day and BPS vaccines.',echo=F,warning=F,message=F,fig.height=4,fig.width=6}
+
+vioplot <- reshape2::melt(difflist[,colnames(difflist)%in%c('Cost','igroup','toscen','fromscen')],id.vars=c('igroup','toscen','fromscen'))
+vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
+# vioplot$variable <- factor(vioplot$variable,
+#                            levels=c('Cost','YLL','School','GDP_loss'),
+#                            labels=c('Total','YLL','Education','GDP'))
+
+ggplot(subset(vioplot,toscen%in%scenario_names[scen_to_keep]&fromscen%in%bau_names),aes(fill=toscen, colour=toscen, y=value, x=toscen)) + 
+    geom_violin(position="dodge",scale='width') +
+  facet_grid(fromscen~igroup, scales="free") + 
+    scale_fill_viridis(discrete=T, name="") +
+    scale_colour_viridis(discrete=T, name="") +
+    theme_bw(base_size = 15)  +
+    xlab("") +
+    ylab("Percent of GDP") +
+  scale_x_discrete(labels=NULL)+ 
+  theme(axis.ticks.x=element_blank(),
+        panel.spacing = unit(0.5, "lines"),
+        legend.position = 'bottom',
+        legend.margin=margin(t=-20))-> p
+  # ggsave(p,filename = 'figures/resultsdiff.pdf',width=12,height=10)
+  p
+  
+  
+
+```
+
+
+
+
+
+\newpage
+
+# Best-case scenarios
+
+
+```{r bestcase,tab.cap='Value of vaccines',echo=F,warning=F,message=F}
+
+plotlist <- readRDS('code/results/exXbars.Rds')
+valuetablist <- readRDS('code/results/exXvalues.Rds')
+valuetab <- do.call(rbind,valuetablist[[1]])
+valuetab2 <- valuetablist[[2]]
+
+colnames(valuetab)[2] = 'Scenario'
+countercol = c(rep(rownames(valuetab2)[1:16],each=ncscens))
+
+valuetabcounter <- setDT(subset(valuetab,counter=='counter'))
+valuetabcounter$Counterfactual = countercol
+rownames(valuetabcounter) <- NULL # rownames(valuetab2)[1:16]
+valuetabcounter$`From scenario` <- NULL
+valuetabcounter[,lq:=as.numeric(strsplit(Value,'--')[[1]][1]),by=Value]
+valuetabcounter[,uq:=as.numeric(strsplit(Value,'--')[[1]][2]),by=Value]
+valuetabcounter[,ml:=max(lq),by=Counterfactual]
+valuetabcounter[,mu:=max(uq),by=Counterfactual]
+
+vtab = subset(valuetabcounter,ml==lq|mu==uq)[,.(Scenario,Value,Counterfactual)]
+bsc <- data.frame(sapply(unique(vtab$Counterfactual),function(x)with(subset(vtab,Counterfactual==x),paste0(Scenario,collapse=', '))))
+colnames(bsc) <- 'Best-case scenarios'
+bsc$Counterfactual <- rownames(bsc)
+rownames(bsc) <- NULL
+bsc <- bsc[,2:1]
+lg <- paste0('Best-case scenarios: scenarios that have the highest $\\Delta$LIR lower quartile or upper quartile for each counterfactual. \\label{tab:bsc}')
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(bsc,caption=lg))
+}else{
+  x <- knitr::kable(bsc,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
+
+
+
+
+
+\newpage
+
+# Percent of counterfactual
+
+
+```{r ex100,tab.cap='Value of vaccines',echo=F,warning=F,message=F}
+valuetabcounter[,counter:=NULL]
+valuetabcounter[,lq:=NULL]
+valuetabcounter[,uq:=NULL]
+valuetabcounter[,ml:=NULL]
+valuetabcounter[,mu:=NULL]
+
+# subvaluetab <- valuetabcounter[,!colnames(valuetabcounter)%in%scenario_names[-c(scen_to_keep)]]
+lg <- paste0('Value of vaccine investments in the event of a one-in-X-years pandemic (percent of counterfactual). \\label{tab:ex100}')
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(valuetabcounter,caption=lg))
+}else{
+  x <- knitr::kable(valuetabcounter,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+```
+
+
+
+
+
+\newpage
+
+# Percent of GDP
+
+
+```{r ex100gdp,tab.cap='Value of vaccines',echo=F,warning=F,message=F}
+
+valuetabgdp <- setDT(subset(valuetab,counter=='gdp'))
+valuetabgdp[,counter:=NULL]
+valuetabgdp$Counterfactual = countercol
+rownames(valuetabgdp) <- NULL # rownames(valuetab2)[1:16]
+valuetabgdp$`From scenario` <- NULL
+# subvaluetab <- valuetabgdp[,!colnames(valuetabgdp)%in%scenario_names[-c(scen_to_keep)]]
+lg <- paste0('Value of vaccine investments in the event of a one-in-X-years pandemic (percent of global GDP). \\label{tab:ex100gdp}')
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(valuetabgdp,caption=lg))
+}else{
+  x <- knitr::kable(valuetabgdp,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
+
+
+
+
+\newpage
+
+# Absolute values: LIR and numbers of deaths
+
+
+
+
+```{r absvals,tab.cap='Absolute losses and numbers of deaths of one-in-thirty-years and one-in-one-hundred-years events under the BAU scenario.',echo=F,warning=F,message=F}
+
+lg <- paste0('Absolute losses and numbers of deaths of one-in-X-years events under the BAU scenario. \\label{tab:absvals}')
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(valuetab2,caption=lg))
+}else{
+  x <- knitr::kable(valuetab2,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
+
+\newpage
+
+# Distributions of loss
+
+```{r ex30bar,fig.cap='Distributions of values of investments for once-in-thirty-years events.',echo=F,warning=F,message=F,fig.height=8,fig.width=10}
+print(plotlist)
+```
+
+\newpage
+
+# Expected values
+
+
+```{r expvalue,tab.cap='Expected value of investments',echo=F,warning=F,message=F,results='asis'}
+
+expvals1 <- readRDS('code/results/expvals_BAU1.Rds')
+expvals2 <- readRDS('code/results/expvals_BAU2.Rds')
+expvals <- expvals1[expvals2,,on='Scenario']
+  #rbind(readRDS('code/results/expvals_BAU1.Rds'),readRDS('code/results/expvals_BAU2.Rds'))
+subexp <- expvals#[,!colnames(expvals)%in%scenario_names[-c(scen_to_keep)],with=F]
+
+lg <- paste0('Value of investments. \\label{tab:expval}')
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(subexp,caption=lg))
+}else{
+  # (knitr::kable(subexp,escape=F, "html",caption=lg))
+  x <- knitr::kable(subexp,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
+
+
+\newpage
+
+# Policy choices
+
+```{r choicestab,fig.cap='Frequency of mitigation policy choices.',echo=F,warning=F,message=F,fig.height=4,fig.width=6}
+
+choicestab <- readRDS(paste0('code/results/choicestab.Rds'))
+nsamples <- sum(choicestab$N)/3/nScen
+ggplot(subset(choicestab,scenario%in%scenario_names[scen_to_keep])) +  
+  geom_bar(aes(x=scenario,
+               y=N/nsamples*100,
+               fill=factor(policy,levels=strategies,labels=newpolicies)),stat='identity') + 
+  facet_wrap(~factor(igroup,levels=c('LLMIC','UMIC','HIC'))) + 
+  theme_bw(base_size=15) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_viridis(discrete=T, name="",option='inferno',end=.925,direction=-1) +
+  labs(x='',y='Chosen policy, % of samples',fill='') +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+        legend.position = 'left') 
+
+```
+
+
+```{r kept,echo=F,warning=F,message=F,eval=T}
+
+setDT(allallresults)
+allallresults[,Costrnd:=Cost]
+allallresults[Policy!='NC',Costrnd:=Cost*(1+runif(sum(allallresults$Policy!='NC'))*1e-8)]
+allallresults[,mincost:=min(Costrnd),by=.(igroup,scenario,samplei)]
+# allallresults[,mincost:=min(Cost),by=.(igroup,scenario,samplei)]
+allallresults[,keeprow:=Costrnd==mincost]
+allallresults$Policy <- factor(allallresults$Policy,levels=newpolicies,labels=newpolicies)
+
+keptresults <- subset(allallresults,keeprow==T)
+
+```
+
+
+\newpage
+
+## Policy choices vs. severity
+
+
+```{r intensity,fig.cap='The relationship between policy choice and severity (total deaths).',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=T}
+
+keptresults[,qdeath:=rank(Deaths)/.N,by=.(igroup,scenario)]
+
+ggplot(subset(keptresults,scenario%in%scenario_names[scen_to_keep])) + 
+  geom_histogram(aes(x=qdeath,y=stat(count / sum(count)),fill=Policy,group=Policy),position='fill',bins = 10) +
+  facet_grid(factor(igroup,levels=c('LLMIC','UMIC','HIC'))~scenario) + 
+  theme_bw(base_size = 11) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_viridis_d(name="",option='inferno',end=.925,direction=-1) +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1,vjust=1),
+        legend.position = 'top') + labs(fill='',x='Deaths per thousand (quantile)',y='Proportion')
+
+```
+
+
+
+
+
