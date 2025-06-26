@@ -2,24 +2,24 @@
 title: "DAEDALUS for CEPI's 100-day mission: code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  bookdown::pdf_document2: 
+    #   --filter=pandoc-xnos
+    toc: false
+    keep_tex: yes
+    citation_package: natbib
+    extra_dependencies: ["float"]
+    # extra_dependencies: ["flafter"]
+    # pandoc_args:
+    number_sections: true
+    fig_caption: yes
+    includes:
+      in_header: "preamble.tex"
   bookdown::github_document2:
     # pandoc_args: --webtex
     toc: true
     toc_depth: 5
     toc_float: true
     number_sections: true
-  bookdown::pdf_document2: 
-    toc: false
-    keep_tex: yes
-    citation_package: natbib
-    extra_dependencies: ["float"]
-    # extra_dependencies: ["flafter"]
-    pandoc_args:
-      --filter=pandoc-xnos
-    number_sections: true
-    fig_caption: yes
-    includes:
-      in_header: "preamble.tex"
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -172,8 +172,13 @@ for $m_S$ sectors, and we use pre-pandemic GVA to define the maximum possible va
 All economic sectors contribute GVA according to the level they are open for production, except for the education sector which contributes its maximum possible GVA, $y_{\text{ed}}$. $x_{j}(t)$ is the proportion of the workforce contributing to economic production in sector $j$ out of the total workforce $N_j$ on day $t$. The workforce can be additionally depleted due to self isolation, sickness, hospitalisation and death, leaving a smaller fraction ($`\hat{x}_{j}(t)`$) to contribute to production.
 
 
-``` math
-\hat{x}_{j}(t)=x_{j}(t)\left(1 - \left(p_j^{23}(t)  + (1-q_j)p_j^{22}(t)\right)/N_j\right)
+```{r}
+eqtext = '\\hat{x}_{j}(t)=x_{j}(t)\\left(1 - \\left(p_j^{23}(t)  + (1-q_j)p_j^{22}(t)\\right)/N_j\\right)'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 where $q_j$ is the fraction of the sector working from home. $p_j^{23}(t)$ represents worker sickness and death:
@@ -187,9 +192,13 @@ $$p_j^{22}(t)=p^2(t)p^{18}I_{j}^{a}.$$
 $p^{18}$ is the number of days spent in self isolation per day of infectiousness (e.g. suppose the average infectious period is four days and mandatory self-isolation time is ten days, then $p^{19}=2.5$ and $p^{18}=p^{19}T^{I^s}/T^{I^a:R}$, where $T^{I^s}$ and $T^{I^a:R}$ are expected infectious periods for symptomatic and asymptomatic, respectively). $p^1$ is compliance with the requirement to self isolate and $p^2(t)$ is the fraction of cases identified. Other notations are vaccine status $v$, infectious and asymptomatic $I_{j,v}^{a}$, infectious and symptomatic $I_{j,v}^{s}$, hospitalised $H$, deceased $D$, and probability to be hospitalised $p^H$. 
 
 Then the total GDP is
-
-```math
-Y =  \frac{1 }{365} \sum_{j\neq\text{ed}}^{m_S}y_j\int_{t=0}^{\tau}\hat{x}_{j}(t)dt + \frac{\tau }{365}{y_\text{ed}},
+```{r}
+eqtext = 'Y =  \\frac{1 }{365} \\sum_{j\\neq\\text{ed}}^{m_S}y_j\\int_{t=0}^{\tau}\\hat{x}_{j}(t)dt + \\frac{\\tau }{365}{y_\\text{ed}},'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 and the GDP loss compared to the maximum is 
@@ -204,20 +213,33 @@ $$K_2=Y_0-Y.$$
 ## Lost lives
 
 To value lives lost, we make use of the expected remaining life years per age group estimated by the Global Burden of Disease Network [@GlobalBurdenofDiseaseCollaborativeNetwork2021]. These are used to estimate the expected number of years of life lost per death, and to estimate the value of a life year. We map the remaining life expectancy $\tilde{l}_a$ for the GBD age groups $a$ to $l_g$ for the (different) age groups $g$ of our model as a population-weighted average, taking into account the size of each age group, $`\tilde{N}_a`$:
-
-```math
-l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; 
+```{r}
+eqtext = 'l_g^{\\text{(life)}} = \\frac{\\sum_{a\\in g}N_a\\tilde{l}_a}{\\sum_{a\\in g}\\tilde{N}_a}; '
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 To estimate the expected number of life years lost per SARS-X death, we take into account the probability to die given infection, $P(D|I,a)$:
-
-```math
-l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
+```{r}
+eqtext = 'l_g^{\\text{(death)}} = \\frac{\\sum_{a\\in g}N_a\\tilde{l}_aP(D|I,a)}{\\sum_{a\\in g}N_aP(D|I,a)}; '
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 The total number of years lost given $D_g$ deaths due to COVID-19 for each age group is 
-```math
-K_1=\sum_gD_gl_g^{\text{(death)}}.
+```{r}
+eqtext = 'K_1 = \\sum_g D_g l_g^{\\text{(death)}}.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 The value of a statistical life (VSL) reflects individuals' willingness to trade wealth for reductions in risk of mortality. We rely on the intrinsic rather than instrumental interpretation of the valuation of life [@Cutler2020], and we use an existing estimate of the VSL to estimate the value of a life year (VLY). We interpret the VSL as a population-weighted average [@Ananthapavan2021; @Robinson2021], where each age group has a VSL defined by the number of expected life years remaining, and where each year has the same value: 
@@ -232,9 +254,13 @@ We estimate a country's VSL using the VSL of the USA, adjusting for the differen
 
 
 We estimate VSL as a function of GDP, relative to values for the USA:
-
-```math
-\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{Y_0}{\text{GDP}_{\text{USA}}}\right)^{r_e}.
+```{r}
+eqtext = '\\text{VSL}=\\text{VSL}_{\\text{USA}}\\left(r_p\\frac{Y_0}{\\text{GDP}_{\\text{USA}}}\\right)^{r_e}. '
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 Here, $`\text{VSL}_{\text{USA}}`$ is a 2019 estimate of VSL for the USA (10.9 million \$) and $`\text{GDP}_{\text{USA}}`$ is its GDP. We choose randomly between two alternative methods, OECD/IHME/World Bank and Viscusi & Masterman, to map from USA's VSL to the VSL of our country, as discussed in @Robinson2021. We implement the methods using approximations to the presentations therein, which we summarise in see Table \@ref(tab:ruleselimination).  
@@ -417,51 +443,91 @@ k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_J}M_{j,h}(x) I_h(t)
 \end{equation}
 
 with $m_J=49$ strata and 
-
-```math
- I_h(t)=\sum_{v=0}^{m_V}\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
+```{r}
+eqtext = 'I_h(t)=\\sum_{v=0}^{m_V}\\left(\\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\\right). '
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
   Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of uncosted transmission reductions; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p^3$ and $p^4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic ($I_{h,\cdot}^{a}$) and symptomatic ($I_{h,\cdot}^{s}$) people who are unvaccinated ($I_{h,v=0}^{\cdot}$), vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
 
-```math
- k^2 = \big(1-p^{I^S}\big)/T^{E:I} 
+
+```{r}
+eqtext = ' k^2 = \\big(1-p^{I^S}\\big)/T^{E:I} '
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
   is the rate to asymptomatic infectiousness, where $p^{I^S}$ is the probability to become symptomatic given infection, and $T^{E:I}$ is the expected duration of the latent period before the onset of infectiousness;
 
-```math
- k^3 = 1/T^{I^a:R}  
+```{r}
+eqtext = ' k^3 = 1/T^{I^a:R}  '
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
   is the rate of recovery from asymptomatic infection;
 
-```math
- k^4 = p^{I^S}/ T^{E:I}; 
+```{r}
+eqtext = ' k^4 = p^{I^S}/ T^{E:I}; '
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
   is the rate of symptom onset;
 
-```math
-k^{5}_{j,v} =  \big(1-p^H_{j,v}\big) / T_{j,v}^{I^s}
+```{r}
+eqtext = 'k^{5}_{j,v} =  \\big(1-p^H_{j,v}\\big) / T_{j,v}^{I^s}'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
   is the rate of recovery from symptomatic infection, where $p^H_{j,v}$ is the probability to be hospitalised given symptomatic infection, and $T_{j,v}^{I^s} = p^H_{j,v}T^{I^s:H} + (1-p^H_{j,v})T^{I^s:R}$ is the expected time to be in compartment $I^s$: $T^{I^s:H}$ is the expected duration before hospitalisation and $T^{I^s:R}$ is the expected duration before recovery.
   
-```math
-p^H_{j,v}=\eta^{H}_{v}\tilde{p}^{H}_{j}
+```{r}
+eqtext = 'p^H_{j,v}=\\eta^{H}_{v}\\tilde{p}^{H}_{j}'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
   is the baseline probability to be hospitalised ($`\tilde{p}^{H}_{j}`$) adjusted by the vaccine effect protecting against hospitalisation ($`\eta^{H}_{v}`$). Then
 
-```math
-k^{6}_{j,v} = p^H_{j,v}/T_{j,v}^{I^s}
+```{r}
+eqtext = 'k^{6}_{j,v} = p^H_{j,v}/T_{j,v}^{I^s}'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
   is the rate of hospitalisation following symptomatic infection.
 
-```math
-k^{7}_{j}(t) = (1-p^{D}_{j}(t)) / T_j^{H}(t)
+```{r}
+eqtext = 'k^{7}_{j}(t) = (1-p^{D}_{j}(t)) / T_j^{H}(t)'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
   is the rate of recovery of hospitalised patients, where $`p^{D}_{j}(t)=\tilde{p}^{D}_{j}f_H(t)`$ is the baseline probability to die given hospitalisation, adjusted by a factor encoding the increase in fatality rate as hospital occupancy increases:
@@ -469,20 +535,35 @@ k^{7}_{j}(t) = (1-p^{D}_{j}(t)) / T_j^{H}(t)
 <!-- (1 + 0.87*max(0, occ - Hmax) / occ)*pd; -->
 
   
-```math
-f_H(t)=1 + 5\frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
+```{r}
+eqtext = 'f_H(t)=1 + \\frac{9\\cdot\\max\\{0,H_{\\text{tot}}(t)-H_{\\text{max}}\\}}{H_{\\text{tot}}(t)},'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
-```math
-H_{\text{tot}}(t) = \sum_{v=0}^{m_V}\sum_{j=1}^{m_J} H_{j,v}(t).
+```{r}
+eqtext = 'H_{\\text{tot}}(t) = \\sum_{v=0}^{m_V}\\sum_{j=1}^{m_J} H_{j,v}(t).'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 $$T_j^{H}(t) = p_j^{D}(t)T^{H:D} + (1-p_{j}^{D}(t))T^{H:R}$$
 
 is the expected time to be in compartment $H$: $T^{H:D}$ is the expected duration before death and $T^{H:R}$ is the expected duration before recovery. Finally,
 
-```math
-k^{8}_{j}(t) = p^{D}_{j}(t)/T_j^{H}(t)
+```{r}
+eqtext = 'k^{8}_{j}(t) = p^{D}_{j}(t)/T_j^{H}(t)'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
   is the rate of death following hospitalisation.
@@ -581,26 +662,41 @@ The configuration $x$ and the proportion of workers working from home $q$ determ
 - Customer absence due to sector closure: impact on workers
 - Customer absence due to sector closure: impact on customers
 
-We approach this differently from @Doohan2025. Instead of contact matrices from @Prem2021, we use those from @Walker2020. Instead of work contacts from @Beraud2015, we use those from @Jarvis2023. @Haw2020 modelled closures using a combination of moving workers between sector compartments and a non-working compartment, and scaling of contacts. Here, we only use contacts to model closures, and do not move workers out of their compartments. An advantage of this is that workers within sectors retain their infection histories. 
+We approach this differently from @Doohan2025. Instead of contact matrices from @Prem2021, we use those from @Walker2020. Instead of work contacts from @Beraud2015, we use those from @Jarvis2024. @Haw2020 modelled closures using a combination of moving workers between sector compartments and a non-working compartment, and scaling of contacts. Here, we only use contacts to model closures, and do not move workers out of their compartments. An advantage of this is that workers within sectors retain their infection histories. 
 
 We construct contact matrix $M(x)$ as the sum of three matrices: $M^{\text{com}}(x)$ (community contacts), $M^{\text{CW}}(x)$ (community-to-worker contacts), and  $M^{\text{WC}}(x)$ (worker-to-community contacts). We construct peacetime matrices ($x=\textbf{1}$) beginning with a "target matrix", which the three matrices should add up to, which is taken from @Walker2020. By sampling relevant values, we decompose the whole matrix into its component parts. To incorporate closures, each matrix is transformed independently, before they are all added together again.
 
 Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix from @Walker2020. These are 16-by-16 matrices, $\tilde{M}$, for five-year age bands $a$ up to age group 75+. We map the matrix to a four-by-four matrix $\hat{M}$ corresponding to the four age groups $g$ used in the DAEDALUS model, using population sizes $\tilde{N}_a$:
 
-```math
-\hat{M}_{gg'} = \frac{\sum_{a\in g}\tilde{N}_{a}\sum_{a'\in g'}\tilde{M}_{a,a'}}{\sum_{a\in g}\tilde{N}_{a}},
+```{r}
+eqtext = "\\hat{M}_{gg'} = \\frac{\\sum_{a\\in g}\\tilde{N}_{a}\\sum_{a'\\in g'}\\tilde{M}_{a,a'}}{\\sum_{a\\in g}\\tilde{N}_{a}},"
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 and $\hat{N}_g$ to represent the population sizes of the DAEDALUS age groups,
 
-```math
-\hat{N}_g=\sum_{a\in g}\tilde{N}_a.
+```{r}
+eqtext = '\\hat{N}_g=\\sum_{a\\in g}\\tilde{N}_a.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 We get to the matrix $M(\textbf{1})$ by broadcasting the four-by-four matrix to the 49-by-49 one. Contacts from all groups $j$ to working groups $h$ depend on the age group of the group ($`g(j)`$), and the fraction of the age-population represented in group $h$, where $N_{h}$ is the number of people in group $h$:
 
-```math
-M_{j,h}(\textbf{1}) = \hat{M}_{g(j),g(h)}\frac{N_{h}}{\hat{N}_{g(h)}}
+```{r}
+eqtext = 'M_{j,h}(\\textbf{1}) = \\hat{M}_{g(j),g(h)}\\frac{N_{h}}{\\hat{N}_{g(h)}}'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 for $j$ and $h$ including all groups (working and non-working). Each group $j$ contains people that belong to only one age group $g$. We refer to the age group of the people in group $j$ as $g(j)$. Then $\hat{N}_{g(h)}$ is the number of people in the age group of group $h$, so $`\hat{N}_{g(h)}=N_{h}`$ for age groups 0 to 4, 5 to 19 and 65+, and $`\hat{N}_{g(h)}=\sum_{h\in\{1,...,m_S,m_S+3\}}N_{h}`$ for age group 20 to 64. 
@@ -613,41 +709,48 @@ With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$ and $M^{\text{WC}}(\textbf{1})
 
 $M^{\text{com}}(\textbf{1})$ is decomposed into its constituent parts, representing intra- and inter-household interactions (home), school interactions (sch) and hospitality interactions (CC):
 
-```math
-M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\text{CC}}(\textbf{1}) 
+```{r}
+eqtext = 'M^{\\text{com}}(\\textbf{1})=M^{\\text{home}} + M^{\\text{sch}}(\\textbf{1}) + M^{\\text{CC}}(\\textbf{1}) '
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values representing the fractions of contacts that come from school. School contacts are estimated separately in two age groups (pre-school age: 0-–4 (Figure \@ref(fig:school1frac)); school age: 5-–19 (Figure \@ref(fig:school2frac))): $M^{\text{sch}}(\textbf{1})$ has entries of zero for groups not in school, and values for 0 to 4 year olds and 5 to 19 year olds. 
 
 <!-- Likewise, $M^{\text{tran}}(\textbf{1})$ is also sampled as a fraction of total contacts. $M_{j,h}^{\text{tran}}(\textbf{1})\geq 0$ for $j=1,...,m_S$. $M_{j,h}^{\text{tran}}(\textbf{1})=0$ for $j>m_S$. -->
 
-Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure \@ref(fig:hospfrac), distributed by age, Figure \@ref(fig:conagefrac)), which leaves $M^{\text{home}}$. Community contacts in consumption settings includes contacts made on public transport, as these contacts are small in number and are most correlated with consumption (and not work or school) [@Jarvis2023]. (This might be because contacts are counted by how many people you talk to.)
+Finally, $M^{\text{CC}}(\textbf{1})$ is sampled as a fraction of $M^{\text{com}}(\textbf{1})- M^{\text{sch}}(\textbf{1})$ (Figure \@ref(fig:hospfrac), distributed by age, Figure \@ref(fig:conagefrac)), which leaves $M^{\text{home}}$. Community contacts in consumption settings includes contacts made on public transport, as these contacts are small in number and are most correlated with consumption (and not work or school) [@Jarvis2024]. (This might be because contacts are counted by how many people you talk to.)
 
-```{r workfrac,fig.cap='Fraction of contacts made at work, from [@Jarvis2023]. Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%)).', echo=F,message=F,warning=F, out.width="50%"}
+(ref:jv) @Jarvis2024
+
+```{r workfrac,fig.cap='Fraction of contacts made at work, from (ref:jv). Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%)).', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/workfrac.png")
 ```
 
-```{r allsector,fig.cap='Number of contacts made at work, from [@Jarvis2023]. Diamonds show average numbers and ranges are 50% quantile intervals. We sample values from half to double the average. Data come from UK, Netherlands and Switzerland, with occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using ONS data.', echo=F,message=F,warning=F, out.width="50%"}
+```{r allsector,fig.cap='Number of contacts made at work, from (ref:jv). Diamonds show average numbers and ranges are 50% quantile intervals. We sample values from half to double the average. Data come from UK, Netherlands and Switzerland, with occupation ISCO-88 mapped to ISCO-08 then SOC-10 then ISIC rev 4 using ONS data.', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/allsector45.png")
 ```
 
-```{r uksecdistage,fig.cap='Fraction of contacts made at work by age, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
+```{r uksecdistage,fig.cap='Fraction of contacts made at work by age, from (ref:jv).', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/uksec_dist_age.png")
 ```
 
-```{r school1frac,fig.cap='Fraction of contacts made at school for ages 0 to 4, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
+```{r school1frac,fig.cap='Fraction of contacts made at school for ages 0 to 4, from (ref:jv).', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/school1frac.png")
 ```
 
-```{r school2frac,fig.cap='Fraction of contacts made at school for ages 5 to 19, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
+```{r school2frac,fig.cap='Fraction of contacts made at school for ages 5 to 19, from (ref:jv).', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/school2frac.png")
 ```
 
-```{r hospfrac,fig.cap='Fraction of non-school and non-work contacts made in hospitality settings, by age group, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
+```{r hospfrac,fig.cap='Fraction of non-school and non-work contacts made in hospitality settings, by age group, from (ref:jv).', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/hospfrac.png")
 ```
 
-```{r conagefrac,fig.cap='Distribution of non-school and non-work contacts made in hospitality settings by age group, from [@Jarvis2023].', echo=F,message=F,warning=F, out.width="50%"}
+```{r conagefrac,fig.cap='Distribution of non-school and non-work contacts made in hospitality settings by age group, from (ref:jv).', echo=F,message=F,warning=F, out.width="50%"}
 knitr::include_graphics(path = "README_files/figure-gfm/conagefrac.png")
 ```
 
@@ -656,8 +759,13 @@ knitr::include_graphics(path = "README_files/figure-gfm/conagefrac.png")
 
 We construct $M^{\text{com}}(x)$ from its constituent parts, representing intra- and inter-household interactions (home), school interactions (sch) and hospitality interactions (CC):
 
-```math
-M^{\text{com}}(x)=M^{\text{home}} + M^{\text{sch}}(x) + M^{\text{CC}}(x).
+```{r}
+eqtext = 'M^{\\text{com}}(x)=M^{\\text{home}} + M^{\\text{sch}}(x) + M^{\\text{CC}}(x).'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 School contacts under $x$ are the peacetime values scaled by the extent of closure. $x_{\text{ed}}$ is the extent to which schools are open, so that the number of contacts per person scales superlinearly with school closure. 
@@ -691,8 +799,13 @@ M^{\text{CC}}(x) = (p^{27})^2M^{\text{CC}}(\textbf{1})
 
 The value $p^{27}$ is the workforce-weighted average extent to which the hospitality sectors are open, so that the number of contacts per person scales superlinearly according to closure:
 
-```math
-p^{27} = \frac{\sum_jx_{j}N_j}{\sum_jN_j}
+```{r}
+eqtext = 'p^{27} = \\frac{\\sum_jx_{j}N_j}{\\sum_jN_j}'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 where we sum over only the hospitality sectors.
@@ -796,9 +909,10 @@ Lost education is also quantified monetarily and constitutes an economic cost. U
 
 As there is no "tourism" sector in the 45-sector classification we are using, to model the impact of changes to tourism, we identify the "Food and accommodation services" sector with tourism. This is imperfect. The correlation of their % contributions to GDP is 0.64 and the order of magnitude is similar (1 to 7% vs 2 to 10% of GDP). The other two sectors considered (Air transport and Arts, entertainment and recreation) have little correlation with tourism in terms of % of GDP. (See Figure \@ref(fig:pairs).)
 
+(ref:unkey) @untourismKeyTourismStatistics2023
+(ref:unint) @untourismInternationalTourismCOVID192023
 
-
-```{r pairs, fig.cap="Correlations between tourism-related data. First: @untourismKeyTourismStatistics2023. Second to fourth: @untourismInternationalTourismCOVID192023. Fifth to seventh: OECD.",fig.height=7, fig.align="center",echo=F,warning=F,message=F}
+```{r pairs, fig.cap="Correlations between tourism-related data. First: (ref:unkey). Second to fourth: (ref:unint). Fifth to seventh: OECD.",fig.height=7, fig.align="center",echo=F,warning=F,message=F}
 
 data <- as.data.frame(readODS::read_ods('data/tourism.ods'))
 # colnames(data) <- data[1,]
@@ -861,8 +975,13 @@ For many countries, tourism was reduced in the COVID-19 pandemic not because of 
 
 We model mitigation via business closures, which are mandated by sector. We represent openness with values $x$ which range from 0 to 1, 1 representing maximum openness. To capture the impact of reduced international travel, we set the maximum openness of the food and accommodation services sector to be limited by international tourism as:
 
-```math
-x = \min\{\hat{x}, 1+ b(c-1)\}
+```{r}
+eqtext = 'x = \\min\\{\\hat{x}, 1+ b(c-1)\\}'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 where $`\hat{x}`$ is the openness of the sector according to the schedule (i.e. the sector-closure policy), $b$ is the proportion of tourism that is international, and $c$ is the fraction international tourism reduces to as a consequence of the pandemic. I.e. the tourism remaining is the domestic ($1-b$) plus that that comes in from abroad ($bc$).
@@ -910,7 +1029,7 @@ fit <- dlnorm(x, fit_params$estimate['meanlog'], fit_params$estimate['sdlog'])
 We model the distribution of $c$ using data from 2020 (Figure \@ref(fig:tourismhist), bottom-right plot). We fit to it a log-normal distribution, and find mean value `r round(fit_params$estimate['meanlog'],2)` and standard deviation `r round(fit_params$estimate['sdlog'],2)` (Figure \@ref(fig:ytd)). We use these values as inputs for all country models.
 
 
-```{r tourismhist, fig.cap="Distributions of tourism-related data from @untourismInternationalTourismCOVID192023. In grey are the subset of countries for which we have GVA data by sector.",fig.height=6, fig.width=9, fig.align="center",echo=F,warning=F,message=F, out.width="50%"}
+```{r tourismhist, fig.cap="Distributions of tourism-related data from (ref:unint). In grey are the subset of countries for which we have GVA data by sector.",fig.height=6, fig.width=9, fig.align="center",echo=F,warning=F,message=F, out.width="50%"}
 tourismhist
 ```
 
@@ -1225,7 +1344,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 lifeexpdist <- hmaxi[,lapply(list(Mean=mean(la1,na.rm=T),Min=min(la1,na.rm=T),Max=max(la1,na.rm=T)),format_to_print2,3),by=`Income group`]
 
-lg <- 'Mean life expectancy for all countries within each income-level group. Life expectancy as given "Expected years of life remaining" for the youngest age group (0 to 4 years old). \\label{tab:agedist}'
+lg <- 'Mean life expectancy for all countries within each income-level group. Life expectancy as given "Expected years of life remaining" for the youngest age group (0 to 4 years old). \\label{tab:le}'
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(lifeexpdist,caption=lg)
 }else{
@@ -1374,7 +1493,9 @@ In LMICs and LICs, there was arguably not a period of vaccine delivery in which 
 
 Figure \@ref(fig:vaxratewho) shows that in 40% of vaccination campaigns in LLMICs, the rate exceeded 0.2% of the population per day; in 28% of campaigns, the rate exceeded 0.4% of the population per day; and in 13% of campaigns, the rate exceeded 1% of the population per day. We use these rates of delivery for LLMIC synthetic countries.
 
-```{r vaxratewho,fig.cap='Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more [@whoSummaryMeaslesRubellaSupplementary2022]. The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up.',echo=F,warning=F,message=F, out.width="80%"}
+(ref:who) [@whoSummaryMeaslesRubellaSupplementary2022]
+
+```{r vaxratewho,fig.cap='Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more (ref:who). The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up.',echo=F,warning=F,message=F, out.width="80%"}
 
 knitr::include_graphics(path = "README_files/figure-gfm/vaccinationrates.png")
 
