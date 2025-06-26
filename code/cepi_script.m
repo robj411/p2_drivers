@@ -2,7 +2,8 @@
 addpath('functions');
 
 %% global variables
-
+lbfile0 = 'data/20250612 updated scenario delivery and costing.xlsx';
+lbfile = ['../',lbfile0];
 income_levels = {'LLMIC','UMIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
 nsamples  = 2048;
@@ -205,7 +206,20 @@ for sl = 1:nScen
     end
 end
 
+%% finishing up - process results with R script and write with Rmarkdown
 % !\Progra~1\R\R-4.4.1\bin\x64\Rscript cepi_voi.R
 exe_path = '"C:\Program Files\R\R-4.5.0\bin\x64\Rscript.exe"';
 system([exe_path,' exceedance_probabilities.R'])
+
+cd('..')
+
+firstbit = ' -e "rmarkdown::render(';
+markdownname = strcat('''', 'cepi','.Rmd''');
+doctype = strcat('''', 'pdf_document''');
+param = strcat('params=list(lbfile = ', '''', lbfile0,'''','))"'); 
+cmd = [exe_path,firstbit, markdownname, ', ', doctype,', ', param];
+% cmd = [exe_path,firstbit, markdownname, ', ', param];
+system(cmd)
+
+
 

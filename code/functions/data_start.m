@@ -2,7 +2,7 @@
 %
 % data: struct of general model parameters
 
-function data = data_start()
+function data = data_start(lbfile)
 
     %% closure strategies
     data      = struct; %rmfield(data,fields(~ismember(1:numel(fields),ikeep)));  
@@ -58,7 +58,7 @@ function data = data_start()
     data.compindex = compindex;
     
     %% vaccine rollout
-    fulltable = readtable('../data/20250612 updated scenario delivery and costing.xlsx','FileType','spreadsheet','Sheet',1);
+    fulltable = readtable(lbfile,'FileType','spreadsheet','Sheet',1);
     % fulltable = readtable('../data/20250328 pandemic delivery scenarios - for ICL.xlsx','FileType','spreadsheet','Sheet',1);
     % fulltable = readtable('../data/20240611 LB Daily Vaccine Delivery.xlsx','FileType','spreadsheet','Sheet',1);
     colnames = regexprep(fulltable.Properties.VariableNames(2+[1:3]),'s','');
