@@ -74,7 +74,7 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
         cum_bpsv = cumsum(bpsv_sched*50000000);
         keep_indices = find(diff([0; cum_bpsv])>0);
         interptime = interp1([0; cum_bpsv(keep_indices)],[0; keep_indices],doses4(4));
-        find(cum_bpsv>doses4(4),1)
+        % find(cum_bpsv>doses4(4),1)
         t_bpsv = min(interptime, find(bpsv_sched~=0,1,'last')) - first_bpsv_nonzero + 1;
         t_vax = p2.Tres + first_bpsv_nonzero;
     else
