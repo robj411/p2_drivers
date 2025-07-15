@@ -2,6 +2,12 @@
 title: "DAEDALUS for CEPI's 100-day mission: code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::pdf_document2: 
     #   --filter=pandoc-xnos
     toc: false
@@ -14,12 +20,6 @@ output:
     fig_caption: yes
     includes:
       in_header: "preamble.tex"
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -90,7 +90,6 @@ This document describes the DAEDALUS model that is used in the CEPI application.
 # Methods {.unlisted .unnumbered}
 
 
-This document describes the DAEDALUS model that is used in the CEPI application. The DAEDALUS model simulates a single epidemic in a single country. Details of how the DAEDALUS model is used as a part of the methodology of the CEPI application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the DAEDALUS model.
 
 
 ```{r internetfile,echo=F,warning=F,message=F}
@@ -271,8 +270,8 @@ Parameter $r_e$ is the income elasticity. For an HIC we set it to 0.8, and other
 
 | Method | Probability | $r_p$ | $r_e$ (LLMIC) | $r_e$ (UMIC, GDPpc < \$8,809) | $r_e$ (UMIC, GDPpc > \$8,809) | $r_e$ (HIC) | 
 |:----- |:----- |:----- |:----- |:----- |:----- |:----- |
-| OECD/IHME/World Bank | 0.5 | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | 0.8 |
-| Viscusi/Masterman | 0.5 | 1 | 1 | 1 | Uniform(0.85, 1) | Uniform(0.85, 1) |
+| OECD/IHME/ World Bank | 0.5 | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | 0.8 |
+| Viscusi/ Masterman | 0.5 | 1 | 1 | 1 | Uniform(0.85, 1) | Uniform(0.85, 1) |
 
 Table: (\#tab:vslrules) values for elasticities, adapted from @Robinson2021, Table 2 (page 25)
 
@@ -444,7 +443,7 @@ k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_J}M_{j,h}(x) I_h(t)
 
 with $m_J=49$ strata and 
 ```{r}
-eqtext = 'I_h(t)=\\sum_{v=0}^{m_V}\\left(\\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\\right). '
+eqtext = 'I_h(t)=\\sum_{v=0}^{m_V}\\eta^I_v\\left(\\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\\right). '
 if (knitr::is_html_output()) {
   cat(paste0("```math\n",eqtext,"\n```",collapse=''))
 } else {
@@ -452,7 +451,7 @@ if (knitr::is_html_output()) {
 }
 ```
 
-  Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of uncosted transmission reductions; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p^3$ and $p^4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic ($I_{h,\cdot}^{a}$) and symptomatic ($I_{h,\cdot}^{s}$) people who are unvaccinated ($I_{h,v=0}^{\cdot}$), vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
+  Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate of infection, $\beta$, which captures the impact of uncosted transmission reductions;  $`\eta^{I}_{v}`$ is the relative infectiousness given vaccine status $v$; $M(x)$ is the contact matrix between groups and depends on the economic configuration $x$; $\epsilon$ is the reduction in infectiousness from asymptomatic relative to symptomatic individuals; $p^3$ and $p^4$ are the proportions of asymptomatic and symptomatic infectiousness averted, respectively, due to self isolating; and $I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic ($I_{h,\cdot}^{a}$) and symptomatic ($I_{h,\cdot}^{s}$) people who are unvaccinated ($I_{h,v=0}^{\cdot}$), vaccinated with the BPSV ($I_{h,v=1}^{\cdot}$), or vaccinated with the specific vaccine ($I_{h,v=2}^{\cdot}$) in stratum $h$.
 
 
 ```{r}
@@ -645,8 +644,8 @@ Quantity | BPSV | SSV
 |:----- |:----- |:----- |
 Time to develop immunity | 21 days | 21 days 
 Effectiveness against infection | 0.35 | 0.55 
-Effectiveness against hospitalisation | 0.8 | 0.9 
-Effect on transmission | 0 | 0 
+Effectiveness against hospitalisation | 0.75 | 0.95 
+Effect on transmission | 0.35 | 0.35 
 Rate of waning | 0 | 0 
 
 Table: (\#tab:vaccineeffects) Vaccine effects. The Time to develop immunity is the average time it takes a person to go from the Susceptible compartment to the Vaccinated equivalent compartment, such that the rate of transition is 1/21 per day. The Effectiveness against infection is one minus the relative risk of infection of a vaccinated person compared to an unvaccinated person. The Effectiveness against hospitalisation is one minus the relative risk of hospitalisation of a vaccinated person compared to an unvaccinated person. The Effect on transmission is one minus the relative infectiousness of an infectious vaccinated person compared to an infectious unvaccinated person. The Rate of waning is the rate at which the vaccine effects decay over time. Parameter choices were made to align with @whittakerQuantifyingImpactBroadly2024.
@@ -823,7 +822,7 @@ for $h\in\{1,...,m_J\}$.
 
 Here, there is superlinear scaling of $M^{\text{CW}}_{j,h}(\textbf{1})$ with respect to working from home and with respect to sector closure, as both workers and members of the community are absent from the workplace as the sector moves online and becomes more closed.
 
-<!-- ### Matrix $M^{\text{WW}}$: Worker-to-worker contacts -->
+<!-- ## Matrix $M^{\text{WW}}$: Worker-to-worker contacts -->
 
 <!-- \begin{equation} -->
 <!-- M_{j,j}^{\text{WW}}(x) = x_{j}(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}), -->
@@ -1233,7 +1232,8 @@ eccon <- eccon[,c(0,colorder)+1]
 colnames(eccon) <- c('Sector',rep(c('Heavy closures','Light closures'),times=3))
 
 if (!knitr::is_html_output(excludes = "markdown")) { 
-  pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
+  # pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
+  cat('\\input{configtable.tex}')
 }else{
     x <- knitr::kable(eccon,escape=F, "html",caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage.  RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
   kable_styling(x,full_width = F,latex_options = "HOLD_position") %>%
@@ -1243,6 +1243,11 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ```
 
+
+<!-- \input{configtable.tex} -->
+
+
+\clearpage
 
 
 # Pathogen profiles
@@ -1493,7 +1498,7 @@ In LMICs and LICs, there was arguably not a period of vaccine delivery in which 
 
 Figure \@ref(fig:vaxratewho) shows that in 40% of vaccination campaigns in LLMICs, the rate exceeded 0.2% of the population per day; in 28% of campaigns, the rate exceeded 0.4% of the population per day; and in 13% of campaigns, the rate exceeded 1% of the population per day. We use these rates of delivery for LLMIC synthetic countries.
 
-(ref:who) [@whoSummaryMeaslesRubellaSupplementary2022]
+(ref:who) [@WorldHealthOrganization2022]
 
 ```{r vaxratewho,fig.cap='Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more (ref:who). The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up.',echo=F,warning=F,message=F, out.width="80%"}
 

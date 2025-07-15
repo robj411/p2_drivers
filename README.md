@@ -58,13 +58,6 @@ rates and are inputs to the DAEDALUS model.
 
 # Methods
 
-This document describes the DAEDALUS model that is used in the CEPI
-application. The DAEDALUS model simulates a single epidemic in a single
-country. Details of how the DAEDALUS model is used as a part of the
-methodology of the CEPI application is presented in a separate report,
-which also details the scenarios which are expressed as vaccination
-rates and are inputs to the DAEDALUS model.
-
 # 1 Simulation rules
 
 - The country is instantiated with two random variables: the response
@@ -261,8 +254,8 @@ the VSL from another.
 
 | Method | Probability | $r_p$ | $r_e$ (LLMIC) | $r_e$ (UMIC, GDPpc \< \$8,809) | $r_e$ (UMIC, GDPpc \> \$8,809) | $r_e$ (HIC) |
 |:---|:---|:---|:---|:---|:---|:---|
-| OECD/IHME/World Bank | 0.5 | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | 0.8 |
-| Viscusi/Masterman | 0.5 | 1 | 1 | 1 | Uniform(0.85, 1) | Uniform(0.85, 1) |
+| OECD/IHME/ World Bank | 0.5 | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | 0.8 |
+| Viscusi/ Masterman | 0.5 | 1 | 1 | 1 | Uniform(0.85, 1) | Uniform(0.85, 1) |
 
 <span id="tab:vslrules"></span>Table 2.1: values for elasticities,
 adapted from Robinson, Sullivan, and Shogren (2021), Table 2 (page 25)
@@ -404,18 +397,19 @@ k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_J}M_{j,h}(x) I_h(t)
 with $m_J=49$ strata and
 
 ``` math
-I_h(t)=\sum_{v=0}^{m_V}\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
+I_h(t)=\sum_{v=0}^{m_V}\eta^I_v\left(\epsilon (1-p^3(t))I_{h,v}^{a}(t)+(1-p^4(t))I_{h,v}^{s}(t)\right). 
 ```
 
 Here, $`\eta^{E}_{v}`$ is the relative probability to be infected given
 vaccine status $v$; $\rho(t)$ is the time-dependent modifier of the rate
 of infection, $\beta$, which captures the impact of uncosted
-transmission reductions; $M(x)$ is the contact matrix between groups and
-depends on the economic configuration $x$; $\epsilon$ is the reduction
-in infectiousness from asymptomatic relative to symptomatic individuals;
-$p^3$ and $p^4$ are the proportions of asymptomatic and symptomatic
-infectiousness averted, respectively, due to self isolating; and
-$I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic
+transmission reductions; $`\eta^{I}_{v}`$ is the relative infectiousness
+given vaccine status $v$; $M(x)$ is the contact matrix between groups
+and depends on the economic configuration $x$; $\epsilon$ is the
+reduction in infectiousness from asymptomatic relative to symptomatic
+individuals; $p^3$ and $p^4$ are the proportions of asymptomatic and
+symptomatic infectiousness averted, respectively, due to self isolating;
+and $I_{h,\cdot}^{\cdot}$ is the number of infectious asymptomatic
 ($I_{h,\cdot}^{a}$) and symptomatic ($I_{h,\cdot}^{s}$) people who are
 unvaccinated ($I_{h,v=0}^{\cdot}$), vaccinated with the BPSV
 ($I_{h,v=1}^{\cdot}$), or vaccinated with the specific vaccine
@@ -538,8 +532,8 @@ vaccination status. $u$: final vaccination status.
 |:--------------------------------------|:--------|:--------|
 | Time to develop immunity              | 21 days | 21 days |
 | Effectiveness against infection       | 0.35    | 0.55    |
-| Effectiveness against hospitalisation | 0.8     | 0.9     |
-| Effect on transmission                | 0       | 0       |
+| Effectiveness against hospitalisation | 0.75    | 0.95    |
+| Effect on transmission                | 0.35    | 0.35    |
 | Rate of waning                        | 0       | 0       |
 
 <span id="tab:vaccineeffects"></span>Table 3.1: Vaccine effects. The
@@ -810,7 +804,7 @@ with respect to working from home and with respect to sector closure, as
 both workers and members of the community are absent from the workplace
 as the sector moves online and becomes more closed.
 
-<!-- ### Matrix $M^{\text{WW}}$: Worker-to-worker contacts -->
+<!-- ## Matrix $M^{\text{WW}}$: Worker-to-worker contacts -->
 <!-- \begin{equation} -->
 <!-- M_{j,j}^{\text{WW}}(x) = x_{j}(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}), -->
 <!-- (\#eq:worker) -->
@@ -2340,7 +2334,7 @@ services-producing activities of households for own use
 </tr>
 </tbody>
 </table>
-
+<!-- \input{configtable.tex} -->
 # 6 Pathogen profiles
 
 We sample pathogen profiles by defining distributions over the pathogen
@@ -4406,16 +4400,16 @@ countries.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaccinationrates.png" alt="Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more [@whoSummaryMeaslesRubellaSupplementary2022]. The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up." width="80%" />
+<img src="README_files/figure-gfm/vaccinationrates.png" alt="Vaccine administration rates in LLMICs. Shown is the cumulative distribution of delivery rate, measured as the % of the population vaccinated per day. The data consist of 141 points, from 55 countries that are currently classified as LIC or LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR vaccines, lasting two weeks or more [@WorldHealthOrganization2022]. The types of programme include campaigns and outbreak response as well as catch up, follow up, speed up, and mop up." width="80%" />
 <p class="caption">
 <span id="fig:vaxratewho"></span>Figure 7.5: Vaccine administration
 rates in LLMICs. Shown is the cumulative distribution of delivery rate,
 measured as the % of the population vaccinated per day. The data consist
 of 141 points, from 55 countries that are currently classified as LIC or
 LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR
-vaccines, lasting two weeks or more (WHO 2022). The types of programme
-include campaigns and outbreak response as well as catch up, follow up,
-speed up, and mop up.
+vaccines, lasting two weeks or more (**WorldHealthOrganization2022?**).
+The types of programme include campaigns and outbreak response as well
+as catch up, follow up, speed up, and mop up.
 </p>
 
 </div>
@@ -4841,14 +4835,6 @@ Whittaker, Charles, Gregory Barnsley, Daniela Olivera Mesa, Daniel J
 Laydon, Chee Wah Tan, Feng Zhu, Rob Johnson, et al. 2024. “Quantifying
 the Impact of a Broadly Protective Sarbecovirus Vaccine in a Future
 SARS-X Pandemic.” <https://doi.org/10.1101/2024.08.12.24311730>.
-
-</div>
-
-<div id="ref-whoSummaryMeaslesRubellaSupplementary2022"
-class="csl-entry">
-
-WHO. 2022. “Summary of Measles-Rubella Supplementary Immunization
-Activities.”
 
 </div>
 
