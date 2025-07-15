@@ -12,7 +12,7 @@ n_income = numel(income_levels);
 %% country variables
 
 [CD, country_parameter_distributions, utr_coefs] = load_country_data();
-data = data_start();
+data = data_start(lbfile);
 nScen = length(data.scenarios);
 
 synthetic_countries = cell(nsamples,length(income_levels));
