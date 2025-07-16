@@ -215,8 +215,8 @@ cd('..')
 
 firstbit = ' -e "rmarkdown::render(';
 markdownname = strcat('''', 'cepi','.Rmd''');
-doctype = strcat('''', 'pdf_document''');
-param = strcat('params=list(lbfile = ', '''', lbfile0,'''','))"'); 
+doctype = strcat('''', 'bookdown::pdf_document2''');
+param = strcat('params=list(lbfile = ', '''', lbfile0,'''','), clean=F)"'); 
 cmd = [exe_path,firstbit, markdownname, ', ', doctype,', ', param];
 % cmd = [exe_path,firstbit, markdownname, ', ', param];
 system(cmd)
