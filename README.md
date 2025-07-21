@@ -20,7 +20,7 @@ DAEDALUS for CEPI’s 100-day mission: code and model description
   - [3.5 Uncosted transmission
     reductions](#35-uncosted-transmission-reductions)
   - [3.6 Testing and self isolating](#36-testing-and-self-isolating)
-- [4 Econ component](#4-econ-component)
+- [4 Economic projections](#4-economic-projections)
   - [4.1 Impact of tourism](#41-impact-of-tourism)
     - [4.1.1 Food and accommodation services
       sector](#411-food-and-accommodation-services-sector)
@@ -935,29 +935,26 @@ $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 <!-- frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5); -->
 <!-- frac_cases_found = max(frac_cases_found, trate/10^5 ); -->
 
-# 4 Econ component
+# 4 Economic projections
 
-The economic component is measuring GDP by summing GVA over sectors and
-over time taking into account the extent to which sectors are open, as
-described in Section <a href="#lost-economic-activity">2.1</a>.
+The model projects economic output for the epidemic period taking into
+account the availability and presence of workers, as described in
+Section <a href="#lost-economic-activity">2.1</a>.
 
 The economy is stratified by sector following the International Standard
 Industrial Classification of All Economic Activities (ISIC) Rev. 4 as
 used by the OECD (UN Economic and Social Affairs 2008). Economic output
 is measured as the sum of gross value added (GVA) of all sectors over
-the epidemic period, expressed as a percentage of pre-epidemic GVA
-summed over the same period.
+the epidemic period. GVA per sector is assumed to depend linearly on its
+workforce.
 
-Openness comes primarily from the economic configuration which is a
-policy choice, mandated in response to the epidemic (see Section
-<a href="#closure-policies">5</a>). There are potentially additional
-losses due to worker sickness and death (see Section
-<a href="#lost-economic-activity">2.1</a>) and due to lost tourism,
-which is an exogenous random variable (see Section
-<a href="#impact-of-tourism">4.1</a>). We do not model changes to supply
-or demand, reductions in consumption and labour supply due to infection
-avoidance of individuals, interruptions in supply chains, or changes in
-imports and exports.
+The size of the workforce present comes primarily from the economic
+configuration which is a policy choice, mandated in response to the
+epidemic (see Section <a href="#closure-policies">5</a>). Additional
+losses come from worker sickness and death (see Section
+<a href="#lost-economic-activity">2.1</a>) and loss of tourism, which is
+an exogenous random variable (see Section
+<a href="#impact-of-tourism">4.1</a>).
 
 Lost education is also quantified monetarily and constitutes an economic
 cost. Unlike the other losses, they are not contemporaneous with the

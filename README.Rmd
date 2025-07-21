@@ -891,15 +891,17 @@ We assume that infectious people who know their status have a compliance $p^1\si
 <!-- frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5); -->
 <!-- frac_cases_found = max(frac_cases_found, trate/10^5 ); -->
 
-# Econ component 
+# Economic projections 
 
-The economic component is measuring GDP by summing GVA over sectors and over time taking into account the extent to which sectors are open, as described in Section \@ref(lost-economic-activity). 
+The model projects economic output for the epidemic period taking into account the availability and presence of workers, as described in Section \@ref(lost-economic-activity). 
 
-The economy is stratified by sector following the International Standard Industrial Classification of All Economic Activities (ISIC) Rev. 4 as used by the OECD [@un]. Economic output is measured as the sum of gross value added (GVA) of all sectors over the epidemic period, expressed as a percentage of pre-epidemic GVA summed over the same period. 
+The economy is stratified by sector following the International Standard Industrial Classification of All Economic Activities (ISIC) Rev. 4 as used by the OECD [@un]. Economic output is measured as the sum of gross value added (GVA) of all sectors over the epidemic period. GVA per sector is assumed to depend linearly on its workforce.
 
-Openness comes primarily from the economic configuration which is a policy choice, mandated in response to the epidemic (see Section \@ref(closure-policies)). There are potentially additional losses due to worker sickness and death (see Section \@ref(lost-economic-activity)) and due to lost tourism, which is an exogenous random variable (see Section \@ref(impact-of-tourism)). We do not model changes to supply or demand, reductions in consumption and labour supply due to infection avoidance of individuals, interruptions in supply chains, or changes in imports and exports.
+The size of the workforce present comes primarily from the economic configuration which is a policy choice, mandated in response to the epidemic (see Section \@ref(closure-policies)). Additional losses come from worker sickness and death (see Section \@ref(lost-economic-activity)) and loss of tourism, which is an exogenous random variable (see Section \@ref(impact-of-tourism)). 
 
 Lost education is also quantified monetarily and constitutes an economic cost. Unlike the other losses, they are not contemporaneous with the epidemic, but losses that unfold into the future. The assumptions and equations are described in Section \@ref(lost-education).
+
+
 
 ## Impact of tourism
 
