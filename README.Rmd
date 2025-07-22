@@ -529,19 +529,20 @@ if (knitr::is_html_output()) {
 }
 ```
 
-  is the rate of recovery of hospitalised patients, where $`p^{D}_{j}(t)=\tilde{p}^{D}_{j}f_H(t)`$ is the baseline probability to die given hospitalisation, adjusted by a factor encoding the increase in fatality rate as hospital occupancy increases:
+  is the rate of recovery of hospitalised patients, where $`p^{D}_{j}(t)=\min\{\tilde{p}^{D}_{j}f_H(t),1\}`$ is the baseline probability to die given hospitalisation, adjusted by a factor encoding the increase in fatality rate as hospital occupancy increases:
   
-<!-- (1 + 0.87*max(0, occ - Hmax) / occ)*pd; -->
 
   
 ```{r}
-eqtext = 'f_H(t)=1 + \\frac{9\\cdot\\max\\{0,H_{\\text{tot}}(t)-H_{\\text{max}}\\}}{H_{\\text{tot}}(t)},'
+eqtext = 'f_H(t)=1 + \\frac{\\cdot\\max\\{0,H_{\\text{tot}}(t)-H_{\\text{max}}\\}}{H_{\\text{tot}}(t)}\\phi,'
 if (knitr::is_html_output()) {
   cat(paste0("```math\n",eqtext,"\n```",collapse=''))
 } else {
   cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
 }
 ```
+
+$1+\phi$ can be interpreted as the what the fatality ratio is for someone who needs but does not receive hospital care relative to the HFR (i.e. the fatality ratio of those who need and receive hospital care). This is the value the HFR tends to as hospital demand far exceeds its capacity, at which point most who need care do not receive it.
 
 ```{r}
 eqtext = 'H_{\\text{tot}}(t) = \\sum_{v=0}^{m_V}\\sum_{j=1}^{m_J} H_{j,v}(t).'
@@ -1249,7 +1250,8 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 <!-- \input{configtable.tex} -->
 
 
-\clearpage
+<!-- \newpage -->
+
 
 
 # Pathogen profiles
@@ -1293,6 +1295,7 @@ Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997
 Time to immunity waning | Constant | Inf | None 
 Relative infectiousness of asymptomatic | Constant | 0.58 | None 
 $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) 
+Fatality ratio without care relative to HFR | Gamma | 5, 1 | None
 
 Table: (\#tab:pathogenparameters) Distributions for pathogen parameters used to sample synthetic pathogens. Distributions are built from values in Table \@ref(tab:pathogenprofile).
 

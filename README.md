@@ -466,15 +466,19 @@ k^{7}_{j}(t) = (1-p^{D}_{j}(t)) / T_j^{H}(t)
 ```
 
 is the rate of recovery of hospitalised patients, where
-$`p^{D}_{j}(t)=\tilde{p}^{D}_{j}f_H(t)`$ is the baseline probability to
-die given hospitalisation, adjusted by a factor encoding the increase in
-fatality rate as hospital occupancy increases:
-
-<!-- (1 + 0.87*max(0, occ - Hmax) / occ)*pd; -->
+$`p^{D}_{j}(t)=\min\{\tilde{p}^{D}_{j}f_H(t),1\}`$ is the baseline
+probability to die given hospitalisation, adjusted by a factor encoding
+the increase in fatality rate as hospital occupancy increases:
 
 ``` math
-f_H(t)=1 + \frac{9\cdot\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)},
+f_H(t)=1 + \frac{\cdot\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)}\phi,
 ```
+
+$1+\phi$ can be interpreted as the what the fatality ratio is for
+someone who needs but does not receive hospital care relative to the HFR
+(i.e. the fatality ratio of those who need and receive hospital care).
+This is the value the HFR tends to as hospital demand far exceeds its
+capacity, at which point most who need care do not receive it.
 
 ``` math
 H_{\text{tot}}(t) = \sum_{v=0}^{m_V}\sum_{j=1}^{m_J} H_{j,v}(t).
@@ -2332,6 +2336,8 @@ services-producing activities of households for own use
 </tbody>
 </table>
 <!-- \input{configtable.tex} -->
+<!-- \newpage -->
+
 # 6 Pathogen profiles
 
 We sample pathogen profiles by defining distributions over the pathogen
@@ -3536,6 +3542,7 @@ basic reproduction number
 | Time to immunity waning | Constant | Inf | None |
 | Relative infectiousness of asymptomatic | Constant | 0.58 | None |
 | $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
+| Fatality ratio without care relative to HFR | Gamma | 5, 1 | None |
 
 <span id="tab:pathogenparameters"></span>Table 6.2: Distributions for
 pathogen parameters used to sample synthetic pathogens. Distributions
@@ -4536,31 +4543,31 @@ Capital letters
 
 Lower-case letters
 
-|   Letter   |              Definition              |
-|:----------:|:------------------------------------:|
-|  $\alpha$  |                                      |
-|  $\beta$   |          transmission rate           |
-|  $\gamma$  |                                      |
-|  $\delta$  |                                      |
-| $\epsilon$ | ratio transmission from asymptomatic |
-|  $\zeta$   |                                      |
-|   $\eta$   |           vaccine effects            |
-|  $\theta$  |                                      |
-|  $\iota$   |                                      |
-|  $\kappa$  |                                      |
-| $\lambda$  |                                      |
-|   $\mu$    |                                      |
-|   $\nu$    |             growth rate              |
-|    $o$     |                  –                   |
-|   $\pi$    |                                      |
-|   $\rho$   |        transmission modifier         |
-|  $\sigma$  |                                      |
-|   $\tau$   |               max time               |
-| $\upsilon$ |                  –                   |
-|   $\phi$   |                                      |
-|   $\chi$   |                                      |
-|   $\psi$   |                                      |
-|  $\omega$  |                                      |
+|   Letter   |                     Definition                      |
+|:----------:|:---------------------------------------------------:|
+|  $\alpha$  |                                                     |
+|  $\beta$   |                  transmission rate                  |
+|  $\gamma$  |                                                     |
+|  $\delta$  |                                                     |
+| $\epsilon$ |        ratio transmission from asymptomatic         |
+|  $\zeta$   |                                                     |
+|   $\eta$   |                   vaccine effects                   |
+|  $\theta$  |                                                     |
+|  $\iota$   |                                                     |
+|  $\kappa$  |                                                     |
+| $\lambda$  |                                                     |
+|   $\mu$    |                                                     |
+|   $\nu$    |                     growth rate                     |
+|    $o$     |                          –                          |
+|   $\pi$    |                                                     |
+|   $\rho$   |                transmission modifier                |
+|  $\sigma$  |                                                     |
+|   $\tau$   |                      max time                       |
+| $\upsilon$ |                          –                          |
+|   $\phi$   | Fatality rate without hospital care relative to HFR |
+|   $\chi$   |                                                     |
+|   $\psi$   |                                                     |
+|  $\omega$  |                                                     |
 
 Greek letters
 
