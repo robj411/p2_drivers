@@ -90,6 +90,8 @@ function [param_struct, R0_dist] = sample_disease_parameters(nsamples)
 
     param_struct.frac_presymptomatic = unifrnd(0,1,nsamples,1);
 
+    param_struct.rel_FR = gamrnd(5,1,nsamples,1);
+
     disp(hyper_param_struct)
 
     %% ihr and hfr 
