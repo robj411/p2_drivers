@@ -225,8 +225,10 @@ levels (Hammitt 2020).
 We estimate VSL as a function of GDP, relative to values for the USA:
 
 ``` math
-\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{Y_0}{\text{GDP}_{\text{USA}}}\right)^{r_e}. 
+\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{\text{GDP}}{\text{GDP}_{\text{USA}}}\right)^{r_e} 
 ```
+
+with $$\text{GDP}=\sum_{j=1}^{m_S}y_j.$$
 
 Here, $`\text{VSL}_{\text{USA}}`$ is a 2019 estimate of VSL for the USA
 (10.9 million \$) and $`\text{GDP}_{\text{USA}}`$ is its GDP. We choose

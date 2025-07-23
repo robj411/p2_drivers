@@ -254,13 +254,18 @@ We estimate a country's VSL using the VSL of the USA, adjusting for the differen
 
 We estimate VSL as a function of GDP, relative to values for the USA:
 ```{r}
-eqtext = '\\text{VSL}=\\text{VSL}_{\\text{USA}}\\left(r_p\\frac{Y_0}{\\text{GDP}_{\\text{USA}}}\\right)^{r_e}. '
+eqtext = '\\text{VSL}=\\text{VSL}_{\\text{USA}}\\left(r_p\\frac{\\text{GDP}}{\\text{GDP}_{\\text{USA}}}\\right)^{r_e} '
 if (knitr::is_html_output()) {
   cat(paste0("```math\n",eqtext,"\n```",collapse=''))
 } else {
   cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
 }
 ```
+
+with
+$$\text{GDP}=\sum_{j=1}^{m_S}y_j.$$
+
+
 
 Here, $`\text{VSL}_{\text{USA}}`$ is a 2019 estimate of VSL for the USA (10.9 million \$) and $`\text{GDP}_{\text{USA}}`$ is its GDP. We choose randomly between two alternative methods, OECD/IHME/World Bank and Viscusi & Masterman, to map from USA's VSL to the VSL of our country, as discussed in @Robinson2021. We implement the methods using approximations to the presentations therein, which we summarise in see Table \@ref(tab:ruleselimination).  
 
