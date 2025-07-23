@@ -529,19 +529,20 @@ if (knitr::is_html_output()) {
 }
 ```
 
-  is the rate of recovery of hospitalised patients, where $`p^{D}_{j}(t)=\tilde{p}^{D}_{j}f_H(t)`$ is the baseline probability to die given hospitalisation, adjusted by a factor encoding the increase in fatality rate as hospital occupancy increases:
+  is the rate of recovery of hospitalised patients, where $`p^{D}_{j}(t)=\min\{\tilde{p}^{D}_{j}f_H(t),1\}`$ is the baseline probability to die given hospitalisation, adjusted by a factor encoding the increase in fatality rate as hospital occupancy increases:
   
-<!-- (1 + 0.87*max(0, occ - Hmax) / occ)*pd; -->
 
   
 ```{r}
-eqtext = 'f_H(t)=1 + \\frac{9\\cdot\\max\\{0,H_{\\text{tot}}(t)-H_{\\text{max}}\\}}{H_{\\text{tot}}(t)},'
+eqtext = 'f_H(t)=1 + \\frac{\\cdot\\max\\{0,H_{\\text{tot}}(t)-H_{\\text{max}}\\}}{H_{\\text{tot}}(t)}\\phi,'
 if (knitr::is_html_output()) {
   cat(paste0("```math\n",eqtext,"\n```",collapse=''))
 } else {
   cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
 }
 ```
+
+$1+\phi$ can be interpreted as the what the fatality ratio is for someone who needs but does not receive hospital care relative to the HFR (i.e. the fatality ratio of those who need and receive hospital care). This is the value the HFR tends to as hospital demand far exceeds its capacity, at which point most who need care do not receive it.
 
 ```{r}
 eqtext = 'H_{\\text{tot}}(t) = \\sum_{v=0}^{m_V}\\sum_{j=1}^{m_J} H_{j,v}(t).'
@@ -891,15 +892,17 @@ We assume that infectious people who know their status have a compliance $p^1\si
 <!-- frac_cases_found(Ip >= trate) = min(frac_cases_found(Ip >= trate),trate/10^5); -->
 <!-- frac_cases_found = max(frac_cases_found, trate/10^5 ); -->
 
-# Econ component 
+# Economic projections 
 
-The economic component is measuring GDP by summing GVA over sectors and over time taking into account the extent to which sectors are open, as described in Section \@ref(lost-economic-activity). 
+The model projects economic output for the epidemic period taking into account the availability and presence of workers, as described in Section \@ref(lost-economic-activity). 
 
-The economy is stratified by sector following the International Standard Industrial Classification of All Economic Activities (ISIC) Rev. 4 as used by the OECD [@un]. Economic output is measured as the sum of gross value added (GVA) of all sectors over the epidemic period, expressed as a percentage of pre-epidemic GVA summed over the same period. 
+The economy is stratified by sector following the International Standard Industrial Classification of All Economic Activities (ISIC) Rev. 4 as used by the OECD [@un]. Economic output is measured as the sum of gross value added (GVA) of all sectors over the epidemic period. GVA per sector is assumed to depend linearly on its workforce.
 
-Openness comes primarily from the economic configuration which is a policy choice, mandated in response to the epidemic (see Section \@ref(closure-policies)). There are potentially additional losses due to worker sickness and death (see Section \@ref(lost-economic-activity)) and due to lost tourism, which is an exogenous random variable (see Section \@ref(impact-of-tourism)). We do not model changes to supply or demand, reductions in consumption and labour supply due to infection avoidance of individuals, interruptions in supply chains, or changes in imports and exports.
+The size of the workforce present comes primarily from the economic configuration which is a policy choice, mandated in response to the epidemic (see Section \@ref(closure-policies)). Additional losses come from worker sickness and death (see Section \@ref(lost-economic-activity)) and loss of tourism, which is an exogenous random variable (see Section \@ref(impact-of-tourism)). 
 
 Lost education is also quantified monetarily and constitutes an economic cost. Unlike the other losses, they are not contemporaneous with the epidemic, but losses that unfold into the future. The assumptions and equations are described in Section \@ref(lost-education).
+
+
 
 ## Impact of tourism
 
@@ -1247,7 +1250,8 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 <!-- \input{configtable.tex} -->
 
 
-\clearpage
+<!-- \newpage -->
+
 
 
 # Pathogen profiles
@@ -1291,6 +1295,7 @@ Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997
 Time to immunity waning | Constant | Inf | None 
 Relative infectiousness of asymptomatic | Constant | 0.58 | None 
 $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) 
+Fatality ratio without care relative to HFR | Gamma | 5, 1 | None
 
 Table: (\#tab:pathogenparameters) Distributions for pathogen parameters used to sample synthetic pathogens. Distributions are built from values in Table \@ref(tab:pathogenprofile).
 
