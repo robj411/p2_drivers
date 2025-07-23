@@ -145,6 +145,10 @@ pb <- sum(xlsxdata[,deaths/pop*1000<mu])/nrow(xlsxdata)
 data <- subset(xlsxdata,deaths/pop*1000>mu)
 
 
+allyears = seq(min(xlsxdata$yearstart),max(xlsxdata$yearend))
+for(i in 1:nrow(xlsxdata))
+  allyears = allyears[!allyears %in% seq(xlsxdata$yearstart[i],xlsxdata$yearend[i])]
+
 # csvdata <- read.csv('../../mevd/Epidemic16002020March2021.csv',header=F)
 # colnames(csvdata)[1:4] <- c('yearstart','yearend','deaths','pop')
 # csvdata$deaths[csvdata$deaths==1800] <- 1.8
@@ -399,7 +403,9 @@ for(bau_scen in 1:nbscens){
   
   comparisons <- lapply(list(bpsv = c(1:3), 
                              ssv = c(4:11), 
-                             eq = c(12)),function(x) just_scen_names[x])
+                             eq = c(12),
+                             supp1 = c(3,5,8,11),
+                             supp2 = c(2,4,7,10)),function(x) just_scen_names[x])
   domplotlist <- list()
   for(i in 1:length(comparisons)) {
     (domplotlist[[i]] = ggplot(dom) + 
@@ -429,6 +435,9 @@ for(bau_scen in 1:nbscens){
   domplot = ggarrange(domplotlist[[1]],domplotlist[[2]],domplotlist[[3]],nrow=1,labels=c('A','B','C'))
   print(domplot)
   ggsave(domplot,filename=paste0('../cepi_results/dom3_',bau_names[bau_scen],'.png'),width=16,height=5)
+  domplot = ggarrange(domplotlist[[4]],domplotlist[[5]],nrow=1,labels=c('A','B'))
+  print(domplot)
+  ggsave(domplot,filename=paste0('../cepi_results/dom2_',bau_names[bau_scen],'.png'),width=11,height=5)
 }
 
 # # "final cost" voi
@@ -485,9 +494,9 @@ for(j in 1:ncscens){
 tens = seq(30,100,by=10)
 plotlist <- list()
 valuetablist <- list()
-absvalues <- data.frame()
+absvalues <- s11lir <- data.frame()
 for(ex in 1:length(tens)){
-  allvaluesil <- allvaluescost <- allvalues4 <- allvalues5 <- data.frame()
+  allvaluesil <- allvaluescost <- valuetabcounter <- valuetabgdp <- data.frame()
   for(refsl in 1:nbscens){
     exlist <- lapply(tens,function(x) allyvals[[refsl]]<1/x*uval&allyvals[[refsl]]>1/x*lval)
     oneinXindex <- exlist[[ex]]
@@ -530,13 +539,17 @@ for(ex in 1:length(tens)){
       ## index 1 of absvaluelist is cost. (2 is deaths)
       printval <- paste0(signif(quantile(value4/absvaluelist[[1]]*100,c(1,3)/4),2),collapse='--')
       printvalabs <- paste0(signif(quantile(value4,c(1,3)/4),2),collapse='--')
-      allvalues4 <- rbind(allvalues4,c(bau_names[refsl],scenname,printval))
-      allvalues5 <- rbind(allvalues5,c(bau_names[refsl],scenname,printvalabs))
+      valuetabcounter <- rbind(valuetabcounter,c(bau_names[refsl],scenname,printval))
+      valuetabgdp <- rbind(valuetabgdp,c(bau_names[refsl],scenname,printvalabs))
       newcolname <- paste0('val',refsl,'to',j)
       if(length(value4)!=sum(abscosttab[[refsl]]$return==tens[ex])) break
       abscosttab[[refsl]][[newcolname]][abscosttab[[refsl]]$return==tens[ex]] <- value4
       # in % gdp
       # print(summary(rowSums(valuelist[[j]][[refsl]])/ncountries))
+      if(scenname=='S11'){
+        printval <- paste0(signif(quantile(absvaluelist[[1]]-value4,c(1,3)/4),2),collapse='--')
+        s11lir <- rbind(s11lir,c(bau_names[refsl],paste0('Once in ',tens[ex],' years'),printval))
+      }
     }
   }
   colnames(allvaluescost) <- c('Cost','From scenario','To','lower','Value','upper')
@@ -572,15 +585,14 @@ for(ex in 1:length(tens)){
   
   plotlist[[ex]] <- p1 + p2
   
-  colnames(allvalues4) <- c('From scenario','To','Value')
-  colnames(allvalues5) <- c('From scenario','To','Value')
-  valuetab <- allvalues4 # reshape2::dcast(allvalues4,formula=`From scenario`~To,value.var = 'Value',fill=''))
-  valuetabgdp <- allvalues5 # reshape2::dcast(allvalues5,formula=`From scenario`~To,value.var = 'Value',fill=''))
-  valuetab$counter = 'counter'
+  colnames(valuetabcounter) <- c('From scenario','To','Value')
+  colnames(valuetabgdp) <- c('From scenario','To','Value')
+  valuetabcounter$counter = 'counter'
   valuetabgdp$counter = 'gdp'
-  valuetablist[[ex]] <- do.call(rbind,list(valuetab,valuetabgdp))
+  valuetablist[[ex]] <- do.call(rbind,list(valuetabcounter,valuetabgdp))
   
 }
+colnames(s11lir) <- c('Counterfactual','Probability','LIR')
 colnames(absvalues) <- colnames(expvalues) <- c('LIR, % global GDP','Deaths per thousand')
 absvalues <- rbind(absvalues,expvalues)
 decades = c('thirty','forty','fifty','sixty','seventy','eighty','ninety','one hundred')
