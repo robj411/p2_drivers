@@ -148,6 +148,8 @@ data <- subset(xlsxdata,deaths/pop*1000>mu)
 allyears = seq(min(xlsxdata$yearstart),max(xlsxdata$yearend))
 for(i in 1:nrow(xlsxdata))
   allyears = allyears[!allyears %in% seq(xlsxdata$yearstart[i],xlsxdata$yearend[i])]
+c(min(xlsxdata$yearstart),max(xlsxdata$yearend),nrow(xlsxdata))
+
 
 # csvdata <- read.csv('../../mevd/Epidemic16002020March2021.csv',header=F)
 # colnames(csvdata)[1:4] <- c('yearstart','yearend','deaths','pop')
@@ -193,13 +195,15 @@ for(bau_scen in 1:nbscens){
 
 
 ## plot bootstrap marani ##################
-
+nyears = max(xlsxdata$yearend)-min(xlsxdata$yearstart)+1
 exceedance_probs <- deathsx <- sam <- c()
 nrep <- 50
 for(i in 1:nrep){
   mu <- 10^runif(1,-3,-2)
   datares <- xlsxdata[sample(1:nrow(xlsxdata),nrow(xlsxdata),replace=T),]
   pb <- sum(datares[,deaths/pop*1000<mu])/nrow(datares)
+  events = sum(datares[,deaths/pop*1000>mu])
+  pb <- 1-events/nyears
   data <- subset(datares,deaths/pop*1000>mu)
   intensity <- data$deaths/data$pop*1000
   newsample <- sample(intensity,nrow(data),replace=T)
@@ -254,7 +258,9 @@ for(bau_scen in 1:nbscens){
     # new gpd function
     mu <- 10^runif(1,-3,-2)
     datares <- xlsxdata[sample(1:nrow(xlsxdata),nrow(xlsxdata),replace=T),]
-    pb <- sum(datares[,deaths/pop*1000<mu])/nrow(datares)
+    # pb <- sum(datares[,deaths/pop*1000<mu])/nrow(datares)
+    events = sum(datares[,deaths/pop*1000>mu])
+    pb <- 1-events/nyears
     data <- subset(datares,deaths/pop*1000>mu)
     intensity <- data$deaths/data$pop*1000
     newsample <- sample(intensity,nrow(data),replace=T)
