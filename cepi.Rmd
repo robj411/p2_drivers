@@ -155,10 +155,9 @@ vioplot$variable <- factor(vioplot$variable,
 
 \newpage
 
-# Results for all income levels and best policy option
 
 
-```{r tabres,echo=F,warning=F,message=F,results='asis'}
+```{r tabres0,echo=F,warning=F,message=F,results='asis'}
 
 meltmeantab <- c()
 allallresults <- tabresall <- data.frame()
@@ -282,22 +281,13 @@ lg <- paste0('Results for all vaccination levels, scenarios and country types. M
 #   x <- knitr::kable(tabresall,escape=F, "html",caption=lg)
 #   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
 # }
-lmtabresall <- subset(tabresall,Policy=='Loss minimising')
-lmtabresall$Policy <- NULL
-if (!knitr::is_html_output(excludes = "markdown")) { 
-  cat(pander(lmtabresall,caption=lg))
-}else{
-  x <- knitr::kable(lmtabresall,escape=F, "html",caption=lg)
-  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
-}
-
 ```
 
-\newpage
+
+
+
 
 # Results for all income levels and policy options
-
-
 
 ```{r tabresall,echo=F,warning=F,message=F,results='asis'}
 lmtabresall <- subset(tabresall,Policy!='Loss minimising')
@@ -310,6 +300,26 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ```
 
+
+
+\newpage
+
+
+# Results for all income levels and best policy option
+
+
+```{r tabres,echo=F,warning=F,message=F,results='asis'}
+
+lmtabresall <- subset(tabresall,Policy=='Loss minimising')
+lmtabresall$Policy <- NULL
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(lmtabresall,caption=lg))
+}else{
+  x <- knitr::kable(lmtabresall,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
 
 
 
@@ -520,30 +530,27 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 
 
-
 \newpage
 
-# Percent of counterfactual
+# Absolute values: LIR and numbers of deaths
 
 
-```{r ex100,tab.cap='Value of vaccines',echo=F,warning=F,message=F}
-valuetabcounter[,counter:=NULL]
-valuetabcounter[,lq:=NULL]
-valuetabcounter[,uq:=NULL]
-valuetabcounter[,ml:=NULL]
-valuetabcounter[,mu:=NULL]
 
-# subvaluetab <- valuetabcounter[,!colnames(valuetabcounter)%in%scenario_names[-c(scen_to_keep)]]
-lg <- paste0('Value of vaccine investments in the event of a one-in-X-years pandemic (percent of counterfactual). \\label{tab:ex100}')
+
+```{r absvals,tab.cap='Absolute losses and numbers of deaths of one-in-thirty-years and one-in-one-hundred-years events under the BAU scenario.',echo=F,warning=F,message=F}
+
+valuetabbau1 <- valuetab2[grepl('BAU1',rownames(valuetab2)),]
+rownames(valuetabbau1) <- gsub(', BAU1','',rownames(valuetabbau1))
+
+lg <- paste0('Absolute losses and numbers of deaths of one-in-X-years events under the BAU scenario. \\label{tab:absvals}')
 if (!knitr::is_html_output(excludes = "markdown")) { 
-  cat(pander(valuetabcounter,caption=lg))
+  cat(pander(valuetabbau1,caption=lg))
 }else{
-  x <- knitr::kable(valuetabcounter,escape=F, "html",caption=lg)
+  x <- knitr::kable(valuetabbau1,escape=F, "html",caption=lg)
   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
 }
+
 ```
-
-
 
 
 
@@ -572,25 +579,31 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 
 
-
 \newpage
 
-# Absolute values: LIR and numbers of deaths
+# Percent of counterfactual
 
 
+```{r ex100,tab.cap='Value of vaccines',echo=F,warning=F,message=F}
+valuetabcounter[,counter:=NULL]
+valuetabcounter[,lq:=NULL]
+valuetabcounter[,uq:=NULL]
+valuetabcounter[,ml:=NULL]
+valuetabcounter[,mu:=NULL]
 
-
-```{r absvals,tab.cap='Absolute losses and numbers of deaths of one-in-thirty-years and one-in-one-hundred-years events under the BAU scenario.',echo=F,warning=F,message=F}
-
-lg <- paste0('Absolute losses and numbers of deaths of one-in-X-years events under the BAU scenario. \\label{tab:absvals}')
+# subvaluetab <- valuetabcounter[,!colnames(valuetabcounter)%in%scenario_names[-c(scen_to_keep)]]
+lg <- paste0('Value of vaccine investments in the event of a one-in-X-years pandemic (percent of counterfactual). \\label{tab:ex100}')
 if (!knitr::is_html_output(excludes = "markdown")) { 
-  cat(pander(valuetab2,caption=lg))
+  cat(pander(valuetabcounter,caption=lg))
 }else{
-  x <- knitr::kable(valuetab2,escape=F, "html",caption=lg)
+  x <- knitr::kable(valuetabcounter,escape=F, "html",caption=lg)
   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
 }
-
 ```
+
+
+
+
 
 \newpage
 
