@@ -370,12 +370,19 @@ $$\begin{align}
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status." width="50%" />
+<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status. Disease transition rates are represented with parameters $k$. Note that rates are all functions of probabilities and durations (the natural history parameters that characterise the disease), and these may in turn depend on other epidemiological variables, which is indicated through a dependence on time, $t$. Where rates differ by age or sector, there is an index $j$. Where rates differ by vaccination status, there is an index $v$." width="50%" />
 <p class="caption">
 <span id="fig:statetransitions"></span>Figure 3.1: Disease state
 transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic
 infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$:
-recovered. $D$: died. $j$: stratum. $v$: vaccination status.
+recovered. $D$: died. $j$: stratum. $v$: vaccination status. Disease
+transition rates are represented with parameters $k$. Note that rates
+are all functions of probabilities and durations (the natural history
+parameters that characterise the disease), and these may in turn depend
+on other epidemiological variables, which is indicated through a
+dependence on time, $t$. Where rates differ by age or sector, there is
+an index $j$. Where rates differ by vaccination status, there is an
+index $v$.
 </p>
 
 </div>
@@ -521,13 +528,19 @@ pathway of the lower vaccination level.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status."  />
+<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status. Note that rates are all functions of probabilities and durations (the natural history parameters that characterise the disease), and these may in turn depend on other epidemiological variables, which is indicated through a dependence on time, $t$. Where rates differ by age or sector, there is an index $j$. Where rates differ by vaccination status, there is an index $v$."  />
 <p class="caption">
 <span id="fig:vaccinetransitions"></span>Figure 3.2: Vaccine state
 transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently
 vaccinated but has not yet seroconverted (i.e. is not protected by most
 recent vaccination). $R$: recovered. $j$: stratum. $v$: initial
-vaccination status. $u$: final vaccination status.
+vaccination status. $u$: final vaccination status. Note that rates are
+all functions of probabilities and durations (the natural history
+parameters that characterise the disease), and these may in turn depend
+on other epidemiological variables, which is indicated through a
+dependence on time, $t$. Where rates differ by age or sector, there is
+an index $j$. Where rates differ by vaccination status, there is an
+index $v$.
 </p>
 
 </div>
