@@ -528,19 +528,17 @@ pathway of the lower vaccination level.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status. Note that rates are all functions of probabilities and durations (the natural history parameters that characterise the disease), and these may in turn depend on other epidemiological variables, which is indicated through a dependence on time, $t$. Where rates differ by age or sector, there is an index $j$. Where rates differ by vaccination status, there is an index $v$."  />
+<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status. Note that rates are all functions of probabilities and durations, and these may in turn depend on other model variables, which is indicated through a dependence on time, $t$. Where rates differ by age or sector, there is an index $j$. Where rates differ by vaccination status, there is an index $v$."  />
 <p class="caption">
 <span id="fig:vaccinetransitions"></span>Figure 3.2: Vaccine state
 transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently
 vaccinated but has not yet seroconverted (i.e. is not protected by most
 recent vaccination). $R$: recovered. $j$: stratum. $v$: initial
 vaccination status. $u$: final vaccination status. Note that rates are
-all functions of probabilities and durations (the natural history
-parameters that characterise the disease), and these may in turn depend
-on other epidemiological variables, which is indicated through a
-dependence on time, $t$. Where rates differ by age or sector, there is
-an index $j$. Where rates differ by vaccination status, there is an
-index $v$.
+all functions of probabilities and durations, and these may in turn
+depend on other model variables, which is indicated through a dependence
+on time, $t$. Where rates differ by age or sector, there is an index
+$j$. Where rates differ by vaccination status, there is an index $v$.
 </p>
 
 </div>
