@@ -27,7 +27,7 @@ output:
     editor_options: 
       chunk_output_type: inline
 bibliography: 
-  - "DAEDALUS.bib"
+  - "epi.bib"
 always_allow_html: true
 ---
 
@@ -858,7 +858,7 @@ knitr::include_graphics(path = "README_files/figure-gfm/smoothmobility.png")
 knitr::include_graphics(path = "README_files/figure-gfm/mobilitydrop.png")
 ```
 
-- We want to write mobility as a function of mandate and some epi outcome, e.g. deaths: $\rho(t) = (1-p^8)f(d(t),e(t)) + p^8$ where $\rho(t)$ is mobility, $d$ is deaths per million, $e$ is government mandate, and $`0 < p^8 < 1`$ is the baseline.
+- We want to write mobility as a function of mandate and some epi outcome, e.g. deaths: $\rho(t) = (1-p^8)f(d(t),e(t)) + p^8$ where $\rho(t)$ is mobility (which is operationalised as the uncosted transmission reduction (UTR) in the model), $d$ is deaths per million, $e$ is government mandate, and $`0 < p^8 < 1`$ is the baseline.
 - We want mobility to drop monotonically with both the mandate and the epi outcome: $\frac{\partial f}{\partial d}<0$, $\frac{\partial f}{\partial e}<0$.
 - We want a maximum mobility of 1 when both the mandate and the epi outcome are 0: $f(0,0)=1$.
 - We want mobility to approach $p^8$ when the mandate and the epi outcome become large: $\lim_{d\to 10^6, e\to 1}f(d,e)= 0$.

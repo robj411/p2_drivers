@@ -859,8 +859,9 @@ mobility plotted against the stringency on that date.
 
 - We want to write mobility as a function of mandate and some epi
   outcome, e.g. deaths: $\rho(t) = (1-p^8)f(d(t),e(t)) + p^8$ where
-  $\rho(t)$ is mobility, $d$ is deaths per million, $e$ is government
-  mandate, and $`0 < p^8 < 1`$ is the baseline.
+  $\rho(t)$ is mobility (which is operationalised as the uncosted
+  transmission reduction (UTR) in the model), $d$ is deaths per million,
+  $e$ is government mandate, and $`0 < p^8 < 1`$ is the baseline.
 - We want mobility to drop monotonically with both the mandate and the
   epi outcome: $\frac{\partial f}{\partial d}<0$,
   $\frac{\partial f}{\partial e}<0$.
@@ -4413,7 +4414,7 @@ rates in LLMICs. Shown is the cumulative distribution of delivery rate,
 measured as the % of the population vaccinated per day. The data consist
 of 141 points, from 55 countries that are currently classified as LIC or
 LMIC, from the years 2000 to 2022, of programmes for measles, MR or MMR
-vaccines, lasting two weeks or more (**WorldHealthOrganization2022?**).
+vaccines, lasting two weeks or more (World Health Organization 2022).
 The types of programme include campaigns and outbreak response as well
 as catch up, follow up, speed up, and mop up.
 </p>
@@ -4460,7 +4461,7 @@ the letter will be enclosed in parentheses for clarity.
 | $E$ | COMPARTMENT: Exposed |  | related to exposed state |
 | $F$ |  |  |  |
 | $G$ |  |  |  |
-| $GDP$ | GDP |  |  |
+| $GDP$ | GDP (annual) |  |  |
 | $H$ | COMPARTMENT: Hospitalised |  | related to hospitalised state |
 | $H_{\text{max}}$ | hospital capacity |  |  |
 | $I$ | Infectious |  |  |
@@ -4503,8 +4504,8 @@ the letter will be enclosed in parentheses for clarity.
 | $V$ |  | MAX: vaccines |  |
 | $W$ |  |  | worker (contacts) |
 | $X$ |  |  |  |
-| $Y$ | GDP | MAX: years |  |
-| $Y_0$ | max GDP |  |  |
+| $Y$ | GDP (simulation) | MAX: years |  |
+| $Y_0$ | max GDP (simulation) |  |  |
 | $Z$ |  |  |  |
 
 Capital letters
@@ -4545,31 +4546,31 @@ Capital letters
 
 Lower-case letters
 
-|   Letter   |                     Definition                      |
-|:----------:|:---------------------------------------------------:|
-|  $\alpha$  |                                                     |
-|  $\beta$   |                  transmission rate                  |
-|  $\gamma$  |                                                     |
-|  $\delta$  |                                                     |
-| $\epsilon$ |        ratio transmission from asymptomatic         |
-|  $\zeta$   |                                                     |
-|   $\eta$   |                   vaccine effects                   |
-|  $\theta$  |                                                     |
-|  $\iota$   |                                                     |
-|  $\kappa$  |                                                     |
-| $\lambda$  |                                                     |
-|   $\mu$    |                                                     |
-|   $\nu$    |                     growth rate                     |
-|    $o$     |                          –                          |
-|   $\pi$    |                                                     |
-|   $\rho$   |                transmission modifier                |
-|  $\sigma$  |                                                     |
-|   $\tau$   |                      max time                       |
-| $\upsilon$ |                          –                          |
-|   $\phi$   | Fatality rate without hospital care relative to HFR |
-|   $\chi$   |                                                     |
-|   $\psi$   |                                                     |
-|  $\omega$  |                                                     |
+|   Letter   |                       Definition                        |
+|:----------:|:-------------------------------------------------------:|
+|  $\alpha$  |                                                         |
+|  $\beta$   |                    transmission rate                    |
+|  $\gamma$  |                                                         |
+|  $\delta$  |                                                         |
+| $\epsilon$ |          ratio transmission from asymptomatic           |
+|  $\zeta$   |                                                         |
+|   $\eta$   |                     vaccine effects                     |
+|  $\theta$  |                                                         |
+|  $\iota$   |                                                         |
+|  $\kappa$  |                                                         |
+| $\lambda$  |                                                         |
+|   $\mu$    |                                                         |
+|   $\nu$    |                                                         |
+|    $o$     |                            –                            |
+|   $\pi$    |                                                         |
+|   $\rho$   | transmission modifier (uncosted transmission reduction) |
+|  $\sigma$  |                                                         |
+|   $\tau$   |                        max time                         |
+| $\upsilon$ |                            –                            |
+|   $\phi$   |   Fatality rate without hospital care relative to HFR   |
+|   $\chi$   |                                                         |
+|   $\psi$   |                                                         |
+|  $\omega$  |                                                         |
 
 Greek letters
 
@@ -4600,10 +4601,10 @@ Rates
 | Letter | Definition |
 |:--:|:--:|
 | $p^{I^S}$ | probability to be symptomatic |
-| $\tilde{p}^H$ | Basic probability to be hospitalised |
-| $p^H$ | Adjusted probability to be hospitalised |
-| $\tilde{p}^D$ | Basic probability to die |
-| $p^D$ | Adjusted probability to die |
+| $\tilde{p}^H$ | Basic probability to be hospitalised (IHR) |
+| $p^H$ | Adjusted probability to be hospitalised (IHR) |
+| $\tilde{p}^D$ | Basic probability to die (HFR) |
+| $p^D$ | Adjusted probability to die (HFR) |
 | $p^1$ | Compliance with the instruction to self isolate |
 | $p^2$ | fraction of cases identified by testing |
 | $p^3$ | proportion of asymptomatic infectiousness averted due to self isolating |
@@ -4678,7 +4679,7 @@ and the \$16 Trillion Virus.” *JAMA* 324 (15).
 <div id="ref-Doohan2025" class="csl-entry">
 
 Doohan, P, R Johnson, A Lochen, D Haw, C Morgenstern, G Forchini, and K
-Hauck. 2025. “Mitigating Future Respiratory Pandemics in Low- Middle-
+Hauck. 2025. “Mitigating Future Respiratory Pandemics in Low-, Middle-
 and High-Income Countries: A Modelling Study of Health, Economic and
 Educational Losses.” Imperial College London.
 
@@ -4688,7 +4689,7 @@ Educational Losses.” Imperial College London.
 
 Feenstra, Robert C., Robert Inklaar, and Marcel P. Timmer. 2015. “The
 Next Generation of the Penn World Table.” *American Economic Review* 105
-(10): 3150–82.
+(10): 3150–82. [www.ggdc.net/pwt](https://www.ggdc.net/pwt).
 
 </div>
 
@@ -4741,7 +4742,7 @@ Snapshot of Post-Pandemic Behaviour from the CoMix Study.” *Epidemics*
 
 Jones, Sarah P, Imperial College London Big Data Analytical Unit, and
 YouGov Plc. 2020. “Imperial College London YouGov Covid 19 Behaviour
-Tracker Data Hub.”
+Tracker Data Hub.” <https://github.com/YouGov-Data/covid-19-tracker>.
 
 </div>
 
@@ -4816,12 +4817,14 @@ Nations. <https://doi.org/10.4337/9781781955659.00009>.
 class="csl-entry">
 
 UN Tourism. 2023a. “International Tourism and COVID-19.”
+<https://www.unwto.org/tourism-data/international-tourism-and-covid-19>.
 
 </div>
 
 <div id="ref-untourismKeyTourismStatistics2023" class="csl-entry">
 
 ———. 2023b. “Key Tourism Statistics.”
+<https://www.unwto.org/tourism-statistics/key-tourism-statistics>.
 
 </div>
 
@@ -4841,6 +4844,14 @@ Whittaker, Charles, Gregory Barnsley, Daniela Olivera Mesa, Daniel J
 Laydon, Chee Wah Tan, Feng Zhu, Rob Johnson, et al. 2024. “Quantifying
 the Impact of a Broadly Protective Sarbecovirus Vaccine in a Future
 SARS-X Pandemic.” <https://doi.org/10.1101/2024.08.12.24311730>.
+
+</div>
+
+<div id="ref-WorldHealthOrganization2022" class="csl-entry">
+
+World Health Organization. 2022. “Summary of Measles-Rubella
+Supplementary Immunization Activities.”
+<https://immunizationdata.who.int/global?topic=&location=>.
 
 </div>
 
