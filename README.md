@@ -545,13 +545,13 @@ $j$. Where rates differ by vaccination status, there is an index $v$.
 
 ### 3.3.1 Vaccine effects
 
-| Quantity                              | BPSV    | SSV     |
-|:--------------------------------------|:--------|:--------|
-| Time to develop immunity              | 21 days | 21 days |
-| Effectiveness against infection       | 0.35    | 0.55    |
-| Effectiveness against hospitalisation | 0.75    | 0.95    |
-| Effect on transmission                | 0.35    | 0.35    |
-| Rate of waning                        | 0       | 0       |
+| Quantity                              | BPSV   | SSV     |
+|:--------------------------------------|:-------|:--------|
+| Time to develop immunity              | 7 days | 28 days |
+| Effectiveness against infection       | 0.35   | 0.55    |
+| Effectiveness against hospitalisation | 0.75   | 0.95    |
+| Effect on transmission                | 0.35   | 0.35    |
+| Rate of waning                        | 0      | 0       |
 
 <span id="tab:vaccineeffects"></span>Table 3.1: Vaccine effects. The
 Time to develop immunity is the average time it takes a person to go

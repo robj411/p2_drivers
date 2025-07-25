@@ -648,7 +648,7 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
 
 Quantity | BPSV | SSV
 |:----- |:----- |:----- |
-Time to develop immunity | 21 days | 21 days 
+Time to develop immunity | 7 days | 28 days 
 Effectiveness against infection | 0.35 | 0.55 
 Effectiveness against hospitalisation | 0.75 | 0.95 
 Effect on transmission | 0.35 | 0.35 
