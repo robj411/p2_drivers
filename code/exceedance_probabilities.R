@@ -161,11 +161,34 @@ c(min(xlsxdata$yearstart),max(xlsxdata$yearend),nrow(xlsxdata))
 # pb <- sum(csvdata[,deaths/pop*1000<mu])/nrow(csvdata)
 # data <- subset(csvdata,deaths/pop*1000>mu&yearstart>1600)
 
+library(evir)
+use_evir = T
+get_gpd_params <- function(smps, threshold){
+  if(use_evir){
+    # fp <- gpd(smps, threshold=threshold, method = "pwm")
+    fp <- gpd(smps, threshold=threshold, method = "ml")
+    sigmau <- fp$par.ests[['beta']] # 0.0113 # 
+    xi <-  fp$par.ests[['xi']] # 1.41 # 
+  }else{
+    fp <- fgpd(smps-threshold)
+    sigmau <- fp$sigmau # 0.0113 #
+    xi <-  fp$xi # 1.41 #
+  }
+  c(xi,sigmau)
+}
+
+get_gpd_probs = function(smps, threshold, gpdparams){
+  if(use_evir){
+    evir::pgpd(smps, mu=threshold, xi=gpdparams[1], beta=gpdparams[2])
+  }else{
+    evmix::pgpd(smps-threshold, xi=gpdparams[1], sigmau=gpdparams[2])
+  }
+}
+
 intensity <- data$deaths/data$pop*1000
-fp <- fgpd(intensity-mu)
-sigmau <- fp$sigmau # 0.0113 # 
-xi <-  fp$xi # 1.41 # 
-exceedance_probs_marani <- pgpd(intensity-mu,xi=xi,sigmau=sigmau)
+gpdparams = get_gpd_params(intensity, mu)
+exceedance_probs_marani <- get_gpd_probs(intensity, mu, gpdparams)
+
 
 p <- ggplot() + geom_point(aes(x=intensity,y=1-(pb+(1-pb)*exceedance_probs_marani)),size=5,colour='grey')  +
   scale_x_log10(labels=label_log(digits=1)) +
@@ -174,7 +197,7 @@ p <- ggplot() + geom_point(aes(x=intensity,y=1-(pb+(1-pb)*exceedance_probs_maran
   labs(x='Deaths per thousand population',y='Exceedance probability')
 
 deathspermil <- lapply(deathsamples,function(x) sort(rowSums(x)/(50*1e6*ncountries)*1e3,decreasing=F))
-exceedance_probs <- lapply(deathspermil,function(x) pgpd(x-mu,xi=xi,sigmau=sigmau))
+exceedance_probs <- lapply(deathspermil,function(x) get_gpd_probs(x,mu,get_gpd_params(x,mu)))
 yvals <- lapply(exceedance_probs,function(x) 1-(pb+(1-pb)*x))
 # deaths per thousand people
 (expdeaths <- lapply(1:length(bau_scens),function(x) sum(-diff(yvals[[x]])*deathspermil[[x]][-1])+yvals[[x]][1]*deathspermil[[x]][1]))
@@ -191,11 +214,10 @@ for(bau_scen in 1:nbscens){
 
 }
 
-1/(1-(pb+(1-pb)*pgpd(8.6-mu,xi=xi,sigmau=sigmau)))
 
 
 ## plot bootstrap marani ##################
-nyears = max(xlsxdata$yearend)-min(xlsxdata$yearstart)+1
+nyears = max(xlsxdata$yearstart)-min(xlsxdata$yearstart)+1
 exceedance_probs <- deathsx <- sam <- c()
 nrep <- 50
 for(i in 1:nrep){
@@ -209,11 +231,12 @@ for(i in 1:nrep){
   newsample <- sample(intensity,nrow(data),replace=T)
   # newsample[newsample==intensity[length(intensity)]] <- samplecovid(sum(newsample==intensity[length(intensity)]))
   
-  fp <- fgpd(newsample-mu)
+  fp <- get_gpd_params(newsample, mu) # fgpd(newsample-mu)
   deathspermilex <- 10^seq(log10(mu),2,by=.1)
   sam <- c(sam,rep(i,each=length(deathspermilex)))
   deathsx <- c(deathsx, deathspermilex)
-  exceedance_probs <- c(exceedance_probs,pgpd(deathspermilex-mu,xi=fp$xi,sigmau=fp$sigmau))
+  # exceedance_probs <- c(exceedance_probs,pgpd(deathspermilex-mu,xi=fp$xi,sigmau=fp$sigmau))
+  exceedance_probs <- c(exceedance_probs,get_gpd_probs(deathspermilex, mu, fp) )
 }
 
 p <- ggplot(data.frame(y=exceedance_probs,x=deathsx,sam=sam)) + 
@@ -253,26 +276,26 @@ for(bau_scen in 1:nbscens){
   cov_ex <- c()
   abscosttablist <- expvalslist <- scencostlist <- list()
   for(i in 1:boot){
-    print(i)
+    # print(i)
     
     # new gpd function
-    mu <- 10^runif(1,-3,-2)
+    mu <- 10^runif(1,-4.4,-2.9)
     datares <- xlsxdata[sample(1:nrow(xlsxdata),nrow(xlsxdata),replace=T),]
     # pb <- sum(datares[,deaths/pop*1000<mu])/nrow(datares)
-    events = sum(datares[,deaths/pop*1000>mu])
+    events = sum(datares[,deaths/pop*1000>mu]) # events per year
     pb <- 1-events/nyears
     data <- subset(datares,deaths/pop*1000>mu)
     intensity <- data$deaths/data$pop*1000
     newsample <- sample(intensity,nrow(data),replace=T)
     # newsample[newsample==intensity[length(intensity)]] <- samplecovid(sum(newsample==intensity[length(intensity)]))
-    fp <- fgpd(newsample-mu)
-    sigmau <- fp$sigmau # 0.0113 # 
-    xi <-  fp$xi # 1.41 # 
+    fp <- get_gpd_params(newsample, mu)
+    sigmau <- fp[2] # 0.0113 # 
+    xi <-  fp[1] # 1.41 # 
     gpdparams <- rbind(gpdparams,c(sigmau,xi,mu,pb))
-    cov_ex[i] <- (1-(pb+(1-pb)*pgpd(samples_for_pgpd-mu,xi=xi,sigmau=sigmau))) # apply to covid
+    cov_ex[i] <- (1-(pb+(1-pb)*get_gpd_probs(samples_for_pgpd, mu, fp))) # apply to covid
     
     # apply to counterfactual (deaths per mil)
-    exceedance_probs <- pgpd(deathspermil-mu,xi=xi,sigmau=sigmau)
+    exceedance_probs <- get_gpd_probs(deathspermil, mu, fp)
     yvals <- (1-(pb+(1-pb)*exceedance_probs))
     allyvals[[bau_scen]][,i] <- yvals
     
@@ -304,12 +327,12 @@ for(bau_scen in 1:nbscens){
   
   abscosttab[[bau_scen]] <- as.data.frame(do.call(rbind,abscosttablist))
   rm(abscosttablist)
-  # estimated deaths, millions
-  summary(deathests/1000*8.1e9)/1e6
-  # estimated deaths per thousand
-  summary(deathspermil)
-  # covid return time
-  summary(1/cov_ex)
+  print('estimated deaths, millions')
+  print(signif(summary(deathests/1000*8.2e9)/1e6,2))
+  print('estimated deaths per thousand')
+  print(signif(summary(deathests),2))
+  print('covid return time')
+  print(signif(summary(1/cov_ex),2))
   expvalues <- rbind(expvalues,
                      c(paste0(signif(quantile(costests,c(1,3)/4),2),collapse='--'), 
                  paste0(signif(quantile(deathests,c(1,3)/4),2),collapse='--')))
