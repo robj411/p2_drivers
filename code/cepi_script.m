@@ -221,5 +221,6 @@ cmd = [exe_path,firstbit, markdownname, ', ', doctype,', ', param];
 % cmd = [exe_path,firstbit, markdownname, ', ', param];
 system(cmd)
 
+cd('code')
 
 
