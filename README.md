@@ -370,12 +370,19 @@ $$\begin{align}
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status." width="50%" />
+<img src="README_files/figure-gfm/statetransitions-1.png" alt="Disease state transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$: recovered. $D$: died. $j$: stratum. $v$: vaccination status. Disease transition rates are represented with parameters $k$. Note that rates are all functions of probabilities and durations (the natural history parameters that characterise the disease), and these may in turn depend on other epidemiological variables, which is indicated through a dependence on time, $t$. Where rates differ by age or sector, there is an index $j$. Where rates differ by vaccination status, there is an index $v$." width="50%" />
 <p class="caption">
 <span id="fig:statetransitions"></span>Figure 3.1: Disease state
 transitions. $S$: susceptible. $E$: exposed. $I^{a}$: asymptomatic
 infectious. $I^{s}$: symptomatic infectious. $H$: hospitalised. $R$:
-recovered. $D$: died. $j$: stratum. $v$: vaccination status.
+recovered. $D$: died. $j$: stratum. $v$: vaccination status. Disease
+transition rates are represented with parameters $k$. Note that rates
+are all functions of probabilities and durations (the natural history
+parameters that characterise the disease), and these may in turn depend
+on other epidemiological variables, which is indicated through a
+dependence on time, $t$. Where rates differ by age or sector, there is
+an index $j$. Where rates differ by vaccination status, there is an
+index $v$.
 </p>
 
 </div>
@@ -473,14 +480,21 @@ probability to die given hospitalisation, adjusted by a factor encoding
 the increase in fatality rate as hospital occupancy increases:
 
 ``` math
-f_H(t)=1 + \frac{\cdot\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)}\phi,
+f_H(t)=1 + \frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)}\phi,
 ```
 
 $1+\phi$ can be interpreted as the what the fatality ratio is for
 someone who needs but does not receive hospital care relative to the HFR
 (i.e. the fatality ratio of those who need and receive hospital care).
 This is the value the HFR tends to as hospital demand far exceeds its
-capacity, at which point most who need care do not receive it.
+capacity, at which point most who need care do not receive it. Note that
+the rate at which the HFR increases as a function of $H_\text{tot}$ is
+at most $\phi/H_\text{max}$, which occurs when
+$H_\text{tot}=H_\text{max}$. Thus, the change is steepest at the point
+of capacity breach, and can be no more than the rate of change of
+hospital occupancy; that is, each additional admission can contribute no
+more than one additional death (and in practice it is considerably less
+than that).
 
 ``` math
 H_{\text{tot}}(t) = \sum_{v=0}^{m_V}\sum_{j=1}^{m_J} H_{j,v}(t).
@@ -521,40 +535,45 @@ pathway of the lower vaccination level.
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status."  />
+<img src="README_files/figure-gfm/vaccinetransitions-1.png" alt="Vaccine state transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently vaccinated but has not yet seroconverted (i.e. is not protected by most recent vaccination). $R$: recovered. $j$: stratum. $v$: initial vaccination status. $u$: final vaccination status. Note that rates are all functions of probabilities and durations, and these may in turn depend on other model variables, which is indicated through a dependence on time, $t$. Where rates differ by age or sector, there is an index $j$. Where rates differ by vaccination status, there is an index $v$."  />
 <p class="caption">
 <span id="fig:vaccinetransitions"></span>Figure 3.2: Vaccine state
 transitions. $S$: susceptible. $S^{c_u}, u\in\{1,2\}$: recently
 vaccinated but has not yet seroconverted (i.e. is not protected by most
 recent vaccination). $R$: recovered. $j$: stratum. $v$: initial
-vaccination status. $u$: final vaccination status.
+vaccination status. $u$: final vaccination status. Note that rates are
+all functions of probabilities and durations, and these may in turn
+depend on other model variables, which is indicated through a dependence
+on time, $t$. Where rates differ by age or sector, there is an index
+$j$. Where rates differ by vaccination status, there is an index $v$.
 </p>
 
 </div>
 
 ### 3.3.1 Vaccine effects
 
-| Quantity                              | BPSV    | SSV     |
-|:--------------------------------------|:--------|:--------|
-| Time to develop immunity              | 21 days | 21 days |
-| Effectiveness against infection       | 0.35    | 0.55    |
-| Effectiveness against hospitalisation | 0.75    | 0.95    |
-| Effect on transmission                | 0.35    | 0.35    |
-| Rate of waning                        | 0       | 0       |
+| Quantity                              | BPSV   | SSV     |
+|:--------------------------------------|:-------|:--------|
+| Time to develop immunity              | 7 days | 28 days |
+| Effectiveness against infection       | 0.35   | 0.55    |
+| Effectiveness against hospitalisation | 0.75   | 0.95    |
+| Effect on transmission                | 0.35   | 0.35    |
+| Rate of waning                        | 0      | 0       |
 
 <span id="tab:vaccineeffects"></span>Table 3.1: Vaccine effects. The
 Time to develop immunity is the average time it takes a person to go
 from the Susceptible compartment to the Vaccinated equivalent
-compartment, such that the rate of transition is 1/21 per day. The
-Effectiveness against infection is one minus the relative risk of
-infection of a vaccinated person compared to an unvaccinated person. The
-Effectiveness against hospitalisation is one minus the relative risk of
-hospitalisation of a vaccinated person compared to an unvaccinated
-person. The Effect on transmission is one minus the relative
-infectiousness of an infectious vaccinated person compared to an
-infectious unvaccinated person. The Rate of waning is the rate at which
-the vaccine effects decay over time. Parameter choices were made to
-align with Whittaker et al. (2024).
+compartment, such that the rate of transition is 1/28 per for the case
+of the SSV, which corresponds to receipt of a second dose with a
+four-week delay following the first dose. The Effectiveness against
+infection is one minus the relative risk of infection of a vaccinated
+person compared to an unvaccinated person. The Effectiveness against
+hospitalisation is one minus the relative risk of hospitalisation of a
+vaccinated person compared to an unvaccinated person. The Effect on
+transmission is one minus the relative infectiousness of an infectious
+vaccinated person compared to an infectious unvaccinated person. The
+Rate of waning is the rate at which the vaccine effects decay over time.
+Parameter choices were made to align with Whittaker et al. (2024).
 
 ## 3.4 Contact rates
 
