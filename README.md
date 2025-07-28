@@ -480,14 +480,21 @@ probability to die given hospitalisation, adjusted by a factor encoding
 the increase in fatality rate as hospital occupancy increases:
 
 ``` math
-f_H(t)=1 + \frac{\cdot\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)}\phi,
+f_H(t)=1 + \frac{\max\{0,H_{\text{tot}}(t)-H_{\text{max}}\}}{H_{\text{tot}}(t)}\phi,
 ```
 
 $1+\phi$ can be interpreted as the what the fatality ratio is for
 someone who needs but does not receive hospital care relative to the HFR
 (i.e. the fatality ratio of those who need and receive hospital care).
 This is the value the HFR tends to as hospital demand far exceeds its
-capacity, at which point most who need care do not receive it.
+capacity, at which point most who need care do not receive it. Note that
+the rate at which the HFR increases as a function of $H_\text{tot}$ is
+at most $\phi/H_\text{max}$, which occurs when
+$H_\text{tot}=H_\text{max}$. Thus, the change is steepest at the point
+of capacity breach, and can be no more than the rate of change of
+hospital occupancy; that is, each additional admission can contribute no
+more than one additional death (and in practice it is considerably less
+than that).
 
 ``` math
 H_{\text{tot}}(t) = \sum_{v=0}^{m_V}\sum_{j=1}^{m_J} H_{j,v}(t).
@@ -556,16 +563,17 @@ $j$. Where rates differ by vaccination status, there is an index $v$.
 <span id="tab:vaccineeffects"></span>Table 3.1: Vaccine effects. The
 Time to develop immunity is the average time it takes a person to go
 from the Susceptible compartment to the Vaccinated equivalent
-compartment, such that the rate of transition is 1/21 per day. The
-Effectiveness against infection is one minus the relative risk of
-infection of a vaccinated person compared to an unvaccinated person. The
-Effectiveness against hospitalisation is one minus the relative risk of
-hospitalisation of a vaccinated person compared to an unvaccinated
-person. The Effect on transmission is one minus the relative
-infectiousness of an infectious vaccinated person compared to an
-infectious unvaccinated person. The Rate of waning is the rate at which
-the vaccine effects decay over time. Parameter choices were made to
-align with Whittaker et al. (2024).
+compartment, such that the rate of transition is 1/28 per for the case
+of the SSV, which corresponds to receipt of a second dose with a
+four-week delay following the first dose. The Effectiveness against
+infection is one minus the relative risk of infection of a vaccinated
+person compared to an unvaccinated person. The Effectiveness against
+hospitalisation is one minus the relative risk of hospitalisation of a
+vaccinated person compared to an unvaccinated person. The Effect on
+transmission is one minus the relative infectiousness of an infectious
+vaccinated person compared to an infectious unvaccinated person. The
+Rate of waning is the rate at which the vaccine effects decay over time.
+Parameter choices were made to align with Whittaker et al. (2024).
 
 ## 3.4 Contact rates
 
