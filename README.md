@@ -691,14 +691,15 @@ you talk to.)
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/workfrac.png" alt="Fraction of contacts made at work, from @Jarvis2024. Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%))." width="50%" />
+<img src="README_files/figure-gfm/workfrac.png" alt="Fraction of contacts made at work, from @Jarvis2024 @Jarvis2024. Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%))." width="50%" />
 <p class="caption">
 <span id="fig:workfrac"></span>Figure 3.3: Fraction of contacts made at
-work, from Jarvis et al. (2024). Extrapolated from three countries (UK,
-Belgium, Netherlands), whose values are all close to 40%, using time-use
-survey results for fraction of time spent at work (OECD, last updated
-December 2023, 33 countries, with values ranging from 12 to 25% (and the
-three reference countries have values 16 to 18%)).
+work, from Jarvis et al. (2024) Jarvis et al. (2024). Extrapolated from
+three countries (UK, Belgium, Netherlands), whose values are all close
+to 40%, using time-use survey results for fraction of time spent at work
+(OECD, last updated December 2023, 33 countries, with values ranging
+from 12 to 25% (and the three reference countries have values 16 to
+18%)).
 </p>
 
 </div>
