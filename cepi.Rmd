@@ -383,6 +383,10 @@ p[[scen_to_keep[5]]]
 ```
 
 
+
+
+
+
 \newpage
 
 # Expected value by policy choice
@@ -485,7 +489,38 @@ ggplot(subset(vioplot,toscen%in%scenario_names[scen_to_keep]&fromscen%in%bau_nam
 
 
 
+\newpage
 
+# Differences
+
+```{r tabresdiff,tab.cap='Value of vaccines: expected difference between BAU and 100 days. Mean values and 95% prediction intervals.',echo=F,warning=F,message=F}
+
+meantab <- setDT(difflist)[,.(yll=mean(YLL),
+                        education=mean(School),
+                        gdp=mean(GDP_loss)),by=.(igroup,fromscen,toscen)]
+
+difflist[,IQR:=rank(Cost)%in%c(round(nsamples/4):round(3*nsamples/4)),by=.(fromscen,toscen,igroup)]
+tabres <- setDT(difflist)[IQR==T,list(costs=paste0(signif(range(Cost),2),collapse='--\u200B')
+                        ),by=.(fromscen,toscen,igroup)]
+# tabres <- dcast(tabres,formula=igroup+fromscen~toscen,value.var = 'costs',fill = '')
+
+tabres[,igroup:=factor(igroup,levels=c('LLMIC','UMIC','HIC'))]
+setorder(tabres,igroup,fromscen)
+colnames(tabres)[1:3] <- c('From scenario','To scenario','Income group')
+
+
+# write.csv(tabres,'cepi_results/Delta_LIR_IQR_IL.csv',row.names = F, quote = F)
+
+# subtabres <- subset(tabres,`From scenario`%in%bau_names)[,!colnames(tabres)%in%scenario_names[-c(scen_to_keep)],with=F]
+
+lg <- 'Value of vaccines as a percent of GDP: differences between BAU and scenarios. 75% uncertainty intervals. \\label{tab:tabresdiff}'
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  pander(tabres,caption=lg)
+}else{
+    x <- knitr::kable(tabres,escape=F, "html",caption=lg)
+  kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position")
+}
+```
 
 \newpage
 
