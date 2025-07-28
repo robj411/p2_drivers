@@ -703,8 +703,8 @@ sheet5.5 = read.csv('../cepi_results/LIR_IQR_pc_GDPBAU2.csv',check.names = F)
 # xlsx::write.xlsx(rbind(sheet2,sheet2.5),file = '../cepi_results/cepi_results.xlsx',sheetName='Delta LIR, % GDP (Table S6)', append=T,row.names = F)
 # xlsx::write.xlsx(sheet3,file = '../cepi_results/cepi_results.xlsx',sheetName='given return, SARS-X (Table S7)', append=T,row.names = F)
 # xlsx::write.xlsx(sheet4,file = '../cepi_results/cepi_results.xlsx',sheetName='as % counterfactual (Table S8)', append=T,row.names = F)
-xlsx::write.xlsx(sheet5,file = '../cepi_results/cepi_results.xlsx',sheetName='LIR, % GDP (BAU1)', append=F,row.names = F)
-xlsx::write.xlsx(sheet5.5,file = '../cepi_results/cepi_results.xlsx',sheetName='LIR, % GDP (BAU2)', append=T,row.names = F)
+# xlsx::write.xlsx(sheet5,file = '../cepi_results/cepi_results.xlsx',sheetName='LIR, % GDP (BAU1)', append=F,row.names = F)
+# xlsx::write.xlsx(sheet5.5,file = '../cepi_results/cepi_results.xlsx',sheetName='LIR, % GDP (BAU2)', append=T,row.names = F)
 
 
 
