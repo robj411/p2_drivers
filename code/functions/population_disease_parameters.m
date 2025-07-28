@@ -60,7 +60,7 @@ function [dis, data] = population_disease_parameters(data,dis,R0betafun, R0_dist
     %% vaccines
 
     %Vaccine: Broadly protective sarbecovirus vaccine (BPSV)
-    dis.hrv1 = 1/21;                       %time to develop v-acquired immunity
+    dis.hrv1 = 1/14;                       %time to develop v-acquired immunity
     dis.scv1 = 0.35;                       %infection-blocking effectiveness
     heff1 = 0.75;                       %severe-disease-blocking effectiveness
     dis.hv1  = 1-((1-heff1)/(1-dis.scv1)); 
@@ -72,7 +72,7 @@ function [dis, data] = population_disease_parameters(data,dis,R0betafun, R0_dist
     dis.h_v1  = (1-dis.hv1)*dis.ph./Ts_v1;
 
     % SARS-X specific
-    dis.hrv2 = 1/21;                       %time to develop v-acquired immunity
+    dis.hrv2 = 1/28;                       %time to develop v-acquired immunity
     dis.scv2 = 0.55;                       %infection-blocking effectiveness
     heff2 = 0.95;                       %severe-disease-blocking effectiveness
     dis.hv2  = 1-((1-heff2)/(1-dis.scv2)); 
