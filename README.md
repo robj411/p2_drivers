@@ -691,15 +691,14 @@ you talk to.)
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/workfrac.png" alt="Fraction of contacts made at work, from @Jarvis2024 @Jarvis2024. Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%))." width="50%" />
+<img src="README_files/figure-gfm/workfrac.png" alt="Fraction of contacts made at work, from @Jarvis2024. Extrapolated from three countries (UK, Belgium, Netherlands), whose values are all close to 40%, using time-use survey results for fraction of time spent at work (OECD, last updated December 2023, 33 countries, with values ranging from 12 to 25% (and the three reference countries have values 16 to 18%))." width="50%" />
 <p class="caption">
 <span id="fig:workfrac"></span>Figure 3.3: Fraction of contacts made at
-work, from Jarvis et al. (2024) Jarvis et al. (2024). Extrapolated from
-three countries (UK, Belgium, Netherlands), whose values are all close
-to 40%, using time-use survey results for fraction of time spent at work
-(OECD, last updated December 2023, 33 countries, with values ranging
-from 12 to 25% (and the three reference countries have values 16 to
-18%)).
+work, from Jarvis et al. (2024). Extrapolated from three countries (UK,
+Belgium, Netherlands), whose values are all close to 40%, using time-use
+survey results for fraction of time spent at work (OECD, last updated
+December 2023, 33 countries, with values ranging from 12 to 25% (and the
+three reference countries have values 16 to 18%)).
 </p>
 
 </div>
@@ -1260,8 +1259,11 @@ closures.
 <caption>
 <span id="tab:eccon"></span>Table 5.3: Economic configurations used to
 implement strategies. Values are the openness of the sector expressed as
-a percentage. RC3 values are taken from Australia. Lockdown and RC2
-values are taken from the UK. RC1 values are taken from Indonesia.
+a percentage. RC1 values are taken from Indonesia (Q2 and Q4 2020 (Badan
+Pusat Statistik 2022)). RC2 values are taken from the UK (April 2020 for
+heavy closures, August 2020 for light closures (Office for National
+Statistics 2022)). RC3 values for light closures are taken from
+Australia (June 2021). RC3 heavy closures are the same as those for RC2.
 </caption>
 <thead>
 <tr>
@@ -4668,6 +4670,13 @@ Research and Public Health* 18 (11).
 
 </div>
 
+<div id="ref-BadanPusatStatistik2022" class="csl-entry">
+
+Badan Pusat Statistik. 2022. “PDB Menurut Lapangan Usaha Seri 2010.”
+<https://www.bps.go.id/indicator/11/65/1/-2010-version-gdp-at-2010-version.html>.
+
+</div>
+
 <div id="ref-Beraud2015" class="csl-entry">
 
 Béraud, Guillaume, Sabine Kazmercziak, Philippe Beutels, Daniel
@@ -4772,6 +4781,13 @@ Moscoviz, Laura, and David K Evans. 2022. “Learning Loss and Student
 Dropouts During the COVID-19 Pandemic: A Review of the Evidence Two
 Years After Schools Shut Down.” Washington, DC: Center for Global
 Development.
+
+</div>
+
+<div id="ref-OfficeforNationalStatistics2022" class="csl-entry">
+
+Office for National Statistics. 2022. “GDP Monthly Estimate, UK.”
+<https://www.ons.gov.uk/economy/grossdomesticproductgdp/bulletins/gdpmonthlyestimateuk/latest>.
 
 </div>
 

@@ -1243,7 +1243,8 @@ if (!knitr::is_html_output(excludes = "markdown")) {
   # pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
   cat('\\input{configtable.tex}')
 }else{
-    x <- knitr::kable(eccon,escape=F, "html",caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage.  RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
+    x <- knitr::kable(eccon,escape=F, "html",caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. RC1 values are taken from Indonesia (Q2 and Q4 2020 [@BadanPusatStatistik2022]). RC2 values are taken from the UK (April 2020 for heavy closures, August 2020 for light closures [@OfficeforNationalStatistics2022]).  RC3 values for light closures are taken from Australia (June 2021). RC3 heavy closures are the same as those for RC2. 
+ \\label{tab:eccon}')
   kable_styling(x,full_width = F,latex_options = "HOLD_position") %>%
   add_header_above(c('',"RC1" = 2,"RC2" = 2,"RC3" = 2)) %>%
   kable_classic()
