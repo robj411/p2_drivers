@@ -3566,7 +3566,7 @@ basic reproduction number
 | Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 |
 | Time to immunity waning | Constant | Inf | None |
 | Relative infectiousness of asymptomatic | Constant | 0.58 | None |
-| $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
+| $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 3.5) | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
 | Fatality ratio without care relative to HFR | Gamma | 5, 1 | None |
 
 <span id="tab:pathogenparameters"></span>Table 6.2: Distributions for
