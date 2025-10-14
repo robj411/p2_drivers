@@ -2369,7 +2369,7 @@ We sample pathogen profiles by defining distributions over the pathogen
 parameters. The distributions are made using data sourced by Doohan et
 al. (2025) (shown in Table <a href="#tab:pathogenprofile">6.1</a>), and
 are described in Table <a href="#tab:pathogenparameters">6.2</a>. Age
-profiles for severity rates are shown in Figure
+profiles for severity ratios are shown in Figure
 <a href="#fig:ratesbyage">6.1</a>. We sample parameter values from
 distributions informed by the seven pathogen profiles. $\text{R}_0$ is
 truncated at 1.5 and 3.5 following Whittaker et al. (2024).
@@ -2377,7 +2377,7 @@ truncated at 1.5 and 3.5 following Whittaker et al. (2024).
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:pathogenprofile"></span>Table 6.1: Pathogen profiles. IHR:
-infection hospitalisation rate. IFR: infection fatality rate.
+infection hospitalisation ratio. IFR: infection fatality ratio.
 </caption>
 <thead>
 <tr>
