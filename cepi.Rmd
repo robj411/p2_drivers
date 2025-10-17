@@ -28,7 +28,7 @@ output:
     pandoc_args: --webtex
 always_allow_html: yes 
 params:
-  lbfile: './data/20250612 updated scenario delivery and costing.xlsx'
+  lbfile: './data/20250922 updated scenario delivery and costing.xlsx'
 ---
 
 \fancypagestyle{plain}{%
@@ -84,7 +84,8 @@ format_to_print2 <- function(x,z=2){
 
 ```{r scentab,echo=F,warning=F,message=F}
 
-tab <- readxl::read_xlsx(params$lbfile)
+tab <- readxl::read_xlsx(params$lbfile, sheet = 'Delivery')
+colnames(tab)[colnames(tab)=='BAU1'] = 'BAU'
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 newpolicies <- c('NC','RC1','RC2','RC3')
 income_levels <- c('LLMIC','UMIC','HIC')
@@ -102,6 +103,103 @@ ncscens = length(scen_scens)
 
 ```
 
+```{r scenarios,message=F,echo=F,warning=F,fig.cap='Vaccine coverage over time by income level.',fig.height=4}
+
+tab[1,c(is.na(tab[1,]))] = ''
+
+df_list <- list()
+for(scen in 1:nScen){
+  for(il in 1:3){
+    start_index <- (scen-1)*6 + 1 + 2
+    # print(any(tab[-c(1,2),start_index]>0 & tab[-c(1,2),start_index + 3]>0))
+    get_index <- start_index - 1 + il
+    ilevel <- gsub('s','',tab[2,get_index])
+    scenario <- colnames(tab)[start_index]
+    vals <- 0
+    for(i in c(0,3)){
+      vaccine <- tab[1,start_index+i][[1]]
+      vindex <- get_index + i
+      vals <- vals +  as.numeric(tab[-c(1:2),vindex][[1]])
+    }
+    df_list[[length(df_list)+1]] <- data.frame(Day=1:length(vals), Percent=cumsum(as.numeric(vals))*100, #Vaccine=vaccine,
+                                               Scenario=scenario, Income=ilevel)
+  }
+}
+
+plotscens <- do.call(rbind,df_list)
+# plotscens$Percent[plotscens$Percent>80] <- 80
+# plotscens$Percent[plotscens$Percent>25&plotscens$Vaccine=='BPSV'] <- 25
+ggplot(subset(plotscens,!Scenario%in%c('BAU2'))) + 
+  geom_line(aes(x=Day,y=Percent,colour=Scenario),linewidth=.6,alpha=.75) +
+  facet_grid(~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
+  theme_bw(base_size=15) + labs(colour='') +
+  theme(legend.position = 'top') + 
+  guides(colour=guide_legend(nrow=2,byrow=F))
+```
+
+
+```{r costresultsbau1,echo=F,warning=F,message=F, results='asis'}
+costresults <- readxl::read_xlsx(params$lbfile,sheet = 3)
+costresults$`Cost Category`[which(costresults$`Cost Category`=='Difference to BAU')+0:4] <- 'Difference to BAU'
+costresults <- costresults[!is.na(costresults$`Cost Category`),]
+costresults <- costresults[costresults$`Cost Category`!='Cost Category',]
+newClabels <- c('Mean','C5','C25','C50','C75','C95')
+oldClabels <- unique(costresults[[2]])
+costresults[[2]] <- newClabels[match(costresults[[2]],oldClabels)]
+for(i in 3:ncol(costresults)) {
+  costresults[[i]] <- gsub('\\.','{\\cdotp}',format_to_print2(as.numeric(costresults[[i]]),2))
+}
+boldrows = grepl('Total',costresults$`Cost Category`) &! grepl('Cashflow',costresults$`Cost Category`)
+for(i in 1:2) {
+  costresults[[i]][boldrows] <- paste0('\\textbf{',costresults[[i]][boldrows],'}')
+}
+for(i in 3:ncol(costresults)) {
+  costresults[[i]][boldrows] <- paste0('\\mathbf{',costresults[[i]][boldrows],'}')
+}
+for(i in 3:ncol(costresults)) {
+  costresults[[i]] <- paste0('$',costresults[[i]],'$')
+}
+lg = 'Full results from costing model for BAU. Values given are the arithmetic mean, and centiles 5, 25, 50, 75 and 95. Units are million USD. Results are reported to two signficant figures.'
+if (!knitr::is_html_output(excludes = "markdown")) {
+  cat(pander(costresults,caption=lg))
+}else{
+  x <- knitr::kable(costresults,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
+
+
+```{r costresultsbau2,echo=F,warning=F,message=F}
+costresults <- readxl::read_xlsx(params$lbfile,sheet = 4)
+costresults$`Cost Category`[which(costresults$`Cost Category`=='Difference to BAU')+0:4] <- 'Difference to BAU'
+costresults <- costresults[!is.na(costresults$`Cost Category`),]
+costresults <- costresults[costresults$`Cost Category`!='Cost Category',]
+newClabels <- c('Mean','C5','C25','C50','C75','C95')
+oldClabels <- unique(costresults[[2]])
+costresults[[2]] <- newClabels[match(costresults[[2]],oldClabels)]
+for(i in 3:ncol(costresults)) {
+  costresults[[i]] <- gsub('\\.','{\\cdotp}',format_to_print2(as.numeric(costresults[[i]]),2))
+}
+boldrows = grepl('Total',costresults$`Cost Category`) &! grepl('Cashflow',costresults$`Cost Category`)
+for(i in 1:2) {
+  costresults[[i]][boldrows] <- paste0('\\textbf{',costresults[[i]][boldrows],'}')
+}
+for(i in 3:ncol(costresults)) {
+  costresults[[i]][boldrows] <- paste0('\\mathbf{',costresults[[i]][boldrows],'}')
+}
+for(i in 3:ncol(costresults)) {
+  costresults[[i]] <- paste0('$',costresults[[i]],'$')
+}
+lg = 'Full results from costing model for BAU2. Values given are the arithmetic mean, and centiles 5, 25, 50, 75 and 95. Units are million USD. Results are reported to two signficant figures.'
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(costresults,caption=lg))
+}else{
+  x <- knitr::kable(costresults,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
 
 
 
@@ -274,7 +372,7 @@ tabresall$`Income group` <- factor(tabresall$`Income group`,levels=c(income_leve
 setorder(tabresall,Scenario,`Income group`,Policy)
 # tabresall[,Scenario:=paste0(`SARS-X vaccine`,' days, ',c('no BPSV','BPSV')[BPSV]),by=.(`SARS-X vaccine`,BPSV)]
 tabresall <- cbind(tabresall[,7],tabresall[,-c(7)])
-lg <- paste0('Results for all vaccination levels, scenarios and country types. Mean values and 95% prediction intervals. \\label{tab:tabres}')
+lg <- paste0('Results for all policies, scenarios and country types. Mean values and 95% prediction intervals. \\label{tab:tabresall}')
 # if (!knitr::is_html_output(excludes = "markdown")) { 
 #   cat(pander(tabresall,caption=lg))
 # }else{
@@ -290,7 +388,10 @@ lg <- paste0('Results for all vaccination levels, scenarios and country types. M
 # Results for all income levels and policy options
 
 ```{r tabresall,echo=F,warning=F,message=F,results='asis'}
-lmtabresall <- subset(tabresall,Policy!='Loss minimising')
+
+for(i in 4:7) tabresall[[i]] <- gsub('\\.','·',tabresall[[i]])
+
+lmtabresall <- subset(tabresall,Policy!='Loss minimising'&Scenario!='BAU2')
 if (!knitr::is_html_output(excludes = "markdown")) { 
   cat(pander(lmtabresall,caption=lg))
 }else{
@@ -310,7 +411,9 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ```{r tabres,echo=F,warning=F,message=F,results='asis'}
 
-lmtabresall <- subset(tabresall,Policy=='Loss minimising')
+lg <- paste0('Best-policy results for all scenarios and country types. Mean values and 95% prediction intervals. \\label{tab:tabres}')
+
+lmtabresall <- subset(tabresall,Policy=='Loss minimising'&Scenario!='BAU2')
 lmtabresall$Policy <- NULL
 if (!knitr::is_html_output(excludes = "markdown")) { 
   cat(pander(lmtabresall,caption=lg))
@@ -506,14 +609,17 @@ tabres <- setDT(difflist)[IQR==T,list(costs=paste0(signif(range(Cost),2),collaps
 
 tabres[,igroup:=factor(igroup,levels=c('LLMIC','UMIC','HIC'))]
 setorder(tabres,igroup,fromscen)
-colnames(tabres)[1:3] <- c('From scenario','To scenario','Income group')
-
+tabres <- subset(tabres, fromscen!='BAU2')
+tabres$fromscen = NULL
+colnames(tabres)[1:2] <- c('Scenario','Income group')
 
 # write.csv(tabres,'cepi_results/Delta_LIR_IQR_IL.csv',row.names = F, quote = F)
 
 # subtabres <- subset(tabres,`From scenario`%in%bau_names)[,!colnames(tabres)%in%scenario_names[-c(scen_to_keep)],with=F]
 
 lg <- 'Value of vaccines as a percent of GDP: differences between BAU and scenarios. 75% uncertainty intervals. \\label{tab:tabresdiff}'
+for(i in 3) tabres[[i]] <- gsub('\\.','·',tabres[[i]])
+
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(tabres,caption=lg)
 }else{
@@ -553,12 +659,12 @@ bsc$Counterfactual <- rownames(bsc)
 rownames(bsc) <- NULL
 bsc <- bsc[,2:1]
 lg <- paste0('Best-case scenarios: scenarios that have the highest $\\Delta$LIR lower quartile or upper quartile for each counterfactual. \\label{tab:bsc}')
-if (!knitr::is_html_output(excludes = "markdown")) { 
-  cat(pander(bsc,caption=lg))
-}else{
-  x <- knitr::kable(bsc,escape=F, "html",caption=lg)
-  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
-}
+# if (!knitr::is_html_output(excludes = "markdown")) { 
+#   cat(pander(bsc,caption=lg))
+# }else{
+#   x <- knitr::kable(bsc,escape=F, "html",caption=lg)
+#   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+# }
 
 ```
 
@@ -574,8 +680,10 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ```{r absvals,tab.cap='Absolute losses and numbers of deaths of one-in-thirty-years and one-in-one-hundred-years events under the BAU scenario.',echo=F,warning=F,message=F}
 
-valuetabbau1 <- valuetab2[grepl('BAU1',rownames(valuetab2)),]
-rownames(valuetabbau1) <- gsub(', BAU1','',rownames(valuetabbau1))
+valuetabbau1 <- valuetab2[!grepl('BAU2',rownames(valuetab2)),]
+rownames(valuetabbau1) <- gsub(', BAU','',rownames(valuetabbau1))
+
+for(i in 1:2) valuetabbau1[[i]] <- gsub('\\.','·',valuetabbau1[[i]])
 
 lg <- paste0('Absolute losses and numbers of deaths of one-in-X-years events under the BAU scenario. \\label{tab:absvals}')
 if (!knitr::is_html_output(excludes = "markdown")) { 
@@ -596,19 +704,22 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ```{r ex100gdp,tab.cap='Value of vaccines',echo=F,warning=F,message=F}
 
-valuetabgdp <- setDT(subset(valuetab,counter=='gdp'))
+valuetabgdp <- setDT(subset(valuetab,counter=='gdp'&`From scenario`!='BAU2'))
 valuetabgdp[,counter:=NULL]
-valuetabgdp$Counterfactual = countercol
+valuetabgdp$Counterfactual = sapply(countercol[!grepl('BAU2',countercol)], function(x)gsub(', BAU','',x))
 rownames(valuetabgdp) <- NULL # rownames(valuetab2)[1:16]
 valuetabgdp$`From scenario` <- NULL
 # subvaluetab <- valuetabgdp[,!colnames(valuetabgdp)%in%scenario_names[-c(scen_to_keep)]]
 lg <- paste0('Value of vaccine investments in the event of a one-in-X-years pandemic (percent of global GDP). \\label{tab:ex100gdp}')
-if (!knitr::is_html_output(excludes = "markdown")) { 
-  cat(pander(valuetabgdp,caption=lg))
-}else{
-  x <- knitr::kable(valuetabgdp,escape=F, "html",caption=lg)
-  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
-}
+
+for(i in 2) valuetabgdp[[i]] <- gsub('\\.','·',valuetabgdp[[i]])
+
+# if (!knitr::is_html_output(excludes = "markdown")) { 
+#   cat(pander(valuetabgdp,caption=lg))
+# }else{
+#   x <- knitr::kable(valuetabgdp,escape=F, "html",caption=lg)
+#   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+# }
 
 ```
 
@@ -620,18 +731,27 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 
 ```{r ex100,tab.cap='Value of vaccines',echo=F,warning=F,message=F}
+valuetabcounter = subset(valuetabcounter,!grepl('BAU2',Counterfactual))
+valuetabcounter$Counterfactual = sapply(countercol[!grepl('BAU2',countercol)], function(x)gsub(', BAU','',x))
 valuetabcounter[,counter:=NULL]
 valuetabcounter[,lq:=NULL]
 valuetabcounter[,uq:=NULL]
 valuetabcounter[,ml:=NULL]
 valuetabcounter[,mu:=NULL]
 
+for(i in 2) valuetabcounter[[i]] <- gsub('\\.','·',valuetabcounter[[i]])
+
+valuetabcom = cbind(Return=valuetabcounter$Counterfactual,
+                    Scenario=valuetabcounter$Scenario,
+                    pccounter=valuetabcounter$Value,
+                    pcgdp=valuetabgdp$Value)
+
 # subvaluetab <- valuetabcounter[,!colnames(valuetabcounter)%in%scenario_names[-c(scen_to_keep)]]
 lg <- paste0('Value of vaccine investments in the event of a one-in-X-years pandemic (percent of counterfactual). \\label{tab:ex100}')
 if (!knitr::is_html_output(excludes = "markdown")) { 
-  cat(pander(valuetabcounter,caption=lg))
+  cat(pander(valuetabcom,caption=lg))
 }else{
-  x <- knitr::kable(valuetabcounter,escape=F, "html",caption=lg)
+  x <- knitr::kable(valuetabcom,escape=F, "html",caption=lg)
   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
 }
 ```
@@ -655,11 +775,14 @@ print(plotlist)
 
 ```{r expvalue,tab.cap='Expected value of investments',echo=F,warning=F,message=F,results='asis'}
 
-expvals1 <- readRDS('code/results/expvals_BAU1.Rds')
+expvals1 <- readRDS('code/results/expvals_BAU.Rds')
 expvals2 <- readRDS('code/results/expvals_BAU2.Rds')
 expvals <- expvals1[expvals2,,on='Scenario']
   #rbind(readRDS('code/results/expvals_BAU1.Rds'),readRDS('code/results/expvals_BAU2.Rds'))
-subexp <- expvals#[,!colnames(expvals)%in%scenario_names[-c(scen_to_keep)],with=F]
+subexp <- expvals1#[,!colnames(expvals)%in%scenario_names[-c(scen_to_keep)],with=F]
+colnames(subexp)[2] = 'Expected impact'
+
+for(i in 2) subexp[[i]] <- gsub('\\.','·',subexp[[i]])
 
 lg <- paste0('Value of investments. \\label{tab:expval}')
 if (!knitr::is_html_output(excludes = "markdown")) { 
@@ -669,6 +792,24 @@ if (!knitr::is_html_output(excludes = "markdown")) {
   x <- knitr::kable(subexp,escape=F, "html",caption=lg)
   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
 }
+```
+
+```{r}
+subexp <- expvals2#[,!colnames(expvals)%in%scenario_names[-c(scen_to_keep)],with=F]
+colnames(subexp)[2] = 'Expected impact'
+for(i in 2) subexp[[i]] <- gsub('\\.','·',subexp[[i]])
+
+
+lg <- paste0('Value of investments. \\label{tab:expval2}')
+if (!knitr::is_html_output(excludes = "markdown")) { 
+  cat(pander(subexp,caption=lg))
+}else{
+  # (knitr::kable(subexp,escape=F, "html",caption=lg))
+  x <- knitr::kable(subexp,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+
 
 ```
 
