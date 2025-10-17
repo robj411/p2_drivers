@@ -2,7 +2,7 @@
 args <- commandArgs(TRUE)
 # print(args)
 if(length(args)==0){
-  lb_file = '../data/20250612 updated scenario delivery and costing.xlsx'
+  lb_file = '../data/20251015 updated scenario delivery and costing.xlsx'
 }else{
   lb_file = args[1]
 }
@@ -26,6 +26,7 @@ library(xlsx)
 library(rJava)
 library(prismatic)
 library(ggpubr)
+library(geomtextpath)
 
 Sys.setenv(JAVA_HOME='C:\\Program Files\\Java \\jre1.8.0_451/') # for 64-bit version
 Sys.setenv(JAVA_HOME='C:\\Program Files (x86)\\Java\\jre1.8.0_451/') # for 32-bit version
@@ -33,10 +34,15 @@ Sys.setenv(JAVA_HOME='C:\\Program Files (x86)\\Java\\jre1.8.0_451/') # for 32-bi
 cl <- makeCluster(4)
 registerDoParallel(cl)
 
-scenario_tab <- readxl::read_xlsx(lb_file)
+scenario_tab <- readxl::read_xlsx(lb_file, sheet = 'Delivery')
+lbsheets = readxl::excel_sheets(lb_file)
+onecost = readxl::read_xlsx(lb_file,sheet = "Lump Sum")
+acosts = readxl::read_xlsx(lb_file,sheet = "Annual Cost")
+rcosts = readxl::read_xlsx(lb_file,sheet = "Response Cost")
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','UMIC','HIC')
 scenario_names <- colnames(scenario_tab)[!grepl('^\\.',colnames(scenario_tab))]
+scenario_names[1] = 'BAU'
 # scenario_names <- c(scenario_names)
 nScen = length(scenario_names)
 scenario_levels <- 1:nScen
@@ -296,3 +302,54 @@ for (or in 1:nrow(others)){
 #   scale_y_continuous(limits=ylims)
 # p1 + p2
 # ggsave(p1 + p2,filename='results/displacement.png',width=7)
+
+
+
+get_pcs <- function(df, x = "x", y = "y") {
+  
+  stopifnot(all(c(x, y) %in% names(df)))
+  d <- na.omit(df[, c(x, y)])
+  names(d) <- c("x", "y")
+  
+  # PCA to get axes
+  pc <- prcomp(d, center = TRUE, scale. = FALSE)
+  v1 <- pc$rotation[, 1]          # axis of max variance (unit vector)
+  v2 <- pc$rotation[, 2]          # perpendicular axis (unit vector)
+  ctr <- pc$center                # mean used for centering
+  sc  <- pc$x                     # scores in PC coordinates
+  
+  # IQR on PC1 (along v1)
+  q1_pc1  <- as.numeric(quantile(sc[,1], 0.25))
+  q3_pc1  <- as.numeric(quantile(sc[,1], 0.75))
+  med_pc1 <- as.numeric(median(sc[,1]))
+  
+  # IQR on PC2 (along v2)
+  q1_pc2  <- as.numeric(quantile(sc[,2], 0.25))
+  q3_pc2  <- as.numeric(quantile(sc[,2], 0.75))
+  
+  # Helper to go from center + a*v1 + b*v2 back to (x, y)
+  to_xy <- function(a, b) {
+    # (x, y) = ctr + a*v1 + b*v2
+    c(ctr[1] + a*v1[1] + b*v2[1],
+      ctr[2] + a*v1[2] + b*v2[2])
+  }
+  
+  # Segment along PC1: from Q1 to Q3 (b = 0)
+  p1 <- to_xy(q1_pc1, 0)
+  p2 <- to_xy(q3_pc1, 0)
+  
+  # Segment along PC2 through the PC1 median point: a = med_pc1
+  p3 <- to_xy(med_pc1, q1_pc2)
+  p4 <- to_xy(med_pc1, q3_pc2)
+  
+  segs <- rbind(
+    data.frame(x = p1[1], y = p1[2], xend = p2[1], yend = p2[2],
+               axis = "PC1 IQR")#,
+    # data.frame(x = p3[1], y = p3[2], xend = p4[1], yend = p4[2],
+    #            axis = "PC2 IQR @ PC1 median")
+  )
+  
+  segs
+  
+  
+}
