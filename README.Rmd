@@ -1243,7 +1243,8 @@ if (!knitr::is_html_output(excludes = "markdown")) {
   # pander(eccon,caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
   cat('\\input{configtable.tex}')
 }else{
-    x <- knitr::kable(eccon,escape=F, "html",caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage.  RC3 values are taken from Australia. Lockdown and RC2 values are taken from the UK. RC1 values are taken from Indonesia. \\label{tab:eccon}')
+    x <- knitr::kable(eccon,escape=F, "html",caption='Economic configurations used to implement strategies. Values are the openness of the sector expressed as a percentage. RC1 values are taken from Indonesia (Q2 and Q4 2020 [@BadanPusatStatistik2022]). RC2 values are taken from the UK (April 2020 for heavy closures, August 2020 for light closures [@OfficeforNationalStatistics2022]).  RC3 values for light closures are taken from Australia (June 2021). RC3 heavy closures are the same as those for RC2. 
+ \\label{tab:eccon}')
   kable_styling(x,full_width = F,latex_options = "HOLD_position") %>%
   add_header_above(c('',"RC1" = 2,"RC2" = 2,"RC3" = 2)) %>%
   kable_classic()
@@ -1261,7 +1262,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 # Pathogen profiles
 
-We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using data sourced by @Doohan2025 (shown in Table \@ref(tab:pathogenprofile)), and are described in Table \@ref(tab:pathogenparameters). Age profiles for severity rates are shown in Figure \@ref(fig:ratesbyage). We sample parameter values from distributions informed by the seven pathogen profiles. $\text{R}_0$ is truncated at 1.5 and 3.5 following @whittakerQuantifyingImpactBroadly2024. 
+We sample pathogen profiles by defining distributions over the pathogen parameters. The distributions are made using data sourced by @Doohan2025 (shown in Table \@ref(tab:pathogenprofile)), and are described in Table \@ref(tab:pathogenparameters). Age profiles for severity ratios are shown in Figure \@ref(fig:ratesbyage). We sample parameter values from distributions informed by the seven pathogen profiles. $\text{R}_0$ is truncated at 1.5 and 3.5 following @whittakerQuantifyingImpactBroadly2024. 
 
 
 
@@ -1275,7 +1276,7 @@ rownames(pp) <- pp$definition
 colnames(pp) <- nm
 pp$definition <- NULL
 for(i in 1:ncol(pp)) pp[,i] <- format_to_print2(as.numeric(pp[,i]))
-cp <- 'Pathogen profiles. IHR: infection hospitalisation rate. IFR: infection fatality rate. \\label{tab:pathogenprofile}'
+cp <- 'Pathogen profiles. IHR: infection hospitalisation ratio. IFR: infection fatality ratio. \\label{tab:pathogenprofile}'
 
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(pp,caption=cp)
@@ -1299,7 +1300,7 @@ Time from hospitalisation to recovery | Gamma | 2.46, 3.75 | 0.997
 Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 
 Time to immunity waning | Constant | Inf | None 
 Relative infectiousness of asymptomatic | Constant | 0.58 | None 
-$\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) 
+$\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 3.5) | 0.60 (time to recovery); 0.66 (time to hospitalisation) 
 Fatality ratio without care relative to HFR | Gamma | 5, 1 | None
 
 Table: (\#tab:pathogenparameters) Distributions for pathogen parameters used to sample synthetic pathogens. Distributions are built from values in Table \@ref(tab:pathogenprofile).

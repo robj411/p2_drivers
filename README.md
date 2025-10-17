@@ -1259,8 +1259,11 @@ closures.
 <caption>
 <span id="tab:eccon"></span>Table 5.3: Economic configurations used to
 implement strategies. Values are the openness of the sector expressed as
-a percentage. RC3 values are taken from Australia. Lockdown and RC2
-values are taken from the UK. RC1 values are taken from Indonesia.
+a percentage. RC1 values are taken from Indonesia (Q2 and Q4 2020 (Badan
+Pusat Statistik 2022)). RC2 values are taken from the UK (April 2020 for
+heavy closures, August 2020 for light closures (Office for National
+Statistics 2022)). RC3 values for light closures are taken from
+Australia (June 2021). RC3 heavy closures are the same as those for RC2.
 </caption>
 <thead>
 <tr>
@@ -2366,7 +2369,7 @@ We sample pathogen profiles by defining distributions over the pathogen
 parameters. The distributions are made using data sourced by Doohan et
 al. (2025) (shown in Table <a href="#tab:pathogenprofile">6.1</a>), and
 are described in Table <a href="#tab:pathogenparameters">6.2</a>. Age
-profiles for severity rates are shown in Figure
+profiles for severity ratios are shown in Figure
 <a href="#fig:ratesbyage">6.1</a>. We sample parameter values from
 distributions informed by the seven pathogen profiles. $\text{R}_0$ is
 truncated at 1.5 and 3.5 following Whittaker et al. (2024).
@@ -2374,7 +2377,7 @@ truncated at 1.5 and 3.5 following Whittaker et al. (2024).
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:pathogenprofile"></span>Table 6.1: Pathogen profiles. IHR:
-infection hospitalisation rate. IFR: infection fatality rate.
+infection hospitalisation ratio. IFR: infection fatality ratio.
 </caption>
 <thead>
 <tr>
@@ -3563,7 +3566,7 @@ basic reproduction number
 | Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 |
 | Time to immunity waning | Constant | Inf | None |
 | Relative infectiousness of asymptomatic | Constant | 0.58 | None |
-| $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 4) | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
+| $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 3.5) | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
 | Fatality ratio without care relative to HFR | Gamma | 5, 1 | None |
 
 <span id="tab:pathogenparameters"></span>Table 6.2: Distributions for
@@ -4667,6 +4670,13 @@ Research and Public Health* 18 (11).
 
 </div>
 
+<div id="ref-BadanPusatStatistik2022" class="csl-entry">
+
+Badan Pusat Statistik. 2022. “PDB Menurut Lapangan Usaha Seri 2010.”
+<https://www.bps.go.id/indicator/11/65/1/-2010-version-gdp-at-2010-version.html>.
+
+</div>
+
 <div id="ref-Beraud2015" class="csl-entry">
 
 Béraud, Guillaume, Sabine Kazmercziak, Philippe Beutels, Daniel
@@ -4771,6 +4781,13 @@ Moscoviz, Laura, and David K Evans. 2022. “Learning Loss and Student
 Dropouts During the COVID-19 Pandemic: A Review of the Evidence Two
 Years After Schools Shut Down.” Washington, DC: Center for Global
 Development.
+
+</div>
+
+<div id="ref-OfficeforNationalStatistics2022" class="csl-entry">
+
+Office for National Statistics. 2022. “GDP Monthly Estimate, UK.”
+<https://www.ons.gov.uk/economy/grossdomesticproductgdp/bulletins/gdpmonthlyestimateuk/latest>.
 
 </div>
 

@@ -1,0 +1,100 @@
+---
+title: "The Costing Model"
+#date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
+  bookdown::pdf_document2: 
+    #   --filter=pandoc-xnos
+    toc: false
+    keep_tex: yes
+    citation_package: natbib
+    extra_dependencies: ["float"]
+    # extra_dependencies: ["flafter"]
+    # pandoc_args:
+    number_sections: true
+    fig_caption: yes
+    includes:
+      in_header: "preamble.tex"
+  bookdown::word_document2: 
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
+    editor_options: 
+      chunk_output_type: inline
+bibliography: 
+  - "../../epi.bib"
+always_allow_html: true
+---
+
+<!-- # Figures (temporary) {.unlisted .unnumbered} -->
+
+```{r setup, include=FALSE}
+library(ggplot2)  
+library(knitr)     
+library(tidyr)
+library(dplyr)
+library(stringi)
+library(gplots)
+library(RColorBrewer)
+library(data.table)
+library(splines)
+library(bookdown)
+library(pander)
+library(haven)
+library(viridis)
+library(hrbrthemes)
+library(MASS)
+library(kableExtra)
+library(wbstats)
+library("cowplot")
+library(latex2exp)
+
+
+panderOptions('round',2)
+panderOptions('table.split.table', Inf)
+
+knitr::opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, echo=F, results='asis')
+
+format_to_print <- function(x,z=-1){
+  formatC(round(x,z), format="f", digits=as.numeric(z>0), big.mark=",")
+}
+
+decimalplaces <- function(x) {
+    if ((x %% 1) != 0) {
+        nchar(strsplit(sub('0+$', '', as.character(format(x,scientific = F))), ".", fixed=TRUE)[[1]][[2]])
+    } else {
+        return(0)
+    }
+}
+
+format_to_print2 <- function(x,z=2){
+    v <- signif(x,z)
+    sapply(v, function(i)  formatC(i, format="f", digits=decimalplaces(i), big.mark=","))
+}
+
+```
+
+
+
+
+
+This document describes the costing model that is used in the CEPI application. 
+
+
+
+# Overview
+
+# Parameters
+
+# Model details
+
+# Results
+
+# Attributions / Authors
+
+
