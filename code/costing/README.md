@@ -17,19 +17,19 @@ application.
 # 2 Parameters
 
 | Math notation | Description | Distribution | Parameter 1 | Parameter 2 | Parameter 3 |
-|:---|:--:|:--:|----|----|----|
-| $D_{0; 365}$ | Preclinical trial duration (365); weeks | Constant | 14 |  |  |
-| $D_{0; 200}$ | Preclinical trial duration (200DM); weeks | Constant | 5 |  |  |
-| $D_{0; 100}$ | Preclinical trial duration (100DM); weeks | Constant | 5 |  |  |
-| $D_{1; 365}$ | Phase I trial duration (365); weeks | Constant | 19 |  |  |
-| $D_{1; 200}$ | Phase I trial duration (200DM); weeks | Constant | 7 |  |  |
-| $D_{1; 100}$ | Phase I trial duration (100DM); weeks | Constant | 0 |  |  |
-| $D_{2; 365}$ | Phase II trial duration (365); weeks | Constant | 19 |  |  |
-| $D_{2; 200}$ | Phase II trial duration (200DM); weeks | Constant | 0 |  |  |
-| $D_{2; 100}$ | Phase II trial duration (100DM); weeks | Constant | 0 |  |  |
-| $D_{3; 365}$ | Phase III trial duration (365); weeks | Constant | 16 |  |  |
-| $D_{3; 200}$ | Phase III trial duration (200DM); weeks | Constant | 15 |  |  |
-| $D_{3; 100}$ | Phase III trial duration (100DM); weeks | Constant | 8 |  |  |
+|:--:|:--:|:--:|----|----|----|
+| $T_{0; 365}^{(S)}$ | SSV preclinical trial duration (365); weeks | Constant | 14 |  |  |
+| $T_{0; 200}^{(S)}$ | SSV preclinical trial duration (200DM); weeks | Constant | 5 |  |  |
+| $T_{0; 100}^{(S)}$ | SSV preclinical trial duration (100DM); weeks | Constant | 5 |  |  |
+| $T_{1; 365}^{(S)}$ | SSV phase I trial duration (365); weeks | Constant | 19 |  |  |
+| $T_{1; 200}^{(S)}$ | SSV phase I trial duration (200DM); weeks | Constant | 7 |  |  |
+| $T_{1; 100}^{(S)}$ | SSV phase I trial duration (100DM); weeks | Constant | 0 |  |  |
+| $T_{2; 365}^{(S)}$ | SSV phase II trial duration (365); weeks | Constant | 19 |  |  |
+| $T_{2; 200}^{(S)}$ | SSV phase II trial duration (200DM); weeks | Constant | 0 |  |  |
+| $T_{2; 100}^{(S)}$ | SSV phase II trial duration (100DM); weeks | Constant | 0 |  |  |
+| $T_{3; 365}^{(S)}$ | SSV phase III trial duration (365); weeks | Constant | 16 |  |  |
+| $T_{3; 200}^{(S)}$ | SSV phase III trial duration (200DM); weeks | Constant | 15 |  |  |
+| $T_{3; 100}^{(S)}$ | SSV phase III trial duration (100DM); weeks | Constant | 8 |  |  |
 | $V_{L; 0}$ | Cost of vaccine delivery at start up (0–10%) in LIC; USD per dose | Triangular | 1 | 1.5 | 2 |
 | $V_{L; 11}$ | Cost of vaccine delivery during ramp up (11–30%) in LIC; USD per dose | Triangular | 0.75 | 1 | 1.5 |
 | $V_{L; 31}$ | Cost of vaccine delivery getting to scale (31–80%) in LIC; USD per dose | Triangular | 1 | 2 | 4 |
@@ -60,12 +60,12 @@ application.
 | $T_2$ | Trial cost, Phase II; million USD | Uniform | 3.8 | 140 |  |
 | $T_3$ | Trial cost, Phase III; million USD | Uniform | 15 | 910 |  |
 | $L$ | Licensure; USD | Constant | 287750 |  |  |
-| $T_0^{(D)}$ | Trial duration, preclinical; years | Uniform | 1 | 2 |  |
-| $T_1^{(D)}$ | Trial duration, Phase I; years | Uniform | 1 | 2 |  |
-| $T_2^{(D)}$ | Trial duration, Phase II; years | Constant | 2 |  |  |
-| $T_3^{(D)}$ | Trial duration, Phase III; years | Uniform | 2 | 4 |  |
-| $L^{(D)}$ | Licensure duration; years | Constant | 2 |  |  |
-| $B$ | BPSV cost of goods supplied; USD per dose | Constant | 4.68 |  |  |
+| $T_0^{(B)}$ | BPSV trial duration, preclinical; years | Uniform | 1 | 2 |  |
+| $T_1^{(B)}$ | BPSV trial duration, Phase I; years | Uniform | 1 | 2 |  |
+| $T_2^{(B)}$ | BPSV trial duration, Phase II; years | Constant | 2 |  |  |
+| $T_3^{(B)}$ | BPSV trial duration, Phase III; years | Uniform | 2 | 4 |  |
+| $L^{(B)}$ | Licensure duration; years | Constant | 2 |  |  |
+| $G$ | BPSV cost of goods supplied; USD per dose | Constant | 4.68 |  |  |
 | $A$ | Advanced capacity reservation fee; USD per dose per year | Constant | 0.53 |  |  |
 | $S_R$ | SSV procurement price, reserved capacity; USD per dose | Constant | 6.29 |  |  |
 | $S_U$ | SSV procurement price, reactive capacity; USD per dose | Constant | 18.94 |  |  |
