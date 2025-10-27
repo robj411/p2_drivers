@@ -17,7 +17,7 @@ application.
 # 2 Parameters
 
 | Math notation | Description | Distribution | Parameter 1 | Parameter 2 | Parameter 3 |
-|:--:|:--:|:--:|----|----|----|
+|:---|:--:|:--:|----|----|----|
 | $D_{0; 365}$ | Preclinical trial duration (365); weeks | Constant | 14 |  |  |
 | $D_{0; 200}$ | Preclinical trial duration (200DM); weeks | Constant | 5 |  |  |
 | $D_{0; 100}$ | Preclinical trial duration (100DM); weeks | Constant | 5 |  |  |
@@ -30,18 +30,18 @@ application.
 | $D_{3; 365}$ | Phase III trial duration (365); weeks | Constant | 16 |  |  |
 | $D_{3; 200}$ | Phase III trial duration (200DM); weeks | Constant | 15 |  |  |
 | $D_{3; 100}$ | Phase III trial duration (100DM); weeks | Constant | 8 |  |  |
-| $V_{L; 0-10}$ | Cost of vaccine delivery at start up (0–10%) in LIC; USD per dose | Triangular | 1 | 1.5 | 2 |
-| $V_{L; 11-30}$ | Cost of vaccine delivery during ramp up (11–30%) in LIC; USD per dose | Triangular | 0.75 | 1 | 1.5 |
-| $V_{L; 31-80}$ | Cost of vaccine delivery getting to scale (31–80%) in LIC; USD per dose | Triangular | 1 | 2 | 4 |
-| $V_{LM; 0-10}$ | Cost of vaccine delivery at start up (0–10%) in LMIC; USD per dose | Triangular | 3 | 4.5 | 6 |
-| $V_{LM; 11-30}$ | Cost of vaccine delivery during ramp up (11–30%) in LMIC; USD per dose | Triangular | 2.25 | 3 | 4.5 |
-| $V_{LM; 31-80}$ | Cost of vaccine delivery getting to scale (31–80%) in LMIC; USD per dose | Triangular | 1.5 | 2 | 2.5 |
-| $V_{UM; 0-10}$ | Cost of vaccine delivery at start up (0–10%) in UMIC; USD per dose | Triangular | 6 | 9 | 12 |
-| $V_{UM; 11-30}$ | Cost of vaccine delivery during ramp up (11–30%) in UMIC; USD per dose | Triangular | 4.5 | 6 | 9 |
-| $V_{UM; 31-80}$ | Cost of vaccine delivery getting to scale (31–80%) in UMIC; USD per dose | Triangular | 3 | 4 | 5 |
-| $V_{H; 0-10}$ | Cost of vaccine delivery at start up (0–10%) in HIC; USD per dose | Triangular | 30 | 40 | 75 |
-| $V_{H; 11-30}$ | Cost of vaccine delivery during ramp up (11–30%) in HIC; USD per dose | Triangular | 30 | 40 | 75 |
-| $V_{H; 31-80}$ | Cost of vaccine delivery getting to scale (31–80%) in HIC; USD per dose | Triangular | 30 | 40 | 75 |
+| $V_{L; 0}$ | Cost of vaccine delivery at start up (0–10%) in LIC; USD per dose | Triangular | 1 | 1.5 | 2 |
+| $V_{L; 11}$ | Cost of vaccine delivery during ramp up (11–30%) in LIC; USD per dose | Triangular | 0.75 | 1 | 1.5 |
+| $V_{L; 31}$ | Cost of vaccine delivery getting to scale (31–80%) in LIC; USD per dose | Triangular | 1 | 2 | 4 |
+| $V_{LM; 0}$ | Cost of vaccine delivery at start up (0–10%) in LMIC; USD per dose | Triangular | 3 | 4.5 | 6 |
+| $V_{LM; 11}$ | Cost of vaccine delivery during ramp up (11–30%) in LMIC; USD per dose | Triangular | 2.25 | 3 | 4.5 |
+| $V_{LM; 31}$ | Cost of vaccine delivery getting to scale (31–80%) in LMIC; USD per dose | Triangular | 1.5 | 2 | 2.5 |
+| $V_{UM; 0}$ | Cost of vaccine delivery at start up (0–10%) in UMIC; USD per dose | Triangular | 6 | 9 | 12 |
+| $V_{UM; 11}$ | Cost of vaccine delivery during ramp up (11–30%) in UMIC; USD per dose | Triangular | 4.5 | 6 | 9 |
+| $V_{UM; 31}$ | Cost of vaccine delivery getting to scale (31–80%) in UMIC; USD per dose | Triangular | 3 | 4 | 5 |
+| $V_{H; 0}$ | Cost of vaccine delivery at start up (0–10%) in HIC; USD per dose | Triangular | 30 | 40 | 75 |
+| $V_{H; 11}$ | Cost of vaccine delivery during ramp up (11–30%) in HIC; USD per dose | Triangular | 30 | 40 | 75 |
+| $V_{H; 31}$ | Cost of vaccine delivery getting to scale (31–80%) in HIC; USD per dose | Triangular | 30 | 40 | 75 |
 | $M_G$ | Global annual manufacturing volume; billion doses | Constant | 15 |  |  |
 | $M_C$ | Current annual manufacturing volume; billion doses | Constant | 6 |  |  |
 | $F$ | Facility transition start; weeks before vaccine approval | Constant | 7 |  |  |
