@@ -91,6 +91,15 @@ This document describes the costing model that is used in the CEPI application.
 
 # Parameters
 
+```{r echo=F,warning=F,message=F}
+
+caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
+caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
+lg <- 'Notation and parametric assumptions for inputs to the costing model'
+cat(pander(caps,caption=lg, missing = ""))
+
+```
+
 # Model details
 
 # Results
