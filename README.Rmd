@@ -109,16 +109,16 @@ colnames(internet) <- c('country','Country.Code','internet')
 incomelevels <- read.csv('data/Metadata_Country_API_IT.NET.USER.ZS_DS2_en_csv_v2_5455054.csv')
 colnames(incomelevels)[1] <- 'Country.Code'
 
-incomeint <- left_join(internet,incomelevels,by='Country.Code')
-internetplot <- ggplot(subset(incomeint,!is.na(IncomeGroup)&IncomeGroup!='')) +  geom_histogram(aes(x=internet),colour='navyblue',fill='grey') +
-  facet_wrap(~IncomeGroup) +
-  theme_bw(base_size = 15) +
-  labs(x='Internet coverage, % (I)',y='')
-
-
-hic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup=='High income')$internet/100,"beta",start=list(shape1=1,shape2=1))
-mic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Upper middle income'))$internet/100,"beta",start=list(shape1=1,shape2=1))
-llmic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Low income','Lower middle income'))$internet/100,"beta",start=list(shape1=1,shape2=1))
+# incomeint <- left_join(internet,incomelevels,by='Country.Code')
+# internetplot <- ggplot(subset(incomeint,!is.na(IncomeGroup)&IncomeGroup!='')) +  geom_histogram(aes(x=internet),colour='navyblue',fill='grey') +
+#   facet_wrap(~IncomeGroup) +
+#   theme_bw(base_size = 15) +
+#   labs(x='Internet coverage, % (I)',y='')
+# 
+# 
+# hic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup=='High income')$internet/100,"beta",start=list(shape1=1,shape2=1))
+# mic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Upper middle income'))$internet/100,"beta",start=list(shape1=1,shape2=1))
+# llmic <- fitdistr(subset(incomeint,!is.na(internet)&IncomeGroup%in%c('Low income','Lower middle income'))$internet/100,"beta",start=list(shape1=1,shape2=1))
 
 
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
@@ -1114,21 +1114,19 @@ Here, $p^5$ controls the variance of the distribution and $p^6$ and $p^7$ the li
 ## Remote working
 
 
-For each sector in each country, we have the 90% interval for the proportion of people who can work from home from @Gottlieb2021. We assume that the value we sample within the range is related to internet infrastructure, so that a low value in one sector implies low values in all sectors. We:
+For each sector in each country, we have the 90% interval for the proportion of people who can work from home from @Gottlieb2021. We sample the same quantile within each range such that a low value in one sector implies low values in all sectors. We:
 
 - take the subset of countries in the income group (LLMIC / UMIC / HIC);
 - take the minimum of the lower bounds by sector (5%);
 - take the maximum of the upper bounds by sector (95%);
 - sample from a uniform distribution between these bounds, taking the same quantile for each sector.
 
-```{r internet,fig.cap='Internet access by income level. World Bank data for 2019.',echo=F,warning=F,message=F,include=F}
-internetplot
-```
+
 
 
 We assume that remote working happens to its fullest extent for the whole period of mitigation for all policies.
 
-<!-- We model the Figure \@ref(fig:internet) values with Beta distributions. For LLMICs, we have parameters `r round(llmic$estimate['shape1'],2)` and  `r round(llmic$estimate['shape2'],2)`. For UMICs, we have parameters `r round(mic$estimate['shape1'],2)` and  `r round(mic$estimate['shape2'],2)`. For HICs, we have parameters `r round(hic$estimate['shape1'],2)` and  `r round(hic$estimate['shape2'],2)`. -->
+
 
 # Closure policies
 

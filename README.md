@@ -1110,9 +1110,8 @@ size of the sector (z). Blue points show the data we have available
 
 For each sector in each country, we have the 90% interval for the
 proportion of people who can work from home from Gottlieb et al. (2021).
-We assume that the value we sample within the range is related to
-internet infrastructure, so that a low value in one sector implies low
-values in all sectors. We:
+We sample the same quantile within each range such that a low value in
+one sector implies low values in all sectors. We:
 
 - take the subset of countries in the income group (LLMIC / UMIC / HIC);
 - take the minimum of the lower bounds by sector (5%);
@@ -1122,8 +1121,6 @@ values in all sectors. We:
 
 We assume that remote working happens to its fullest extent for the
 whole period of mitigation for all policies.
-
-<!-- We model the Figure <a href="#fig:internet"><strong>??</strong></a> values with Beta distributions. For LLMICs, we have parameters 1.78 and  3.11. For UMICs, we have parameters 14.32 and  6.44. For HICs, we have parameters 9.57 and  1.39. -->
 
 # 5 Closure policies
 
@@ -3788,57 +3785,6 @@ Parameter 2
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-internet coverage
-</td>
-<td style="text-align:left;">
-LLMIC
-</td>
-<td style="text-align:left;">
-Beta
-</td>
-<td style="text-align:right;">
-1.78
-</td>
-<td style="text-align:right;">
-3.11
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-internet coverage
-</td>
-<td style="text-align:left;">
-UMIC
-</td>
-<td style="text-align:left;">
-Beta
-</td>
-<td style="text-align:right;">
-14.32
-</td>
-<td style="text-align:right;">
-6.44
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-internet coverage
-</td>
-<td style="text-align:left;">
-HIC
-</td>
-<td style="text-align:left;">
-Beta
-</td>
-<td style="text-align:right;">
-9.57
-</td>
-<td style="text-align:right;">
-1.39
-</td>
-</tr>
 <tr>
 <td style="text-align:left;">
 remaining international tourism

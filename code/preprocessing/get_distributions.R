@@ -483,7 +483,7 @@ source('workplace_related_contacts.R')
 
 ## end ############################################
 
-(parameter_distributions <- rbind(internet_distributions,
+(parameter_distributions <- rbind(#internet_distributions,
                                   tourism_distribution,
                                   labsh_distributions,
                                   gdp_to_gnippp_distributions,
