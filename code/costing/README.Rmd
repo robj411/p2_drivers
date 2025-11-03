@@ -18,8 +18,8 @@ output:
     # pandoc_args:
     number_sections: true
     fig_caption: yes
-    includes:
-      in_header: "preamble.tex"
+    # includes:
+    #   in_header: "preamble.tex"
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -58,7 +58,7 @@ library(latex2exp)
 panderOptions('round',2)
 panderOptions('table.split.table', Inf)
 
-knitr::opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, echo=F, results='asis')
+knitr::opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, echo=F, message=F, warning=F, results='asis')
 
 format_to_print <- function(x,z=-1){
   formatC(round(x,z), format="f", digits=as.numeric(z>0), big.mark=",")
@@ -95,15 +95,214 @@ This document describes the costing model that is used in the CEPI application.
 
 caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
 caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
-lg <- 'Notation and parametric assumptions for inputs to the costing model'
+lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1 and are truncated at Parameters 2 and 3. Inverse Gaussian distributions have as a mean Parameter 1, as a shape Parameter 2, and are truncated at Parameters 3 and 4. Log normal distributions have as a mean Parameter 1, as a standard deviation Parameter 2, and are truncated at Parameters 3 and 4. Inverse Gamma distributions have shape Parameter 1, scale Parameter 2, and are truncated at Parameters 3 and 4. Beta Prime distributions have shape Parameters 1 and 2, scale Parameter 3, and are truncated at Parameters 4 and 5.'
 cat(pander(caps,caption=lg, missing = ""))
+
+```
+
+```{r}
+library(TruncExpFam)
+library(EnvStats)
+library(extraDistr)
+
+# caps
+# unique(caps$Distribution)
+nsamples = 10000
+params <- list()
+
+for(i in 1:nrow(caps)){
+  if(caps$Distribution[i]=='Uniform'){
+    params[[caps$Description[i]]] = runif(nsamples,caps$`Parameter 1`[i],caps$`Parameter 2`[i])
+  }else if(caps$Distribution[i]=='Exponential'){
+    params[[caps$Description[i]]] = rtruncexp(nsamples, rate = 1/caps$`Parameter 1`[i], a = caps$`Parameter 2`[i], b = caps$`Parameter 3`[i], faster = T)
+  }else if(caps$Distribution[i]=='Inverse Gaussian'){ # s = dispersion
+    params[[caps$Description[i]]] = rtruncinvgauss(nsamples, m = caps$`Parameter 1`[i], s = caps$`Parameter 2`[i], a = caps$`Parameter 3`[i], b = caps$`Parameter 4`[i], faster = T)
+  }else if(caps$Distribution[i]=='Inverse Gamma'){ 
+    samples = rinvgamma(nsamples, alpha = caps$`Parameter 1`[i], beta = caps$`Parameter 2`[i])
+    fails = samples < caps$`Parameter 3`[i] | samples > caps$`Parameter 4`[i]
+    while(sum(fails)>0){
+      samples[fails] = rinvgamma(sum(fails), alpha = caps$`Parameter 1`[i], beta = caps$`Parameter 2`[i])
+      fails = samples < caps$`Parameter 3`[i] | samples > caps$`Parameter 4`[i]
+    }
+    params[[caps$Description[i]]] = samples
+    # params[[caps$Description[i]]] = rtruncinvgamma(nsamples, shape = caps$`Parameter 1`[i], scale = caps$`Parameter 2`[i], a = caps$`Parameter 3`[i], b = caps$`Parameter 4`[i], faster = T)
+  }else if(caps$Distribution[i]=='Log normal'){ 
+    params[[caps$Description[i]]] = rtrunclnorm(nsamples, meanlog = caps$`Parameter 1`[i], sdlog = caps$`Parameter 2`[i], a = caps$`Parameter 3`[i], b = caps$`Parameter 4`[i], faster = T)
+  }else if(caps$Distribution[i]=='Beta prime'){ 
+    samples = rbetapr(nsamples, shape1 = caps$`Parameter 1`[i], shape2 = caps$`Parameter 2`[i], scale = caps$`Parameter 3`[i])
+    fails = samples < caps$`Parameter 4`[i] | samples > caps$`Parameter 5`[i]
+    while(sum(fails)>0){
+      samples[fails] = rbetapr(sum(fails), shape1 = caps$`Parameter 1`[i], shape2 = caps$`Parameter 2`[i], scale = caps$`Parameter 3`[i])
+      fails = samples < caps$`Parameter 4`[i] | samples > caps$`Parameter 5`[i]
+    }
+    params[[caps$Description[i]]] = samples
+  }else if(caps$Distribution[i]=='Triangular'){
+    params[[caps$Description[i]]] = rtri(nsamples,min=caps$`Parameter 1`[i],mode=caps$`Parameter 2`[i],max=caps$`Parameter 3`[i])
+  }else if(caps$Distribution[i]=='Multinomial'){
+    values = na.omit(c(caps$`Parameter 1`[i],caps$`Parameter 2`[i],caps$`Parameter 3`[i]))
+    params[[caps$Description[i]]] = sample(values,size=nsamples,replace=T)
+  }
+}
+
+for(i in 1:length(params))
+  base::print(
+    ggplot() + 
+      geom_histogram(aes(x=params[[i]])) + 
+      theme_bw(base_size = 13) + 
+      labs(x='',y='',title=names(params)[i])
+    )
 
 ```
 
 # Model details
 
+
+
+## Preparedness cost equation (annual calculation, 2025-2039):
+
+
+(BPSV R&D + BPSV Stockpile + SARS-X Reserved capacity + Enabling activities) / (1 + discount rate) ^ (year – 2025)
+
+
+
+## Response cost equation (annual calculation, 2040-2045):
+
+
+(BPSV R&D + SARS-X R&D + BPSV Procurement + SARS-X Procurement + BPSV Delivery + SARS-X Delivery) / (1 + discount rate) ^ (year – 2025)
+
+
+
+## Risk-adjusted R&D cost per candidate calculation -
+
+Sum of the cost of each phase multiplied by the likelihood of phase occurrence (probability of success for previous phases)
+
+
+Probability of Occurrence (PoO) = 1 * PoS (PhaseN-1) ...
+
+$ (Preclin) * PoO (Preclin) + $ (Ph1) * PoO (Ph1) + $ (Ph2) * PoO (Ph2) + $ (Ph3) * PoO (Ph3) + $ (License) * PoO (License)
+
+
+Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
+
+$$\hat{P}_i = \left\{\begin{array}{lr}1 & i=0 \\ \prod_{j=0}^{i-1}P_j & i\in\{1,2,3\} \\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
+
+and the cost of each phase is $T_i$ (a (weighted) sum of experienced and inexperienced manufacturers?). Then the total cost is
+
+$$D_{\text{R\&D}} = \sum_{i=0}^3 \hat{P}_iT_i + \hat{P}_LL$$
+
+
+## Procurement cost calculation:
+
+Scenario 1: Annual demand under 6.6B
+
+Annual demand * $6.29 * 1.14 *1.2
+
+Scenario 2: Annual demand over 6.6B
+
+Annual demand * $18.94
+
+
+
+If we write annual demand as $A_{\cdot,y}$, then we would have
+
+$$D_{\text{SSV},y} = \min\{A_{SSV,y},6.6e9\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\{A_{SSV,y}-6.6e9,0\}\cdot S_U$$
+
+$$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
+
+
+## Delivery Cost Equation:
+
+WB status demand/0.8 * 0.1 * (0-10% cost) +
+WB status demand/0.8  * 0.2 * (11-30% cost) +
+WB status demand/0.8 * 0.5 * (30-80% cost)
+
+
+I assume this means, for total populations $N_i^{(T)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
+
+$$D_{\text{SSV}} = \sum_{i}N_i^{(T)}(0.1V_{i; 0} + 0.2V_{i; 11} + 0.5V_{i; 31}) $$ 
+
+Are the same percentages applied to BPSV, which goes only to people aged 65 or older, with populations $N_i^{(65)}$? Or will coverage be reached after the "ramp up" phase?
+
+$$D_{\text{BPSV}} = \sum_{i}N_i^{(65)}(0.1V_{i; 0} + 0.2V_{i; 11} + 0.5V_{i; 31}) $$ 
+
+
+
+
+
+| Country | Country status | Study type | Financial Cost per dose (USD) | Source |
+|---|---|---|---|---|
+| WHO, Gavi, and UNICEF AMC Estimate | AMC | Top down | 1.66 | @Griffiths2021 |
+| UNICEF Global Estimate |  All | Model | 0.73 | @Oyatoye2023 |
+| DRC | LIC | Bottom up | 1.91 | @Moi2024 |
+| Malawi | LIC | Bottom up | 4.55 | @Ruisch2025 |
+| Mozambique | LIC | Bottom up | 0.5 | @Namalela2025 |
+| Uganda | LIC | Bottom up | 0.79 | @Tumusiime2024 |
+| Bangladesh | LMIC | Bottom up | 0.29 | @Yesmin2024 |
+| Cote d'Ivoire | LMIC | Bottom up | 0.67 | @Vaughan2023 |
+| Nigeria | LMIC | Bottom up | 0.84 | @Noh2024 |
+| Philippines | LMIC | Bottom up | 2.16 | @Banks2023 |
+| Vietnam | LMIC | Bottom up | 1.73 | @Nguyen2024 |
+| Ghana | LMIC | CVIC tool | 2.2--2.3 | @Nonvignon2022 |
+| Lao PDR | LMIC | CVIC tool | 0.79--0.81 | @Yeung2023 |
+| Kenya | LMIC | Top down | 3.29--4.28 | @Orangi2022 | 
+| Botswana | UMIC | Mixed | 19 | @Vaughan2025 |
+| South Africa | UMIC | Top down | 3.84 | @Edoka2024 | 
+
+Table: Literature review of global and country-specific delivery rates. 
+
+
+
+## Vaccination Scenarios
+
+Vaccine supply at each investment level is modelled by producing doses sourced from preexisting advance capacity reservations or from the private market. The production volumes for each of these supply mechanisms are interconnected and based on the following assumptions: 
+
+- Current annual global vaccine manufacturing capacity is 9B doses and is used in the response to the SARS-X pandemic 
+- A portion of this capacity is reserved in each level for pandemic response following the advance capacity reservation volumes in each investment level (see Table XX) 
+- Advance capacity reservations allow manufacturing facilities to transition and scale production of SSV doses faster because facilities are paid to maintain a high level of transition preparedness and produce vaccines on the same platform as the approved SSV 
+- Advance capacity reservation agreements guarantee a population-proportional distribution to all World Bank income groups as part of their terms and conditions (an exception is made for the 500m doses available in all levels, which comes from an existing advance capacity reservation held by the European Union) 
+- Private manufacturing will respond to meet any additional gap in SSV demand above the volume covered by advance capacity reservations 
+- Private manufacturing of the SARS-X vaccine will occur in all existing vaccine production facilities not under a reserved capacity agreement 
+- Additional production capacity of 6B doses will be built in response to a global pandemic, like during the Covid-19 response 
+- In BAU and half of scenarios, private manufacturers prioritise delivering SARS-X doses to HICs, like during the Covid-19 response. Private manufacturers provide population-proportional distribution to all income groups, following the same logic as advanced capacity reservations, in the remaining scenarios (see Table 2) 
+- HICs initially receive SARS-X doses quicker than other World Bank income groups due to existing advance capacity reservations and preferential treatment from private manufacturers, in select scenarios. When HICs receive sufficient doses for vaccinating eligible populations, the prioritized doses are reallocated to UMICs. This process repeats for LLMICs once all UMICs doses are delivered 
+
+
+| Category | Reserved capacity | Private response (existing capacity)  | Private response (built capacity)  |
+|---|---|---|---|
+| Annual manufacturing volune | By scenario (0.5--9B)| 9B minus reserved volume | 6B |
+| Facility transition start | 7 weeks before vaccine approval | 7 weeks before vaccine approval | 7 weeks before vaccine approval |
+| Weeks to initial manufacturing | 12 | 30 | 48 |
+| Scale-up weeks to full capacity | 10 | 16 | 16 |
+
+Table: Manufacturing response timeline assumptions 
+
+
+
+ 
+
+<!-- | Weeks from transition start | 0-11 | 12-21 | 22-29 | 30-45  | 46-47 | 48-63 | 64+ | -->
+<!-- |---|---|---|---|---|---|---|---| -->
+<!-- | Reserved Capacity (%)  || Scaling from 0-100 | 100 | 100 | 100 | 100 | 100 |  -->
+<!-- | Private Capacity (Existing; %)  || | | Scaling from 0-100 | 100 | 100 | 100 |  -->
+<!-- | Private Capacity (Response; %)  | | | |  | | Scaling from 0-100 | 100 | -->
+
+ 
+
+| Weeks from transition start |	Reserved Capacity (%)	 | Private Capacity (Existing; %)	| Private Capacity (Response; %) |
+|---|---|---|---|
+| 0--11 |  |  |  |			
+| 12--21 |	Scaling from 0-100	 |  |  |				
+| 22--29 |	100		|   |  |			
+| 30--45 |	100 |	Scaling from 0-100	  |  |
+| 46--47 |	100 |	100	  |  |
+| 48--63	 |100 |	100 |	Scaling from 0-100 |
+| 64+|	100 |	100 |	100 |
+
+Table: Vaccine Production Timeline
+
+
 # Results
 
 # Attributions / Authors
 
-
+# References

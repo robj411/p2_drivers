@@ -16,6 +16,7 @@ The Costing Model
   - [3.6 Vaccination Scenarios](#36-vaccination-scenarios)
 - [4 Results](#4-results)
 - [5 Attributions / Authors](#5-attributions--authors)
+- [6 References](#6-references)
 
 <!-- # Figures (temporary) {.unlisted .unnumbered} -->
 
@@ -261,6 +262,8 @@ Vaccine Production Timeline
 # 4 Results
 
 # 5 Attributions / Authors
+
+# 6 References
 
 <div id="refs" class="references csl-bib-body hanging-indent"
 entry-spacing="0">
