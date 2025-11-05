@@ -8,8 +8,8 @@ The Costing Model
     2025-2039):](#31-preparedness-cost-equation-annual-calculation-2025-2039)
   - [3.2 Response cost equation (annual calculation,
     2040-2045):](#32-response-cost-equation-annual-calculation-2040-2045)
-  - [3.3 Risk-adjusted R&D cost per candidate calculation
-    -](#33-risk-adjusted-rd-cost-per-candidate-calculation--)
+  - [3.3 Risk-adjusted R&D cost per candidate
+    calculation](#33-risk-adjusted-rd-cost-per-candidate-calculation)
   - [3.4 Procurement cost
     calculation:](#34-procurement-cost-calculation)
   - [3.5 Delivery Cost Equation:](#35-delivery-cost-equation)
@@ -119,7 +119,7 @@ activities) / (1 + discount rate) ^ (year – 2025)
 (BPSV R&D + SARS-X R&D + BPSV Procurement + SARS-X Procurement + BPSV
 Delivery + SARS-X Delivery) / (1 + discount rate) ^ (year – 2025)
 
-## 3.3 Risk-adjusted R&D cost per candidate calculation -
+## 3.3 Risk-adjusted R&D cost per candidate calculation
 
 Sum of the cost of each phase multiplied by the likelihood of phase
 occurrence (probability of success for previous phases)
@@ -133,12 +133,12 @@ Probabilities of success for preclinical, Phase I, Phase II, and Phase
 III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence
 are:
 
-$$\hat{P}_i = \left\{\begin{array}{lr}1 & i=0 \\ \prod_{j=0}^{i-1}P_j & i\in\{1,2,3\} \\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
+$$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\ \prod_{j=0}^{i-1}P_j & i\in\{1,2,3\} \\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
 
 and the cost of each phase is $T_i$ (a (weighted) sum of experienced and
 inexperienced manufacturers?). Then the total cost is
 
-$$D_{\text{R&D}} = \sum_{i=0}^3 \hat{P}_iT_i + \hat{P}_LL$$
+$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + \hat{P}_LL$$
 
 ## 3.4 Procurement cost calculation:
 

@@ -172,7 +172,7 @@ for(i in 1:length(params))
 
 
 
-## Risk-adjusted R&D cost per candidate calculation -
+## Risk-adjusted R&D cost per candidate calculation
 
 Sum of the cost of each phase multiplied by the likelihood of phase occurrence (probability of success for previous phases)
 
@@ -184,11 +184,11 @@ $ (Preclin) * PoO (Preclin) + $ (Ph1) * PoO (Ph1) + $ (Ph2) * PoO (Ph2) + $ (Ph3
 
 Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
 
-$$\hat{P}_i = \left\{\begin{array}{lr}1 & i=0 \\ \prod_{j=0}^{i-1}P_j & i\in\{1,2,3\} \\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
+$$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\ \prod_{j=0}^{i-1}P_j & i\in\{1,2,3\} \\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
 
 and the cost of each phase is $T_i$ (a (weighted) sum of experienced and inexperienced manufacturers?). Then the total cost is
 
-$$D_{\text{R&D}} = \sum_{i=0}^3 \hat{P}_iT_i + \hat{P}_LL$$
+$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + \hat{P}_LL$$
 
 
 ## Procurement cost calculation:
