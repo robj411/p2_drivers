@@ -205,7 +205,7 @@ Annual demand * $18.94
 
 If we write annual demand as $A_{\cdot,y}$, then we would have
 
-$$D_{\text{SSV},y} = \min\{A_{SSV,y},6.6e9\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\{A_{SSV,y}-6.6e9,0\}\cdot S_U$$
+$$D_{\text{SSV},y} = \min\\{A_{SSV,y},6.6e9\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,y}-6.6e9,0\\}\cdot S_U$$
 
 $$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
 
