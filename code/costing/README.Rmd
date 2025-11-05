@@ -205,7 +205,7 @@ Annual demand * $18.94
 
 If we write annual demand as $A_{\cdot,y}$, then we would have
 
-$$D_{\text{SSV},y} = \min\\{A_{SSV,y},6.6e9\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,y}-6.6e9,0\\}\cdot S_U$$
+$$D_{\text{SSV},y} = \min\\{A_{SSV,y},M_C\times 10^9\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,y}-M_C\times 10^9,0\\}\cdot S_U$$
 
 $$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
 
@@ -269,7 +269,7 @@ Vaccine supply at each investment level is modelled by producing doses sourced f
 
 | Category | Reserved capacity | Private response (existing capacity)  | Private response (built capacity)  |
 |---|---|---|---|
-| Annual manufacturing volune | By scenario (0.5--9B)| 9B minus reserved volume | 6B |
+| Annual manufacturing volune | By scenario (0.5--2.5B)| 2.5B minus reserved volume | 6B |
 | Facility transition start | 7 weeks before vaccine approval | 7 weeks before vaccine approval | 7 weeks before vaccine approval |
 | Weeks to initial manufacturing | 12 | 30 | 48 |
 | Scale-up weeks to full capacity | 10 | 16 | 16 |
