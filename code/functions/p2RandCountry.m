@@ -39,7 +39,7 @@ function data = p2RandCountry(data,CD,income_level,country_parameter_distributio
     international_tourism_quant = unifrnd(0,1);
 
     data.gdp_to_gnippp = gdp_to_gnippp;
-    data.remote_quantile = internet_coverage_quantile;
+    data.remote_quantile = unifrnd(0,1);
     data.response_time_quantile = unifrnd(0,1);
     data.remote_teaching_effectiveness = unifrnd(0,1);
     data.seedsize = unifrnd(4,8);
@@ -161,7 +161,7 @@ function data = p2RandCountry(data,CD,income_level,country_parameter_distributio
     nonempind = find(~isnan(CD.wfhl1) & country_indices);
     mins = min(table2array(CD(nonempind,strmatch('wfhl', colnames))));
     maxs = max(table2array(CD(nonempind,strmatch('wfhu', colnames))));
-    newprop = unifinv(internet_coverage_quantile,mins,maxs);
+    newprop = unifinv(data.remote_quantile,mins,maxs);
     data.wfh  = [newprop; newprop];
 
     % date of importation
