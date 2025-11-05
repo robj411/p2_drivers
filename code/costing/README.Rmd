@@ -188,7 +188,7 @@ $$\hat{P}_i = \left\{\begin{array}{lr}1 & i=0 \\ \prod_{j=0}^{i-1}P_j & i\in\{1,
 
 and the cost of each phase is $T_i$ (a (weighted) sum of experienced and inexperienced manufacturers?). Then the total cost is
 
-$$D_{\text{R\&D}} = \sum_{i=0}^3 \hat{P}_iT_i + \hat{P}_LL$$
+$$D_{\text{R&D}} = \sum_{i=0}^3 \hat{P}_iT_i + \hat{P}_LL$$
 
 
 ## Procurement cost calculation:
