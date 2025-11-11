@@ -132,7 +132,7 @@ Probabilities of success for preclinical, Phase I, Phase II, and Phase
 III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence
 are:
 
-$$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\{1,2,3\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
+$$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
 
 and the cost of each phase is $T_i$ (a (weighted) sum of experienced and
 inexperienced manufacturers?). Then the total cost is
@@ -269,7 +269,28 @@ $$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\
 1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
 2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
 
-where $s=0$ denotes the BAU scenario.
+where $s=0$ denotes the BAU scenario. By definition,
+$M_{E,s} = M_C - M_{R,s}$.
+
+Then the number of doses, in billions, that are made in week $w$ of
+scenario $s$ is:
+
+$$N_{w,s} = \left\\{\begin{array}{lr}0 & w < I_R \\\\ 
+M_{R,s}/52\frac{w-I_R+1}{C_R} & w\in[I_R, I_R+C_R) \\\\ 
+M_{R,s}/52  & w\in[I_R+C_R, I_E)\\\\ 
+M_{R,s}/52 + M_{E,s}/52\frac{w-I_E+1}{C_E} & w\in[I_E, I_E+C_E)\\\\ 
+M_{R,s}/52 + M_{E,s}/52  & w\in[I_E+C_E, I_B)\\\\ 
+M_{R,s}/52 + M_{E,s}/52 + M_{B}/52\frac{w-I_B+1}{C_B} & w\in[I_B, I_B+C_B)\\\\ 
+M_{R,s}/52 + M_{E,s}/52  + M_{B}/52 & w>I_B+C_B
+\end{array}\right.$$
+
+where $I_R=12$ is the number of weeks to initial manufacturing for
+reserved capacity, $C_R=10$ is the number of weeks to scale up to full
+capacity; $I_E=30$ is the number of weeks to initial manufacturing for
+existing and unreserved capacity, $C_E=16$ is the number of weeks to
+scale up to full capacity; $I_B=48$ is the number of weeks to initial
+manufacturing for built and unreserved capacity, $C_B=16$ is the number
+of weeks to scale up to full capacity;
 
 # 4 Results
 
