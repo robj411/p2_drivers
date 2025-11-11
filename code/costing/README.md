@@ -270,18 +270,18 @@ $$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\
 2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
 
 where $s=0$ denotes the BAU scenario. By definition,
-$M_{E,s} = M_C - M_{R,s}$.
+$M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
 
 Then the number of doses, in billions, that are made in week $w$ of
 scenario $s$ is:
 
 $$N_{w,s} = \left\\{\begin{array}{lr}0 & w < I_R \\\\ 
-M_{R,s}/52\frac{w-I_R+1}{C_R} & w\in[I_R, I_R+C_R) \\\\ 
-M_{R,s}/52  & w\in[I_R+C_R, I_E)\\\\ 
-M_{R,s}/52 + M_{E,s}/52\frac{w-I_E+1}{C_E} & w\in[I_E, I_E+C_E)\\\\ 
-M_{R,s}/52 + M_{E,s}/52  & w\in[I_E+C_E, I_B)\\\\ 
-M_{R,s}/52 + M_{E,s}/52 + M_{B}/52\frac{w-I_B+1}{C_B} & w\in[I_B, I_B+C_B)\\\\ 
-M_{R,s}/52 + M_{E,s}/52  + M_{B}/52 & w>I_B+C_B
+\frac{1}{52}\frac{w-I_R+1}{C_R}M_{R,s} & w\in[I_R, I_R+C_R) \\\\ 
+\frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\ 
+\frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\ 
+\frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\ 
+\frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\ 
+\frac{1}{52}\left(M_{R,s} + M_{E,s}  + M_{B}\right) & w\geq I_B+C_B
 \end{array}\right.$$
 
 where $I_R=12$ is the number of weeks to initial manufacturing for
