@@ -5,16 +5,23 @@ The Costing Model
 - [2 Parameters](#2-parameters)
 - [3 Model details](#3-model-details)
   - [3.1 Preparedness cost equation (annual calculation,
-    2025-2039):](#31-preparedness-cost-equation-annual-calculation-2025-2039)
+    2025-2039)](#31-preparedness-cost-equation-annual-calculation-2025-2039)
   - [3.2 Response cost equation (annual calculation,
-    2040-2045):](#32-response-cost-equation-annual-calculation-2040-2045)
+    2040-2045)](#32-response-cost-equation-annual-calculation-2040-2045)
   - [3.3 Risk-adjusted R&D cost per candidate
     calculation](#33-risk-adjusted-rd-cost-per-candidate-calculation)
-  - [3.4 Procurement cost
-    calculation:](#34-procurement-cost-calculation)
-  - [3.5 Delivery Cost Equation:](#35-delivery-cost-equation)
+  - [3.4 Procurement cost calculation](#34-procurement-cost-calculation)
+  - [3.5 Delivery Cost Equation](#35-delivery-cost-equation)
   - [3.6 Vaccination Scenarios](#36-vaccination-scenarios)
 - [4 Results](#4-results)
+  - [4.1 Parameter samples](#41-parameter-samples)
+  - [4.2 Preparedness costs](#42-preparedness-costs)
+  - [4.3 Response costs](#43-response-costs)
+  - [4.4 R&D costs](#44-rd-costs)
+  - [4.5 Procurement costs](#45-procurement-costs)
+  - [4.6 Delivery costs](#46-delivery-costs)
+  - [4.7 Manufacture](#47-manufacture)
+  - [4.8 Vaccination scenarios](#48-vaccination-scenarios)
 - [5 Attributions / Authors](#5-attributions--authors)
 - [6 References](#6-references)
 
@@ -104,16 +111,14 @@ Parameter 1, scale Parameter 2, and are truncated at the bounds. Beta
 Prime distributions have shape Parameters 1 and 2, scale Parameter 3,
 and are truncated at the bounds.
 
-![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-3.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-4.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-5.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-6.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-7.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-8.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-9.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-10.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-11.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-12.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-13.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-14.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-15.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-16.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-17.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-18.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-19.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-20.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-21.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-22.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-23.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-24.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-25.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-26.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-27.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-28.png)<!-- -->
-
 # 3 Model details
 
-## 3.1 Preparedness cost equation (annual calculation, 2025-2039):
+## 3.1 Preparedness cost equation (annual calculation, 2025-2039)
 
 (BPSV R&D + BPSV Stockpile + SARS-X Reserved capacity + Enabling
 activities) / (1 + discount rate) ^ (year – 2025)
 
-## 3.2 Response cost equation (annual calculation, 2040-2045):
+## 3.2 Response cost equation (annual calculation, 2040-2045)
 
 (BPSV R&D + SARS-X R&D + BPSV Procurement + SARS-X Procurement + BPSV
 Delivery + SARS-X Delivery) / (1 + discount rate) ^ (year – 2025)
@@ -141,7 +146,7 @@ $$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + (1+i) \hat{P}_LL$$
 
 where $i$ is inflation from 2018 to 2025.
 
-## 3.4 Procurement cost calculation:
+## 3.4 Procurement cost calculation
 
 Scenario 1: Annual demand under 6.6B
 
@@ -158,7 +163,7 @@ $$D_{\text{SSV},y} = \min\\{A_{SSV,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  +
 
 $$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
 
-## 3.5 Delivery Cost Equation:
+## 3.5 Delivery Cost Equation
 
 WB status demand/0.8 \* 0.1 \* (0-10% cost) + WB status demand/0.8 \*
 0.2 \* (11-30% cost) + WB status demand/0.8 \* 0.5 \* (30-80% cost)
@@ -293,6 +298,24 @@ manufacturing for built and unreserved capacity, $C_B=16$ is the number
 of weeks to scale up to full capacity;
 
 # 4 Results
+
+## 4.1 Parameter samples
+
+![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-3.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-4.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-5.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-6.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-7.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-8.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-9.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-10.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-11.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-12.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-13.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-14.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-15.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-16.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-17.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-18.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-19.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-20.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-21.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-22.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-23.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-24.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-25.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-26.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-27.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-28.png)<!-- -->
+
+## 4.2 Preparedness costs
+
+## 4.3 Response costs
+
+## 4.4 R&D costs
+
+## 4.5 Procurement costs
+
+## 4.6 Delivery costs
+
+## 4.7 Manufacture
+
+## 4.8 Vaccination scenarios
 
 # 5 Attributions / Authors
 

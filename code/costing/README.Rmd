@@ -95,77 +95,24 @@ This document describes the costing model that is used in the CEPI application.
 
 caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
 caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
-lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1 and are truncated at Parameters 2 and 3. Inverse Gaussian distributions have as a mean Parameter 1, as a shape Parameter 2, and are truncated at Parameters 3 and 4. Log normal distributions have as a mean Parameter 1, as a standard deviation Parameter 2, and are truncated at Parameters 3 and 4. Inverse Gamma distributions have shape Parameter 1, scale Parameter 2, and are truncated at Parameters 3 and 4. Beta Prime distributions have shape Parameters 1 and 2, scale Parameter 3, and are truncated at Parameters 4 and 5.'
+lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1 and are truncated at Parameters 2 and 3. Inverse Gaussian distributions have as a mean Parameter 1, as a shape Parameter 2, and are truncated at the bounds. Log normal distributions have as a mean Parameter 1, as a standard deviation Parameter 2, and are truncated at the bounds. Inverse Gamma distributions have shape Parameter 1, scale Parameter 2, and are truncated at the bounds. Beta Prime distributions have shape Parameters 1 and 2, scale Parameter 3, and are truncated at the bounds.'
 cat(pander(caps,caption=lg, missing = ""))
 
 ```
 
-```{r}
-library(TruncExpFam)
-library(EnvStats)
-library(extraDistr)
-
-# caps
-# unique(caps$Distribution)
-nsamples = 10000
-params <- list()
-
-for(i in 1:nrow(caps)){
-  if(caps$Distribution[i]=='Uniform'){
-    params[[caps$Description[i]]] = runif(nsamples,caps$`Parameter 1`[i],caps$`Parameter 2`[i])
-  }else if(caps$Distribution[i]=='Exponential'){
-    params[[caps$Description[i]]] = rtruncexp(nsamples, rate = 1/caps$`Parameter 1`[i], a = caps$`Parameter 2`[i], b = caps$`Parameter 3`[i], faster = T)
-  }else if(caps$Distribution[i]=='Inverse Gaussian'){ # s = dispersion
-    params[[caps$Description[i]]] = rtruncinvgauss(nsamples, m = caps$`Parameter 1`[i], s = caps$`Parameter 2`[i], a = caps$`Parameter 3`[i], b = caps$`Parameter 4`[i], faster = T)
-  }else if(caps$Distribution[i]=='Inverse Gamma'){ 
-    samples = rinvgamma(nsamples, alpha = caps$`Parameter 1`[i], beta = caps$`Parameter 2`[i])
-    fails = samples < caps$`Parameter 3`[i] | samples > caps$`Parameter 4`[i]
-    while(sum(fails)>0){
-      samples[fails] = rinvgamma(sum(fails), alpha = caps$`Parameter 1`[i], beta = caps$`Parameter 2`[i])
-      fails = samples < caps$`Parameter 3`[i] | samples > caps$`Parameter 4`[i]
-    }
-    params[[caps$Description[i]]] = samples
-    # params[[caps$Description[i]]] = rtruncinvgamma(nsamples, shape = caps$`Parameter 1`[i], scale = caps$`Parameter 2`[i], a = caps$`Parameter 3`[i], b = caps$`Parameter 4`[i], faster = T)
-  }else if(caps$Distribution[i]=='Log normal'){ 
-    params[[caps$Description[i]]] = rtrunclnorm(nsamples, meanlog = caps$`Parameter 1`[i], sdlog = caps$`Parameter 2`[i], a = caps$`Parameter 3`[i], b = caps$`Parameter 4`[i], faster = T)
-  }else if(caps$Distribution[i]=='Beta prime'){ 
-    samples = rbetapr(nsamples, shape1 = caps$`Parameter 1`[i], shape2 = caps$`Parameter 2`[i], scale = caps$`Parameter 3`[i])
-    fails = samples < caps$`Parameter 4`[i] | samples > caps$`Parameter 5`[i]
-    while(sum(fails)>0){
-      samples[fails] = rbetapr(sum(fails), shape1 = caps$`Parameter 1`[i], shape2 = caps$`Parameter 2`[i], scale = caps$`Parameter 3`[i])
-      fails = samples < caps$`Parameter 4`[i] | samples > caps$`Parameter 5`[i]
-    }
-    params[[caps$Description[i]]] = samples
-  }else if(caps$Distribution[i]=='Triangular'){
-    params[[caps$Description[i]]] = rtri(nsamples,min=caps$`Parameter 1`[i],mode=caps$`Parameter 2`[i],max=caps$`Parameter 3`[i])
-  }else if(caps$Distribution[i]=='Multinomial'){
-    values = na.omit(c(caps$`Parameter 1`[i],caps$`Parameter 2`[i],caps$`Parameter 3`[i]))
-    params[[caps$Description[i]]] = sample(values,size=nsamples,replace=T)
-  }
-}
-
-for(i in 1:length(params))
-  base::print(
-    ggplot() + 
-      geom_histogram(aes(x=params[[i]])) + 
-      theme_bw(base_size = 13) + 
-      labs(x='',y='',title=names(params)[i])
-    )
-
-```
 
 # Model details
 
 
 
-## Preparedness cost equation (annual calculation, 2025-2039):
+## Preparedness cost equation (annual calculation, 2025-2039)
 
 
 (BPSV R&D + BPSV Stockpile + SARS-X Reserved capacity + Enabling activities) / (1 + discount rate) ^ (year – 2025)
 
 
 
-## Response cost equation (annual calculation, 2040-2045):
+## Response cost equation (annual calculation, 2040-2045)
 
 
 (BPSV R&D + SARS-X R&D + BPSV Procurement + SARS-X Procurement + BPSV Delivery + SARS-X Delivery) / (1 + discount rate) ^ (year – 2025)
@@ -184,14 +131,15 @@ $ (Preclin) * PoO (Preclin) + $ (Ph1) * PoO (Ph1) + $ (Ph2) * PoO (Ph2) + $ (Ph3
 
 Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
 
-$$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\{1,2,3\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
+$$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
 
 and the cost of each phase is $T_i$ (a (weighted) sum of experienced and inexperienced manufacturers?). Then the total cost is
 
-$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + \hat{P}_LL$$
+$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + (1+i) \hat{P}_LL$$
 
+where $i$ is inflation from 2018 to 2025.
 
-## Procurement cost calculation:
+## Procurement cost calculation
 
 Scenario 1: Annual demand under 6.6B
 
@@ -203,14 +151,14 @@ Annual demand * $18.94
 
 
 
-If we write annual demand as $A_{\cdot,y}$, then we would have
+If we write annual demand in billions as $A_{\cdot,y}$, then we would have costs, in billion USD, of:
 
-$$D_{\text{SSV},y} = \min\\{A_{SSV,y},M_C\times 10^9\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,y}-M_C\times 10^9,0\\}\cdot S_U$$
+$$D_{\text{SSV},y} = \min\\{A_{SSV,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,y}-M_C,0\\}\cdot S_U$$
 
 $$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
 
 
-## Delivery Cost Equation:
+## Delivery Cost Equation
 
 WB status demand/0.8 * 0.1 * (0-10% cost) +
 WB status demand/0.8  * 0.2 * (11-30% cost) +
@@ -269,7 +217,7 @@ Vaccine supply at each investment level is modelled by producing doses sourced f
 
 | Category | Reserved capacity | Private response (existing capacity)  | Private response (built capacity)  |
 |---|---|---|---|
-| Annual manufacturing volune | By scenario (0.5--2.5B)| 2.5B minus reserved volume | 6B |
+| Annual manufacturing volume | By scenario (0.5--2.5B)| 2.5B minus reserved volume | 6B |
 | Facility transition start | 7 weeks before vaccine approval | 7 weeks before vaccine approval | 7 weeks before vaccine approval |
 | Weeks to initial manufacturing | 12 | 30 | 48 |
 | Scale-up weeks to full capacity | 10 | 16 | 16 |
@@ -301,7 +249,104 @@ Table: Manufacturing response timeline assumptions
 Table: Vaccine Production Timeline
 
 
+
+The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, depends on the scenarios as follows:
+
+$$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
+1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
+2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
+
+where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
+
+Then the number of doses, in billions, that are made in week $w$ of scenario $s$ is:
+
+
+$$N_{w,s} = \left\\{\begin{array}{lr}0 & w < I_R \\\\ 
+\frac{1}{52}\frac{w-I_R+1}{C_R}M_{R,s} & w\in[I_R, I_R+C_R) \\\\ 
+\frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\ 
+\frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\ 
+\frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\ 
+\frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\ 
+\frac{1}{52}\left(M_{R,s} + M_{E,s}  + M_{B}\right) & w\geq I_B+C_B
+\end{array}\right.$$
+
+
+where $I_R=12$ is the number of weeks to initial manufacturing for reserved capacity, $C_R=10$ is the number of weeks to scale up to full capacity; $I_E=30$ is the number of weeks to initial manufacturing for existing and unreserved capacity, $C_E=16$ is the number of weeks to scale up to full capacity; $I_B=48$ is the number of weeks to initial manufacturing for built and unreserved capacity, $C_B=16$ is the number of weeks to scale up to full capacity; 
+
 # Results
+
+## Parameter samples
+
+```{r}
+library(TruncExpFam)
+library(EnvStats)
+library(extraDistr)
+
+# caps
+# unique(caps$Distribution)
+nsamples = 10000
+params <- list()
+
+for(i in 1:nrow(caps)){
+  parameters <- as.numeric(strsplit(caps$Parameters[i],',')[[1]])
+  bounds <- as.numeric(strsplit(caps$Bounds[i],',')[[1]])
+  if(caps$Distribution[i]=='Uniform'){
+    params[[caps$Description[i]]] = runif(nsamples,parameters[1],parameters[2])
+  }else if(caps$Distribution[i]=='Exponential'){
+    params[[caps$Description[i]]] = rtruncexp(nsamples, rate = 1/parameters[1], a = bounds[1], b = bounds[2], faster = T)
+  }else if(caps$Distribution[i]=='Inverse Gaussian'){ # s = dispersion
+    params[[caps$Description[i]]] = rtruncinvgauss(nsamples, m = parameters[1], s = parameters[2], a = bounds[1], b = bounds[2], faster = T)
+  }else if(caps$Distribution[i]=='Inverse Gamma'){ 
+    samples = rinvgamma(nsamples, alpha = parameters[1], beta = parameters[2])
+    fails = samples < bounds[1] | samples > bounds[2]
+    while(sum(fails)>0){
+      samples[fails] = rinvgamma(sum(fails), alpha = parameters[1], beta = parameters[2])
+      fails = samples < bounds[1] | samples > bounds[2]
+    }
+    params[[caps$Description[i]]] = samples
+    # params[[caps$Description[i]]] = rtruncinvgamma(nsamples, shape = parameters[1], scale = parameters[2], a = bounds[1], b = bounds[2], faster = T)
+  }else if(caps$Distribution[i]=='Log normal'){ 
+    params[[caps$Description[i]]] = rtrunclnorm(nsamples, meanlog = parameters[1], sdlog = parameters[2], a = bounds[1], b = bounds[2], faster = T)
+  }else if(caps$Distribution[i]=='Beta prime'){ 
+    samples = rbetapr(nsamples, shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
+    fails = samples < bounds[1] | samples > bounds[2]
+    while(sum(fails)>0){
+      samples[fails] = rbetapr(sum(fails), shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
+      fails = samples < bounds[1] | samples > bounds[2]
+    }
+    params[[caps$Description[i]]] = samples
+  }else if(caps$Distribution[i]=='Triangular'){
+    params[[caps$Description[i]]] = rtri(nsamples,min=parameters[1],mode=parameters[2],max=parameters[3])
+  }else if(caps$Distribution[i]=='Multinomial'){
+    values = na.omit(c(parameters))
+    params[[caps$Description[i]]] = sample(values,size=nsamples,replace=T)
+  }
+}
+
+for(i in 1:length(params))
+  base::print(
+    ggplot() + 
+      geom_histogram(aes(x=params[[i]])) + 
+      theme_bw(base_size = 13) + 
+      labs(x='',y='',title=names(params)[i])
+    )
+
+```
+
+
+## Preparedness costs
+
+## Response costs
+
+## R&D costs
+
+## Procurement costs
+
+## Delivery costs
+
+## Manufacture
+
+## Vaccination scenarios
 
 # Attributions / Authors
 
