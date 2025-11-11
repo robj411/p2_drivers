@@ -310,27 +310,51 @@ that $K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}$. We
 write $X_i$ as the maximum demand for income group $i$.
 
 $$
-k_{s,x,i,w} = \left\\{ \begin{array}{lr}
+k_{s,R,i,w} = \left\\{ \begin{array}{lr}
 Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \\;\\&\\; i=\text{HIC} \\\\
 0                     & K_{s,\text{HIC},w} \leq 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
-\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{x,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
-\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{x,s,w} & K_{s,\text{HIC},w} > X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{UMIC}\\\\
-Z_{x,s,w}             & K_{s,\text{UMIC},w} > X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
+\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
+\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} > X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC}\\\\
+Z_{R,s,w}             & K_{s,\text{UMIC},w} > X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
 \end{array}\right.
 $$
 
+The logic of this reads as follows:
+
+- The first 500 million doses from reserved capacity go exclusively to
+  HIC
+- None go to UMIC and LLMIC
+- When HIC coverage is between 500 million and its total demand,
+  reserved capacity doses are allocated according to population
+- Once HIC reach their total demand, doses from reserved capacity are
+  split proportional to population between UMIC and LLMIC
+- Once UMIC reach their total demand, all doses from reserved capacity
+  go to LLMIC
+
+For $x\in\\{E,B\\}$,
+
 $$
-M_{R,s} = \left\\{\begin{array}{lr}
-0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
-1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
-N & 0.5  Ks,HIC,w  X{{HIC}}
+k_{s,x,i,w} = \left\\{ \begin{array}{lr}
+Z_{x,s,w}            & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i=\text{HIC} \\\\
+0                     & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC} \\\\
+Z_{x,s,w}            & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i=\text{UMIC} \\\\
+0                     & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i\neq\text{UMIC} \\\\
+Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC} \\\\
+0                     & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i\neq\text{LLMIC} 
 \end{array}\right.
 $$
 
-$$k_{s,\text{HIC},w} = \min(0.5, K_{s,\text{HIC},w}) + \hat{N}_{\text{HIC}}\cdot \max(0, \sum_{j=0}^w Z_{R,s,w} - 0.5) + \sum_{j=0}^w Z_{E,s,w} + \sum_{j=0}^w Z_{B,s,w}$$
+The logic of this reads as follows:
 
-where $\hat{N}_i$ is the proportion of the world’s population in income
-group $i$.
+- Until HIC demand is reached, all doses from unreserved capacity go to
+  HIC
+- None go to UMIC and LLMIC
+- Once HIC demand has been met and until UMIC demand is reached, all
+  doses from unreserved capacity go to UMIC
+- None go to HIC and LLMIC
+- Once HIC and UMIC demand have been met, all remaining doses from
+  unreserved capacity go to LLMIC
+- None go to UMIC and HIC
 
 # 4 Results
 
