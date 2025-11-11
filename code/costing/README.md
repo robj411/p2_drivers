@@ -307,13 +307,15 @@ $$Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.$$
 Denote the weekly allocated doses at week $w$ from capacity $x$ to
 income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such
 that $K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}$. We
-write $\hat{K}_i$ as the maximum demand for income group $i$.
+write $X_i$ as the maximum demand for income group $i$.
 
 $$
 k_{s,x,i,w} = \left\\{ \begin{array}{lr}
 Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5  i=\text{HIC} \\\\
 0                     & K_{s,\text{HIC},w} \leq 0.5  i\neq\text{HIC} \\\\
-N_{i}Z_{x,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}}
+N_{i}Z_{x,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
+N_{i}Z_{x,s,w} & K_{s,\text{HIC},w} > X_{\text{HIC}} \quad\\&\quad  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\& i\neq\text{UMIC}\\\\
+Z_{x,s,w}             & K_{s,\text{UMIC},w} > X_{\text{UMIC}} \quad\\&\quad i=\text{LLMIC}
 \end{array}\right.
 $$
 
@@ -324,9 +326,6 @@ M_{R,s} = \left\\{\begin{array}{lr}
 N & 0.5  Ks,HIC,w  X{{HIC}}
 \end{array}\right.
 $$
-
-<!-- \bar{N}_{i}Z_{x,s,w} & K_{s,\text{HIC},w} > \hat{K}_{\text{HIC}} \quad\\&\quad  K_{s,\text{UMIC},w} < \hat{K}_{\text{HIC}} \\& i\neq\text{UMIC}\\\\  -->
-<!-- Z_{x,s,w}             & K_{s,\text{UMIC},w} > \hat{K}_{\text{UMIC}} \quad\\&\quad i=\text{LLMIC} -->
 
 $$k_{s,\text{HIC},w} = \min(0.5, K_{s,\text{HIC},w}) + \hat{N}_{\text{HIC}}\cdot \max(0, \sum_{j=0}^w Z_{R,s,w} - 0.5) + \sum_{j=0}^w Z_{E,s,w} + \sum_{j=0}^w Z_{B,s,w}$$
 
