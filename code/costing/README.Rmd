@@ -280,12 +280,20 @@ Denote the weekly allocated doses at week $w$ from capacity $x$ to income level 
 
 $$
 k_{s,x,i,w} = \left\\{ \begin{array}{lr}
-Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \\& i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} \leq 0.5 \\& i\neq\text{HIC} \\\\
-\hat{N}_{i}Z_{x,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC})
+Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5  i=\text{HIC} \\\\
+0                     & K_{s,\text{HIC},w} \leq 0.5  i\neq\text{HIC} \\\\
+N_{i}Z_{x,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}}
 \end{array}\right.
 $$
 
+
+$$
+M_{R,s} = \left\\{\begin{array}{lr}
+0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
+1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
+N & 0.5  Ks,HIC,w  X{{HIC}}
+\end{array}\right.
+$$
 
 <!-- \bar{N}_{i}Z_{x,s,w} & K_{s,\text{HIC},w} > \hat{K}_{\text{HIC}} \quad\\&\quad  K_{s,\text{UMIC},w} < \hat{K}_{\text{HIC}} \\& i\neq\text{UMIC}\\\\  -->
 <!-- Z_{x,s,w}             & K_{s,\text{UMIC},w} > \hat{K}_{\text{UMIC}} \quad\\&\quad i=\text{LLMIC} -->
