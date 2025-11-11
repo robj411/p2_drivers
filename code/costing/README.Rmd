@@ -280,7 +280,7 @@ Denote the weekly allocated doses at week $w$ from capacity $x$ to income level 
 
 ```math
 k_{s,x,i,w} = \left\\{\begin{array}{lr}
-Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \quad\\&\quad i=\text{HIC} \\\\ 
+Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \quad\\&\quad i=\text{HIC} 
 \end{array}\right.
 ```
 <!-- 0                     & K_{s,\text{HIC},w} \leq 0.5 \quad\\&\quad i\neq\text{HIC} \\\\  -->
