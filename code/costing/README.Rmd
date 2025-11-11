@@ -249,6 +249,7 @@ Table: Manufacturing response timeline assumptions
 Table: Vaccine Production Timeline
 
 
+## Vaccine supply 
 
 The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, depends on the scenarios as follows:
 
@@ -258,20 +259,36 @@ $$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\
 
 where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
 
-Then the number of doses, in billions, that are made in week $w$ of scenario $s$ is:
+Then the number of doses, in billions, that are made from capacity $x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
 
 
-$$N_{w,s} = \left\\{\begin{array}{lr}0 & w < I_R \\\\ 
-\frac{1}{52}\frac{w-I_R+1}{C_R}M_{R,s} & w\in[I_R, I_R+C_R) \\\\ 
-\frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\ 
-\frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\ 
-\frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\ 
-\frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\ 
-\frac{1}{52}\left(M_{R,s} + M_{E,s}  + M_{B}\right) & w\geq I_B+C_B
+$$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w < I_x \\\\ 
+\frac{1}{52}\frac{w-I_x+1}{C_x}M_{x,s} & w\in[I_x, I_x+C_x) \\\\ 
+\frac{1}{52}M_{x,s}  & w\geq I_x+C_x
 \end{array}\right.$$
 
+<!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
+<!-- \frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\  -->
+<!-- \frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\  -->
+<!-- \frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\  -->
 
-where $I_R=12$ is the number of weeks to initial manufacturing for reserved capacity, $C_R=10$ is the number of weeks to scale up to full capacity; $I_E=30$ is the number of weeks to initial manufacturing for existing and unreserved capacity, $C_E=16$ is the number of weeks to scale up to full capacity; $I_B=48$ is the number of weeks to initial manufacturing for built and unreserved capacity, $C_B=16$ is the number of weeks to scale up to full capacity; 
+where $I_R=12$ is the number of weeks to initial manufacturing for reserved capacity, $C_R=10$ is the number of weeks to scale up to full capacity; $I_E=30$ is the number of weeks to initial manufacturing for existing and unreserved capacity, $C_E=16$ is the number of weeks to scale up to full capacity; $I_B=48$ is the number of weeks to initial manufacturing for built and unreserved capacity, $C_B=16$ is the number of weeks to scale up to full capacity.
+
+Then the total number of doses produced in week $w$ is $$Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.$$
+
+Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}$.
+
+$$k_{s,x,i,w} = \left\\{\begin{array}{lr}Z_{R,s,w} & K_{s,\text{HIC},w} \leq 0.5 \& i=\text{HIC} \\\\ 
+0 & K_{s,\text{HIC},w} \leq 0.5 \& i\neq\text{HIC} \\\\ 
+\hat{N}_{i}Z_{x,s,w} & 0.5 < K_{s,\text{HIC},w} < \text{total HIC demand}\\\\ 
+\bar{N}_{i}Z_{x,s,w} & K_{s,\text{HIC},w} > \text{total HIC demand} \&  K_{s,\text{UMIC},w} < \text{total UMIC demand} \& i\neq\text{HIC}\\\\ 
+Z_{x,s,w} & K_{s,\text{UMIC},w} > \text{total UMIC demand} \& i=\text{LLMIC}
+\end{array}\right.
+
+$$k_{s,\text{HIC},w} = \min(0.5, K_{s,\text{HIC},w}) + \hat{N}_{\text{HIC}}\cdot \max(0, \sum_{j=0}^w Z_{R,s,w} - 0.5) + \sum_{j=0}^w Z_{E,s,w} + \sum_{j=0}^w Z_{B,s,w}$$
+
+where $\hat{N}_i$ is the proportion of the world's population in income group $i$.
+
 
 # Results
 
