@@ -311,12 +311,12 @@ write $\hat{K}_i$ as the maximum demand for income group $i$.
 
 ``` math
 k_{s,x,i,w} = \left\{ \begin{array}{lr}
-Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \quad\&\quad i=\text{HIC} 
+Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \quad\&\quad i=\text{HIC} \\\\
+0                     & K_{s,\text{HIC},w} \leq 0.5 \quad\&\quad i\neq\text{HIC} \\\\
+\hat{N}_{i}Z_{x,s,w} & 0.5 < K_{s,\text{HIC},w} < \hat{K}_{\text{HIC})
 \end{array}\right.
 ```
 
-<!-- 0                     & K_{s,\text{HIC},w} \leq 0.5 \quad\\&\quad i\neq\text{HIC} \\\\  -->
-<!-- \hat{N}_{i}Z_{x,s,w} & 0.5 < K_{s,\text{HIC},w} < \hat{K}_{\text{HIC})\\\\  -->
 <!-- \bar{N}_{i}Z_{x,s,w} & K_{s,\text{HIC},w} > \hat{K}_{\text{HIC}} \quad\\&\quad  K_{s,\text{UMIC},w} < \hat{K}_{\text{HIC}} \\& i\neq\text{UMIC}\\\\  -->
 <!-- Z_{x,s,w}             & K_{s,\text{UMIC},w} > \hat{K}_{\text{UMIC}} \quad\\&\quad i=\text{LLMIC} -->
 
