@@ -311,10 +311,10 @@ write $X_i$ as the maximum demand for income group $i$.
 
 $$
 k_{s,x,i,w} = \left\\{ \begin{array}{lr}
-Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \;\\&\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} \leq 0.5 \;\\&\; i\neq\text{HIC} \\\\
+Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \\;\\&\\; i=\text{HIC} \\\\
+0                     & K_{s,\text{HIC},w} \leq 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
 N_{i}Z_{x,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
-N_{i}Z_{x,s,w} & K_{s,\text{HIC},w} > X_{\text{HIC}} \;\\&\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\& i\neq\text{UMIC}\\\\
+N_{i}Z_{x,s,w} & K_{s,\text{HIC},w} > X_{\text{HIC}} \;\\&\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \;\\&\; i\neq\text{UMIC}\\\\
 Z_{x,s,w}             & K_{s,\text{UMIC},w} > X_{\text{UMIC}} \;\\&\; i=\text{LLMIC}
 \end{array}\right.
 $$
