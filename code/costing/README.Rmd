@@ -126,7 +126,7 @@ library(extraDistr)
 
 # caps
 # unique(caps$Distribution)
-nsamples = 10000
+nsamples = 100
 params <- pall <- list()
 
 for(i in 1:nrow(caps)){
@@ -371,7 +371,7 @@ Then the number of doses, in billions, that are made from capacity $x\in \\{R, E
 
 
 $$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
-\frac{1}{52}\frac{w-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
+\frac{1}{52}\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
 \frac{1}{52}M_{x,s}  & w-w_s^{(0)}\geq I_x+C_x
 \end{array}\right.$$
 
@@ -384,9 +384,77 @@ where $I_R=12$ is the number of weeks to initial manufacturing for reserved capa
 
 Then the total number of doses produced in week $w$ is $$Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.$$
 
+```{r supply, fig.cap='Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen.'}
+
+
+scen_dm = c(1, 1,1,1, 1,1, 2,2,2, 3,3,3, 1)
+scen_capres = c(1, 1,2,3, 2,3, 1,2,3, 1,2,3, 1)
+
+dose_supply = function(week, w0, weeks_init, weeks_scale, man_cap){
+  if((week - w0) < weeks_init){
+    doses = 0
+  }else if((week - w0) < (weeks_init + weeks_scale)){
+    doses = man_cap/52 * (week - w0 - weeks_init + 1) / weeks_scale
+  }else{
+    doses = man_cap/52
+  }
+  return(doses)
+}
+
+nweeks = 200
+suffixes = c('res','ex','bui')
+weeks_init = sapply(suffixes,function(x)pall[[paste0('weeks_init_',x)]])
+weeks_scale = sapply(suffixes,function(x)pall[[paste0('weeks_scale_',x)]])
+supplies <- cumulative <- list()
+for(i in 1:length(scen_dm)){
+  supplies[[i]] = list()
+  
+  w0 = time_to_approval[scen_dm[i]]
+  man_cap_res = c(0.5, 1.2, 2.5)[scen_capres[i]]
+  
+  man_cap_ex = pall$man_curr - man_cap_res
+  man_cap_bui = pall$man_glo - pall$man_curr
+  
+  man_cap = c(man_cap_res, man_cap_ex, man_cap_bui)
+  names(man_cap) = suffixes
+  
+  for(x in suffixes){
+    supplies[[i]][[x]] = c()
+    for(w in 1:nweeks){
+      supplies[[i]][[x]][w] = dose_supply(week=w, w0=w0, weeks_init=weeks_init[[x]], weeks_scale=weeks_scale[[x]], man_cap=man_cap[[x]])
+    }
+  }
+  
+  cumulative[[i]] = cumsum(Reduce("+",supplies[[i]]))
+  
+}
+
+scennames = c('BAU',paste0('S',sprintf("%02d", 1:12)))
+
+t_supply <- as.data.frame(do.call(rbind,lapply(1:length(scennames),function(x)cbind(scen=scennames[x],doses=cumulative[[x]],week=1:nweeks))))
+
+ggplot(t_supply) + 
+  geom_line(aes(x=as.numeric(week),y=as.numeric(doses),colour=factor(scen,levels=scennames))) +
+  theme_bw(base_size = 15) +
+  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
+
+scens = setDT(data.frame(scen=scennames, capres = scen_capres, dm = scen_dm))
+scens[,comb := paste0(capres,dm)]
+scens[,N:=.N,by=comb]
+sames <- list()
+for(un in unique(scens$comb)){
+  subscen = subset(scens,comb==un)
+  if(nrow(subscen)>1)
+    sames[[length(sames)+1]] <- subscen$scen
+}
+
+```
+
+In Figure \@ref(fig:supply), the following scenarios have identical supply (because they have the same capacity reservations and R\&D investments): `r paste0(sames[[1]],collapse=' & ')`; `r paste0(sames[[2]],collapse=' & ')`; and `r paste0(sames[[3]],collapse=' & ')`.
+
 ### Allocation
 
-Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i$ as the maximum demand for income group $i$.
+Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i = 2\cdot 0.8\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for 80\% of the population.
 
 $$
 k_{s,R,i,w} = \left\\{ \begin{array}{lr}
@@ -405,6 +473,8 @@ The logic of this reads as follows:
 - When HIC coverage is between 500 million and its total demand, reserved capacity doses are allocated according to population
 - Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC and LLMIC
 - Once UMIC reach their total demand, all doses from reserved capacity go to LLMIC
+
+
 
 
 For $x\in\\{E,B\\}$,
@@ -429,6 +499,128 @@ The logic of this reads as follows:
 - Once HIC and UMIC demand have been met, all remaining doses from unreserved capacity go to LLMIC
 - None go to UMIC and HIC
 
+
+```{r}
+
+pops = sapply(names(pall)[grepl('15',names(pall))&grepl('pop',names(pall))],function(x)pall[[x]])
+pops3 = pops[1:3]
+pops3[3] = sum(pops[3:4])
+
+demand15 = 0.8*pops3*2
+popfracs15 = pops3/sum(pops3)
+
+
+allocate_res_doses = function(cum_received, new_doses){
+  if(cum_received[1] < 0.5){
+    allocation = c(new_doses, 0, 0)
+  }else if(cum_received[1] < demand15[1]/1e9){
+    allocation = new_doses * popfracs15
+  }else if(cum_received[2] < demand15[2]/1e9){
+    allocation = c(0, new_doses * pops3[2:3]/sum(pops3[2:3]))
+  }else if(cum_received[3] < demand15[3]/1e9){
+    allocation = c(0,0,new_doses)
+  }else{
+    allocation = c(0,0,0)
+  }
+  return(allocation)
+}
+
+allocate_exbui_doses = function(cum_received, new_doses){
+  if(cum_received[1] < demand15[1]/1e9){
+    allocation = c(new_doses, 0, 0)
+  }else if(cum_received[2] < demand15[2]/1e9){
+    allocation = c(0, new_doses, 0)
+  }else if(cum_received[3] < demand15[3]/1e9){
+    allocation = c(0,0,new_doses)
+  }else{
+    allocation = c(0,0,0)
+  }
+  return(allocation)
+}
+
+
+pop_proportional = c(1,1,2,2,1,1,1,2,2,1,2,2,2)
+function_list = list(res=allocate_res_doses, ex=allocate_exbui_doses, bui=allocate_exbui_doses)
+rep_res = list(res=allocate_res_doses, ex=allocate_res_doses, bui=allocate_res_doses)
+
+alloc = list()
+
+for(s in 1:length(scennames)){
+  cumulative_doses = matrix(0,nrow=nweeks,ncol=3)
+  function_op = list(function_list, rep_res)[[pop_proportional[s]]]
+  for(w in 2:nweeks){
+    current_count = cumulative_doses[w-1,]
+    
+    for(x in suffixes){
+      new_doses = supplies[[s]][[x]][w]
+      allocation_res = function_op[[x]](cum_received = current_count, new_doses=new_doses)
+      current_count = current_count + allocation_res
+    }
+    
+    cumulative_doses[w,] = current_count
+  }
+  alloc[[s]] = as.data.frame(cumulative_doses)
+  alloc[[s]]$Scenario = scennames[s]
+  alloc[[s]]$Week = 1:nweeks
+  colnames(alloc[[s]])[1:3] = c('HIC','UMIC','LLMIC')
+}
+
+ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
+  geom_line(aes(x=Week,colour=Scenario,y=value)) +
+  facet_wrap(~variable) +
+  theme_bw(base_size = 15) +
+  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
+
+```
+
+### Distribution
+
+```{r}
+
+incomelevels = c('HIC','UMIC','LLMIC')
+rates = matrix(rep(c(.07, .07, .02), length(scennames)),ncol=length(incomelevels),byrow=T)
+rates[13,3] = 0.04
+
+second_dose_delivery <- list()
+for(s in 1:nrow(rates)){
+  second_dose_delivery[[s]] <- list()
+  for(il in 1:ncol(rates)){
+    rateperdose = rates[s,il]/2
+    # new doses in per week
+    doses_per_week = c(0, diff(alloc[[s]][,il]))
+    first_doses <- second_doses <- c()
+    doses_left = 0
+    for(w in 1:nweeks){
+      # doses this week = stock plus flow
+      doses_left = doses_left + doses_per_week[w]
+      # first doses given are the minimum of: the delivery rate; the doses left (per population); the fraction of the population still unvaccinated
+      first_doses[w] =  min(rateperdose, doses_left/(pops3[il]/1e9), max(0,demand15[il]/pops3[il]/2 - sum(first_doses)) )
+      # subtract doses given to update the stock
+      doses_left = doses_left - first_doses[w]
+      if(w>3){
+        # second doses given are the minimum of: the delivery rate; the doses left (per population); the fraction of the population vaccinated once, at least three weeks ago, but not twice.
+        second_doses[w] = min(rateperdose, doses_left/(pops3[il]/1e9), max(0, sum(first_doses[1:(w-3)])-sum(second_doses)))
+        # subtract doses given to update the stock
+        doses_left = doses_left - second_doses[w]
+      }else{
+        second_doses[w] = 0
+      }
+    }
+    second_dose_delivery[[s]][[il]] = data.frame(doses=cumsum(second_doses), il=incomelevels[il], Week=1:nweeks)
+  }
+  second_dose_delivery[[s]] = do.call(rbind,second_dose_delivery[[s]])
+  second_dose_delivery[[s]]$Scenario = scennames[s]
+}
+
+
+ggplot(do.call(rbind,second_dose_delivery)) +
+  geom_line(aes(x=Week,colour=Scenario,y=doses)) +
+  facet_wrap(~factor(il,levels=incomelevels)) +
+  theme_bw(base_size = 15) +
+  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
+
+
+```
 
 
 

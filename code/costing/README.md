@@ -17,6 +17,7 @@ The Costing Model
     - [3.7.1 Timing](#371-timing)
     - [3.7.2 Production](#372-production)
     - [3.7.3 Allocation](#373-allocation)
+    - [3.7.4 Distribution](#374-distribution)
 - [4 Results](#4-results)
   - [4.1 Parameter samples](#41-parameter-samples)
   - [4.2 Preparedness costs](#42-preparedness-costs)
@@ -96,15 +97,15 @@ application.
 | $S_R$ | cost_res | SSV procurement price, reserved capacity; USD per dose | Constant | 6.29 |  |
 | $S_U$ | cost_un | SSV procurement price, reactive capacity; USD per dose | Constant | 18.94 |  |
 | $E$ | cost_enab | Enabling activities; million USD per year | Constant | 700 |  |
-| $I_$ | inflation | Inflation (2018–2025) | Constant | 0.28 |  |
+| $I$ | inflation | Inflation (2018–2025) | Constant | 0.28 |  |
 | $r$ | discount | Discount rate | Uniform | 0.02, 0.06 |  |
 | $M_p$ | profit | Profit margin | Constant | 0.2 |  |
 | $M_f$ | cost_ff | Fill/finish cost | Constant | 0.14 |  |
-| $N_{HIC}^{(15)}$ | pop_hic_15 | Population aged 15 and older, HIC | Constant | 245880785 |  |
+| $N_{HIC}^{(15)}$ | pop_hic_15 | Population aged 15 and older, HIC | Constant | 1062903718 |  |
 | $N_{UMIC}^{(15)}$ | pop_umic_15 | Population aged 15 and older, UMIC | Constant | 2258682374 |  |
 | $N_{LMIC}^{(15)}$ | pop_lmic_15 | Population aged 15 and older, LMIC | Constant | 2292686818 |  |
 | $N_{LIC}^{(15)}$ | pop_lic_15 | Population aged 15 and older, LIC | Constant | 431149981 |  |
-| $N_{HIC}^{(65)}$ | pop_hic_65 | Population aged 65 and older, HIC | Constant | 1062903718 |  |
+| $N_{HIC}^{(65)}$ | pop_hic_65 | Population aged 65 and older, HIC | Constant | 245880785 |  |
 | $N_{UMIC}^{(65)}$ | pop_umic_65 | Population aged 65 and older, UMIC | Constant | 340100977 |  |
 | $N_{LMIC}^{(65)}$ | pop_lmic_65 | Population aged 65 and older, LMIC | Constant | 196323876 |  |
 | $N_{LIC}^{(65)}$ | pop_lic_65 | Population aged 65 and older, LIC | Constant | 23832449 |  |
@@ -318,7 +319,7 @@ Then the number of doses, in billions, that are made from capacity
 $x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
 
 $$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
-\frac{1}{52}\frac{w-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
+\frac{1}{52}\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
 \frac{1}{52}M_{x,s}  & w-w_s^{(0)}\geq I_x+C_x
 \end{array}\right.$$
 
@@ -338,12 +339,28 @@ of weeks to scale up to full capacity.
 Then the total number of doses produced in week $w$ is
 $$Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.$$
 
+<div class="figure">
+
+<img src="README_files/figure-gfm/supply-1.png" alt="Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
+<p class="caption">
+<span id="fig:supply"></span>Figure 3.1: Doses made available from
+manufacturing per scenario. Weeks are in reference to the sequencing of
+the pathogen.
+</p>
+
+</div>
+
+In Figure <a href="#fig:supply">3.1</a>, the following scenarios have
+identical supply (because they have the same capacity reservations and
+R&D investments): BAU & S01 & S12; S02 & S04; and S03 & S05.
+
 ### 3.7.3 Allocation
 
 Denote the weekly allocated doses at week $w$ from capacity $x$ to
 income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such
 that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We
-write $X_i$ as the maximum demand for income group $i$.
+write $X_i = 2\cdot 0.8\cdot N_i^{(15)}$ as the maximum demand for
+income group $i$, representing two doses each for 80% of the population.
 
 $$
 k_{s,R,i,w} = \left\\{ \begin{array}{lr}
@@ -392,11 +409,17 @@ The logic of this reads as follows:
   unreserved capacity go to LLMIC
 - None go to UMIC and HIC
 
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+### 3.7.4 Distribution
+
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
 # 4 Results
 
 ## 4.1 Parameter samples
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-5.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-6.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-7.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-8.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-9.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-10.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-11.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-12.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-13.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-14.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-15.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-16.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-17.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-18.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-19.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-20.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-21.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-22.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-23.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-24.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-25.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-26.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-27.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-28.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-3.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-4.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-5.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-6.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-7.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-8.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-9.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-10.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-11.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-12.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-13.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-14.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-15.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-16.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-17.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-18.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-19.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-20.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-21.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-22.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-23.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-24.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-25.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-26.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-27.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-28.png)<!-- -->
 
 ## 4.2 Preparedness costs
 
