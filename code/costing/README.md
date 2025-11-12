@@ -14,6 +14,9 @@ The Costing Model
   - [3.5 Delivery Cost Equation](#35-delivery-cost-equation)
   - [3.6 Vaccination Scenarios](#36-vaccination-scenarios)
   - [3.7 Vaccine supply](#37-vaccine-supply)
+    - [3.7.1 Timing](#371-timing)
+    - [3.7.2 Production](#372-production)
+    - [3.7.3 Allocation](#373-allocation)
 - [4 Results](#4-results)
   - [4.1 Parameter samples](#41-parameter-samples)
   - [4.2 Preparedness costs](#42-preparedness-costs)
@@ -35,68 +38,76 @@ application.
 
 # 2 Parameters
 
-| Math notation | Description | Distribution | Parameters | Bounds |
-|:--:|:--:|:--:|:--:|:--:|
-| $W_{0; 365}^{(S)}$ | SSV preclinical duration (365); weeks | Constant | 14 |  |
-| $W_{0; 200}^{(S)}$ | SSV preclinical duration (200DM); weeks | Constant | 5 |  |
-| $W_{0; 100}^{(S)}$ | SSV preclinical duration (100DM); weeks | Constant | 5 |  |
-| $W_{1; 365}^{(S)}$ | SSV phase I duration (365); weeks | Constant | 19 |  |
-| $W_{1; 200}^{(S)}$ | SSV phase I duration (200DM); weeks | Constant | 7 |  |
-| $W_{1; 100}^{(S)}$ | SSV phase I duration (100DM); weeks | Constant | 0 |  |
-| $W_{2; 365}^{(S)}$ | SSV phase II duration (365); weeks | Constant | 19 |  |
-| $W_{2; 200}^{(S)}$ | SSV phase II duration (200DM); weeks | Constant | 0 |  |
-| $W_{2; 100}^{(S)}$ | SSV phase II duration (100DM); weeks | Constant | 0 |  |
-| $W_{3; 365}^{(S)}$ | SSV phase III duration (365); weeks | Constant | 16 |  |
-| $W_{3; 200}^{(S)}$ | SSV phase III duration (200DM); weeks | Constant | 15 |  |
-| $W_{3; 100}^{(S)}$ | SSV phase III duration (100DM); weeks | Constant | 8 |  |
-| $V_{L; 0}$ | Cost of vaccine delivery at start up (0–10%) in LIC; USD per dose | Triangular | 1, 1.5, 2 |  |
-| $V_{L; 11}$ | Cost of vaccine delivery during ramp up (11–30%) in LIC; USD per dose | Triangular | 0.75, 1, 1.5 |  |
-| $V_{L; 31}$ | Cost of vaccine delivery getting to scale (31–80%) in LIC; USD per dose | Triangular | 1, 2, 4 |  |
-| $V_{LM; 0}$ | Cost of vaccine delivery at start up (0–10%) in LMIC; USD per dose | Triangular | 3, 4.5, 6 |  |
-| $V_{LM; 11}$ | Cost of vaccine delivery during ramp up (11–30%) in LMIC; USD per dose | Triangular | 2.25, 3, 4.5 |  |
-| $V_{LM; 31}$ | Cost of vaccine delivery getting to scale (31–80%) in LMIC; USD per dose | Triangular | 1.5, 2, 2.5 |  |
-| $V_{UM; 0}$ | Cost of vaccine delivery at start up (0–10%) in UMIC; USD per dose | Triangular | 6, 9, 12 |  |
-| $V_{UM; 11}$ | Cost of vaccine delivery during ramp up (11–30%) in UMIC; USD per dose | Triangular | 4.5, 6, 9 |  |
-| $V_{UM; 31}$ | Cost of vaccine delivery getting to scale (31–80%) in UMIC; USD per dose | Triangular | 3, 4, 5 |  |
-| $V_{H; 0}$ | Cost of vaccine delivery at start up (0–10%) in HIC; USD per dose | Triangular | 30, 40, 75 |  |
-| $V_{H; 11}$ | Cost of vaccine delivery during ramp up (11–30%) in HIC; USD per dose | Triangular | 30, 40, 75 |  |
-| $V_{H; 31}$ | Cost of vaccine delivery getting to scale (31–80%) in HIC; USD per dose | Triangular | 30, 40, 75 |  |
-| $M_G$ | Global annual manufacturing volume; billion doses | Constant | 15 |  |
-| $M_C$ | Current annual manufacturing volume; billion doses | Constant | 6.6 |  |
-| $F$ | Facility transition start; weeks before vaccine approval | Constant | 7 |  |
-| $I_R$ | Weeks to initial manufacturing, reserved infrastructure | Constant | 12 |  |
-| $I_E$ | Weeks to initial manufacturing, existing and unreserved infrastructure | Constant | 30 |  |
-| $I_B$ | Weeks to initial manufacturing, built and unreserved infrastructure | Constant | 48 |  |
-| $C_R$ | Weeks to scale up to full capacity, reserved infrastructure | Constant | 10 |  |
-| $C_E$ | Weeks to scale up to full capacity, existing and unreserved infrastructure | Constant | 16 |  |
-| $C_B$ | Weeks to scale up to full capacity, built and unreserved infrastructure | Constant | 16 |  |
-| $P_0$ | Probability of success; preclinical | Multinomial | 0.40, 0.41, 0.41, 0.42, 0.48, 0.57 |  |
-| $P_1$ | Probability of success; Phase I | Multinomial | 0.33, 0.40, 0.50, 0.68, 0.70, 0.72, 0.74, 0.77, 0.81, 0.90 |  |
-| $P_2$ | Probability of success; Phase II | Multinomial | 0.22, 0.31, 0.33, 0.43, 0.46, 0.54, 0.58, 0.58, 0.74, 0.79 |  |
-| $P_3$ | Probability of success; Phase III | Uniform | 0.4, 0.8 |  |
-| $T_0^{(e)}$ | Cost, preclinical, experienced manufacturer; USD | Exponential | 24213683 | 1700000, 140000000 |
-| $T_0^{(i)}$ | Cost, preclinical, inexperienced manufacturer; USD | Inverse Gaussian | 7882792, 13455907 | 1700000, 37000000 |
-| $T_1^{(e)}$ | Cost, Phase I, experienced manufacturer; USD | Inverse Gaussian | 15339198, 8076755 | 1900000, 70000000 |
-| $T_1^{(i)}$ | Cost, Phase I, inexperienced manufacturer; USD | Inverse Gamma | 2.2774, 9799081 | 1000000, 30000000 |
-| $T_2^{(e)}$ | Cost, Phase II, experienced manufacturer; USD | Log normal | 28297339, 24061641 | 3800000, 140000000 |
-| $T_2^{(i)}$ | Cost, Phase II, inexperienced manufacturer; USD | Inverse Gaussian | 17124622, 35918793 | 4400000, 54000000 |
-| $T_3^{(e)}$ | Cost, Phase III, experienced manufacturer; USD | Inverse Gamma | 1.3147, 51397313 | 15000000, 910000000 |
-| $T_3^{(i)}$ | Cost, Phase III, inexperienced manufacturer; USD | Beta prime | 4.8928, 1.6933, 11400026 | 2500000, 400000000 |
-| $L$ | Licensure; USD | Constant | 287750 |  |
-| $Y_0^{(B)}$ | BPSV preclinical duration; years | Multinomial | 1, 2 |  |
-| $Y_1^{(B)}$ | BPSV Phase I duration; years | Multinomial | 1, 2 |  |
-| $Y_2^{(B)}$ | BPSV Phase II duration; years | Constant | 2 |  |
-| $Y_3^{(B)}$ | BPSV Phase III duration; years | Multinomial | 2, 3, 4 |  |
-| $L^{(B)}$ | Licensure duration; years | Constant | 2 |  |
-| $G$ | BPSV cost of goods supplied; USD per dose | Constant | 4.68 |  |
-| $A$ | Advanced capacity reservation fee; USD per dose per year | Constant | 0.53 |  |
-| $S_R$ | SSV procurement price, reserved capacity; USD per dose | Constant | 6.29 |  |
-| $S_U$ | SSV procurement price, reactive capacity; USD per dose | Constant | 18.94 |  |
-| $E$ | Enabling activities; million USD per year | Constant | 700 |  |
-| $i$ | Inflation (2018–2025) | Constant | 0.28 |  |
-| $r$ | Discount rate | Uniform | 0.02, 0.06 |  |
-| $M_p$ | Profit margin | Constant | 0.2 |  |
-| $M_f$ | Fill/finish cost | Constant | 0.14 |  |
+| Math notation | Code | Description | Distribution | Parameters | Bounds |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| $W_{0; 365}^{(S)}$ | weeks_P0_365 | SSV preclinical duration (365); weeks | Constant | 14 |  |
+| $W_{0; 200}^{(S)}$ | weeks_P0_200 | SSV preclinical duration (200DM); weeks | Constant | 5 |  |
+| $W_{0; 100}^{(S)}$ | weeks_P0_100 | SSV preclinical duration (100DM); weeks | Constant | 5 |  |
+| $W_{1; 365}^{(S)}$ | weeks_P1_365 | SSV phase I duration (365); weeks | Constant | 19 |  |
+| $W_{1; 200}^{(S)}$ | weeks_P1_200 | SSV phase I duration (200DM); weeks | Constant | 7 |  |
+| $W_{1; 100}^{(S)}$ | weeks_P1_100 | SSV phase I duration (100DM); weeks | Constant | 0 |  |
+| $W_{2; 365}^{(S)}$ | weeks_P2_365 | SSV phase II duration (365); weeks | Constant | 19 |  |
+| $W_{2; 200}^{(S)}$ | weeks_P2_200 | SSV phase II duration (200DM); weeks | Constant | 0 |  |
+| $W_{2; 100}^{(S)}$ | weeks_P2_100 | SSV phase II duration (100DM); weeks | Constant | 0 |  |
+| $W_{3; 365}^{(S)}$ | weeks_P3_365 | SSV phase III duration (365); weeks | Constant | 16 |  |
+| $W_{3; 200}^{(S)}$ | weeks_P3_200 | SSV phase III duration (200DM); weeks | Constant | 15 |  |
+| $W_{3; 100}^{(S)}$ | weeks_P3_100 | SSV phase III duration (100DM); weeks | Constant | 8 |  |
+| $V_{L; 0}$ | cost_lic_0 | Cost of vaccine delivery at start up (0–10%) in LIC; USD per dose | Triangular | 1, 1.5, 2 |  |
+| $V_{L; 11}$ | cost_lic_11 | Cost of vaccine delivery during ramp up (11–30%) in LIC; USD per dose | Triangular | 0.75, 1, 1.5 |  |
+| $V_{L; 31}$ | cost_lic_31 | Cost of vaccine delivery getting to scale (31–80%) in LIC; USD per dose | Triangular | 1, 2, 4 |  |
+| $V_{LM; 0}$ | cost_lmic_0 | Cost of vaccine delivery at start up (0–10%) in LMIC; USD per dose | Triangular | 3, 4.5, 6 |  |
+| $V_{LM; 11}$ | cost_lmic_11 | Cost of vaccine delivery during ramp up (11–30%) in LMIC; USD per dose | Triangular | 2.25, 3, 4.5 |  |
+| $V_{LM; 31}$ | cost_lmic_31 | Cost of vaccine delivery getting to scale (31–80%) in LMIC; USD per dose | Triangular | 1.5, 2, 2.5 |  |
+| $V_{UM; 0}$ | cost_umic_0 | Cost of vaccine delivery at start up (0–10%) in UMIC; USD per dose | Triangular | 6, 9, 12 |  |
+| $V_{UM; 11}$ | cost_umic_11 | Cost of vaccine delivery during ramp up (11–30%) in UMIC; USD per dose | Triangular | 4.5, 6, 9 |  |
+| $V_{UM; 31}$ | cost_umic_31 | Cost of vaccine delivery getting to scale (31–80%) in UMIC; USD per dose | Triangular | 3, 4, 5 |  |
+| $V_{H; 0}$ | cost_hic_0 | Cost of vaccine delivery at start up (0–10%) in HIC; USD per dose | Triangular | 30, 40, 75 |  |
+| $V_{H; 11}$ | cost_hic_11 | Cost of vaccine delivery during ramp up (11–30%) in HIC; USD per dose | Triangular | 30, 40, 75 |  |
+| $V_{H; 31}$ | cost_hic_31 | Cost of vaccine delivery getting to scale (31–80%) in HIC; USD per dose | Triangular | 30, 40, 75 |  |
+| $M_G$ | man_glo | Global annual manufacturing volume; billion doses | Constant | 15 |  |
+| $M_C$ | man_curr | Current annual manufacturing volume; billion doses | Constant | 6.6 |  |
+| $F$ | week_trans_start | Facility transition start; weeks before vaccine approval | Constant | 7 |  |
+| $I_R$ | weeks_init_res | Weeks to initial manufacturing, reserved infrastructure | Constant | 12 |  |
+| $I_E$ | weeks_init_ex | Weeks to initial manufacturing, existing and unreserved infrastructure | Constant | 30 |  |
+| $I_B$ | weeks_init_bui | Weeks to initial manufacturing, built and unreserved infrastructure | Constant | 48 |  |
+| $C_R$ | weeks_scale_res | Weeks to scale up to full capacity, reserved infrastructure | Constant | 10 |  |
+| $C_E$ | weeks_scale_ex | Weeks to scale up to full capacity, existing and unreserved infrastructure | Constant | 16 |  |
+| $C_B$ | weeks_scale_bui | Weeks to scale up to full capacity, built and unreserved infrastructure | Constant | 16 |  |
+| $P_0$ | pos_0 | Probability of success; preclinical | Multinomial | 0.40, 0.41, 0.41, 0.42, 0.48, 0.57 |  |
+| $P_1$ | pos_1 | Probability of success; Phase I | Multinomial | 0.33, 0.40, 0.50, 0.68, 0.70, 0.72, 0.74, 0.77, 0.81, 0.90 |  |
+| $P_2$ | pos_2 | Probability of success; Phase II | Multinomial | 0.22, 0.31, 0.33, 0.43, 0.46, 0.54, 0.58, 0.58, 0.74, 0.79 |  |
+| $P_3$ | pos_3 | Probability of success; Phase III | Uniform | 0.4, 0.8 |  |
+| $T_0^{(e)}$ | cost_0_ex | Cost, preclinical, experienced manufacturer; USD | Exponential | 24213683 | 1700000, 140000000 |
+| $T_0^{(i)}$ | cost_0_inex | Cost, preclinical, inexperienced manufacturer; USD | Inverse Gaussian | 7882792, 13455907 | 1700000, 37000000 |
+| $T_1^{(e)}$ | cost_1_ex | Cost, Phase I, experienced manufacturer; USD | Inverse Gaussian | 15339198, 8076755 | 1900000, 70000000 |
+| $T_1^{(i)}$ | cost_1_inex | Cost, Phase I, inexperienced manufacturer; USD | Inverse Gamma | 2.2774, 9799081 | 1000000, 30000000 |
+| $T_2^{(e)}$ | cost_2_ex | Cost, Phase II, experienced manufacturer; USD | Log normal | 28297339, 24061641 | 3800000, 140000000 |
+| $T_2^{(i)}$ | cost_2_inex | Cost, Phase II, inexperienced manufacturer; USD | Inverse Gaussian | 17124622, 35918793 | 4400000, 54000000 |
+| $T_3^{(e)}$ | cost_3_ex | Cost, Phase III, experienced manufacturer; USD | Inverse Gamma | 1.3147, 51397313 | 15000000, 910000000 |
+| $T_3^{(i)}$ | cost_3_inex | Cost, Phase III, inexperienced manufacturer; USD | Beta prime | 4.8928, 1.6933, 11400026 | 2500000, 400000000 |
+| $L$ | cost_lic | Licensure; USD | Constant | 287750 |  |
+| $Y_0^{(B)}$ | years_0 | BPSV preclinical duration; years | Multinomial | 1, 2 |  |
+| $Y_1^{(B)}$ | years_1 | BPSV Phase I duration; years | Multinomial | 1, 2 |  |
+| $Y_2^{(B)}$ | years_2 | BPSV Phase II duration; years | Constant | 2 |  |
+| $Y_3^{(B)}$ | years_3 | BPSV Phase III duration; years | Multinomial | 2, 3, 4 |  |
+| $L^{(B)}$ | years_lic | Licensure duration; years | Constant | 2 |  |
+| $G$ | cost_bpsv | BPSV cost of goods supplied; USD per dose | Constant | 4.68 |  |
+| $A$ | cost_capres | Advanced capacity reservation fee; USD per dose per year | Constant | 0.53 |  |
+| $S_R$ | cost_res | SSV procurement price, reserved capacity; USD per dose | Constant | 6.29 |  |
+| $S_U$ | cost_un | SSV procurement price, reactive capacity; USD per dose | Constant | 18.94 |  |
+| $E$ | cost_enab | Enabling activities; million USD per year | Constant | 700 |  |
+| $I_$ | inflation | Inflation (2018–2025) | Constant | 0.28 |  |
+| $r$ | discount | Discount rate | Uniform | 0.02, 0.06 |  |
+| $M_p$ | profit | Profit margin | Constant | 0.2 |  |
+| $M_f$ | cost_ff | Fill/finish cost | Constant | 0.14 |  |
+| $N_{HIC}^{(15)}$ | pop_hic_15 | Population aged 15 and older, HIC | Constant | 245880785 |  |
+| $N_{UMIC}^{(15)}$ | pop_umic_15 | Population aged 15 and older, UMIC | Constant | 2258682374 |  |
+| $N_{LMIC}^{(15)}$ | pop_lmic_15 | Population aged 15 and older, LMIC | Constant | 2292686818 |  |
+| $N_{LIC}^{(15)}$ | pop_lic_15 | Population aged 15 and older, LIC | Constant | 431149981 |  |
+| $N_{HIC}^{(65)}$ | pop_hic_65 | Population aged 65 and older, HIC | Constant | 1062903718 |  |
+| $N_{UMIC}^{(65)}$ | pop_umic_65 | Population aged 65 and older, UMIC | Constant | 340100977 |  |
+| $N_{LMIC}^{(65)}$ | pop_lmic_65 | Population aged 65 and older, LMIC | Constant | 196323876 |  |
+| $N_{LIC}^{(65)}$ | pop_lic_65 | Population aged 65 and older, LIC | Constant | 23832449 |  |
 
 Notation and parametric assumptions for inputs to the costing model.
 Parameters are used as follows: uniform distributions go from Parameter
@@ -143,9 +154,9 @@ $$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\
 and the cost of each phase is $T_i$ (a (weighted) sum of experienced and
 inexperienced manufacturers?). Then the total cost is
 
-$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + (1+i) \hat{P}_LL$$
+$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + (1+I) \hat{P}_LL$$
 
-where $i$ is inflation from 2018 to 2025.
+where $I$ is inflation from 2018 to 2025.
 
 ## 3.4 Procurement cost calculation
 
@@ -169,16 +180,23 @@ $$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
 WB status demand/0.8 \* 0.1 \* (0-10% cost) + WB status demand/0.8 \*
 0.2 \* (11-30% cost) + WB status demand/0.8 \* 0.5 \* (30-80% cost)
 
-I assume this means, for total populations $N_i^{(T)}$ in income group
+For populations aged 15 and above $N_i^{(15)}$ in income group
 $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
 
-$$D_{\text{SSV}} = \sum_{i}N_i^{(T)}(0.1V_{i; 0} + 0.2V_{i; 11} + 0.5V_{i; 31}) $$
+$$D_{\text{SSV}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) $$
 
-Are the same percentages applied to BPSV, which goes only to people aged
-65 or older, with populations $N_i^{(65)}$? Or will coverage be reached
-after the “ramp up” phase?
+For the BPSV, which goes only to people aged 65 or older, with
+populations $N_i^{(65)}$, coverage is reached earlier in the process, so
+the cost is weighted more heavily towards start up and ramp up:
 
-$$D_{\text{BPSV}} = \sum_{i}N_i^{(65)}(0.1V_{i; 0} + 0.2V_{i; 11} + 0.5V_{i; 31}) $$
+$$D_{\text{BPSV}} = \sum_{i}D_{\text{BPSV},i}$$
+
+$$D_{\text{BPSV},i} = 
+\left\\{\begin{array}{lr}
+N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{8}N_i^{(15)} \\\\
+\frac{N_i^{(15)}}{8} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{8} \right)V_{i; 11}  & \frac{1}{8}N_i^{(15)} \leq N_i^{(65)}\leq \frac{2}{8}N_i^{(15)} \\\\
+\frac{N_i^{(15)}}{8} V_{i; 0} + \frac{2}{8}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{8}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{8} N_i^{(15)}
+\end{array}\right.$$
 
 | Country | Country status | Study type | Financial Cost per dose (USD) | Source |
 |:---|----|:---|----|:---|
@@ -269,6 +287,22 @@ Vaccine Production Timeline
 
 ## 3.7 Vaccine supply
 
+### 3.7.1 Timing
+
+Facility transition occurs $F=7$ weeks before vaccine approval, which in
+turn depends on R&D investments. We have three levels in our scenarios,
+corresponding to a 100 Days Mission, 200 days, and 365 days. The total
+weeks taken for vaccine approval can be written as follows:
+
+$$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$
+
+for $j\in\\{365, 200, 100\\}$. These work out as 68, 27, and 13 weeks,
+respectively. Thus “week 0” for manufacturing occurs 61, 20, and 6
+weeks, respectively, after the new pathogen has been sequenced. We
+denote this variable $w_s^{(0)}$.
+
+### 3.7.2 Production
+
 The total global manufacturing volume is $M_G=15$ billion doses. The
 amount that is reserved, in billion doses, depends on the scenarios as
 follows:
@@ -283,9 +317,9 @@ $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
 Then the number of doses, in billions, that are made from capacity
 $x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
 
-$$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w < I_x \\\\ 
-\frac{1}{52}\frac{w-I_x+1}{C_x}M_{x,s} & w\in[I_x, I_x+C_x) \\\\ 
-\frac{1}{52}M_{x,s}  & w\geq I_x+C_x
+$$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
+\frac{1}{52}\frac{w-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
+\frac{1}{52}M_{x,s}  & w-w_s^{(0)}\geq I_x+C_x
 \end{array}\right.$$
 
 <!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
@@ -304,18 +338,20 @@ of weeks to scale up to full capacity.
 Then the total number of doses produced in week $w$ is
 $$Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.$$
 
+### 3.7.3 Allocation
+
 Denote the weekly allocated doses at week $w$ from capacity $x$ to
 income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such
-that $K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}$. We
+that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We
 write $X_i$ as the maximum demand for income group $i$.
 
 $$
 k_{s,R,i,w} = \left\\{ \begin{array}{lr}
-Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} \leq 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
+Z_{R,s,w}             & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i=\text{HIC} \\\\
+0                     & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
 \frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
-\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} > X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC}\\\\
-Z_{R,s,w}             & K_{s,\text{UMIC},w} > X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
+\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC}\\\\
+Z_{R,s,w}             & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
 \end{array}\right.
 $$
 
@@ -360,7 +396,7 @@ The logic of this reads as follows:
 
 ## 4.1 Parameter samples
 
-![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-3.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-4.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-5.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-6.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-7.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-8.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-9.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-10.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-11.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-12.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-13.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-14.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-15.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-16.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-17.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-18.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-19.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-20.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-21.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-22.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-23.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-24.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-25.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-26.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-27.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-2-28.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-5.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-6.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-7.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-8.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-9.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-10.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-11.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-12.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-13.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-14.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-15.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-16.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-17.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-18.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-19.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-20.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-21.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-22.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-23.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-24.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-25.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-26.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-27.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-28.png)<!-- -->
 
 ## 4.2 Preparedness costs
 

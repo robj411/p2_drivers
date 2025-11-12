@@ -79,6 +79,24 @@ format_to_print2 <- function(x,z=2){
 
 ```
 
+```{r ages, eval=FALSE}
+
+# age data from owid
+allpop = read.csv('population-by-five-year-age-group.csv')
+ils = unique(allpop$Entity)[grepl('-income',unique(allpop$Entity))]
+maxyear = max(allpop$Year)
+ildata = subset(allpop,Entity%in%ils&Year==maxyear)
+popcols = which(grepl('Population',colnames(ildata)))
+col14 = which(grepl('14',colnames(ildata)))
+col64 = which(grepl('64',colnames(ildata)))
+for(i in 1:nrow(ildata)){
+  print(ildata$Entity[i])
+  print(sum(as.numeric(ildata[i,popcols[popcols>col14]])))
+  print(sum(as.numeric(ildata[i,popcols[popcols>col64]])))
+}
+
+```
+
 
 
 
@@ -99,6 +117,62 @@ lg <- 'Notation and parametric assumptions for inputs to the costing model. Para
 cat(pander(caps,caption=lg, missing = ""))
 
 ```
+
+
+```{r}
+library(TruncExpFam)
+library(EnvStats)
+library(extraDistr)
+
+# caps
+# unique(caps$Distribution)
+nsamples = 10000
+params <- pall <- list()
+
+for(i in 1:nrow(caps)){
+  parameters <- as.numeric(strsplit(caps$Parameters[i],',')[[1]])
+  bounds <- as.numeric(strsplit(caps$Bounds[i],',')[[1]])
+  if(caps$Distribution[i]=='Uniform'){
+    params[[caps$Description[i]]] = runif(nsamples,parameters[1],parameters[2])
+  }else if(caps$Distribution[i]=='Exponential'){
+    params[[caps$Description[i]]] = rtruncexp(nsamples, rate = 1/parameters[1], a = bounds[1], b = bounds[2], faster = T)
+  }else if(caps$Distribution[i]=='Inverse Gaussian'){ # s = dispersion
+    params[[caps$Description[i]]] = rtruncinvgauss(nsamples, m = parameters[1], s = parameters[2], a = bounds[1], b = bounds[2], faster = T)
+  }else if(caps$Distribution[i]=='Inverse Gamma'){ 
+    samples = rinvgamma(nsamples, alpha = parameters[1], beta = parameters[2])
+    fails = samples < bounds[1] | samples > bounds[2]
+    while(sum(fails)>0){
+      samples[fails] = rinvgamma(sum(fails), alpha = parameters[1], beta = parameters[2])
+      fails = samples < bounds[1] | samples > bounds[2]
+    }
+    params[[caps$Description[i]]] = samples
+    # params[[caps$Description[i]]] = rtruncinvgamma(nsamples, shape = parameters[1], scale = parameters[2], a = bounds[1], b = bounds[2], faster = T)
+  }else if(caps$Distribution[i]=='Log normal'){ 
+    params[[caps$Description[i]]] = rtrunclnorm(nsamples, meanlog = parameters[1], sdlog = parameters[2], a = bounds[1], b = bounds[2], faster = T)
+  }else if(caps$Distribution[i]=='Beta prime'){ 
+    samples = rbetapr(nsamples, shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
+    fails = samples < bounds[1] | samples > bounds[2]
+    while(sum(fails)>0){
+      samples[fails] = rbetapr(sum(fails), shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
+      fails = samples < bounds[1] | samples > bounds[2]
+    }
+    params[[caps$Description[i]]] = samples
+  }else if(caps$Distribution[i]=='Triangular'){
+    params[[caps$Description[i]]] = rtri(nsamples,min=parameters[1],mode=parameters[2],max=parameters[3])
+  }else if(caps$Distribution[i]=='Multinomial'){
+    values = na.omit(c(parameters))
+    params[[caps$Description[i]]] = sample(values,size=nsamples,replace=T)
+  }
+  
+  # params has only the samples; pall has also the constants
+  if(caps$Distribution[i]=='Constant'){
+    pall[[caps$Code[i]]] = parameters
+  }else{
+    pall[[caps$Code[i]]] = params[[caps$Description[i]]]
+  }
+}
+```
+
 
 
 # Model details
@@ -135,9 +209,9 @@ $$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\
 
 and the cost of each phase is $T_i$ (a (weighted) sum of experienced and inexperienced manufacturers?). Then the total cost is
 
-$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + (1+i) \hat{P}_LL$$
+$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + (1+I) \hat{P}_LL$$
 
-where $i$ is inflation from 2018 to 2025.
+where $I$ is inflation from 2018 to 2025.
 
 ## Procurement cost calculation
 
@@ -165,13 +239,20 @@ WB status demand/0.8  * 0.2 * (11-30% cost) +
 WB status demand/0.8 * 0.5 * (30-80% cost)
 
 
-I assume this means, for total populations $N_i^{(T)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
+For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
 
-$$D_{\text{SSV}} = \sum_{i}N_i^{(T)}(0.1V_{i; 0} + 0.2V_{i; 11} + 0.5V_{i; 31}) $$ 
+$$D_{\text{SSV}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) $$ 
 
-Are the same percentages applied to BPSV, which goes only to people aged 65 or older, with populations $N_i^{(65)}$? Or will coverage be reached after the "ramp up" phase?
+For the BPSV, which goes only to people aged 65 or older, with populations $N_i^{(65)}$, coverage is reached earlier in the process, so the cost is weighted more heavily towards start up and ramp up:
 
-$$D_{\text{BPSV}} = \sum_{i}N_i^{(65)}(0.1V_{i; 0} + 0.2V_{i; 11} + 0.5V_{i; 31}) $$ 
+$$D_{\text{BPSV}} = \sum_{i}D_{\text{BPSV},i}$$
+
+$$D_{\text{BPSV},i} = 
+\left\\{\begin{array}{lr}
+N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{8}N_i^{(15)} \\\\
+\frac{N_i^{(15)}}{8} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{8} \right)V_{i; 11}  & \frac{1}{8}N_i^{(15)} \leq N_i^{(65)}\leq \frac{2}{8}N_i^{(15)} \\\\
+\frac{N_i^{(15)}}{8} V_{i; 0} + \frac{2}{8}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{8}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{8} N_i^{(15)}
+\end{array}\right.$$ 
 
 
 
@@ -251,6 +332,33 @@ Table: Vaccine Production Timeline
 
 ## Vaccine supply 
 
+### Timing
+
+Facility transition occurs $F=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to a 100 Days Mission, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
+
+$$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$
+
+```{r}
+dms = c(365, 200, 100)
+
+time_to_approval = c()
+for(j in 1:length(dms)){
+  pars = names(pall)[grepl('weeks_P',names(pall)) & grepl(dms[j],names(pall))]
+  time_to_approval[j] = 0
+  for(i in pars){
+    time_to_approval[j] = time_to_approval[j] + pall[[i]]
+  }
+}
+
+```
+
+for $j\in\\{365, 200, 100\\}$. These work out as `r time_to_approval[1]`, `r time_to_approval[2]`, and `r time_to_approval[3]` weeks, respectively. Thus "week 0" for manufacturing occurs `r time_to_approval[1]-7`, `r time_to_approval[2]-7`, and `r time_to_approval[3]-7` weeks, respectively, after the new pathogen has been sequenced. We denote this variable $w_s^{(0)}$.
+
+
+
+
+### Production
+
 The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, depends on the scenarios as follows:
 
 $$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
@@ -262,9 +370,9 @@ where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$, 
 Then the number of doses, in billions, that are made from capacity $x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
 
 
-$$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w < I_x \\\\ 
-\frac{1}{52}\frac{w-I_x+1}{C_x}M_{x,s} & w\in[I_x, I_x+C_x) \\\\ 
-\frac{1}{52}M_{x,s}  & w\geq I_x+C_x
+$$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
+\frac{1}{52}\frac{w-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
+\frac{1}{52}M_{x,s}  & w-w_s^{(0)}\geq I_x+C_x
 \end{array}\right.$$
 
 <!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
@@ -276,15 +384,17 @@ where $I_R=12$ is the number of weeks to initial manufacturing for reserved capa
 
 Then the total number of doses produced in week $w$ is $$Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.$$
 
-Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}$. We write $X_i$ as the maximum demand for income group $i$.
+### Allocation
+
+Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i$ as the maximum demand for income group $i$.
 
 $$
 k_{s,R,i,w} = \left\\{ \begin{array}{lr}
-Z_{R,s,w}             & K_{s,\text{HIC},w} \leq 0.5 \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} \leq 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
+Z_{R,s,w}             & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i=\text{HIC} \\\\
+0                     & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
 \frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
-\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} > X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC}\\\\
-Z_{R,s,w}             & K_{s,\text{UMIC},w} > X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
+\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC}\\\\
+Z_{R,s,w}             & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
 \end{array}\right.
 $$
 
@@ -321,55 +431,13 @@ The logic of this reads as follows:
 
 
 
+
+
 # Results
 
 ## Parameter samples
 
 ```{r}
-library(TruncExpFam)
-library(EnvStats)
-library(extraDistr)
-
-# caps
-# unique(caps$Distribution)
-nsamples = 10000
-params <- list()
-
-for(i in 1:nrow(caps)){
-  parameters <- as.numeric(strsplit(caps$Parameters[i],',')[[1]])
-  bounds <- as.numeric(strsplit(caps$Bounds[i],',')[[1]])
-  if(caps$Distribution[i]=='Uniform'){
-    params[[caps$Description[i]]] = runif(nsamples,parameters[1],parameters[2])
-  }else if(caps$Distribution[i]=='Exponential'){
-    params[[caps$Description[i]]] = rtruncexp(nsamples, rate = 1/parameters[1], a = bounds[1], b = bounds[2], faster = T)
-  }else if(caps$Distribution[i]=='Inverse Gaussian'){ # s = dispersion
-    params[[caps$Description[i]]] = rtruncinvgauss(nsamples, m = parameters[1], s = parameters[2], a = bounds[1], b = bounds[2], faster = T)
-  }else if(caps$Distribution[i]=='Inverse Gamma'){ 
-    samples = rinvgamma(nsamples, alpha = parameters[1], beta = parameters[2])
-    fails = samples < bounds[1] | samples > bounds[2]
-    while(sum(fails)>0){
-      samples[fails] = rinvgamma(sum(fails), alpha = parameters[1], beta = parameters[2])
-      fails = samples < bounds[1] | samples > bounds[2]
-    }
-    params[[caps$Description[i]]] = samples
-    # params[[caps$Description[i]]] = rtruncinvgamma(nsamples, shape = parameters[1], scale = parameters[2], a = bounds[1], b = bounds[2], faster = T)
-  }else if(caps$Distribution[i]=='Log normal'){ 
-    params[[caps$Description[i]]] = rtrunclnorm(nsamples, meanlog = parameters[1], sdlog = parameters[2], a = bounds[1], b = bounds[2], faster = T)
-  }else if(caps$Distribution[i]=='Beta prime'){ 
-    samples = rbetapr(nsamples, shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
-    fails = samples < bounds[1] | samples > bounds[2]
-    while(sum(fails)>0){
-      samples[fails] = rbetapr(sum(fails), shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
-      fails = samples < bounds[1] | samples > bounds[2]
-    }
-    params[[caps$Description[i]]] = samples
-  }else if(caps$Distribution[i]=='Triangular'){
-    params[[caps$Description[i]]] = rtri(nsamples,min=parameters[1],mode=parameters[2],max=parameters[3])
-  }else if(caps$Distribution[i]=='Multinomial'){
-    values = na.omit(c(parameters))
-    params[[caps$Description[i]]] = sample(values,size=nsamples,replace=T)
-  }
-}
 
 for(i in 1:length(params))
   base::print(
