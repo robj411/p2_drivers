@@ -135,7 +135,7 @@ capacity + Enabling activities) / (1 + discount rate) ^ (year –
 $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_s^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + E_y\right)$$
 
 - $D_s^{\text{(BP-adRD)}}$ is the R&D cost of BPSV prior to an outbreak;
-  see Equation (3.1)
+  see Equation (<strong>??</strong>)
 - $D_s^{\text{(BP-inv)}}$ is the cost of maintaining an investigational
   reserve of 100,000 BPSV doses; see Equation (3.2)
 - $D_s^{\text{(S-cap)}}$ is the cost of reserved capacity for SSV; see
