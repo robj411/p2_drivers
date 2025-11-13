@@ -120,6 +120,13 @@ This document describes the costing model that is used in the CEPI application.
 caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
 caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
 lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1 and are truncated at Parameters 2 and 3. Inverse Gaussian distributions have as a mean Parameter 1, as a shape Parameter 2, and are truncated at the bounds. Log normal distributions have as a mean Parameter 1, as a standard deviation Parameter 2, and are truncated at the bounds. Inverse Gamma distributions have shape Parameter 1, scale Parameter 2, and are truncated at the bounds. Beta Prime distributions have shape Parameters 1 and 2, scale Parameter 3, and are truncated at the bounds.'
+if (knitr::is_html_output()) {
+  # cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  caps$Source <- gsub('}','',caps$Source)
+  caps$Source <- gsub('\\\\citet\\{','@',caps$Source)
+} else {
+  # cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 cat(pander(caps,caption=lg, missing = ""))
 
 ```
@@ -318,7 +325,7 @@ $$x(s) = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\
 200 & s\in\\{6, 7, 8\\} \\\\ 
 100 & s\in\\{9, 10, 11\\} \end{array}\right.$$
 
-This is the cost per candidate. We multiply by the number of candidate, $N^{\text{(SSV)}}=18$, to get the total cost.
+We multiply by the number of candidate, $N^{\text{(SSV)}}=18$, to get the total cost from the weighted average per candidate.
 
 
 ```{r phases}
@@ -1001,6 +1008,10 @@ ggplot(do.call(rbind,second_dose_delivery)) +
 
 
 # BPSV delivery
+
+## Timing
+
+The duration of the Phase three trial is 18 weeks. **The time to manufacturing transition is 12 weeks, and the time to manufacturing scale-up 10 weeks; these are the same as the reserved-capacity times for SSV. Are these reservations included in the preparedness cost?**
 
 
 
