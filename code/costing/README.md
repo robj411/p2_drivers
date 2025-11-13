@@ -134,23 +134,53 @@ and are truncated at the bounds.
 
 ## 3.1 Preparedness cost equation (annual calculation, 2025-2039)
 
-(BPSV R&D + BPSV Stockpile + SARS-X Reserved capacity + Enabling
-activities) / (1 + discount rate) ^ (year – 2025)
+<span style="color:red;">(BPSV R&D + BPSV Stockpile + SARS-X Reserved
+capacity + Enabling activities) / (1 + discount rate) ^ (year –
+2025)</span>
+
+$$D_{prep} = \frac{1}{(1+r)^y}\left(D_{BPSV, prepRD} + D_{BPSV, inv} + D_{SSV, cap} + E_y\right)$$
+
+- $D_{BPSV, prepRD}$ is the R&D cost of BPSV prior to an outbreak; see
+  Equation (<strong>??</strong>)
+- $D_{BPSV, inv}$ is the cost of maintaining an investigational reserve
+  of 100,000 BPSV doses; see Equation (<strong>??</strong>)
+- $D_{SSV, cap}$ is the cost of reserved capacity for SSV; see Equation
+  (<strong>??</strong>)
+- $E_y$ is the annual cost of enabling activities, equal to 700 million
+  USD per year.
 
 ## 3.2 Response cost equation (annual calculation, 2040-2045)
 
-(BPSV R&D + SARS-X R&D + BPSV Procurement + SARS-X Procurement + BPSV
-Delivery + SARS-X Delivery) / (1 + discount rate) ^ (year – 2025)
+<span style="color:red;">(BPSV R&D + SARS-X R&D + BPSV Procurement +
+SARS-X Procurement + BPSV Delivery + SARS-X Delivery) / (1 + discount
+rate) ^ (year – 2025)</span>
+
+$$D_{res} = \frac{1}{(1+r)^y}\left(D_{BPSV, resRD} + D_{SSV, RD, s} + D_{BPSV, proc} + D_{SSV, proc} + D_{BPSV, del} + D_{SSV, del}\right)$$
+
+- $D_{BPSV, resRD}$ is the R&D cost of BPSV after an outbreak; see
+  Equation (<strong>??</strong>)
+- $D_{SSV, RD, s}$ is the R&D cost for SSV; see Equation (3.1)
+- $D_{BPSV, proc}$ is the cost of procuring BPSV; see Equation
+  (<strong>??</strong>)
+- $D_{SSV, proc}$ is the cost of procuring SSV; see Equation
+  (<strong>??</strong>)
+- $D_{BPSV, del}$ is the cost of delivering BPSV; see Equation
+  (<strong>??</strong>)
+- $D_{SSV, del}$ is the cost of delivering SSV; see Equation
+  (<strong>??</strong>)
 
 ## 3.3 Risk-adjusted R&D cost per candidate calculation
 
-Sum of the cost of each phase multiplied by the likelihood of phase
-occurrence (probability of success for previous phases)
+<span style="color:red;">Sum of the cost of each phase multiplied by the
+likelihood of phase occurrence (probability of success for previous
+phases)</span>
 
-Probability of Occurrence (PoO) = 1 \* PoS (PhaseN-1) …
+<span style="color:red;">Probability of Occurrence (PoO) = 1 \* PoS
+(PhaseN-1) …</span>
 
-\$ (Preclin) \* PoO (Preclin) + \$ (Ph1) \* PoO (Ph1) + \$ (Ph2) \* PoO
-(Ph2) + \$ (Ph3) \* PoO (Ph3) + \$ (License) \* PoO (License)
+<span style="color:red;">\$ (Preclin) \* PoO (Preclin) + \$ (Ph1) \* PoO
+(Ph1) + \$ (Ph2) \* PoO (Ph2) + \$ (Ph3) \* PoO (Ph3) + \$ (License) \*
+PoO (License)</span>
 
 ### 3.3.1 SSV
 
@@ -169,11 +199,14 @@ $x\in\{365, 200, 100\}$:
 $$T_{x,i} = \frac{W_{i;x}^{(S)}}{W_{i;365}^{(S)}}\left(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}\right).$$
 Then the total cost is
 
-$$D_{\text{SSV},\text{RD},x} = \sum_{i=0}^3 \hat{P}_iT_{x,i} + (1+I) \hat{P}_LL$$
+$$\begin{equation}
+D_{\text{SSV},\text{RD},s} = 18\left(\sum_{i=0}^3 \hat{P}_iT_{x(s),i} + (1+I) \hat{P}_LL\right)
+\qquad(3.1)
+\end{equation}$$
 
 where $I$ is inflation from 2018 to 2025. For our scenarios, we have
 
-$$x = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\ 
+$$x(s) = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\ 
 200 & s\in\\{6, 7, 8\\} \\\\ 
 100 & s\in\\{9, 10, 11\\} \end{array}\right.$$
 
@@ -200,13 +233,13 @@ $$p \sim \text{Binom}(8, P_3).$$
 
 ## 3.4 Procurement cost calculation
 
-Scenario 1: Annual demand under 6.6B
+<span style="color:red;">Scenario 1: Annual demand under 6.6B</span>
 
-Annual demand \* \$6.29 \* 1.14 \*1.2
+<span style="color:red;">Annual demand \* \$6.29 \* 1.14 \* 1.2</span>
 
-Scenario 2: Annual demand over 6.6B
+<span style="color:red;">Scenario 2: Annual demand over 6.6B</span>
 
-Annual demand \* \$18.94
+<span style="color:red;">Annual demand \* \$18.94</span>
 
 ### 3.4.1 SSV
 
@@ -219,7 +252,7 @@ Here, $S_R$ is the cost per reserved dose and $S_U$ the cost per
 unreserved dose. Reserved doses are marked up by $M_p$ and $M_f$.
 
 The total number of doses produced in week $w$ in scenario $s$ is
-$Z_{T,s,w}$ (see Equation (3.1)). The total in a one-year period is
+$Z_{T,s,w}$ (see Equation (3.2)). The total in a one-year period is
 
 $$A_{SSV,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
@@ -229,10 +262,15 @@ $$A_{SSV,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 $$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
 
+For a world population aged 65 and over of 0.8 billion, and a cost per
+dose of 4.68 USD, and uptake of 80%, the procurement cost for BPSV is
+3.02 billion USD.
+
 ## 3.5 Delivery Cost Equation
 
-WB status demand/0.8 \* 0.1 \* (0-10% cost) + WB status demand/0.8 \*
-0.2 \* (11-30% cost) + WB status demand/0.8 \* 0.5 \* (30-80% cost)
+<span style="color:red;">WB status demand/0.8 \* 0.1 \* (0-10% cost) +
+WB status demand/0.8 \* 0.2 \* (11-30% cost) + WB status demand/0.8 \*
+0.5 \* (30-80% cost)</span>
 
 ### 3.5.1 SSV
 
@@ -386,7 +424,7 @@ Then the total number of doses produced in week $w$ is
 
 $$\begin{equation}
 Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
-\qquad(3.1)
+\qquad(3.2)
 \end{equation}$$
 
 <div class="figure">
