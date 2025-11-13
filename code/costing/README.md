@@ -155,12 +155,13 @@ $$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\
 and the cost of each phase is $T_i$, a weighted average of experienced
 and inexperienced manufacturers (assuming $\omega=0.5$):
 
-$$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ Then the total cost
-for phases 0 through 2 is
+$$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ Then the total
+weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}} = 8$
+candidates is
 
 $$\begin{equation}
 D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
- N^{BPSV}\sum_{i=0}^2 \hat{P}_iT_{i} \\; & \\; s\in\\{1,2,3\\} \\\\
+ N^{\text{(BPSV)}}\sum_{i=0}^2 \hat{P}_iT_{i} \\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
 \qquad(3.1)
@@ -240,7 +241,7 @@ $$T_{x,i} = \frac{W_{i;x}^{(S)}}{W_{i;365}^{(S)}}T_i.$$ Then the total
 cost is
 
 $$\begin{equation}
-D_s^{\text{(S-RD)}} = N^{SSV}\left(\sum_{i=0}^3 \hat{P}_iT_{x(s),i} + (1+I) \hat{P}_LL\right)
+D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_iT_{x(s),i} + (1+I) \hat{P}_LL\right)
 \qquad(4.1)
 \end{equation}$$
 
@@ -251,7 +252,7 @@ $$x(s) = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\
 100 & s\in\\{9, 10, 11\\} \end{array}\right.$$
 
 This is the cost per candidate. We multiply by the number of candidate,
-$N^{SSV}=18$, to get the total cost.
+$N^{\text{(SSV)}}=18$, to get the total cost.
 
 ![](README_files/figure-gfm/posssv-1.png)<!-- -->
 
@@ -260,13 +261,13 @@ $N^{SSV}=18$, to get the total cost.
 **I have basically assumed the same as SSV except for the numbers given
 (8 candidates and 18 weeks)**
 
-The BPSV has $N^{BPSV}=8$ candidates. Those that have passed through
-Phases 0 to 2 prior to the outbreak go through Phase 3 during the
-response. The duration is 18 weeks. Thus we write the BPSV R&D response
-cost
+The BPSV has $N^{\text{(BPSV)}}=8$ candidates. Those that have passed
+through Phases 0 to 2 prior to the outbreak go through Phase 3 during
+the response. The duration is 18 weeks. Thus we write the BPSV R&D
+response cost
 
 $$\begin{equation}
-D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{BPSV}\hat{P}_3\left(\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
+D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\left(\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
 \qquad(4.2)
