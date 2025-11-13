@@ -135,11 +135,11 @@ capacity + Enabling activities) / (1 + discount rate) ^ (year –
 $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_s^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + E_y\right)$$
 
 - $D_s^{\text{(BP-adRD)}}$ is the R&D cost of BPSV prior to an outbreak;
-  see Equation (<strong>??</strong>)
+  see Equation (3.2)
 - $D_s^{\text{(BP-inv)}}$ is the cost of maintaining an investigational
-  reserve of 100,000 BPSV doses; see Equation (3.2)
+  reserve of 100,000 BPSV doses; see Equation (3.3)
 - $D_s^{\text{(S-cap)}}$ is the cost of reserved capacity for SSV; see
-  Equation (3.3)
+  Equation (3.4)
 - $E_y$ is the annual cost of enabling activities, equal to 700 million
   USD per year.
 
@@ -175,7 +175,7 @@ D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
  N^{\text{(BPSV)}}\sum_{i=0}^2 \hat{P}_iT_{i} \\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
-\label{eq:bpsvrd}
+\qquad(3.2)
 \end{equation}$$
 
 ![](README_files/figure-gfm/posbpsv-1.png)<!-- -->
@@ -191,7 +191,7 @@ D_s^{\text{(BP-inv)}} = \left\{\begin{array}{lr}
 \; & \; s\in\{1,2,3\} \\
 0  \; & \; s\notin\{1,2,3\}
 \end{array}\right.
-\qquad(3.2)
+\qquad(3.3)
 \end{equation}$$
 
 for the scenarios that include a BPSV (S01, S02, S03).
@@ -211,7 +211,7 @@ Then the total cost per year is
 
 $$\begin{equation}
 D_s^{\text{(S-cap)}} =  M_{R,s} A_2
-\qquad(3.3)
+\qquad(3.4)
 \end{equation}$$
 
 # 4 Response cost equation
