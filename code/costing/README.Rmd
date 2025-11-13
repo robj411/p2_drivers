@@ -222,13 +222,18 @@ and the cost of each phase is $T_i$, a weighted average of experienced and inexp
 $$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}} = 8$ candidates is
 
 
-\begin{equation}
-D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
- N^{\text{(BPSV)}}\sum_{i=0}^2 \hat{P}_iT_{i} \\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
-\end{array}\right.
-(\#eq:bpsvrd)
-\end{equation}
+```{r}
+eqtext = 'D_s^{\\text{(BP-adRD)}} = \\left\\{\\begin{array}{lr}
+ N^{\\text{(BPSV)}}\\sum_{i=0}^2 \\hat{P}_iT_{i} \\; & \\; s\\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\\notin\\{1,2,3\\}
+\\end{array}\\right.
+(\\#eq:bpsvrd)'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 ```{r posbpsv}
 # probability of success is a parameter
@@ -265,14 +270,19 @@ ggplot() + geom_histogram(aes(8*bpsv_rd_costsamples/1e9)) +
 
 The cost per dose per year is `r pall$cost_bpsvinv` USD, denoted $A_1$. Then the cost to maintain the reserve of 100,000 doses is
 
-\begin{equation}
-D_s^{\text{(BP-inv)}} = \left\\{\begin{array}{lr}
+```{r}
+eqtext = 'D_s^{\\text{(BP-inv)}} = \\left\\{\\begin{array}{lr}
 100000 A_1
-\\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
-\end{array}\right.
-(\#eq:bpsvinv)
-\end{equation}
+\\; & \\; s\\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\\notin\\{1,2,3\\}
+\\end{array}\\right.
+(\\#eq:bpsvinv)'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 for the scenarios that include a BPSV (S01, S02, S03).
 
@@ -280,9 +290,16 @@ for the scenarios that include a BPSV (S01, S02, S03).
 
 The cost per dose reservation per year is `r pall$cost_capres` USD, denoted $A_2$. Reservation sizes depend on scenarios as follows:
 
-$$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
-1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
-2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
+```{r}
+eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}0.5 & s\\in\\{0, 1, 6, 9, 12\\} \\\\ 
+1.2 & s\\in\\{2, 4, 7, 10\\} \\\\ 
+2.5 & s\\in\\{3, 5, 8, 11\\} \\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 Then the total cost per year is
 
@@ -331,9 +348,17 @@ D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_iT_{x(s),i} + (
 
 where $I$ is inflation from 2018 to 2025. For our scenarios, we have 
 
-$$x(s) = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\ 
-200 & s\in\\{6, 7, 8\\} \\\\ 
-100 & s\in\\{9, 10, 11\\} \end{array}\right.$$
+
+```{r}
+eqtext = 'x(s) = \\left\\{\\begin{array}{lr} 365 & s\\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\ 
+200 & s\\in\\{6, 7, 8\\} \\\\ 
+100 & s\\in\\{9, 10, 11\\} \\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 We multiply by the number of candidate, $N^{\text{(SSV)}}=18$, to get the total cost from the weighted average per candidate.
 
@@ -394,12 +419,18 @@ ggplot(ssv_rd_plot) + geom_histogram(aes(Cost/1e9*18)) +
 
 The BPSV has $N^{\text{(BPSV)}}=8$ candidates. Those that have passed through Phases 0 to 2 prior to the outbreak go through Phase 3 during the response. The duration is 18 weeks. Thus we write the BPSV R\&D response cost
 
-\begin{equation}
-D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\left(\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
-\end{array}\right.
-(\#eq:bpsvresrd)
-\end{equation}
+
+```{r}
+eqtext = 'D_s^{\\text{(BP-resRD)}} = \\left\\{\\begin{array}{lr}N^{\\text{(BPSV)}}\\hat{P}_3\\left(\\frac{18}{W_{3;365}^{(S)}}\\left(\\omega T_3^{(n)} + (1-\\omega)T_3^{(e)}\\right) + (1+I) P_3L\\right) \\; & \\; s\\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\\notin\\{1,2,3\\}
+\\end{array}\\right.
+(\\#eq:bpsvresrd)'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 
 ```{r bpsvrd}
@@ -533,13 +564,19 @@ ggplot(cpymelt) +
 ### BPSV
 
 
-\begin{equation}
-D_s^{\text{(BP-proc)}} = \left\\{\begin{array}{lr}
-A_{BPSV,s}\cdot G\\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
-\end{array}\right.
-(\#eq:bpsvproc)
-\end{equation}
+
+```{r}
+eqtext = 'D_s^{\\text{(BP-proc)}} = \\left\\{\\begin{array}{lr}
+A_{BPSV,s}\\cdot G\\; & \\; s\\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\\notin\\{1,2,3\\}
+\\end{array}\\right.
+(\\#eq:bpsvproc)'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 
 ```{r bpsvproc}
@@ -768,22 +805,37 @@ ggplot(reshape2::melt(ssv_delivery_costs)) +
 
 For the BPSV, which goes only to people aged 65 or older, with populations $N_i^{(65)}$, coverage is reached earlier in the process, so the cost is weighted more heavily towards start up and ramp up:
 
-\begin{equation}
-D_s^{\text{(BP-del)}} = 
-\left\\{\begin{array}{lr}
-\sum_{i}D_{\text{BPSV},i}
-\\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
-\end{array}\right.
-(\#eq:bspvdel)
-\end{equation}
 
-$$D_{\text{BPSV},i} = 
-\left\\{\begin{array}{lr}
-N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{10}N_i^{(15)} \\\\
-\frac{N_i^{(15)}}{10} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{10} \right)V_{i; 11}  & \frac{1}{10}N_i^{(15)} \leq N_i^{(65)}\leq \frac{3}{10}N_i^{(15)} \\\\
-\frac{N_i^{(15)}}{10} V_{i; 0} + \frac{2}{10}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{10}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{10} N_i^{(15)}
-\end{array}\right.$$ 
+```{r}
+eqtext = 'D_s^{\\text{(BP-del)}} = 
+\\left\\{\\begin{array}{lr}
+\\sum_{i}D_{\\text{BPSV},i}
+\\; & \\; s\\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\\notin\\{1,2,3\\}
+\\end{array}\\right.
+(\\#eq:bspvdel)'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
+
+
+
+```{r}
+eqtext = 'D_{\\text{BPSV},i} = 
+\\left\\{\\begin{array}{lr}
+N_i^{(65)}V_{i; 0}  & N_i^{(65)}\\leq \\frac{1}{10}N_i^{(15)} \\\\
+\\frac{N_i^{(15)}}{10} V_{i; 0} + \\left(N_i^{(65)}-\\frac{N_i^{(15)}}{10} \\right)V_{i; 11}  & \\frac{1}{10}N_i^{(15)} \\leq N_i^{(65)}\\leq \\frac{3}{10}N_i^{(15)} \\\\
+\\frac{N_i^{(15)}}{10} V_{i; 0} + \\frac{2}{10}N_i^{(15)} V_{i; 11} + \\left(N_i^{(65)}-\\frac{3}{10}N_i^{(15)} \\right)V_{i; 31} & N_i^{(65)}> \\frac{3}{10} N_i^{(15)}
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 The logic of this is as follows:
 
@@ -901,19 +953,33 @@ for $j\in\\{365, 200, 100\\}$. These work out as `r time_to_approval[1]`, `r tim
 
 The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, depends on the scenarios as follows:
 
-$$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
-1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
-2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
+```{r}
+eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}0.5 & s\\in\\{0, 1, 6, 9, 12\\} \\\\ 
+1.2 & s\\in\\{2, 4, 7, 10\\} \\\\ 
+2.5 & s\\in\\{3, 5, 8, 11\\} \\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
 
 Then the number of doses, in billions, that are made from capacity $x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
 
 
-$$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
-\frac{1}{52}\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
-\frac{1}{52}M_{x,s}  & w-w_s^{(0)}\geq I_x+C_x
-\end{array}\right.$$
+```{r}
+eqtext = 'Z_{x,s,w} = \\left\\{\\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
+\\frac{1}{52}\\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\\in[I_x, I_x+C_x) \\\\ 
+\\frac{1}{52}M_{x,s}  & w-w_s^{(0)}\\geq I_x+C_x
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 <!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
 <!-- \frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\  -->
@@ -946,15 +1012,21 @@ In Figure \@ref(fig:supply), the following scenarios have identical supply (beca
 
 Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i = 2\cdot 0.8\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for 80\% of the population.
 
-$$
-k_{s,R,i,w} = \left\\{ \begin{array}{lr}
-Z_{R,s,w}             & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
-\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
-\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC}\\\\
-Z_{R,s,w}             & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
-\end{array}\right.
-$$
+```{r}
+eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
+Z_{R,s,w}             & K_{s,\\text{HIC},w} < 0.5 \\;\\&\\; i=\\text{HIC} \\\\
+0                     & K_{s,\\text{HIC},w} < 0.5 \\;\\&\\; i\\neq\\text{HIC} \\\\
+\\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & 0.5 < K_{s,\\text{HIC},w} < X_{\\text{HIC}} \\\\
+\\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\;  K_{s,\\text{UMIC},w} < X_{\\text{HIC}} \\;\\&\\; i\\neq\\text{HIC}\\\\
+Z_{R,s,w}             & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{LLMIC}
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
+
 
 The logic of this reads as follows:
 
@@ -969,16 +1041,22 @@ The logic of this reads as follows:
 
 For $x\in\\{E,B\\}$,
 
-$$
-k_{s,x,i,w} = \left\\{ \begin{array}{lr}
-Z_{x,s,w}            & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC} \\\\
-Z_{x,s,w}            & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i=\text{UMIC} \\\\
-0                     & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i\neq\text{UMIC} \\\\
-Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC} \\\\
-0                     & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i\neq\text{LLMIC} 
-\end{array}\right.
-$$
+
+```{r}
+eqtext = 'k_{s,x,i,w} = \\left\\{ \\begin{array}{lr}
+Z_{x,s,w}            & K_{s,\\text{HIC},w} < X_{\\text{HIC}} \\;\\&\\; i=\\text{HIC} \\\\
+0                     & K_{s,\\text{HIC},w} < X_{\\text{HIC}} \\;\\&\\; i\\neq\\text{HIC} \\\\
+Z_{x,s,w}            & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\; K_{s,\\text{UMIC},w} < X_{\\text{UMIC}} \\;\\&\\; i=\\text{UMIC} \\\\
+0                     & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\; K_{s,\\text{UMIC},w} < X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{UMIC} \\\\
+Z_{x,s,w}            & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{LLMIC} \\\\
+0                     & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{LLMIC} 
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+}
+```
 
 The logic of this reads as follows:
 

@@ -162,13 +162,13 @@ $$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ Then the total
 weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}} = 8$
 candidates is
 
-$$\begin{equation}
-D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
- N^{\text{(BPSV)}}\sum_{i=0}^2 \hat{P}_iT_{i} \\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
+``` math
+D_s^{\text{(BP-adRD)}} = \left\{\begin{array}{lr}
+ N^{\text{(BPSV)}}\sum_{i=0}^2 \hat{P}_iT_{i} \; & \; s\in\{1,2,3\} \\
+0  \; & \; s\notin\{1,2,3\}
 \end{array}\right.
-\qquad(3.1)
-\end{equation}$$
+(\#eq:bpsvrd)
+```
 
 ![](README_files/figure-gfm/posbpsv-1.png)<!-- -->
 
@@ -177,14 +177,14 @@ D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
 The cost per dose per year is 2 USD, denoted $A_1$. Then the cost to
 maintain the reserve of 100,000 doses is
 
-$$\begin{equation}
-D_s^{\text{(BP-inv)}} = \left\\{\begin{array}{lr}
+``` math
+D_s^{\text{(BP-inv)}} = \left\{\begin{array}{lr}
 100000 A_1
-\\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
+\; & \; s\in\{1,2,3\} \\
+0  \; & \; s\notin\{1,2,3\}
 \end{array}\right.
-\qquad(3.2)
-\end{equation}$$
+(\#eq:bpsvinv)
+```
 
 for the scenarios that include a BPSV (S01, S02, S03).
 
@@ -193,9 +193,11 @@ for the scenarios that include a BPSV (S01, S02, S03).
 The cost per dose reservation per year is 0.53 USD, denoted $A_2$.
 Reservation sizes depend on scenarios as follows:
 
-$$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
-1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
-2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
+``` math
+M_{R,s} = \left\{\begin{array}{lr}0.5 & s\in\{0, 1, 6, 9, 12\} \\ 
+1.2 & s\in\{2, 4, 7, 10\} \\ 
+2.5 & s\in\{3, 5, 8, 11\} \end{array}\right.
+```
 
 Then the total cost per year is
 
@@ -213,15 +215,15 @@ rate) ^ (year – 2025)</span>
 $$D_y^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-resRD)}} + D_s^{\text{(S-RD)}} + D_s^{\text{(BP-proc)}} + D_{s}^{\text{(S-proc)}} + D_s^{\text{(BP-del)}} + D^{\text{(S-del)}}\right)$$
 
 - $D_s^{\text{(BP-resRD)}}$ is the R&D cost of BPSV after an outbreak;
-  see Equation (4.2)
+  see Equation (<strong>??</strong>)
 - $D_s^{\text{(S-RD)}}$ is the R&D cost for SSV; see Equation (4.1)
 - $D_s^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation
-  (4.4)
+  (<strong>??</strong>)
 - $D_{s}^{\text{(S-proc)}}$ is the cost of procuring SSV; see Equation
-  (4.3)
+  (4.2)
 - $D_s^{\text{(BP-del)}}$ is the cost of delivering BPSV; see Equation
-  (4.6)
-- $D^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation (4.5)
+  (<strong>??</strong>)
+- $D^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation (4.3)
 
 ## 4.1 Risk-adjusted R&D cost per candidate calculation
 
@@ -250,9 +252,11 @@ D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_iT_{x(s),i} + (
 
 where $I$ is inflation from 2018 to 2025. For our scenarios, we have
 
-$$x(s) = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\ 
-200 & s\in\\{6, 7, 8\\} \\\\ 
-100 & s\in\\{9, 10, 11\\} \end{array}\right.$$
+``` math
+x(s) = \left\{\begin{array}{lr} 365 & s\in\{0, 1, 2, 3, 4, 5, 12\} \\ 
+200 & s\in\{6, 7, 8\} \\ 
+100 & s\in\{9, 10, 11\} \end{array}\right.
+```
 
 We multiply by the number of candidate, $N^{\text{(SSV)}}=18$, to get
 the total cost from the weighted average per candidate.
@@ -269,12 +273,12 @@ through Phases 0 to 2 prior to the outbreak go through Phase 3 during
 the response. The duration is 18 weeks. Thus we write the BPSV R&D
 response cost
 
-$$\begin{equation}
-D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\left(\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
+``` math
+D_s^{\text{(BP-resRD)}} = \left\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\left(\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \; & \; s\in\{1,2,3\} \\
+0  \; & \; s\notin\{1,2,3\}
 \end{array}\right.
-\qquad(4.2)
-\end{equation}$$
+(\#eq:bpsvresrd)
+```
 
 ![](README_files/figure-gfm/bpsvrd-1.png)<!-- -->
 
@@ -295,7 +299,7 @@ have costs, in billion USD, of:
 
 $$\begin{equation}
 D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
-\qquad(4.3)
+\qquad(4.2)
 \end{equation}$$
 
 Here, $S_R$ is the cost per reserved dose and $S_U$ the cost per
@@ -310,13 +314,13 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 ### 4.2.2 BPSV
 
-$$\begin{equation}
-D_s^{\text{(BP-proc)}} = \left\\{\begin{array}{lr}
-A_{BPSV,s}\cdot G\\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
+``` math
+D_s^{\text{(BP-proc)}} = \left\{\begin{array}{lr}
+A_{BPSV,s}\cdot G\; & \; s\in\{1,2,3\} \\
+0  \; & \; s\notin\{1,2,3\}
 \end{array}\right.
-\qquad(4.4)
-\end{equation}$$
+(\#eq:bpsvproc)
+```
 
 For a world population aged 65 and over of 0.8 billion, and a cost per
 dose of 4.68 USD, and uptake of 80%, the procurement cost for BPSV is
@@ -335,7 +339,7 @@ $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
 
 $$\begin{equation}
 D^{\text{(S-del)}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) 
-\qquad(4.5)
+\qquad(4.3)
 \end{equation}$$
 
 We set
@@ -350,22 +354,24 @@ For the BPSV, which goes only to people aged 65 or older, with
 populations $N_i^{(65)}$, coverage is reached earlier in the process, so
 the cost is weighted more heavily towards start up and ramp up:
 
-$$\begin{equation}
+``` math
 D_s^{\text{(BP-del)}} = 
-\left\\{\begin{array}{lr}
+\left\{\begin{array}{lr}
 \sum_{i}D_{\text{BPSV},i}
-\\; & \\; s\in\\{1,2,3\\} \\\\
-0  \\; & \\; s\notin\\{1,2,3\\}
+\; & \; s\in\{1,2,3\} \\
+0  \; & \; s\notin\{1,2,3\}
 \end{array}\right.
-\qquad(4.6)
-\end{equation}$$
+(\#eq:bspvdel)
+```
 
-$$D_{\text{BPSV},i} = 
-\left\\{\begin{array}{lr}
-N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{10}N_i^{(15)} \\\\
-\frac{N_i^{(15)}}{10} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{10} \right)V_{i; 11}  & \frac{1}{10}N_i^{(15)} \leq N_i^{(65)}\leq \frac{3}{10}N_i^{(15)} \\\\
+``` math
+D_{\text{BPSV},i} = 
+\left\{\begin{array}{lr}
+N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{10}N_i^{(15)} \\
+\frac{N_i^{(15)}}{10} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{10} \right)V_{i; 11}  & \frac{1}{10}N_i^{(15)} \leq N_i^{(65)}\leq \frac{3}{10}N_i^{(15)} \\
 \frac{N_i^{(15)}}{10} V_{i; 0} + \frac{2}{10}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{10}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{10} N_i^{(15)}
-\end{array}\right.$$
+\end{array}\right.
+```
 
 The logic of this is as follows:
 
@@ -457,9 +463,11 @@ The total global manufacturing volume is $M_G=15$ billion doses. The
 amount that is reserved, in billion doses, depends on the scenarios as
 follows:
 
-$$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
-1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
-2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
+``` math
+M_{R,s} = \left\{\begin{array}{lr}0.5 & s\in\{0, 1, 6, 9, 12\} \\ 
+1.2 & s\in\{2, 4, 7, 10\} \\ 
+2.5 & s\in\{3, 5, 8, 11\} \end{array}\right.
+```
 
 where $s=0$ denotes the BAU scenario. By definition,
 $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
@@ -467,10 +475,12 @@ $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
 Then the number of doses, in billions, that are made from capacity
 $x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
 
-$$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
-\frac{1}{52}\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
+``` math
+Z_{x,s,w} = \left\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\ 
+\frac{1}{52}\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\ 
 \frac{1}{52}M_{x,s}  & w-w_s^{(0)}\geq I_x+C_x
-\end{array}\right.$$
+\end{array}\right.
+```
 
 <!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
 <!-- \frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\  -->
@@ -515,15 +525,15 @@ that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We
 write $X_i = 2\cdot 0.8\cdot N_i^{(15)}$ as the maximum demand for
 income group $i$, representing two doses each for 80% of the population.
 
-$$
-k_{s,R,i,w} = \left\\{ \begin{array}{lr}
-Z_{R,s,w}             & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
-\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
-\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC}\\\\
-Z_{R,s,w}             & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
+``` math
+k_{s,R,i,w} = \left\{ \begin{array}{lr}
+Z_{R,s,w}             & K_{s,\text{HIC},w} < 0.5 \;\&\; i=\text{HIC} \\
+0                     & K_{s,\text{HIC},w} < 0.5 \;\&\; i\neq\text{HIC} \\
+\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\
+\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \;\&\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \;\&\; i\neq\text{HIC}\\
+Z_{R,s,w}             & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \;\&\; i=\text{LLMIC}
 \end{array}\right.
-$$
+```
 
 The logic of this reads as follows:
 
@@ -539,16 +549,16 @@ The logic of this reads as follows:
 
 For $x\in\\{E,B\\}$,
 
-$$
-k_{s,x,i,w} = \left\\{ \begin{array}{lr}
-Z_{x,s,w}            & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC} \\\\
-Z_{x,s,w}            & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i=\text{UMIC} \\\\
-0                     & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i\neq\text{UMIC} \\\\
-Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC} \\\\
-0                     & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i\neq\text{LLMIC} 
+``` math
+k_{s,x,i,w} = \left\{ \begin{array}{lr}
+Z_{x,s,w}            & K_{s,\text{HIC},w} < X_{\text{HIC}} \;\&\; i=\text{HIC} \\
+0                     & K_{s,\text{HIC},w} < X_{\text{HIC}} \;\&\; i\neq\text{HIC} \\
+Z_{x,s,w}            & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \;\&\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \;\&\; i=\text{UMIC} \\
+0                     & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \;\&\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \;\&\; i\neq\text{UMIC} \\
+Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \;\&\; i=\text{LLMIC} \\
+0                     & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \;\&\; i\neq\text{LLMIC} 
 \end{array}\right.
-$$
+```
 
 The logic of this reads as follows:
 
