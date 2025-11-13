@@ -873,10 +873,10 @@ ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
 ```{r scendelivery}
 
 ggplot(do.call(rbind,second_dose_delivery)) +
-  geom_line(aes(x=Week,colour=Scenario,y=doses)) +
+  geom_line(aes(x=Week,colour=Scenario,y=doses*100)) +
   facet_wrap(~factor(il,levels=incomelevels)) +
   theme_bw(base_size = 15) +
-  labs(x='Week',y='Cumulative doses delivered, billions',colour='Scenario')
+  labs(x='Week',y='Second-dose coverage, percent population',colour='Scenario')
 
 
 ```
