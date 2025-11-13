@@ -2,12 +2,6 @@
 title: "The Costing Model"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::pdf_document2: 
     #   --filter=pandoc-xnos
     toc: false
@@ -20,6 +14,12 @@ output:
     fig_caption: yes
     # includes:
     #   in_header: "preamble.tex"
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -210,11 +210,8 @@ Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $
 
 ```{r}
 eqtext = '\\hat{P}_i = \\left\\{\\begin{array}{lr}1 & i=0 \\\\ \\prod_{j=0}^{i-1}P_j & i\\in\\{1,2,3\\} \\\\ \\prod_{j=0}^{3}P_j & i=L \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega=0.5$):
@@ -228,11 +225,8 @@ eqtext = 'D_s^{\\text{(BP-adRD)}} = \\left\\{\\begin{array}{lr}
 0  \\; & \\; s\\notin\\{1,2,3\\}
 \\end{array}\\right.
 (\\#eq:bpsvrd)'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+
 ```
 
 ```{r posbpsv}
@@ -277,11 +271,7 @@ eqtext = 'D_s^{\\text{(BP-inv)}} = \\left\\{\\begin{array}{lr}
 0  \\; & \\; s\\notin\\{1,2,3\\}
 \\end{array}\\right.
 (\\#eq:bpsvinv)'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
 ```
 
 for the scenarios that include a BPSV (S01, S02, S03).
@@ -294,11 +284,8 @@ The cost per dose reservation per year is `r pall$cost_capres` USD, denoted $A_2
 eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}0.5 & s\\in\\{0, 1, 6, 9, 12\\} \\\\ 
 1.2 & s\\in\\{2, 4, 7, 10\\} \\\\ 
 2.5 & s\\in\\{3, 5, 8, 11\\} \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 Then the total cost per year is
@@ -353,11 +340,8 @@ where $I$ is inflation from 2018 to 2025. For our scenarios, we have
 eqtext = 'x(s) = \\left\\{\\begin{array}{lr} 365 & s\\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\ 
 200 & s\\in\\{6, 7, 8\\} \\\\ 
 100 & s\\in\\{9, 10, 11\\} \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 We multiply by the number of candidate, $N^{\text{(SSV)}}=18$, to get the total cost from the weighted average per candidate.
@@ -425,11 +409,8 @@ eqtext = 'D_s^{\\text{(BP-resRD)}} = \\left\\{\\begin{array}{lr}N^{\\text{(BPSV)
 0  \\; & \\; s\\notin\\{1,2,3\\}
 \\end{array}\\right.
 (\\#eq:bpsvresrd)'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 
@@ -571,11 +552,8 @@ A_{BPSV,s}\\cdot G\\; & \\; s\\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\\notin\\{1,2,3\\}
 \\end{array}\\right.
 (\\#eq:bpsvproc)'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 
@@ -814,11 +792,8 @@ eqtext = 'D_s^{\\text{(BP-del)}} =
 0  \\; & \\; s\\notin\\{1,2,3\\}
 \\end{array}\\right.
 (\\#eq:bspvdel)'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 
@@ -830,11 +805,8 @@ N_i^{(65)}V_{i; 0}  & N_i^{(65)}\\leq \\frac{1}{10}N_i^{(15)} \\\\
 \\frac{N_i^{(15)}}{10} V_{i; 0} + \\left(N_i^{(65)}-\\frac{N_i^{(15)}}{10} \\right)V_{i; 11}  & \\frac{1}{10}N_i^{(15)} \\leq N_i^{(65)}\\leq \\frac{3}{10}N_i^{(15)} \\\\
 \\frac{N_i^{(15)}}{10} V_{i; 0} + \\frac{2}{10}N_i^{(15)} V_{i; 11} + \\left(N_i^{(65)}-\\frac{3}{10}N_i^{(15)} \\right)V_{i; 31} & N_i^{(65)}> \\frac{3}{10} N_i^{(15)}
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 The logic of this is as follows:
@@ -957,11 +929,8 @@ The total global manufacturing volume is $M_G=15$ billion doses. The amount that
 eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}0.5 & s\\in\\{0, 1, 6, 9, 12\\} \\\\ 
 1.2 & s\\in\\{2, 4, 7, 10\\} \\\\ 
 2.5 & s\\in\\{3, 5, 8, 11\\} \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
@@ -974,11 +943,8 @@ eqtext = 'Z_{x,s,w} = \\left\\{\\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\
 \\frac{1}{52}\\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\\in[I_x, I_x+C_x) \\\\ 
 \\frac{1}{52}M_{x,s}  & w-w_s^{(0)}\\geq I_x+C_x
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 <!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
@@ -1020,11 +986,8 @@ Z_{R,s,w}             & K_{s,\\text{HIC},w} < 0.5 \\;\\&\\; i=\\text{HIC} \\\\
 \\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\;  K_{s,\\text{UMIC},w} < X_{\\text{HIC}} \\;\\&\\; i\\neq\\text{HIC}\\\\
 Z_{R,s,w}             & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{LLMIC}
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 
@@ -1051,11 +1014,8 @@ Z_{x,s,w}            & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\; K_{s,
 Z_{x,s,w}            & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{LLMIC} \\\\
 0                     & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{LLMIC} 
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
-}
+cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}\n",collapse=''))
+
 ```
 
 The logic of this reads as follows:
