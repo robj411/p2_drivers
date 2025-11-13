@@ -176,36 +176,105 @@ for(i in 1:nrow(caps)){
 
 
 
-# Model details
 
 
 
-## Preparedness cost equation (annual calculation, 2025-2039)
+# Preparedness cost equation 
 
 
 <span style="color:red;"> (BPSV R&D + BPSV Stockpile + SARS-X Reserved capacity + Enabling activities) / (1 + discount rate) ^ (year – 2025) </span>
 
-$$D_{prep} = \frac{1}{(1+r)^y}\left(D_{BPSV, prepRD} + D_{BPSV, inv} + D_{SSV, cap} + E_y\right)$$
+$$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_s^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + E_y\right)$$
 
-- $D_{BPSV, prepRD}$ is the R\&D cost of BPSV prior to an outbreak; see Equation \@ref(eq:)
-- $D_{BPSV, inv}$ is the cost of maintaining an investigational reserve of 100,000 BPSV doses; see Equation \@ref(eq:)
-- $D_{SSV, cap}$ is the cost of reserved capacity for SSV; see Equation \@ref(eq:)
+- $D_s^{\text{(BP-adRD)}}$ is the R\&D cost of BPSV prior to an outbreak; see Equation \@ref(eq:bpsvrd)
+- $D_s^{\text{(BP-inv)}}$ is the cost of maintaining an investigational reserve of 100,000 BPSV doses; see Equation \@ref(eq:bpsvinv)
+- $D_s^{\text{(S-cap)}}$ is the cost of reserved capacity for SSV; see Equation \@ref(eq:ssvcap)
 - $E_y$ is the annual cost of enabling activities, equal to `r pall$cost_enab` million USD per year.
 
-## Response cost equation (annual calculation, 2040-2045)
+
+## BPSV advanced R\&D
+
+\begin{equation}
+D_s^{\text{(BP-adRD)}} = 
+(\#eq:bpsvrd)
+\end{equation}
+
+```{r posbpsv}
+# probability of success is a parameter
+pos = sapply(paste0('pos_',0:2),function(x) pall[[x]])
+# probability to occur is the product of prior phases
+pto = t(apply(pos[,1:2], 1, function (y) sapply(1:length(y),function(x) prod(y[1:x]))))
+
+# save bpsv from phase 2 for later
+pto_bpsv_phase3 = pall$n_bpsv_candidates*pto[,2]*pos[,3]
+
+# add 1 column for probability of phase 0 to occur
+pto = cbind(1, pto)
+
+# costs are parameters
+inex = sapply(paste0('cost_',0:2,'_inex'),function(x) pall[[x]])
+ex = sapply(paste0('cost_',0:2,'_ex'),function(x) pall[[x]])
+  
+# weight should be a parameter
+inex_weight = 0.5
+
+# cost per phase is a weighted sum
+costs = inex_weight * inex + (1-inex_weight) * ex
+
+bpsv_rd_costsamples = rowSums(costs*pto)
+
+ggplot() + geom_histogram(aes(8*bpsv_rd_costsamples/1e9)) +
+  theme_bw(base_size=15) +
+  labs(x='Billion USD',y='',title='Risk-adjusted R&D cost for 8 BPSV candidates')
+
+
+```
+
+## BPSV investigational reserve
+
+The cost per dose per year is `r pall$cost_bpsvinv` USD, denoted $A_1$. Then the cost to maintain the reserve of 100,000 doses is
+
+\begin{equation}
+D_s^{\text{(BP-inv)}} = 100000 A_1
+(\#eq:bpsvinv)
+\end{equation}
+
+for the scenarios that include a BPSV (S01, S02, S03).
+
+## SSV capacity reservation
+
+The cost per dose reservation per year is `r pall$cost_capres` USD, denoted $A_2$. Reservation sizes depend on scenarios as follows:
+
+$$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
+1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
+2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
+
+Then the total cost per year is
+
+\begin{equation}
+D_s^{\text{(S-cap)}} =  M_{R,s} A_2
+(\#eq:ssvcap)
+\end{equation}
+
+
+# Response cost equation 
 
 
 <span style="color:red;"> (BPSV R&D + SARS-X R&D + BPSV Procurement + SARS-X Procurement + BPSV Delivery + SARS-X Delivery) / (1 + discount rate) ^ (year – 2025) </span>
 
 
-$$D_{res} = \frac{1}{(1+r)^y}\left(D_{BPSV, resRD} + D_{SSV, RD, s} + D_{BPSV, proc} + D_{SSV, proc} + D_{BPSV, del} + D_{SSV, del}\right)$$
+$$D_y^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-resRD)}} + D_s^{\text{(S-RD)}} + D_s^{\text{(BP-proc)}} + D_{s}^{\text{(S-proc)}} + D_s^{\text{(BP-del)}} + D^{\text{(S-del)}}\right)$$
 
-- $D_{BPSV, resRD}$ is the R\&D cost of BPSV after an outbreak; see Equation \@ref(eq:)
-- $D_{SSV, RD, s}$ is the R\&D cost for SSV; see Equation \@ref(eq:ssvrd)
-- $D_{BPSV, proc}$ is the cost of procuring BPSV; see Equation \@ref(eq:)
-- $D_{SSV, proc}$ is the cost of procuring SSV; see Equation \@ref(eq:)
-- $D_{BPSV, del}$ is the cost of delivering BPSV; see Equation \@ref(eq:)
-- $D_{SSV, del}$ is the cost of delivering SSV; see Equation \@ref(eq:)
+- $D_s^{\text{(BP-resRD)}}$ is the R\&D cost of BPSV after an outbreak; see Equation \@ref(eq:bpsvresrd)
+- $D_s^{\text{(S-RD)}}$ is the R\&D cost for SSV; see Equation \@ref(eq:ssvrd)
+- $D_s^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation \@ref(eq:bpsvproc)
+- $D_{s}^{\text{(S-proc)}}$ is the cost of procuring SSV; see Equation \@ref(eq:ssvproc)
+- $D_s^{\text{(BP-del)}}$ is the cost of delivering BPSV; see Equation \@ref(eq:bspvdel)
+- $D^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation \@ref(eq:ssvdel)
+
+
+
+
 
 ## Risk-adjusted R&D cost per candidate calculation
 
@@ -227,7 +296,7 @@ $$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\
 and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega=0.5$), adjusted for the duration of the trial, which depends on the R\&D investment, denoted $x\in\{365, 200, 100\}$: $$T_{x,i} = \frac{W_{i;x}^{(S)}}{W_{i;365}^{(S)}}\left(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}\right).$$ Then the total cost is
 
 \begin{equation}
-D_{\text{SSV},\text{RD},s} = 18\left(\sum_{i=0}^3 \hat{P}_iT_{x(s),i} + (1+I) \hat{P}_LL\right)
+D_s^{\text{(S-RD)}} = 18\left(\sum_{i=0}^3 \hat{P}_iT_{x(s),i} + (1+I) \hat{P}_LL\right)
 (\#eq:ssvrd)
 \end{equation}
 
@@ -256,7 +325,7 @@ for(j in 1:length(dms)){
 
 ```
 
-```{r pos}
+```{r posssv}
 # probability of success is a parameter
 pos = sapply(paste0('pos_',0:3),function(x) pall[[x]])
 # probability to occur is the product of prior phases
@@ -269,9 +338,6 @@ pto = cbind(1, pto)
 inex = sapply(paste0('cost_',0:3,'_inex'),function(x) pall[[x]])
 ex = sapply(paste0('cost_',0:3,'_ex'),function(x) pall[[x]])
   
-# weight should be a parameter
-inex_weight = 0.5
-
 # cost per phase is a weighted sum
 costs = inex_weight * inex + (1-inex_weight) * ex
 
@@ -288,7 +354,7 @@ ssv_rd_plot$Cost = as.numeric(ssv_rd_plot$Cost)
 ggplot(ssv_rd_plot) + geom_histogram(aes(Cost/1e9*18)) +
   facet_wrap(~Investment) +
   theme_bw(base_size=15) +
-  labs(x='Cost, billion USD',y='',title='Risk-adjusted R&D cost for 18 candidates')
+  labs(x='Billion USD',y='',title='Risk-adjusted R&D cost for 18 SSV candidates')
 
 ```
 
@@ -299,15 +365,17 @@ ggplot(ssv_rd_plot) + geom_histogram(aes(Cost/1e9*18)) +
 
 The BPSV has eight candidates that go through Phase 3 only. The duration is 18 weeks. Thus we write the response cost
 
-$$D_{BPSV,RD} = 8\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + p(1+I) \hat{P}_LL$$
+\begin{equation}
+D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}8\hat{P}_3\left(\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\notin\\{1,2,3\\}
+\end{array}\right.
+(\#eq:bpsvresrd)
+\end{equation}
 
-and we assume that the eight candidates have the same probability of success at Phase 3 as the SSV: 
-
-$$p \sim \text{Binom}(8, P_3).$$
 
 ```{r bpsvrd}
 set.seed(0)
-x = 8 * 18/phase_duration[1,4] * costs[,4] + rbinom(n = nsamples, prob = pos[,4], size=8)*(1+pall$inflation)*pall$cost_lic
+x = pto_bpsv_phase3 * (18/phase_duration[1,4] * costs[,4] + pos[,4]*(1+pall$inflation)*pall$cost_lic)
 ggplot() + geom_histogram(aes(x/1e9)) +
   theme_bw(base_size=15) +
   labs(x='Cost, billion USD',y='',title='Reactive R&D cost for BPSV')
@@ -327,15 +395,18 @@ ggplot() + geom_histogram(aes(x/1e9)) +
 
 ### SSV
 
-If we write annual demand in billions as $A_{\cdot,y}$, then we would have costs, in billion USD, of:
+If we write annual demand in billions as $A_{\cdot,s,y}$, then we would have costs, in billion USD, of:
 
-$$D_{\text{SSV},y} = \min\\{A_{SSV,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,y}-M_C,0\\}\cdot S_U$$
+\begin{equation}
+D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
+(\#eq:ssvproc)
+\end{equation}
 
 Here, $S_R$ is the cost per reserved dose and $S_U$ the cost per unreserved dose. Reserved doses are marked up by $M_p$ and $M_f$. 
 
 The total number of doses produced in week $w$ in scenario $s$ is $Z_{T,s,w}$ (see Equation \@ref(eq:supply)). The total in a one-year period is 
 
-$$A_{SSV,y} = \sum_{w\in y}Z_{T,s,w}.$$
+$$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 ```{r sup}
 
@@ -432,7 +503,14 @@ ggplot(cpymelt) +
 
 ### BPSV
 
-$$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
+
+\begin{equation}
+D_s^{\text{(BP-proc)}} = \left\\{\begin{array}{lr}
+A_{BPSV,s}\cdot G\\; & \\; s\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\notin\\{1,2,3\\}
+\end{array}\right.
+(\#eq:bpsvproc)
+\end{equation}
 
 
 ```{r bpsvproc}
@@ -461,14 +539,15 @@ For a world population aged 65 and over of `r round(sum(pops365)/1e9,1)` billion
 
 <span style="color:red;">  WB status demand/0.8 * 0.1 * (0-10% cost) + WB status demand/0.8  * 0.2 * (11-30% cost) + WB status demand/0.8 * 0.5 * (30-80% cost) </span>
 
-
-
 ### SSV
 
 
 For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
 
-$$D_{\text{SSV}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) $$ 
+\begin{equation}
+D^{\text{(S-del)}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) 
+(\#eq:ssvdel)
+\end{equation}
 
 We set 
 
@@ -660,7 +739,15 @@ ggplot(reshape2::melt(ssv_delivery_costs)) +
 
 For the BPSV, which goes only to people aged 65 or older, with populations $N_i^{(65)}$, coverage is reached earlier in the process, so the cost is weighted more heavily towards start up and ramp up:
 
-$$D_{\text{BPSV}} = \sum_{i}D_{\text{BPSV},i}$$
+\begin{equation}
+D_s^{\text{(BP-del)}} = 
+\left\\{\begin{array}{lr}
+\sum_{i}D_{\text{BPSV},i}
+\\; & \\; s\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\notin\\{1,2,3\\}
+\end{array}\right.
+(\#eq:bspvdel)
+\end{equation}
 
 $$D_{\text{BPSV},i} = 
 \left\\{\begin{array}{lr}
@@ -730,7 +817,9 @@ Table: Literature review of global and country-specific delivery rates.
 
 
 
-## Vaccination Scenarios
+
+
+# SSV delivery
 
 
 | Category | Reserved capacity | Private response (existing capacity)  | Private response (built capacity)  |
@@ -767,9 +856,7 @@ Table: Manufacturing response timeline assumptions
 Table: Vaccine Production Timeline
 
 
-## Vaccine supply 
-
-### Timing
+## Timing
 
 Facility transition occurs $F=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to a 100 Days Mission, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
 
@@ -781,7 +868,7 @@ for $j\in\\{365, 200, 100\\}$. These work out as `r time_to_approval[1]`, `r tim
 
 
 
-### Production
+## Production
 
 The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, depends on the scenarios as follows:
 
@@ -826,7 +913,7 @@ ggplot(t_supply) +
 
 In Figure \@ref(fig:supply), the following scenarios have identical supply (because they have the same capacity reservations and R\&D investments): `r paste0(sames[[1]],collapse=' & ')`; `r paste0(sames[[2]],collapse=' & ')`; and `r paste0(sames[[3]],collapse=' & ')`.
 
-### Allocation
+## Allocation
 
 Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i = 2\cdot 0.8\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for 80\% of the population.
 
@@ -886,7 +973,7 @@ ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
 
 ```
 
-### Delivery
+## Delivery
 
 ```{r scendelivery}
 
@@ -901,10 +988,11 @@ ggplot(do.call(rbind,second_dose_delivery)) +
 
 
 
+# BPSV delivery
 
-# Results
 
-## Parameter samples
+
+# Parameter samples
 
 ```{r parsamples}
 
@@ -918,20 +1006,6 @@ for(i in 1:length(params))
 
 ```
 
-
-## Preparedness costs
-
-## Response costs
-
-## R&D costs
-
-## Procurement costs
-
-## Delivery costs
-
-## Manufacture
-
-## Vaccination scenarios
 
 # Attributions / Authors
 
