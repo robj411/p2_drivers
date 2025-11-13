@@ -221,14 +221,6 @@ and the cost of each phase is $T_i$, a weighted average of experienced and inexp
 
 $$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}} = 8$ candidates is
 
-\begin{equation}
-D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
- N^{\text{(BPSV)}}\sum_{i=0}^2 \hat{P}_iT_{i} \\; & \\; s\in\\{1,2,3\\} \\
-0  \\; & \\; s\notin\\{1,2,3\\}
-\end{array}\right.
-(\#eq:bpsvrd0)
-\end{equation}
-
 
 
 ```{r}
@@ -238,9 +230,7 @@ eqtext = 'D_s^{\\text{(BP-adRD)}} = \\left\\{\\begin{array}{lr}
 \\end{array}\\right.
 (\\#eq:bpsvrd)'
 if (knitr::is_html_output()) {
-  
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-  # cat(paste0("\\begin{equation}\n",gsub("\\\\(?=[[:punct:]](?![[:space:]]))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
   cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
@@ -291,9 +281,9 @@ eqtext = 'D_s^{\\text{(BP-inv)}} = \\left\\{\\begin{array}{lr}
 \\end{array}\\right.
 (\\#eq:bpsvinv)'
 if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",eqtext,"\n\\end{equation}",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -308,9 +298,9 @@ eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}0.5 & s\\in\\{0, 1, 6, 9, 12\\} \
 1.2 & s\\in\\{2, 4, 7, 10\\} \\\\ 
 2.5 & s\\in\\{3, 5, 8, 11\\} \\end{array}\\right.'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -367,9 +357,9 @@ eqtext = 'x(s) = \\left\\{\\begin{array}{lr} 365 & s\\in\\{0, 1, 2, 3, 4, 5, 12\
 200 & s\\in\\{6, 7, 8\\} \\\\ 
 100 & s\\in\\{9, 10, 11\\} \\end{array}\\right.'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -439,9 +429,9 @@ eqtext = 'D_s^{\\text{(BP-resRD)}} = \\left\\{\\begin{array}{lr}N^{\\text{(BPSV)
 \\end{array}\\right.
 (\\#eq:bpsvresrd)'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -585,9 +575,9 @@ A_{BPSV,s}\\cdot G\\; & \\; s\\in\\{1,2,3\\} \\\\
 \\end{array}\\right.
 (\\#eq:bpsvproc)'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -828,9 +818,9 @@ eqtext = 'D_s^{\\text{(BP-del)}} =
 \\end{array}\\right.
 (\\#eq:bspvdel)'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -844,9 +834,9 @@ N_i^{(65)}V_{i; 0}  & N_i^{(65)}\\leq \\frac{1}{10}N_i^{(15)} \\\\
 \\frac{N_i^{(15)}}{10} V_{i; 0} + \\frac{2}{10}N_i^{(15)} V_{i; 11} + \\left(N_i^{(65)}-\\frac{3}{10}N_i^{(15)} \\right)V_{i; 31} & N_i^{(65)}> \\frac{3}{10} N_i^{(15)}
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -971,9 +961,9 @@ eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}0.5 & s\\in\\{0, 1, 6, 9, 12\\} \
 1.2 & s\\in\\{2, 4, 7, 10\\} \\\\ 
 2.5 & s\\in\\{3, 5, 8, 11\\} \\end{array}\\right.'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -988,9 +978,9 @@ eqtext = 'Z_{x,s,w} = \\left\\{\\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\
 \\frac{1}{52}M_{x,s}  & w-w_s^{(0)}\\geq I_x+C_x
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -1034,9 +1024,9 @@ Z_{R,s,w}             & K_{s,\\text{HIC},w} < 0.5 \\;\\&\\; i=\\text{HIC} \\\\
 Z_{R,s,w}             & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{LLMIC}
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
@@ -1065,9 +1055,9 @@ Z_{x,s,w}            & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\
 0                     & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{LLMIC} 
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n$$",collapse=''))
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
 
