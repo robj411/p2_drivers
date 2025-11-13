@@ -202,16 +202,101 @@ Probability of Occurrence (PoO) = 1 * PoS (PhaseN-1) ...
 
 $ (Preclin) * PoO (Preclin) + $ (Ph1) * PoO (Ph1) + $ (Ph2) * PoO (Ph2) + $ (Ph3) * PoO (Ph3) + $ (License) * PoO (License)
 
+### SSV
+
+**I have set the weight of inexperienced manufacturer to 0.5**
 
 Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
 
 $$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
 
-and the cost of each phase is $T_i$ (a (weighted) sum of experienced and inexperienced manufacturers?). Then the total cost is
+and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega=0.5$), adjusted for the duration of the trial, which depends on the R\&D investment, denoted $x\in\{365, 200, 100\}$: $$T_{x,i} = \frac{W_{i;x}^{(S)}}{W_{i;365}^{(S)}}\left(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}\right).$$ Then the total cost is
 
-$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + (1+I) \hat{P}_LL$$
+$$D_{\text{SSV},\text{RD},x} = \sum_{i=0}^3 \hat{P}_iT_{x,i} + (1+I) \hat{P}_LL$$
 
-where $I$ is inflation from 2018 to 2025.
+where $I$ is inflation from 2018 to 2025. For our scenarios, we have 
+
+$$x = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\ 
+200 & s\in\\{6, 7, 8\\} \\\\ 
+100 & s\in\\{9, 10, 11\\} \end{array}\right.$$
+
+This is the cost per candidate. We multiply by 18 to get the total cost.
+
+
+```{r}
+
+dms = c(365, 200, 100)
+time_to_approval = c()
+phase_duration = matrix(0,length(dms),4)
+for(j in 1:length(dms)){
+  pars = names(pall)[grepl('weeks_P',names(pall)) & grepl(dms[j],names(pall))]
+  time_to_approval[j] = 0
+  for(i in 1:length(pars)){
+    time_to_approval[j] = time_to_approval[j] + pall[[pars[i]]]
+    phase_duration[j,i] = pall[[pars[i]]]
+  }
+}
+
+```
+
+```{r}
+# probability of success is a parameter
+pos = sapply(paste0('pos_',0:3),function(x) pall[[x]])
+# probability to occur is the product of prior phases
+pto = t(apply(pos, 1, function (y) sapply(1:length(y),function(x) prod(y[1:x]))))
+
+# add 1 column for probability of phase 0 to occur
+pto = cbind(1, pto)
+
+# costs are parameters
+inex = sapply(paste0('cost_',0:3,'_inex'),function(x) pall[[x]])
+ex = sapply(paste0('cost_',0:3,'_ex'),function(x) pall[[x]])
+  
+# weight should be a parameter
+inex_weight = 0.5
+
+# cost per phase is a weighted sum
+costs = inex_weight * inex + (1-inex_weight) * ex
+
+timescale = t(apply(phase_duration,1,function(x)x/phase_duration[1,]))
+
+costlist = lapply(1:length(dms),function(x) t(apply(costs,1, function (r) r*timescale[x,]/timescale[1,])))
+
+# add licence cost column (adjusted for inflation)
+ssv_rd_costsamples = lapply( 1:length(costlist), function(x) cbind( rowSums( cbind(costlist[[x]], (1+pall$inflation)*pall$cost_lic)*pto), paste0(dms[x], ' Days Mission')) )
+
+ssv_rd_plot <- as.data.frame(do.call(rbind,ssv_rd_costsamples))
+colnames(ssv_rd_plot) = c('Cost','Investment')
+ssv_rd_plot$Cost = as.numeric(ssv_rd_plot$Cost)
+ggplot(ssv_rd_plot) + geom_histogram(aes(Cost/1e9*18)) +
+  facet_wrap(~Investment) +
+  theme_bw(base_size=15) +
+  labs(x='Cost, billion USD',y='',title='Risk-adjusted R&D cost for 18 candidates')
+
+```
+
+### BPSV
+
+**I have basically assumed the same as SSV except for the numbers given (8 candidates and 18 weeks)**
+
+
+The BPSV has eight candidates that go through Phase 3 only. The duration is 18 weeks. Thus we write the response cost
+
+$$D_{BPSV,RD} = 8\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + p(1+I) \hat{P}_LL$$
+
+and we assume that the eight candidates have the same probability of success at Phase 3 as the SSV: 
+
+$$p \sim \text{Binom}(8, P_3).$$
+
+```{r}
+set.seed(0)
+x = 8 * 18/phase_duration[1,4] * costs[,4] + rbinom(n = nsamples, prob = pos[,4], size=8)*(1+pall$inflation)*pall$cost_lic
+ggplot() + geom_histogram(aes(x/1e9)) +
+  theme_bw(base_size=15) +
+  labs(x='Cost, billion USD',y='',title='Reactive R&D cost for BPSV')
+
+```
+
 
 ## Procurement cost calculation
 
@@ -223,169 +308,21 @@ Scenario 2: Annual demand over 6.6B
 
 Annual demand * $18.94
 
-
+### SSV
 
 If we write annual demand in billions as $A_{\cdot,y}$, then we would have costs, in billion USD, of:
 
 $$D_{\text{SSV},y} = \min\\{A_{SSV,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,y}-M_C,0\\}\cdot S_U$$
 
-$$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
+Here, $S_R$ is the cost per reserved dose and $S_U$ the cost per unreserved dose. Reserved doses are marked up by $M_p$ and $M_f$. 
 
+The total number of doses produced in week $w$ in scenario $s$ is $Z_{T,s,w}$ (see Equation \@ref(eq:supply)). The total in a one-year period is 
 
-## Delivery Cost Equation
-
-WB status demand/0.8 * 0.1 * (0-10% cost) +
-WB status demand/0.8  * 0.2 * (11-30% cost) +
-WB status demand/0.8 * 0.5 * (30-80% cost)
-
-
-For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
-
-$$D_{\text{SSV}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) $$ 
-
-For the BPSV, which goes only to people aged 65 or older, with populations $N_i^{(65)}$, coverage is reached earlier in the process, so the cost is weighted more heavily towards start up and ramp up:
-
-$$D_{\text{BPSV}} = \sum_{i}D_{\text{BPSV},i}$$
-
-$$D_{\text{BPSV},i} = 
-\left\\{\begin{array}{lr}
-N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{8}N_i^{(15)} \\\\
-\frac{N_i^{(15)}}{8} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{8} \right)V_{i; 11}  & \frac{1}{8}N_i^{(15)} \leq N_i^{(65)}\leq \frac{2}{8}N_i^{(15)} \\\\
-\frac{N_i^{(15)}}{8} V_{i; 0} + \frac{2}{8}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{8}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{8} N_i^{(15)}
-\end{array}\right.$$ 
-
-
-
-
-
-| Country | Country status | Study type | Financial Cost per dose (USD) | Source |
-|---|---|---|---|---|
-| WHO, Gavi, and UNICEF AMC Estimate | AMC | Top down | 1.66 | @Griffiths2021 |
-| UNICEF Global Estimate |  All | Model | 0.73 | @Oyatoye2023 |
-| DRC | LIC | Bottom up | 1.91 | @Moi2024 |
-| Malawi | LIC | Bottom up | 4.55 | @Ruisch2025 |
-| Mozambique | LIC | Bottom up | 0.5 | @Namalela2025 |
-| Uganda | LIC | Bottom up | 0.79 | @Tumusiime2024 |
-| Bangladesh | LMIC | Bottom up | 0.29 | @Yesmin2024 |
-| Cote d'Ivoire | LMIC | Bottom up | 0.67 | @Vaughan2023 |
-| Nigeria | LMIC | Bottom up | 0.84 | @Noh2024 |
-| Philippines | LMIC | Bottom up | 2.16 | @Banks2023 |
-| Vietnam | LMIC | Bottom up | 1.73 | @Nguyen2024 |
-| Ghana | LMIC | CVIC tool | 2.2--2.3 | @Nonvignon2022 |
-| Lao PDR | LMIC | CVIC tool | 0.79--0.81 | @Yeung2023 |
-| Kenya | LMIC | Top down | 3.29--4.28 | @Orangi2022 | 
-| Botswana | UMIC | Mixed | 19 | @Vaughan2025 |
-| South Africa | UMIC | Top down | 3.84 | @Edoka2024 | 
-
-Table: Literature review of global and country-specific delivery rates. 
-
-
-
-## Vaccination Scenarios
-
-Vaccine supply at each investment level is modelled by producing doses sourced from preexisting advance capacity reservations or from the private market. The production volumes for each of these supply mechanisms are interconnected and based on the following assumptions: 
-
-- Current annual global vaccine manufacturing capacity is 9B doses and is used in the response to the SARS-X pandemic 
-- A portion of this capacity is reserved in each level for pandemic response following the advance capacity reservation volumes in each investment level (see Table XX) 
-- Advance capacity reservations allow manufacturing facilities to transition and scale production of SSV doses faster because facilities are paid to maintain a high level of transition preparedness and produce vaccines on the same platform as the approved SSV 
-- Advance capacity reservation agreements guarantee a population-proportional distribution to all World Bank income groups as part of their terms and conditions (an exception is made for the 500m doses available in all levels, which comes from an existing advance capacity reservation held by the European Union) 
-- Private manufacturing will respond to meet any additional gap in SSV demand above the volume covered by advance capacity reservations 
-- Private manufacturing of the SARS-X vaccine will occur in all existing vaccine production facilities not under a reserved capacity agreement 
-- Additional production capacity of 6B doses will be built in response to a global pandemic, like during the Covid-19 response 
-- In BAU and half of scenarios, private manufacturers prioritise delivering SARS-X doses to HICs, like during the Covid-19 response. Private manufacturers provide population-proportional distribution to all income groups, following the same logic as advanced capacity reservations, in the remaining scenarios (see Table 2) 
-- HICs initially receive SARS-X doses quicker than other World Bank income groups due to existing advance capacity reservations and preferential treatment from private manufacturers, in select scenarios. When HICs receive sufficient doses for vaccinating eligible populations, the prioritized doses are reallocated to UMICs. This process repeats for LLMICs once all UMICs doses are delivered 
-
-
-| Category | Reserved capacity | Private response (existing capacity)  | Private response (built capacity)  |
-|---|---|---|---|
-| Annual manufacturing volume | By scenario (0.5--2.5B)| 2.5B minus reserved volume | 6B |
-| Facility transition start | 7 weeks before vaccine approval | 7 weeks before vaccine approval | 7 weeks before vaccine approval |
-| Weeks to initial manufacturing | 12 | 30 | 48 |
-| Scale-up weeks to full capacity | 10 | 16 | 16 |
-
-Table: Manufacturing response timeline assumptions 
-
-
-
- 
-
-<!-- | Weeks from transition start | 0-11 | 12-21 | 22-29 | 30-45  | 46-47 | 48-63 | 64+ | -->
-<!-- |---|---|---|---|---|---|---|---| -->
-<!-- | Reserved Capacity (%)  || Scaling from 0-100 | 100 | 100 | 100 | 100 | 100 |  -->
-<!-- | Private Capacity (Existing; %)  || | | Scaling from 0-100 | 100 | 100 | 100 |  -->
-<!-- | Private Capacity (Response; %)  | | | |  | | Scaling from 0-100 | 100 | -->
-
- 
-
-| Weeks from transition start |	Reserved Capacity (%)	 | Private Capacity (Existing; %)	| Private Capacity (Response; %) |
-|---|---|---|---|
-| 0--11 |  |  |  |			
-| 12--21 |	Scaling from 0-100	 |  |  |				
-| 22--29 |	100		|   |  |			
-| 30--45 |	100 |	Scaling from 0-100	  |  |
-| 46--47 |	100 |	100	  |  |
-| 48--63	 |100 |	100 |	Scaling from 0-100 |
-| 64+|	100 |	100 |	100 |
-
-Table: Vaccine Production Timeline
-
-
-## Vaccine supply 
-
-### Timing
-
-Facility transition occurs $F=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to a 100 Days Mission, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
-
-$$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$
+$$A_{SSV,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 ```{r}
-dms = c(365, 200, 100)
 
-time_to_approval = c()
-for(j in 1:length(dms)){
-  pars = names(pall)[grepl('weeks_P',names(pall)) & grepl(dms[j],names(pall))]
-  time_to_approval[j] = 0
-  for(i in pars){
-    time_to_approval[j] = time_to_approval[j] + pall[[i]]
-  }
-}
-
-```
-
-for $j\in\\{365, 200, 100\\}$. These work out as `r time_to_approval[1]`, `r time_to_approval[2]`, and `r time_to_approval[3]` weeks, respectively. Thus "week 0" for manufacturing occurs `r time_to_approval[1]-7`, `r time_to_approval[2]-7`, and `r time_to_approval[3]-7` weeks, respectively, after the new pathogen has been sequenced. We denote this variable $w_s^{(0)}$.
-
-
-
-
-### Production
-
-The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, depends on the scenarios as follows:
-
-$$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
-1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
-2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
-
-where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
-
-Then the number of doses, in billions, that are made from capacity $x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
-
-
-$$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
-\frac{1}{52}\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
-\frac{1}{52}M_{x,s}  & w-w_s^{(0)}\geq I_x+C_x
-\end{array}\right.$$
-
-<!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
-<!-- \frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\  -->
-<!-- \frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\  -->
-<!-- \frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\  -->
-
-where $I_R=12$ is the number of weeks to initial manufacturing for reserved capacity, $C_R=10$ is the number of weeks to scale up to full capacity; $I_E=30$ is the number of weeks to initial manufacturing for existing and unreserved capacity, $C_E=16$ is the number of weeks to scale up to full capacity; $I_B=48$ is the number of weeks to initial manufacturing for built and unreserved capacity, $C_B=16$ is the number of weeks to scale up to full capacity.
-
-Then the total number of doses produced in week $w$ is $$Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.$$
-
-```{r supply, fig.cap='Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen.'}
-
+## supply
 
 scen_dm = c(1, 1,1,1, 1,1, 2,2,2, 3,3,3, 1)
 scen_capres = c(1, 1,2,3, 2,3, 1,2,3, 1,2,3, 1)
@@ -401,7 +338,7 @@ dose_supply = function(week, w0, weeks_init, weeks_scale, man_cap){
   return(doses)
 }
 
-nweeks = 200
+nweeks = 208
 suffixes = c('res','ex','bui')
 weeks_init = sapply(suffixes,function(x)pall[[paste0('weeks_init_',x)]])
 weeks_scale = sapply(suffixes,function(x)pall[[paste0('weeks_scale_',x)]])
@@ -433,10 +370,7 @@ scennames = c('BAU',paste0('S',sprintf("%02d", 1:12)))
 
 t_supply <- as.data.frame(do.call(rbind,lapply(1:length(scennames),function(x)cbind(scen=scennames[x],doses=cumulative[[x]],week=1:nweeks))))
 
-ggplot(t_supply) + 
-  geom_line(aes(x=as.numeric(week),y=as.numeric(doses),colour=factor(scen,levels=scennames))) +
-  theme_bw(base_size = 15) +
-  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
+names(cumulative) = scennames
 
 scens = setDT(data.frame(scen=scennames, capres = scen_capres, dm = scen_dm))
 scens[,comb := paste0(capres,dm)]
@@ -447,62 +381,76 @@ for(un in unique(scens$comb)){
   if(nrow(subscen)>1)
     sames[[length(sames)+1]] <- subscen$scen
 }
-
 ```
-
-In Figure \@ref(fig:supply), the following scenarios have identical supply (because they have the same capacity reservations and R\&D investments): `r paste0(sames[[1]],collapse=' & ')`; `r paste0(sames[[2]],collapse=' & ')`; and `r paste0(sames[[3]],collapse=' & ')`.
-
-### Allocation
-
-Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i = 2\cdot 0.8\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for 80\% of the population.
-
-$$
-k_{s,R,i,w} = \left\\{ \begin{array}{lr}
-Z_{R,s,w}             & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
-\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
-\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC}\\\\
-Z_{R,s,w}             & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
-\end{array}\right.
-$$
-
-The logic of this reads as follows:
-
-- The first 500 million doses from reserved capacity go exclusively to HIC
-- None go to UMIC and LLMIC
-- When HIC coverage is between 500 million and its total demand, reserved capacity doses are allocated according to population
-- Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC and LLMIC
-- Once UMIC reach their total demand, all doses from reserved capacity go to LLMIC
-
-
-
-
-For $x\in\\{E,B\\}$,
-
-$$
-k_{s,x,i,w} = \left\\{ \begin{array}{lr}
-Z_{x,s,w}            & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC} \\\\
-Z_{x,s,w}            & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i=\text{UMIC} \\\\
-0                     & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i\neq\text{UMIC} \\\\
-Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC} \\\\
-0                     & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i\neq\text{LLMIC} 
-\end{array}\right.
-$$
-
-The logic of this reads as follows:
-
-- Until HIC demand is reached, all doses from unreserved capacity go to HIC
-- None go to UMIC and LLMIC
-- Once HIC demand has been met and until UMIC demand is reached, all doses from unreserved capacity go to UMIC
-- None go to HIC and LLMIC
-- Once HIC and UMIC demand have been met, all remaining doses from unreserved capacity go to LLMIC
-- None go to UMIC and HIC
-
 
 ```{r}
 
-pops = sapply(names(pall)[grepl('15',names(pall))&grepl('pop',names(pall))],function(x)pall[[x]])
+cost_per_year <- list()
+for(s in 1:length(scennames)){
+  sup = supplies[[s]]
+  res = sup[[1]]
+  exbui = sup[[2]] + sup[[3]]
+  annual_res_doses = sapply(1:ceiling(nweeks/52),function(y) sum(na.omit(res[(1:52) + (y-1)*52])))
+  annual_exbui_doses = sapply(1:ceiling(nweeks/52),function(y) sum(na.omit(exbui[(1:52) + (y-1)*52])))
+  annual_doses = annual_res_doses + annual_exbui_doses
+  cost_per_year[[s]] = c(sapply(1:ceiling(nweeks/52), function(y) 
+    min(pall$man_curr,annual_doses[y])*pall$cost_res*(1+pall$profit)*(1+pall$cost_ff) + max(annual_doses[y]-pall$man_curr, 0)*pall$cost_un
+    ), scennames[s])
+}
+
+cpy = data.frame(do.call(rbind,cost_per_year))
+colnames(cpy) = c(paste0('Year ',1:ceiling(nweeks/52)),'Scenario')
+cpymelt = reshape2::melt(cpy,id.vars='Scenario')
+cpymelt$variable = as.numeric(cpymelt$variable)
+cpymelt$value = as.numeric(cpymelt$value)
+
+ggplot(cpymelt) + 
+  geom_line(aes(x=variable,y=value,colour=Scenario)) +
+  theme_bw(base_size=15) +
+  labs(x='Year',y='Cost, billion USD')
+
+
+```
+
+
+### BPSV
+
+$$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
+
+
+
+
+
+
+
+
+
+## Delivery Cost Equation
+
+WB status demand/0.8 * 0.1 * (0-10% cost) +
+WB status demand/0.8  * 0.2 * (11-30% cost) +
+WB status demand/0.8 * 0.5 * (30-80% cost)
+
+
+
+### SSV
+
+
+For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
+
+$$D_{\text{SSV}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) $$ 
+
+We set 
+
+$$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)}V_{LMIC; j} + N_{LIC}^{(15)}V_{LIC; j} \right)$$
+
+```{r}
+
+
+## allocation 
+
+ics = c('hic','umic','lmic','lic')
+pops = sapply(paste0('pop_',ics,'_15'),function(x)pall[[x]])
 pops3 = pops[1:3]
 pops3[3] = sum(pops[3:4])
 
@@ -565,25 +513,22 @@ for(s in 1:length(scennames)){
   colnames(alloc[[s]])[1:3] = c('HIC','UMIC','LLMIC')
 }
 
-ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
-  geom_line(aes(x=Week,colour=Scenario,y=value)) +
-  facet_wrap(~variable) +
-  theme_bw(base_size = 15) +
-  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
-
 ```
 
-### Distribution
 
 ```{r}
+
+
+## delivery
+
 
 incomelevels = c('HIC','UMIC','LLMIC')
 rates = matrix(rep(c(.07, .07, .02), length(scennames)),ncol=length(incomelevels),byrow=T)
 rates[13,3] = 0.04
 
-second_dose_delivery <- list()
+second_dose_delivery <- all_dose_delivery <- list()
 for(s in 1:nrow(rates)){
-  second_dose_delivery[[s]] <- list()
+  second_dose_delivery[[s]] <- all_dose_delivery[[s]] <- list()
   for(il in 1:ncol(rates)){
     rateperdose = rates[s,il]/2
     # new doses in per week
@@ -607,11 +552,323 @@ for(s in 1:nrow(rates)){
       }
     }
     second_dose_delivery[[s]][[il]] = data.frame(doses=cumsum(second_doses), il=incomelevels[il], Week=1:nweeks)
+    all_dose_delivery[[s]][[il]] = data.frame(doses=cumsum(second_doses+first_doses))
   }
   second_dose_delivery[[s]] = do.call(rbind,second_dose_delivery[[s]])
+  all_dose_delivery[[s]] = do.call(cbind,all_dose_delivery[[s]])
   second_dose_delivery[[s]]$Scenario = scennames[s]
+  all_dose_delivery[[s]]$Scenario = scennames[s]
+  all_dose_delivery[[s]]$Week = 1:nweeks
 }
 
+```
+
+
+```{r}
+
+## cost delivery
+
+# get costs per dose
+pcs = c(0,11,31)
+icpc = apply(expand.grid(ics,pcs), 1, function(x) paste0('cost_',x[1],'_',as.numeric(x[2])))
+cost_per_dose = as.data.frame(sapply(icpc,function(x) pall[[x]]))
+popsllmic = pops[3:4]/sum(pops[3:4])
+for(i in pcs){
+  lic = paste0('cost_lic_',as.numeric(i))
+  lmic = paste0('cost_lmic_',as.numeric(i))
+  llmic = paste0('cost_llmic_',as.numeric(i))
+  cost_per_dose[[llmic]] = popsllmic[1]*cost_per_dose[[lmic]] + popsllmic[2]*cost_per_dose[[lic]]
+  cost_per_dose[[lmic]] <- cost_per_dose[[lic]] <- NULL
+}
+
+# apply costs per dose to quantiles
+##!! can just apply values to the total (rather than going week by week) if there is no discounting
+ssv_delivery_costs = matrix(0,ncol=length(scennames),nrow=nsamples)
+for(s in 1:length(scennames)){
+  scendoses = all_dose_delivery[[s]]
+  costvec = rep(1, nrow(scendoses))
+  for(j in 1:length(incomelevels)){
+    # the jth column is HIC, UMIC or LLMIC
+    # which(scendoses[,1] <= 0.1)
+    costvec[which(scendoses[,j] > 0.1 & scendoses[,1] <= 0.3)] <- 2
+    costvec[which(scendoses[,j] > 0.3)] <- 3
+    
+    costsamples = sapply(1:length(costvec),function(x) {
+      lab = paste0('cost_',tolower(incomelevels)[j],'_',as.numeric(pcs[costvec[x]]))
+      cost_per_dose[[lab]]
+      })
+    
+    # add country levels together, multiplying by population size
+    ssv_delivery_costs[,s] = ssv_delivery_costs[,s] + pops3[j]/1e9 * apply(costsamples, 1, function(x) sum(x*c(0,diff(scendoses[,j]))))
+    
+  }
+}
+
+ssv_delivery_costs = as.data.frame(ssv_delivery_costs)
+colnames(ssv_delivery_costs) = scennames
+# apply(ssv_delivery_costs,2,function(x)summary(x-ssv_delivery_costs[,1]))
+# apply(ssv_delivery_costs,2,mean)
+
+ggplot(reshape2::melt(ssv_delivery_costs)) +
+  geom_boxplot(aes(x=variable,y=value,colour=variable),show.legend=F) +
+  theme_bw(base_size=15) +
+  labs(x='',y='SSV delivery cost, billion USD')
+
+
+# lapply(all_dose_delivery,function(x)
+#   sapply(1:ceiling(nweeks/52),function(y) 
+#     apply(na.omit(x[(1:52) + (y-1)*52, 1:3]), 1, function(z) z*
+#     )
+# )
+
+
+
+```
+
+
+
+
+
+
+
+### BPSV
+
+For the BPSV, which goes only to people aged 65 or older, with populations $N_i^{(65)}$, coverage is reached earlier in the process, so the cost is weighted more heavily towards start up and ramp up:
+
+$$D_{\text{BPSV}} = \sum_{i}D_{\text{BPSV},i}$$
+
+$$D_{\text{BPSV},i} = 
+\left\\{\begin{array}{lr}
+N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{10}N_i^{(15)} \\\\
+\frac{N_i^{(15)}}{10} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{10} \right)V_{i; 11}  & \frac{1}{10}N_i^{(15)} \leq N_i^{(65)}\leq \frac{3}{10}N_i^{(15)} \\\\
+\frac{N_i^{(15)}}{10} V_{i; 0} + \frac{2}{10}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{10}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{10} N_i^{(15)}
+\end{array}\right.$$ 
+
+The logic of this is as follows:
+
+- The increments in cost correspond to numbers of eligible people in the whole population, namely those aged 15 and above.
+- If the number of people eligible for the BPSV is less than 10\% of the population aged 15 and over, then all doses cost the "start up" amount.
+- If the number of people eligible for the BPSV is more than 10\% and less than 30\% of the 15+ population, then cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. All remaining doses cost the "ramp up" amount.
+- If the number of people eligible for the BPSV is more than 30\% of the 15+ population, then the cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. The cost of the second tranche of doses, a number equal to 20\% of the 15+ population, is the "ramp up" amount. All remaining doses cost the "getting to scale" amount.
+
+
+```{r}
+
+pops65 = sapply(paste0('pop_',ics,'_65'),function(x)pall[[x]])
+pops365 = pops65[1:3]
+pops365[3] = sum(pops65[3:4])
+# popfracs65 = pops365/sum(pops365)
+
+demand65 = 0.8*pops365 # total bpsv doses per income level
+thresholds = sapply(c(1,3,8)/10,function(x) x*pops3) # points at which costs shift per income level
+bpsv_del_cost = 0
+for(i in 1:length(incomelevels)){
+  icthresh = thresholds[i,]
+  icdemand = demand65[i]
+  firstcost = cost_per_dose[[paste0('cost_',tolower(incomelevels[i]),'_0')]]
+  if(icdemand < icthresh[1]){
+    cost = icdemand * firstcost
+  }else if(icdemand < icthresh[2]){
+    cost = icthresh[1] * firstcost + (icdemand - icthresh[1]) * cost_per_dose[[paste0('cost_',tolower(incomelevels[i]),'_11')]]
+  }else{
+    cost = icthresh[1] * firstcost + (icthresh[2] - icthresh[1]) * cost_per_dose[[paste0('cost_',tolower(incomelevels[i]),'_11')]]  + (icdemand - icthresh[2]) * cost_per_dose[[paste0('cost_',tolower(incomelevels[i]),'_31')]]
+  }
+  # print(round(summary(cost/1e9)))
+  bpsv_del_cost = bpsv_del_cost + cost
+}
+
+  # print((summary(bpsv_del_cost/1e9)))
+
+ggplot() + geom_histogram(aes(x=bpsv_del_cost/1e9)) +
+  theme_bw(base_size = 15) +
+  labs(x='BPSV delivery cost, billion USD')
+
+
+  
+```
+
+
+| Country | Country status | Study type | Financial Cost per dose (USD) | Source |
+|---|---|---|---|---|
+| WHO, Gavi, and UNICEF AMC Estimate | AMC | Top down | 1.66 | @Griffiths2021 |
+| UNICEF Global Estimate |  All | Model | 0.73 | @Oyatoye2023 |
+| DRC | LIC | Bottom up | 1.91 | @Moi2024 |
+| Malawi | LIC | Bottom up | 4.55 | @Ruisch2025 |
+| Mozambique | LIC | Bottom up | 0.5 | @Namalela2025 |
+| Uganda | LIC | Bottom up | 0.79 | @Tumusiime2024 |
+| Bangladesh | LMIC | Bottom up | 0.29 | @Yesmin2024 |
+| Cote d'Ivoire | LMIC | Bottom up | 0.67 | @Vaughan2023 |
+| Nigeria | LMIC | Bottom up | 0.84 | @Noh2024 |
+| Philippines | LMIC | Bottom up | 2.16 | @Banks2023 |
+| Vietnam | LMIC | Bottom up | 1.73 | @Nguyen2024 |
+| Ghana | LMIC | CVIC tool | 2.2--2.3 | @Nonvignon2022 |
+| Lao PDR | LMIC | CVIC tool | 0.79--0.81 | @Yeung2023 |
+| Kenya | LMIC | Top down | 3.29--4.28 | @Orangi2022 | 
+| Botswana | UMIC | Mixed | 19 | @Vaughan2025 |
+| South Africa | UMIC | Top down | 3.84 | @Edoka2024 | 
+
+Table: Literature review of global and country-specific delivery rates. 
+
+
+
+## Vaccination Scenarios
+
+
+| Category | Reserved capacity | Private response (existing capacity)  | Private response (built capacity)  |
+|---|---|---|---|
+| Annual manufacturing volume | By scenario (0.5--2.5B)| 2.5B minus reserved volume | 6B |
+| Facility transition start | 7 weeks before vaccine approval | 7 weeks before vaccine approval | 7 weeks before vaccine approval |
+| Weeks to initial manufacturing | 12 | 30 | 48 |
+| Scale-up weeks to full capacity | 10 | 16 | 16 |
+
+Table: Manufacturing response timeline assumptions 
+
+
+
+ 
+
+<!-- | Weeks from transition start | 0-11 | 12-21 | 22-29 | 30-45  | 46-47 | 48-63 | 64+ | -->
+<!-- |---|---|---|---|---|---|---|---| -->
+<!-- | Reserved Capacity (%)  || Scaling from 0-100 | 100 | 100 | 100 | 100 | 100 |  -->
+<!-- | Private Capacity (Existing; %)  || | | Scaling from 0-100 | 100 | 100 | 100 |  -->
+<!-- | Private Capacity (Response; %)  | | | |  | | Scaling from 0-100 | 100 | -->
+
+ 
+
+| Weeks from transition start |	Reserved Capacity (%)	 | Private Capacity (Existing; %)	| Private Capacity (Response; %) |
+|---|---|---|---|
+| 0--11 |  |  |  |			
+| 12--21 |	Scaling from 0-100	 |  |  |				
+| 22--29 |	100		|   |  |			
+| 30--45 |	100 |	Scaling from 0-100	  |  |
+| 46--47 |	100 |	100	  |  |
+| 48--63	 |100 |	100 |	Scaling from 0-100 |
+| 64+|	100 |	100 |	100 |
+
+Table: Vaccine Production Timeline
+
+
+## Vaccine supply 
+
+### Timing
+
+Facility transition occurs $F=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to a 100 Days Mission, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
+
+$$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$
+
+
+for $j\in\\{365, 200, 100\\}$. These work out as `r time_to_approval[1]`, `r time_to_approval[2]`, and `r time_to_approval[3]` weeks, respectively. Thus "week 0" for manufacturing occurs `r time_to_approval[1]-7`, `r time_to_approval[2]-7`, and `r time_to_approval[3]-7` weeks, respectively, after the new pathogen has been sequenced. We denote this variable $w_s^{(0)}$.
+
+
+
+
+### Production
+
+The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, depends on the scenarios as follows:
+
+$$M_{R,s} = \left\\{\begin{array}{lr}0.5 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
+1.2 & s\in\\{2, 4, 7, 10\\} \\\\ 
+2.5 & s\in\\{3, 5, 8, 11\\} \end{array}\right.$$
+
+where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
+
+Then the number of doses, in billions, that are made from capacity $x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
+
+
+$$Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
+\frac{1}{52}\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\in[I_x, I_x+C_x) \\\\ 
+\frac{1}{52}M_{x,s}  & w-w_s^{(0)}\geq I_x+C_x
+\end{array}\right.$$
+
+<!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
+<!-- \frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\  -->
+<!-- \frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\  -->
+<!-- \frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\  -->
+
+where $I_R=12$ is the number of weeks to initial manufacturing for reserved capacity, $C_R=10$ is the number of weeks to scale up to full capacity; $I_E=30$ is the number of weeks to initial manufacturing for existing and unreserved capacity, $C_E=16$ is the number of weeks to scale up to full capacity; $I_B=48$ is the number of weeks to initial manufacturing for built and unreserved capacity, $C_B=16$ is the number of weeks to scale up to full capacity.
+
+Then the total number of doses produced in week $w$ is 
+
+\begin{equation}(\#eq:supply)
+Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
+\end{equation}
+
+
+
+```{r supply, fig.cap='Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen.'}
+
+ggplot(t_supply) + 
+  geom_line(aes(x=as.numeric(week),y=as.numeric(doses),colour=factor(scen,levels=scennames))) +
+  theme_bw(base_size = 15) +
+  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
+
+```
+
+In Figure \@ref(fig:supply), the following scenarios have identical supply (because they have the same capacity reservations and R\&D investments): `r paste0(sames[[1]],collapse=' & ')`; `r paste0(sames[[2]],collapse=' & ')`; and `r paste0(sames[[3]],collapse=' & ')`.
+
+### Allocation
+
+Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i = 2\cdot 0.8\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for 80\% of the population.
+
+$$
+k_{s,R,i,w} = \left\\{ \begin{array}{lr}
+Z_{R,s,w}             & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i=\text{HIC} \\\\
+0                     & K_{s,\text{HIC},w} < 0.5 \\;\\&\\; i\neq\text{HIC} \\\\
+\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & 0.5 < K_{s,\text{HIC},w} < X_{\text{HIC}} \\\\
+\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC}\\\\
+Z_{R,s,w}             & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC}
+\end{array}\right.
+$$
+
+The logic of this reads as follows:
+
+- The first 500 million doses from reserved capacity go exclusively to HIC
+- None go to UMIC and LLMIC
+- When HIC coverage is between 500 million and its total demand, reserved capacity doses are allocated according to population
+- Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC and LLMIC
+- Once UMIC reach their total demand, all doses from reserved capacity go to LLMIC
+
+
+
+
+For $x\in\\{E,B\\}$,
+
+$$
+k_{s,x,i,w} = \left\\{ \begin{array}{lr}
+Z_{x,s,w}            & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i=\text{HIC} \\\\
+0                     & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC} \\\\
+Z_{x,s,w}            & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i=\text{UMIC} \\\\
+0                     & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i\neq\text{UMIC} \\\\
+Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC} \\\\
+0                     & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i\neq\text{LLMIC} 
+\end{array}\right.
+$$
+
+The logic of this reads as follows:
+
+- Until HIC demand is reached, all doses from unreserved capacity go to HIC
+- None go to UMIC and LLMIC
+- Once HIC demand has been met and until UMIC demand is reached, all doses from unreserved capacity go to UMIC
+- None go to HIC and LLMIC
+- Once HIC and UMIC demand have been met, all remaining doses from unreserved capacity go to LLMIC
+- None go to UMIC and HIC
+
+
+
+
+```{r}
+
+ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
+  geom_line(aes(x=Week,colour=Scenario,y=value)) +
+  facet_wrap(~variable) +
+  theme_bw(base_size = 15) +
+  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
+
+```
+
+### Distribution
+
+```{r}
 
 ggplot(do.call(rbind,second_dose_delivery)) +
   geom_line(aes(x=Week,colour=Scenario,y=doses)) +

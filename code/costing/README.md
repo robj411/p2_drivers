@@ -10,8 +10,14 @@ The Costing Model
     2040-2045)](#32-response-cost-equation-annual-calculation-2040-2045)
   - [3.3 Risk-adjusted R&D cost per candidate
     calculation](#33-risk-adjusted-rd-cost-per-candidate-calculation)
+    - [3.3.1 SSV](#331-ssv)
+    - [3.3.2 BPSV](#332-bpsv)
   - [3.4 Procurement cost calculation](#34-procurement-cost-calculation)
+    - [3.4.1 SSV](#341-ssv)
+    - [3.4.2 BPSV](#342-bpsv)
   - [3.5 Delivery Cost Equation](#35-delivery-cost-equation)
+    - [3.5.1 SSV](#351-ssv)
+    - [3.5.2 BPSV](#352-bpsv)
   - [3.6 Vaccination Scenarios](#36-vaccination-scenarios)
   - [3.7 Vaccine supply](#37-vaccine-supply)
     - [3.7.1 Timing](#371-timing)
@@ -79,13 +85,13 @@ application.
 | $P_2$ | pos_2 | Probability of success; Phase II | Multinomial | 0.22, 0.31, 0.33, 0.43, 0.46, 0.54, 0.58, 0.58, 0.74, 0.79 |  |
 | $P_3$ | pos_3 | Probability of success; Phase III | Uniform | 0.4, 0.8 |  |
 | $T_0^{(e)}$ | cost_0_ex | Cost, preclinical, experienced manufacturer; USD | Exponential | 24213683 | 1700000, 140000000 |
-| $T_0^{(i)}$ | cost_0_inex | Cost, preclinical, inexperienced manufacturer; USD | Inverse Gaussian | 7882792, 13455907 | 1700000, 37000000 |
+| $T_0^{(n)}$ | cost_0_inex | Cost, preclinical, inexperienced manufacturer; USD | Inverse Gaussian | 7882792, 13455907 | 1700000, 37000000 |
 | $T_1^{(e)}$ | cost_1_ex | Cost, Phase I, experienced manufacturer; USD | Inverse Gaussian | 15339198, 8076755 | 1900000, 70000000 |
-| $T_1^{(i)}$ | cost_1_inex | Cost, Phase I, inexperienced manufacturer; USD | Inverse Gamma | 2.2774, 9799081 | 1000000, 30000000 |
+| $T_1^{(n)}$ | cost_1_inex | Cost, Phase I, inexperienced manufacturer; USD | Inverse Gamma | 2.2774, 9799081 | 1000000, 30000000 |
 | $T_2^{(e)}$ | cost_2_ex | Cost, Phase II, experienced manufacturer; USD | Log normal | 28297339, 24061641 | 3800000, 140000000 |
-| $T_2^{(i)}$ | cost_2_inex | Cost, Phase II, inexperienced manufacturer; USD | Inverse Gaussian | 17124622, 35918793 | 4400000, 54000000 |
+| $T_2^{(n)}$ | cost_2_inex | Cost, Phase II, inexperienced manufacturer; USD | Inverse Gaussian | 17124622, 35918793 | 4400000, 54000000 |
 | $T_3^{(e)}$ | cost_3_ex | Cost, Phase III, experienced manufacturer; USD | Inverse Gamma | 1.3147, 51397313 | 15000000, 910000000 |
-| $T_3^{(i)}$ | cost_3_inex | Cost, Phase III, inexperienced manufacturer; USD | Beta prime | 4.8928, 1.6933, 11400026 | 2500000, 400000000 |
+| $T_3^{(n)}$ | cost_3_inex | Cost, Phase III, inexperienced manufacturer; USD | Beta prime | 4.8928, 1.6933, 11400026 | 2500000, 400000000 |
 | $L$ | cost_lic | Licensure; USD | Constant | 287750 |  |
 | $Y_0^{(B)}$ | years_0 | BPSV preclinical duration; years | Multinomial | 1, 2 |  |
 | $Y_1^{(B)}$ | years_1 | BPSV Phase I duration; years | Multinomial | 1, 2 |  |
@@ -146,18 +152,51 @@ Probability of Occurrence (PoO) = 1 \* PoS (PhaseN-1) …
 \$ (Preclin) \* PoO (Preclin) + \$ (Ph1) \* PoO (Ph1) + \$ (Ph2) \* PoO
 (Ph2) + \$ (Ph3) \* PoO (Ph3) + \$ (License) \* PoO (License)
 
+### 3.3.1 SSV
+
+**I have set the weight of inexperienced manufacturer to 0.5**
+
 Probabilities of success for preclinical, Phase I, Phase II, and Phase
 III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence
 are:
 
 $$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
 
-and the cost of each phase is $T_i$ (a (weighted) sum of experienced and
-inexperienced manufacturers?). Then the total cost is
+and the cost of each phase is $T_i$, a weighted average of experienced
+and inexperienced manufacturers (assuming $\omega=0.5$), adjusted for
+the duration of the trial, which depends on the R&D investment, denoted
+$x\in\{365, 200, 100\}$:
+$$T_{x,i} = \frac{W_{i;x}^{(S)}}{W_{i;365}^{(S)}}\left(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}\right).$$
+Then the total cost is
 
-$$D_{\text{RD}} = \sum_{i=0}^3 \hat{P}_iT_i + (1+I) \hat{P}_LL$$
+$$D_{\text{SSV},\text{RD},x} = \sum_{i=0}^3 \hat{P}_iT_{x,i} + (1+I) \hat{P}_LL$$
 
-where $I$ is inflation from 2018 to 2025.
+where $I$ is inflation from 2018 to 2025. For our scenarios, we have
+
+$$x = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\ 
+200 & s\in\\{6, 7, 8\\} \\\\ 
+100 & s\in\\{9, 10, 11\\} \end{array}\right.$$
+
+This is the cost per candidate. We multiply by 18 to get the total cost.
+
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+### 3.3.2 BPSV
+
+**I have basically assumed the same as SSV except for the numbers given
+(8 candidates and 18 weeks)**
+
+The BPSV has eight candidates that go through Phase 3 only. The duration
+is 18 weeks. Thus we write the response cost
+
+$$D_{BPSV,RD} = 8\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + p(1+I) \hat{P}_LL$$
+
+and we assume that the eight candidates have the same probability of
+success at Phase 3 as the SSV:
+
+$$p \sim \text{Binom}(8, P_3).$$
+
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ## 3.4 Procurement cost calculation
 
@@ -169,10 +208,24 @@ Scenario 2: Annual demand over 6.6B
 
 Annual demand \* \$18.94
 
+### 3.4.1 SSV
+
 If we write annual demand in billions as $A_{\cdot,y}$, then we would
 have costs, in billion USD, of:
 
 $$D_{\text{SSV},y} = \min\\{A_{SSV,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,y}-M_C,0\\}\cdot S_U$$
+
+Here, $S_R$ is the cost per reserved dose and $S_U$ the cost per
+unreserved dose. Reserved doses are marked up by $M_p$ and $M_f$.
+
+The total number of doses produced in week $w$ in scenario $s$ is
+$Z_{T,s,w}$ (see Equation (3.1)). The total in a one-year period is
+
+$$A_{SSV,y} = \sum_{w\in y}Z_{T,s,w}.$$
+
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+### 3.4.2 BPSV
 
 $$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
 
@@ -181,10 +234,20 @@ $$D_{\text{BPSV},y} = A_{BPSV,y}\cdot G$$
 WB status demand/0.8 \* 0.1 \* (0-10% cost) + WB status demand/0.8 \*
 0.2 \* (11-30% cost) + WB status demand/0.8 \* 0.5 \* (30-80% cost)
 
+### 3.5.1 SSV
+
 For populations aged 15 and above $N_i^{(15)}$ in income group
 $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
 
 $$D_{\text{SSV}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) $$
+
+We set
+
+$$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)}V_{LMIC; j} + N_{LIC}^{(15)}V_{LIC; j} \right)$$
+
+![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+### 3.5.2 BPSV
 
 For the BPSV, which goes only to people aged 65 or older, with
 populations $N_i^{(65)}$, coverage is reached earlier in the process, so
@@ -194,10 +257,30 @@ $$D_{\text{BPSV}} = \sum_{i}D_{\text{BPSV},i}$$
 
 $$D_{\text{BPSV},i} = 
 \left\\{\begin{array}{lr}
-N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{8}N_i^{(15)} \\\\
-\frac{N_i^{(15)}}{8} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{8} \right)V_{i; 11}  & \frac{1}{8}N_i^{(15)} \leq N_i^{(65)}\leq \frac{2}{8}N_i^{(15)} \\\\
-\frac{N_i^{(15)}}{8} V_{i; 0} + \frac{2}{8}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{8}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{8} N_i^{(15)}
+N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{10}N_i^{(15)} \\\\
+\frac{N_i^{(15)}}{10} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{10} \right)V_{i; 11}  & \frac{1}{10}N_i^{(15)} \leq N_i^{(65)}\leq \frac{3}{10}N_i^{(15)} \\\\
+\frac{N_i^{(15)}}{10} V_{i; 0} + \frac{2}{10}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{10}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{10} N_i^{(15)}
 \end{array}\right.$$
+
+The logic of this is as follows:
+
+- The increments in cost correspond to numbers of eligible people in the
+  whole population, namely those aged 15 and above.
+- If the number of people eligible for the BPSV is less than 10% of the
+  population aged 15 and over, then all doses cost the “start up”
+  amount.
+- If the number of people eligible for the BPSV is more than 10% and
+  less than 30% of the 15+ population, then cost of the first doses, a
+  number equal to 10% of the 15+ population, is the “start up” amount.
+  All remaining doses cost the “ramp up” amount.
+- If the number of people eligible for the BPSV is more than 30% of the
+  15+ population, then the cost of the first doses, a number equal to
+  10% of the 15+ population, is the “start up” amount. The cost of the
+  second tranche of doses, a number equal to 20% of the 15+ population,
+  is the “ramp up” amount. All remaining doses cost the “getting to
+  scale” amount.
+
+![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 | Country | Country status | Study type | Financial Cost per dose (USD) | Source |
 |:---|----|:---|----|:---|
@@ -221,43 +304,6 @@ N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{8}N_i^{(15)} \\\\
 Literature review of global and country-specific delivery rates.
 
 ## 3.6 Vaccination Scenarios
-
-Vaccine supply at each investment level is modelled by producing doses
-sourced from preexisting advance capacity reservations or from the
-private market. The production volumes for each of these supply
-mechanisms are interconnected and based on the following assumptions:
-
-- Current annual global vaccine manufacturing capacity is 9B doses and
-  is used in the response to the SARS-X pandemic
-- A portion of this capacity is reserved in each level for pandemic
-  response following the advance capacity reservation volumes in each
-  investment level (see Table XX)
-- Advance capacity reservations allow manufacturing facilities to
-  transition and scale production of SSV doses faster because facilities
-  are paid to maintain a high level of transition preparedness and
-  produce vaccines on the same platform as the approved SSV
-- Advance capacity reservation agreements guarantee a
-  population-proportional distribution to all World Bank income groups
-  as part of their terms and conditions (an exception is made for the
-  500m doses available in all levels, which comes from an existing
-  advance capacity reservation held by the European Union)
-- Private manufacturing will respond to meet any additional gap in SSV
-  demand above the volume covered by advance capacity reservations
-- Private manufacturing of the SARS-X vaccine will occur in all existing
-  vaccine production facilities not under a reserved capacity agreement
-- Additional production capacity of 6B doses will be built in response
-  to a global pandemic, like during the Covid-19 response
-- In BAU and half of scenarios, private manufacturers prioritise
-  delivering SARS-X doses to HICs, like during the Covid-19 response.
-  Private manufacturers provide population-proportional distribution to
-  all income groups, following the same logic as advanced capacity
-  reservations, in the remaining scenarios (see Table 2)
-- HICs initially receive SARS-X doses quicker than other World Bank
-  income groups due to existing advance capacity reservations and
-  preferential treatment from private manufacturers, in select
-  scenarios. When HICs receive sufficient doses for vaccinating eligible
-  populations, the prioritized doses are reallocated to UMICs. This
-  process repeats for LLMICs once all UMICs doses are delivered
 
 | Category | Reserved capacity | Private response (existing capacity) | Private response (built capacity) |
 |:---|----|:---|:---|
@@ -337,7 +383,8 @@ manufacturing for built and unreserved capacity, $C_B=16$ is the number
 of weeks to scale up to full capacity.
 
 Then the total number of doses produced in week $w$ is
-$$Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.$$
+
+\$\$
 
 <div class="figure">
 
@@ -409,17 +456,17 @@ The logic of this reads as follows:
   unreserved capacity go to LLMIC
 - None go to UMIC and HIC
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ### 3.7.4 Distribution
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 # 4 Results
 
 ## 4.1 Parameter samples
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-3.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-4.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-5.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-6.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-7.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-8.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-9.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-10.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-11.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-12.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-13.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-14.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-15.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-16.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-17.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-18.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-19.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-20.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-21.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-22.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-23.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-24.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-25.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-26.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-27.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-6-28.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-3.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-4.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-5.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-6.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-7.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-8.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-9.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-10.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-11.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-12.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-13.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-14.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-15.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-16.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-17.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-18.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-19.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-20.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-21.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-22.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-23.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-24.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-25.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-26.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-27.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-28.png)<!-- -->
 
 ## 4.2 Preparedness costs
 
