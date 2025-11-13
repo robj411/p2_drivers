@@ -194,8 +194,22 @@ $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_s^{\te
 
 ## BPSV advanced R\&D
 
+**I have set the weight of inexperienced manufacturer to 0.5**
+
+Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
+
+$$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
+
+and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega=0.5$):
+
+$$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ Then the total cost for phases 0 through 2 is
+
+
 \begin{equation}
-D_s^{\text{(BP-adRD)}} = 
+D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
+ N^{BPSV}\sum_{i=0}^2 \hat{P}_iT_{i} \\; & \\; s\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\notin\\{1,2,3\\}
+\end{array}\right.
 (\#eq:bpsvrd)
 \end{equation}
 
@@ -235,7 +249,11 @@ ggplot() + geom_histogram(aes(8*bpsv_rd_costsamples/1e9)) +
 The cost per dose per year is `r pall$cost_bpsvinv` USD, denoted $A_1$. Then the cost to maintain the reserve of 100,000 doses is
 
 \begin{equation}
-D_s^{\text{(BP-inv)}} = 100000 A_1
+D_s^{\text{(BP-inv)}} = \left\\{\begin{array}{lr}
+100000 A_1
+\\; & \\; s\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\notin\\{1,2,3\\}
+\end{array}\right.
 (\#eq:bpsvinv)
 \end{equation}
 
@@ -287,16 +305,10 @@ $$D_y^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-resRD)}} + D_s^{\te
 
 ### SSV
 
-**I have set the weight of inexperienced manufacturer to 0.5**
-
-Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
-
-$$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
-
-and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega=0.5$), adjusted for the duration of the trial, which depends on the R\&D investment, denoted $x\in\{365, 200, 100\}$: $$T_{x,i} = \frac{W_{i;x}^{(S)}}{W_{i;365}^{(S)}}\left(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}\right).$$ Then the total cost is
+Trial costs are adjusted for the duration of the trial, which depend on the R\&D investment, denoted $x\in\{365, 200, 100\}$: $$T_{x,i} = \frac{W_{i;x}^{(S)}}{W_{i;365}^{(S)}}T_i.$$ Then the total cost is
 
 \begin{equation}
-D_s^{\text{(S-RD)}} = 18\left(\sum_{i=0}^3 \hat{P}_iT_{x(s),i} + (1+I) \hat{P}_LL\right)
+D_s^{\text{(S-RD)}} = N^{SSV}\left(\sum_{i=0}^3 \hat{P}_iT_{x(s),i} + (1+I) \hat{P}_LL\right)
 (\#eq:ssvrd)
 \end{equation}
 
@@ -306,7 +318,7 @@ $$x(s) = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\
 200 & s\in\\{6, 7, 8\\} \\\\ 
 100 & s\in\\{9, 10, 11\\} \end{array}\right.$$
 
-This is the cost per candidate. We multiply by 18 to get the total cost.
+This is the cost per candidate. We multiply by the number of candidate, $N^{SSV}=18$, to get the total cost.
 
 
 ```{r phases}
@@ -363,10 +375,10 @@ ggplot(ssv_rd_plot) + geom_histogram(aes(Cost/1e9*18)) +
 **I have basically assumed the same as SSV except for the numbers given (8 candidates and 18 weeks)**
 
 
-The BPSV has eight candidates that go through Phase 3 only. The duration is 18 weeks. Thus we write the response cost
+The BPSV has $N^{BPSV}=8$ candidates. Those that have passed through Phases 0 to 2 prior to the outbreak go through Phase 3 during the response. The duration is 18 weeks. Thus we write the BPSV R\&D response cost
 
 \begin{equation}
-D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}8\hat{P}_3\left(\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
+D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{BPSV}\hat{P}_3\left(\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
 (\#eq:bpsvresrd)
