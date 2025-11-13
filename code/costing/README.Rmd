@@ -53,7 +53,7 @@ library(kableExtra)
 library(wbstats)
 library("cowplot")
 library(latex2exp)
-
+library(statmod)
 library(TruncExpFam)
 library(EnvStats)
 library(extraDistr)
@@ -141,35 +141,38 @@ for(i in 1:nrow(caps)){
   parameters <- as.numeric(strsplit(caps$Parameters[i],',')[[1]])
   bounds <- as.numeric(strsplit(caps$Bounds[i],',')[[1]])
   if(caps$Distribution[i]=='Uniform'){
-    params[[caps$Description[i]]] = runif(nsamples,parameters[1],parameters[2])
+    distcall = function(nsamples) runif(nsamples,parameters[1],parameters[2])
   }else if(caps$Distribution[i]=='Exponential'){
-    params[[caps$Description[i]]] = rtruncexp(nsamples, rate = 1/parameters[1], a = bounds[1], b = bounds[2], faster = T)
+    distcall = function(nsamples) rexp(nsamples, rate = 1/parameters[1])
   }else if(caps$Distribution[i]=='Inverse Gaussian'){ # s = dispersion
-    params[[caps$Description[i]]] = rtruncinvgauss(nsamples, m = parameters[1], s = parameters[2], a = bounds[1], b = bounds[2], faster = T)
+    distcall = function(nsamples) rinvgauss(nsamples, mean = parameters[1], shape = parameters[2])
   }else if(caps$Distribution[i]=='Inverse Gamma'){ 
-    samples = rinvgamma(nsamples, alpha = parameters[1], beta = parameters[2])
-    fails = samples < bounds[1] | samples > bounds[2]
-    while(sum(fails)>0){
-      samples[fails] = rinvgamma(sum(fails), alpha = parameters[1], beta = parameters[2])
-      fails = samples < bounds[1] | samples > bounds[2]
-    }
-    params[[caps$Description[i]]] = samples
-    # params[[caps$Description[i]]] = rtruncinvgamma(nsamples, shape = parameters[1], scale = parameters[2], a = bounds[1], b = bounds[2], faster = T)
+    distcall = function(nsamples) rinvgamma(nsamples, alpha = parameters[1], beta = parameters[2])
   }else if(caps$Distribution[i]=='Log normal'){ 
-    params[[caps$Description[i]]] = rtrunclnorm(nsamples, meanlog = parameters[1], sdlog = parameters[2], a = bounds[1], b = bounds[2], faster = T)
+    m <- parameters[1]
+    s <- parameters[2]
+    location <- log(m^2 / sqrt(s^2 + m^2))
+    shape <- sqrt(log(1 + (s^2 / m^2)))
+    distcall = function(nsamples) rlnorm(nsamples, meanlog = location, sdlog = shape)
   }else if(caps$Distribution[i]=='Beta prime'){ 
-    samples = rbetapr(nsamples, shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
-    fails = samples < bounds[1] | samples > bounds[2]
-    while(sum(fails)>0){
-      samples[fails] = rbetapr(sum(fails), shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
-      fails = samples < bounds[1] | samples > bounds[2]
-    }
-    params[[caps$Description[i]]] = samples
+    distcall = function(nsamples) rbetapr(nsamples, shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
   }else if(caps$Distribution[i]=='Triangular'){
-    params[[caps$Description[i]]] = rtri(nsamples,min=parameters[1],mode=parameters[2],max=parameters[3])
+    distcall = function(nsamples) rtri(nsamples,min=parameters[1],mode=parameters[2],max=parameters[3])
   }else if(caps$Distribution[i]=='Multinomial'){
     values = na.omit(c(parameters))
-    params[[caps$Description[i]]] = sample(values,size=nsamples,replace=T)
+    distcall = function(nsamples) sample(values,size=nsamples,replace=T)
+  }
+  
+  if(caps$Distribution[i]!='Constant'){
+    samples = distcall(nsamples)
+    if(length(bounds)>1){
+      fails = samples < bounds[1] | samples > bounds[2]
+      while(sum(fails)>0){
+        samples[fails] = distcall(sum(fails))
+        fails = samples < bounds[1] | samples > bounds[2]
+      }
+    }
+  params[[caps$Description[i]]] = samples
   }
   
   # params has only the samples; pall has also the constants
@@ -205,7 +208,9 @@ $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_s^{\te
 
 Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
 
-$$\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.$$
+```math
+\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.
+```
 
 and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega=0.5$):
 
