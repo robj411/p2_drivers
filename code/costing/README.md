@@ -152,7 +152,7 @@ III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence
 are:
 
 ``` math
-\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.
+\hat{P}_i = \left\{\begin{array}{lr}1 & i=0 \\ \prod_{j=0}^{i-1}P_j & i\in\{1,2,3\} \\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.
 ```
 
 and the cost of each phase is $T_i$, a weighted average of experienced

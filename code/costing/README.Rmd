@@ -208,8 +208,13 @@ $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_s^{\te
 
 Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
 
-```math
-\hat{P}_i = \left\\{\begin{array}{lr}1 & i=0 \\\\ \prod_{j=0}^{i-1}P_j & i\in\\{1,2,3\\} \\\\ \prod_{j=0}^{3}P_j & i=L \end{array}\right.
+```{r}
+eqtext = '\\hat{P}_i = \\left\\{\\begin{array}{lr}1 & i=0 \\\\ \\prod_{j=0}^{i-1}P_j & i\\in\\{1,2,3\\} \\\\ \\prod_{j=0}^{3}P_j & i=L \\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
 ```
 
 and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega=0.5$):
