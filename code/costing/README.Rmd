@@ -239,7 +239,8 @@ eqtext = 'D_s^{\\text{(BP-adRD)}} = \\left\\{\\begin{array}{lr}
 (\\#eq:bpsvrd)'
 if (knitr::is_html_output()) {
   
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?=[[:punct:]](?![[:space:]]))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?![a-z])", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+  # cat(paste0("\\begin{equation}\n",gsub("\\\\(?=[[:punct:]](?![[:space:]]))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
   cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }

@@ -172,8 +172,8 @@ D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
 
 $$\begin{equation}
 D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
- N^{\text{(BPSV)}}\sum_{i=0}^2 \hat{P}_iT_{i} \; & \; s\in\\{1,2,3\} \\
-0  \; & \; s\notin\\{1,2,3\}
+ N^{\text{(BPSV)}}\sum_{i=0}^2 \hat{P}_iT_{i} \\; & \\; s\in\\{1,2,3\\} \\\\
+0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
 (\\#eq:bpsvrd)
 \end{equation}$$
