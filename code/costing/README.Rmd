@@ -54,6 +54,10 @@ library(wbstats)
 library("cowplot")
 library(latex2exp)
 
+library(TruncExpFam)
+library(EnvStats)
+library(extraDistr)
+
 
 panderOptions('round',2)
 panderOptions('table.split.table', Inf)
@@ -76,6 +80,8 @@ format_to_print2 <- function(x,z=2){
     v <- signif(x,z)
     sapply(v, function(i)  formatC(i, format="f", digits=decimalplaces(i), big.mark=","))
 }
+
+nsamples = 100
 
 ```
 
@@ -109,7 +115,7 @@ This document describes the costing model that is used in the CEPI application.
 
 # Parameters
 
-```{r echo=F,warning=F,message=F}
+```{r paramtable, echo=F,warning=F,message=F}
 
 caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
 caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
@@ -119,14 +125,9 @@ cat(pander(caps,caption=lg, missing = ""))
 ```
 
 
-```{r}
-library(TruncExpFam)
-library(EnvStats)
-library(extraDistr)
+```{r sample}
 
-# caps
-# unique(caps$Distribution)
-nsamples = 100
+
 params <- pall <- list()
 
 for(i in 1:nrow(caps)){
@@ -223,7 +224,7 @@ $$x = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\
 This is the cost per candidate. We multiply by 18 to get the total cost.
 
 
-```{r}
+```{r phases}
 
 dms = c(365, 200, 100)
 time_to_approval = c()
@@ -239,7 +240,7 @@ for(j in 1:length(dms)){
 
 ```
 
-```{r}
+```{r pos}
 # probability of success is a parameter
 pos = sapply(paste0('pos_',0:3),function(x) pall[[x]])
 # probability to occur is the product of prior phases
@@ -288,7 +289,7 @@ and we assume that the eight candidates have the same probability of success at 
 
 $$p \sim \text{Binom}(8, P_3).$$
 
-```{r}
+```{r bpsvrd}
 set.seed(0)
 x = 8 * 18/phase_duration[1,4] * costs[,4] + rbinom(n = nsamples, prob = pos[,4], size=8)*(1+pall$inflation)*pall$cost_lic
 ggplot() + geom_histogram(aes(x/1e9)) +
@@ -320,7 +321,7 @@ The total number of doses produced in week $w$ in scenario $s$ is $Z_{T,s,w}$ (s
 
 $$A_{SSV,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
-```{r}
+```{r sup}
 
 ## supply
 
@@ -383,7 +384,7 @@ for(un in unique(scens$comb)){
 }
 ```
 
-```{r}
+```{r costperyear}
 
 cost_per_year <- list()
 for(s in 1:length(scennames)){
@@ -444,7 +445,7 @@ We set
 
 $$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)}V_{LMIC; j} + N_{LIC}^{(15)}V_{LIC; j} \right)$$
 
-```{r}
+```{r allocation}
 
 
 ## allocation 
@@ -516,7 +517,7 @@ for(s in 1:length(scennames)){
 ```
 
 
-```{r}
+```{r delivery}
 
 
 ## delivery
@@ -564,7 +565,7 @@ for(s in 1:nrow(rates)){
 ```
 
 
-```{r}
+```{r deliverycost}
 
 ## cost delivery
 
@@ -652,7 +653,7 @@ The logic of this is as follows:
 - If the number of people eligible for the BPSV is more than 30\% of the 15+ population, then the cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. The cost of the second tranche of doses, a number equal to 20\% of the 15+ population, is the "ramp up" amount. All remaining doses cost the "getting to scale" amount.
 
 
-```{r}
+```{r bpsvdelivery}
 
 pops65 = sapply(paste0('pop_',ics,'_65'),function(x)pall[[x]])
 pops365 = pops65[1:3]
@@ -681,7 +682,7 @@ for(i in 1:length(incomelevels)){
 
 ggplot() + geom_histogram(aes(x=bpsv_del_cost/1e9)) +
   theme_bw(base_size = 15) +
-  labs(x='BPSV delivery cost, billion USD')
+  labs(x='BPSV delivery cost, billion USD',y='')
 
 
   
@@ -789,8 +790,9 @@ where $I_R=12$ is the number of weeks to initial manufacturing for reserved capa
 
 Then the total number of doses produced in week $w$ is 
 
-\begin{equation}(\#eq:supply)
+\begin{equation}
 Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
+(\#eq:supply)
 \end{equation}
 
 
@@ -800,7 +802,7 @@ Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
 ggplot(t_supply) + 
   geom_line(aes(x=as.numeric(week),y=as.numeric(doses),colour=factor(scen,levels=scennames))) +
   theme_bw(base_size = 15) +
-  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
+  labs(x='Week',y='Cumulative doses manufactured, billions',colour='Scenario')
 
 ```
 
@@ -856,25 +858,25 @@ The logic of this reads as follows:
 
 
 
-```{r}
+```{r procurement}
 
 ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
   geom_line(aes(x=Week,colour=Scenario,y=value)) +
   facet_wrap(~variable) +
   theme_bw(base_size = 15) +
-  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
+  labs(x='Week',y='Cumulative doses procured, billions',colour='Scenario')
 
 ```
 
-### Distribution
+### Delivery
 
-```{r}
+```{r scendelivery}
 
 ggplot(do.call(rbind,second_dose_delivery)) +
   geom_line(aes(x=Week,colour=Scenario,y=doses)) +
   facet_wrap(~factor(il,levels=incomelevels)) +
   theme_bw(base_size = 15) +
-  labs(x='Week',y='Cumulative doses, billions',colour='Scenario')
+  labs(x='Week',y='Cumulative doses delivered, billions',colour='Scenario')
 
 
 ```
@@ -886,7 +888,7 @@ ggplot(do.call(rbind,second_dose_delivery)) +
 
 ## Parameter samples
 
-```{r}
+```{r parsamples}
 
 for(i in 1:length(params))
   base::print(

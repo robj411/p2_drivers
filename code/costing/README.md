@@ -23,7 +23,7 @@ The Costing Model
     - [3.7.1 Timing](#371-timing)
     - [3.7.2 Production](#372-production)
     - [3.7.3 Allocation](#373-allocation)
-    - [3.7.4 Distribution](#374-distribution)
+    - [3.7.4 Delivery](#374-delivery)
 - [4 Results](#4-results)
   - [4.1 Parameter samples](#41-parameter-samples)
   - [4.2 Preparedness costs](#42-preparedness-costs)
@@ -179,7 +179,7 @@ $$x = \left\\{\begin{array}{lr} 365 & s\in\\{0, 1, 2, 3, 4, 5, 12\\} \\\\
 
 This is the cost per candidate. We multiply by 18 to get the total cost.
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-gfm/pos-1.png)<!-- -->
 
 ### 3.3.2 BPSV
 
@@ -196,7 +196,7 @@ success at Phase 3 as the SSV:
 
 $$p \sim \text{Binom}(8, P_3).$$
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](README_files/figure-gfm/bpsvrd-1.png)<!-- -->
 
 ## 3.4 Procurement cost calculation
 
@@ -223,7 +223,7 @@ $Z_{T,s,w}$ (see Equation (3.1)). The total in a one-year period is
 
 $$A_{SSV,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
-![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](README_files/figure-gfm/costperyear-1.png)<!-- -->
 
 ### 3.4.2 BPSV
 
@@ -245,7 +245,7 @@ We set
 
 $$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)}V_{LMIC; j} + N_{LIC}^{(15)}V_{LIC; j} \right)$$
 
-![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](README_files/figure-gfm/deliverycost-1.png)<!-- -->
 
 ### 3.5.2 BPSV
 
@@ -280,7 +280,7 @@ The logic of this is as follows:
   is the “ramp up” amount. All remaining doses cost the “getting to
   scale” amount.
 
-![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](README_files/figure-gfm/bpsvdelivery-1.png)<!-- -->
 
 | Country | Country status | Study type | Financial Cost per dose (USD) | Source |
 |:---|----|:---|----|:---|
@@ -384,7 +384,10 @@ of weeks to scale up to full capacity.
 
 Then the total number of doses produced in week $w$ is
 
-\$\$
+$$\begin{equation}
+Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
+\qquad(3.1)
+\end{equation}$$
 
 <div class="figure">
 
@@ -456,17 +459,17 @@ The logic of this reads as follows:
   unreserved capacity go to LLMIC
 - None go to UMIC and HIC
 
-![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](README_files/figure-gfm/procurement-1.png)<!-- -->
 
-### 3.7.4 Distribution
+### 3.7.4 Delivery
 
-![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](README_files/figure-gfm/scendelivery-1.png)<!-- -->
 
 # 4 Results
 
 ## 4.1 Parameter samples
 
-![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-3.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-4.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-5.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-6.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-7.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-8.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-9.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-10.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-11.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-12.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-13.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-14.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-15.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-16.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-17.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-18.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-19.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-20.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-21.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-22.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-23.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-24.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-25.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-26.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-27.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-14-28.png)<!-- -->
+![](README_files/figure-gfm/parsamples-1.png)<!-- -->![](README_files/figure-gfm/parsamples-2.png)<!-- -->![](README_files/figure-gfm/parsamples-3.png)<!-- -->![](README_files/figure-gfm/parsamples-4.png)<!-- -->![](README_files/figure-gfm/parsamples-5.png)<!-- -->![](README_files/figure-gfm/parsamples-6.png)<!-- -->![](README_files/figure-gfm/parsamples-7.png)<!-- -->![](README_files/figure-gfm/parsamples-8.png)<!-- -->![](README_files/figure-gfm/parsamples-9.png)<!-- -->![](README_files/figure-gfm/parsamples-10.png)<!-- -->![](README_files/figure-gfm/parsamples-11.png)<!-- -->![](README_files/figure-gfm/parsamples-12.png)<!-- -->![](README_files/figure-gfm/parsamples-13.png)<!-- -->![](README_files/figure-gfm/parsamples-14.png)<!-- -->![](README_files/figure-gfm/parsamples-15.png)<!-- -->![](README_files/figure-gfm/parsamples-16.png)<!-- -->![](README_files/figure-gfm/parsamples-17.png)<!-- -->![](README_files/figure-gfm/parsamples-18.png)<!-- -->![](README_files/figure-gfm/parsamples-19.png)<!-- -->![](README_files/figure-gfm/parsamples-20.png)<!-- -->![](README_files/figure-gfm/parsamples-21.png)<!-- -->![](README_files/figure-gfm/parsamples-22.png)<!-- -->![](README_files/figure-gfm/parsamples-23.png)<!-- -->![](README_files/figure-gfm/parsamples-24.png)<!-- -->![](README_files/figure-gfm/parsamples-25.png)<!-- -->![](README_files/figure-gfm/parsamples-26.png)<!-- -->![](README_files/figure-gfm/parsamples-27.png)<!-- -->![](README_files/figure-gfm/parsamples-28.png)<!-- -->
 
 ## 4.2 Preparedness costs
 
