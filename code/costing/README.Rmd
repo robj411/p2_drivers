@@ -789,14 +789,14 @@ print(round(summary(bpsvproc*at_yr_15),2))
 **These values are not correct**
 
 
-For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
+For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, we have delivery cost:
 
 ```{r}
 eqtext = 'D^{\\text{(S-del)}} = 
 \\left\\{\\begin{array}{lr}
-\\lambda N_i^{(15)}V_{i; 0}  & \\lambda\\leq \\frac{1}{10} \\\\
-\\left(\\frac{1}{10} V_{i; 0} + \\left(\\lambda-\\frac{1}{10} \\right)V_{i; 11} \\right)N_i^{(15)} & \\frac{1}{10} \\leq \\lambda\\leq \\frac{3}{10} \\\\
-\\left(\\frac{1}{10} V_{i; 0} + \\frac{2}{10} V_{i; 11} + \\left(\\lambda-\\frac{3}{10} \\right)V_{i; 31}\\right)N_i^{(15)} & \\lambda> \\frac{3}{10} 
+\\sum_i\\lambda N_i^{(15)}V_{i; 0}  & \\lambda\\leq \\frac{1}{10} \\\\
+\\sum_i\\left(\\frac{1}{10} V_{i; 0} + \\left(\\lambda-\\frac{1}{10} \\right)V_{i; 11} \\right)N_i^{(15)} & \\frac{1}{10} \\leq \\lambda\\leq \\frac{3}{10} \\\\
+\\sum_i\\left(\\frac{1}{10} V_{i; 0} + \\frac{2}{10} V_{i; 11} + \\left(\\lambda-\\frac{3}{10} \\right)V_{i; 31}\\right)N_i^{(15)} & \\lambda> \\frac{3}{10} 
 \\end{array}\\right.
 (\\#eq:ssvdel)'
 if (knitr::is_html_output()) {
@@ -806,9 +806,9 @@ if (knitr::is_html_output()) {
 }
 ```
 
-We set 
+<!-- We set  -->
 
-$$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)}V_{LMIC; j} + N_{LIC}^{(15)}V_{LIC; j} \right)$$
+<!-- $$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)}V_{LMIC; j} + N_{LIC}^{(15)}V_{LIC; j} \right)$$ -->
 
 ```{r allocation}
 
