@@ -338,7 +338,7 @@ if (knitr::is_html_output()) {
 }
 ```
 
-and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega=0.9$):
+and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega = `r pall$inex_weight`$):
 
 $$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}} = 8$ candidates is
 
@@ -386,7 +386,7 @@ print(round(summary(bpsv_rd_costsamples_dyd),2))
 **These are slightly too high. Could be the cost per dose.**
 
 
-The cost per dose per year is `r pall$cost_bpsvinv` USD, denoted $A_1$. Then the cost to maintain the reserve of 100,000 doses is
+The cost per dose per year is $A_1 = `r pall$cost_bpsvinv`$ USD. Then the cost to maintain the reserve of 100,000 doses is
 
 ```{r}
 eqtext = 'D_{s,y}^{\\text{(BP-inv)}} = \\left\\{\\begin{array}{lr}
@@ -430,7 +430,7 @@ print(round(summary(inv_cost),2))
 **This matches the spreadsheet results.**
 
 
-The cost per dose reservation per year is `r pall$cost_capres` USD, denoted $A_2$. Reservation sizes, in billions, depend on scenarios, including the $A_3=0.5$ billion doses reserved for HIC, as follows:
+The cost per dose reservation per year is $A_2 = `r pall$cost_capres`$ USD. Reservation sizes, in billions, depend on scenarios, including the $A_3 = `r pall$hic_cap_res`$ billion doses reserved for HIC, as follows:
 
 ```{r}
 eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}A_3 & s\\in\\{0, 1, 6, 9, 12\\} \\\\ 
@@ -654,7 +654,7 @@ D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+
 (\#eq:ssvproc)
 \end{equation}
 
-Here, $S_R$ is the cost per reserved dose and $S_U$ the cost per unreserved dose. Reserved doses are marked up by $M_p$ and $M_f$. 
+Here, $S_R = `r pall$cost_res`$ is the cost per reserved dose and $S_U = `r pall$cost_un`$ the cost per unreserved dose in USD. Reserved doses are marked up by $M_p = `r pall$profit`$ and $M_f = `r pall$cost_ff`$. 
 
 The total number of doses produced in week $w$ in scenario $s$ is $Z_{T,s,w}$ (see Equation \@ref(eq:supply)). The total in a one-year period is 
 
@@ -791,10 +791,20 @@ print(round(summary(bpsvproc*at_yr_15),2))
 
 For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
 
-\begin{equation}
-D^{\text{(S-del)}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) 
-(\#eq:ssvdel)
-\end{equation}
+```{r}
+eqtext = 'D^{\\text{(S-del)}} = 
+\\left\\{\\begin{array}{lr}
+\\lambda N_i^{(15)}V_{i; 0}  & \\lambda\\leq \\frac{1}{10} \\\\
+\\left(\\frac{1}{10} V_{i; 0} + \\left(\\lambda-\\frac{1}{10} \\right)V_{i; 11} \\right)N_i^{(15)} & \\frac{1}{10} \\leq \\lambda\\leq \\frac{3}{10} \\\\
+\\left(\\frac{1}{10} V_{i; 0} + \\frac{2}{10} V_{i; 11} + \\left(\\lambda-\\frac{3}{10} \\right)V_{i; 31}\\right)N_i^{(15)} & \\lambda> \\frac{3}{10} 
+\\end{array}\\right.
+(\\#eq:ssvdel)'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 We set 
 

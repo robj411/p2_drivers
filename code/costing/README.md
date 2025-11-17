@@ -157,7 +157,7 @@ are:
 ```
 
 and the cost of each phase is $T_i$, a weighted average of experienced
-and inexperienced manufacturers (assuming $\omega=0.9$):
+and inexperienced manufacturers (assuming $\omega = 0.9$):
 
 $$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ Then the total
 weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}} = 8$
@@ -181,14 +181,14 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.04 0.10 0.13 0.14 0.17 0.44
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.04 0.10 0.13 0.14 0.17 0.53
 
 ## 2.2 BPSV investigational reserve
 
 **These are slightly too high. Could be the cost per dose.**
 
-The cost per dose per year is 2 USD, denoted $A_1$. Then the cost to
-maintain the reserve of 100,000 doses is
+The cost per dose per year is $A_1 = 2$ USD. Then the cost to maintain
+the reserve of 100,000 doses is
 
 $$\begin{equation}
 D_{s,y}^{\text{(BP-inv)}} = \left\\{\begin{array}{lr}
@@ -210,15 +210,15 @@ discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.17 1.27 1.38 1.39 1.52 1.66
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.17 1.27 1.39 1.40 1.52 1.66
 
 ## 2.3 SSV capacity reservation
 
 **This matches the spreadsheet results.**
 
-The cost per dose reservation per year is 0.53 USD, denoted $A_2$.
-Reservation sizes, in billions, depend on scenarios, including the
-$A_3=0.5$ billion doses reserved for HIC, as follows:
+The cost per dose reservation per year is $A_2 = 0.53$ USD. Reservation
+sizes, in billions, depend on scenarios, including the $A_3 = 0.5$
+billion doses reserved for HIC, as follows:
 
 $$\begin{equation}
 M_{R,s} = \left\\{\begin{array}{lr}A_3 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
@@ -246,11 +246,11 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.88 3.06 3.07 3.26 3.47
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.89 3.06 3.08 3.26 3.47
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.92 7.34 7.38 7.83 8.34
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.94 7.35 7.39 7.82 8.34
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.42 15.30 15.37 16.30
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.46 15.32 15.39 16.29
 17.37
 
 ## 2.4 Enabling activities
@@ -285,7 +285,7 @@ years with uniformly distributed discount rate.
 
 </div>
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.62 8.08 8.12 8.61 9.17
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.64 8.09 8.13 8.61 9.17
 
 200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.24 3.24 3.30 3.37
 
@@ -352,14 +352,14 @@ SSV candidates
 
 </div>
 
-365 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.06 0.18 0.25
-0.28 0.33 1.57
+365 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.05 0.18 0.25
+0.28 0.33 1.73
 
 200 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.02 0.07 0.10
-0.13 0.16 1.29
+0.13 0.16 1.39
 
 100 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.01 0.05 0.07
-0.08 0.10 0.68
+0.08 0.10 0.76
 
 ### 3.1.2 BPSV
 
@@ -389,7 +389,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1 16 29 46 55 648
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1 15 29 46 56 711
 
 ## 3.2 Procurement cost calculation
 
@@ -413,8 +413,9 @@ D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+
 \qquad(3.3)
 \end{equation}$$
 
-Here, $S_R$ is the cost per reserved dose and $S_U$ the cost per
-unreserved dose. Reserved doses are marked up by $M_p$ and $M_f$.
+Here, $S_R = 6.29$ is the cost per reserved dose and $S_U = 18.94$ the
+cost per unreserved dose in USD. Reserved doses are marked up by
+$M_p = 0.2$ and $M_f = 0.14$.
 
 The total number of doses produced in week $w$ in scenario $s$ is
 $Z_{T,s,w}$ (see Equation (4.1)). The total in a one-year period is
@@ -446,7 +447,7 @@ For a world population aged 65 and over of 0.8 billion, an uptake of
 80%, and a cost per dose of $G = 4.68$ USD, the procurement cost for
 BPSV is 3.02 billion USD.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.26 1.45 1.67 1.70 1.94 2.24
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.26 1.46 1.68 1.70 1.94 2.24
 
 ## 3.3 Delivery Cost Equation
 
@@ -462,7 +463,12 @@ For populations aged 15 and above $N_i^{(15)}$ in income group
 $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
 
 $$\begin{equation}
-D^{\text{(S-del)}} = \sum_{i}N_i^{(15)}\left(\frac{1}{8}V_{i; 0} + \frac{2}{8}V_{i; 11} + \frac{5}{8}V_{i; 31}\right) 
+D^{\text{(S-del)}} = 
+\left\\{\begin{array}{lr}
+\lambda N_i^{(15)}V_{i; 0}  & \lambda\leq \frac{1}{10} \\\\
+\left(\frac{1}{10} V_{i; 0} + \left(\lambda-\frac{1}{10} \right)V_{i; 11} \right)N_i^{(15)} & \frac{1}{10} \leq \lambda\leq \frac{3}{10} \\\\
+\left(\frac{1}{10} V_{i; 0} + \frac{2}{10} V_{i; 11} + \left(\lambda-\frac{3}{10} \right)V_{i; 31}\right)N_i^{(15)} & \lambda> \frac{3}{10} 
+\end{array}\right.
 \qquad(3.5)
 \end{equation}$$
 
@@ -479,8 +485,8 @@ $$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 76.97 94.73 103.98 105.63 115.27
-145.90
+Min. 1st Qu. Median Mean 3rd Qu. Max. 75.45 94.61 103.65 105.58 115.33
+146.51
 
 ### 3.3.2 BPSV
 
@@ -536,7 +542,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 3.95 5.97 6.92 7.07 8.05 12.11
+Min. 1st Qu. Median Mean 3rd Qu. Max. 3.92 5.98 6.94 7.09 8.06 12.28
 
 | Country | Country status | Study type | Financial Cost per dose (USD) | Source |
 |:---|----|:---|----|:---|
