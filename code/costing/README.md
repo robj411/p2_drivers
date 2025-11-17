@@ -144,6 +144,8 @@ $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^
 
 ## 2.1 BPSV advanced R&D
 
+**These values match the spreadsheet results**
+
 **I have set the weight of inexperienced manufacturer to 0.9**
 
 Probabilities of success for preclinical, Phase I, Phase II, and Phase
@@ -179,7 +181,11 @@ BPSV candidates
 
 </div>
 
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.04 0.10 0.13 0.14 0.17 0.44
+
 ## 2.2 BPSV investigational reserve
+
+**These are slightly too high. Could be the cost per dose.**
 
 The cost per dose per year is 2 USD, denoted $A_1$. Then the cost to
 maintain the reserve of 100,000 doses is
@@ -204,7 +210,11 @@ discount rate.
 
 </div>
 
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.17 1.27 1.38 1.39 1.52 1.66
+
 ## 2.3 SSV capacity reservation
+
+**This matches the spreadsheet results.**
 
 The cost per dose reservation per year is 0.53 USD, denoted $A_2$.
 Reservation sizes, in billions, depend on scenarios, including the
@@ -236,7 +246,16 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.88 3.06 3.07 3.26 3.47
+
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.92 7.34 7.38 7.83 8.34
+
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.42 15.30 15.37 16.30
+17.37
+
 ## 2.4 Enabling activities
+
+**This matches the spreadsheet results**
 
 Denote the “Days Mission” by $\zeta$, so that
 $\zeta\in\{365, 200, 100\}$. Then annual costs, $E=700$ million,
@@ -265,6 +284,12 @@ years with uniformly distributed discount rate.
 </p>
 
 </div>
+
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.62 8.08 8.12 8.61 9.17
+
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.24 3.24 3.30 3.37
+
+365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
 # 3 Response cost equation
 
@@ -300,6 +325,8 @@ PoO (License)</span>
 
 ### 3.1.1 SSV
 
+**These don’t match the spreadsheet results**
+
 Trial costs are adjusted for the duration of the trial, which depend on
 the R&D investment, denoted $\zeta\in\{365, 200, 100\}$:
 $$T_{\zeta,i} = \frac{W_{i;\zeta}^{(S)}}{W_{i;365}^{(S)}}T_i.$$ Then the
@@ -325,16 +352,18 @@ SSV candidates
 
 </div>
 
-365 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.05 0.19 0.25
-0.28 0.34 1.65
+365 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.06 0.18 0.25
+0.28 0.33 1.57
 
-200 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.02 0.07 0.11
-0.14 0.16 1.39
+200 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.02 0.07 0.10
+0.13 0.16 1.29
 
 100 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.01 0.05 0.07
-0.08 0.10 0.76
+0.08 0.10 0.68
 
 ### 3.1.2 BPSV
+
+**This is quite different from the spreadsheet results**
 
 **I have basically assumed the same as SSV except for the numbers given
 (8 candidates and 18 weeks)**
@@ -345,7 +374,7 @@ the response. The duration is $Y_3^{(B)}=18$ weeks. Thus we write the
 BPSV R&D response cost
 
 $$\begin{equation}
-D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\left(\frac{18}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
+D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\left(\frac{Y_3^{(B)}}{W_{3;365}^{(S)}}\left(\omega T_3^{(n)} + (1-\omega)T_3^{(e)}\right) + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
 \qquad(3.2)
@@ -353,14 +382,14 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 <div class="figure">
 
-<img src="README_files/figure-gfm/bpsvrd-1.png" alt="Reactive R&amp;D cost for BPSV"  />
+<img src="README_files/figure-gfm/bpsvresrd-1.png" alt="Reactive R&amp;D cost for BPSV"  />
 <p class="caption">
-<span id="fig:bpsvrd"></span>Figure 3.2: Reactive R&D cost for BPSV
+<span id="fig:bpsvresrd"></span>Figure 3.2: Reactive R&D cost for BPSV
 </p>
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1 16 30 48 57 700
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1 16 29 46 55 648
 
 ## 3.2 Procurement cost calculation
 
@@ -373,6 +402,8 @@ Min. 1st Qu. Median Mean 3rd Qu. Max. 1 16 30 48 57 700
 <span style="color:red;">Annual demand \* \$18.94</span>
 
 ### 3.2.1 SSV
+
+**This is quite different from the spreadsheet results**
 
 If we write annual demand in billions as $A_{\cdot,s,y}$, then we would
 have costs, in billion USD, of:
@@ -401,6 +432,8 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 ### 3.2.2 BPSV
 
+**This is quite different from the spreadsheet results**
+
 $$\begin{equation}
 D_s^{\text{(BP-proc)}} = \left\\{\begin{array}{lr}
 A_{BPSV,s}\cdot G\\; & \\; s\in\\{1,2,3\\} \\\\
@@ -409,11 +442,11 @@ A_{BPSV,s}\cdot G\\; & \\; s\in\\{1,2,3\\} \\\\
 \qquad(3.4)
 \end{equation}$$
 
-For a world population aged 65 and over of 0.8 billion, and a cost per
-dose of 4.68 USD, and uptake of 80%, the procurement cost for BPSV is
-3.02 billion USD.
+For a world population aged 65 and over of 0.8 billion, an uptake of
+80%, and a cost per dose of $G = 4.68$ USD, the procurement cost for
+BPSV is 3.02 billion USD.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.26 1.45 1.68 1.71 1.95 2.24
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.26 1.45 1.67 1.70 1.94 2.24
 
 ## 3.3 Delivery Cost Equation
 
@@ -422,6 +455,8 @@ WB status demand/0.8 \* 0.2 \* (11-30% cost) + WB status demand/0.8 \*
 0.5 \* (30-80% cost)</span>
 
 ### 3.3.1 SSV
+
+**These values are not correct**
 
 For populations aged 15 and above $N_i^{(15)}$ in income group
 $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, and delivery cost $D$:
@@ -444,7 +479,12 @@ $$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)
 
 </div>
 
+Min. 1st Qu. Median Mean 3rd Qu. Max. 76.97 94.73 103.98 105.63 115.27
+145.90
+
 ### 3.3.2 BPSV
+
+**These values are too low**
 
 For the BPSV, which goes only to people aged 65 or older, with
 populations $N_i^{(65)}$, coverage is reached earlier in the process, so
@@ -496,7 +536,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 4.02 5.99 6.95 7.08 8.05 12.27
+Min. 1st Qu. Median Mean 3rd Qu. Max. 3.95 5.97 6.92 7.07 8.05 12.11
 
 | Country | Country status | Study type | Financial Cost per dose (USD) | Source |
 |:---|----|:---|----|:---|
@@ -691,6 +731,8 @@ income level
 </div>
 
 ## 4.4 Delivery
+
+**These values do not look correct**
 
 <div class="figure">
 
