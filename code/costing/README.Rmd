@@ -642,6 +642,12 @@ print(round(summary(bpsvresrd/1e6*at_yr_15)))
 
 <span style="color:red;"> Annual demand * $18.94 </span>
 
+The cost per dose comes from the cost of goods supplied ($G = `r pall$cost_bpsv`$) adjusted for profits ($M_p = `r pall$profit`$) and the fill/finish cost ($M_f = `r pall$cost_ff`$).
+
+$G(1+M_p)(1+M_f)$ evaluates to `r round(pall$cost_bpsv*(1+pall$profit)*(1+pall$cost_ff),3)`, which is slightly more than the given cost per reserved dose, $S_R = `r pall$cost_res`$.
+
+This cost is used both for SSV doses manufactured using reserved capacity, and all BPSV doses.
+
 ### SSV
 
 **This is quite different from the spreadsheet results**
@@ -650,11 +656,11 @@ print(round(summary(bpsvresrd/1e6*at_yr_15)))
 If we write annual demand in billions as $A_{\cdot,s,y}$, then we would have costs, in billion USD, of:
 
 \begin{equation}
-D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
+D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
 (\#eq:ssvproc)
 \end{equation}
 
-Here, $S_R = `r pall$cost_res`$ is the cost per reserved dose and $S_U = `r pall$cost_un`$ the cost per unreserved dose in USD. Reserved doses are marked up by $M_p = `r pall$profit`$ and $M_f = `r pall$cost_ff`$. 
+Here, $S_R = `r pall$cost_res`$ is the cost per reserved dose and $S_U = `r pall$cost_un`$ the cost per unreserved dose in USD. 
 
 The total number of doses produced in week $w$ in scenario $s$ is $Z_{T,s,w}$ (see Equation \@ref(eq:supply)). The total in a one-year period is 
 
@@ -726,7 +732,8 @@ for(s in 1:length(scennames)){
   annual_exbui_doses = sapply(1:ceiling(nweeks/52),function(y) sum(na.omit(exbui[(1:52) + (y-1)*52])))
   annual_doses = annual_res_doses + annual_exbui_doses
   cost_per_year[[s]] = c(sapply(1:ceiling(nweeks/52), function(y) 
-    min(pall$man_curr,annual_doses[y])*pall$cost_res*(1+pall$profit)*(1+pall$cost_ff) + max(annual_doses[y]-pall$man_curr, 0)*pall$cost_un
+    min(pall$man_curr,annual_doses[y])*pall$cost_res #*(1+pall$profit)*(1+pall$cost_ff) 
+    + max(annual_doses[y]-pall$man_curr, 0)*pall$cost_un
     ), scennames[s])
 }
 
@@ -752,7 +759,7 @@ ggplot(cpymelt) +
 
 ```{r}
 eqtext = 'D_s^{\\text{(BP-proc)}} = \\left\\{\\begin{array}{lr}
-A_{BPSV,s}\\cdot G\\; & \\; s\\in\\{1,2,3\\} \\\\
+A_{BPSV,s}\\cdot S_R\\; & \\; s\\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\\notin\\{1,2,3\\}
 \\end{array}\\right.
 (\\#eq:bpsvproc)'
@@ -766,11 +773,11 @@ if (knitr::is_html_output()) {
 
 ```{r bpsvproc}
 
-bpsvproc = pall$cost_bpsv*sum(demand65)/1e9
+bpsvproc = pall$cost_res*sum(demand65)/1e9
 
 ```
 
-For a world population aged 65 and over of `r round(sum(pops365)/1e9,1)` billion, an uptake of 80\%, and a cost per dose of $G = `r pall$cost_bpsv`$ USD, the procurement cost for BPSV is `r round(bpsvproc,2)` billion USD.
+For a world population aged 65 and over of `r round(sum(pops365)/1e9,1)` billion, an uptake of 80\%, and a cost per dose of $S_R = `r pall$cost_res`$ USD (the same as for SSV via reserved capacity), the procurement cost for BPSV is `r round(bpsvproc,2)` billion USD.
 
 
 
@@ -795,7 +802,7 @@ For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\{\text{LIC,
 eqtext = 'D^{\\text{(S-del)}} = 
 \\left\\{\\begin{array}{lr}
 \\sum_i\\lambda N_i^{(15)}V_{i; 0}  & \\lambda\\leq \\frac{1}{10} \\\\
-\\sum_i\\left(\\frac{1}{10} V_{i; 0} + \\left(\\lambda-\\frac{1}{10} \\right)V_{i; 11} \\right)N_i^{(15)} & \\frac{1}{10} \\leq \\lambda\\leq \\frac{3}{10} \\\\
+\\sum_i\\left(\\frac{1}{10} V_{i; 0} + \\left(\\lambda-\\frac{1}{10} \\right)V_{i; 11} \\right)N_i^{(15)} & \\frac{1}{10} < \\lambda\\leq \\frac{3}{10} \\\\
 \\sum_i\\left(\\frac{1}{10} V_{i; 0} + \\frac{2}{10} V_{i; 11} + \\left(\\lambda-\\frac{3}{10} \\right)V_{i; 31}\\right)N_i^{(15)} & \\lambda> \\frac{3}{10} 
 \\end{array}\\right.
 (\\#eq:ssvdel)'
@@ -1000,7 +1007,7 @@ if (knitr::is_html_output()) {
 eqtext = 'D_{\\text{BPSV},i} = 
 \\left\\{\\begin{array}{lr}
 N_i^{(65)}V_{i; 0}  & N_i^{(65)}\\leq \\frac{1}{10}N_i^{(15)} \\\\
-\\frac{N_i^{(15)}}{10} V_{i; 0} + \\left(N_i^{(65)}-\\frac{N_i^{(15)}}{10} \\right)V_{i; 11}  & \\frac{1}{10}N_i^{(15)} \\leq N_i^{(65)}\\leq \\frac{3}{10}N_i^{(15)} \\\\
+\\frac{N_i^{(15)}}{10} V_{i; 0} + \\left(N_i^{(65)}-\\frac{N_i^{(15)}}{10} \\right)V_{i; 11}  & \\frac{1}{10}N_i^{(15)} < N_i^{(65)}\\leq \\frac{3}{10}N_i^{(15)} \\\\
 \\frac{N_i^{(15)}}{10} V_{i; 0} + \\frac{2}{10}N_i^{(15)} V_{i; 11} + \\left(N_i^{(65)}-\\frac{3}{10}N_i^{(15)} \\right)V_{i; 31} & N_i^{(65)}> \\frac{3}{10} N_i^{(15)}
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
@@ -1183,7 +1190,7 @@ In Figure \@ref(fig:supply), the following scenarios have identical supply (beca
 
 ## Allocation
 
-Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i = 2\cdot \lambda\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for $\lambda=80$\% of the population.
+Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $i$ $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i = 2\cdot \lambda\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for $\lambda=80$\% of the population.
 
 ```{r}
 eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}

@@ -181,7 +181,7 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.04 0.10 0.13 0.14 0.17 0.41
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.03 0.10 0.13 0.14 0.17 0.45
 
 ## 2.2 BPSV investigational reserve
 
@@ -210,7 +210,7 @@ discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.17 1.27 1.39 1.40 1.52 1.66
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.17 1.27 1.39 1.40 1.51 1.66
 
 ## 2.3 SSV capacity reservation
 
@@ -246,11 +246,11 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.88 3.07 3.08 3.26 3.47
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.89 3.07 3.08 3.26 3.47
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.92 7.36 7.38 7.82 8.33
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.94 7.36 7.39 7.81 8.34
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.42 15.33 15.38 16.30
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.45 15.34 15.39 16.28
 17.36
 
 ## 2.4 Enabling activities
@@ -285,7 +285,7 @@ years with uniformly distributed discount rate.
 
 </div>
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.62 8.10 8.13 8.61 9.17
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.63 8.10 8.13 8.60 9.17
 
 200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.24 3.24 3.30 3.37
 
@@ -353,13 +353,13 @@ SSV candidates
 </div>
 
 365 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.06 0.18 0.25
-0.28 0.33 1.52
+0.28 0.33 1.75
 
 200 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.02 0.07 0.10
-0.13 0.16 1.21
+0.13 0.16 1.45
 
 100 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.01 0.05 0.07
-0.08 0.10 0.66
+0.08 0.10 0.78
 
 ### 3.1.2 BPSV
 
@@ -389,7 +389,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1 15 29 47 57 622
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1 15 29 46 56 735
 
 ## 3.2 Procurement cost calculation
 
@@ -401,6 +401,16 @@ Min. 1st Qu. Median Mean 3rd Qu. Max. 1 15 29 47 57 622
 
 <span style="color:red;">Annual demand \* \$18.94</span>
 
+The cost per dose comes from the cost of goods supplied ($G = 4.68$)
+adjusted for profits ($M_p = 0.2$) and the fill/finish cost
+($M_f = 0.14$).
+
+$G(1+M_p)(1+M_f)$ evaluates to 6.402, which is slightly more than the
+given cost per reserved dose, $S_R = 6.29$.
+
+This cost is used both for SSV doses manufactured using reserved
+capacity, and all BPSV doses.
+
 ### 3.2.1 SSV
 
 **This is quite different from the spreadsheet results**
@@ -409,13 +419,12 @@ If we write annual demand in billions as $A_{\cdot,s,y}$, then we would
 have costs, in billion USD, of:
 
 $$\begin{equation}
-D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
+D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
 \qquad(3.3)
 \end{equation}$$
 
 Here, $S_R = 6.29$ is the cost per reserved dose and $S_U = 18.94$ the
-cost per unreserved dose in USD. Reserved doses are marked up by
-$M_p = 0.2$ and $M_f = 0.14$.
+cost per unreserved dose in USD.
 
 The total number of doses produced in week $w$ in scenario $s$ is
 $Z_{T,s,w}$ (see Equation (4.1)). The total in a one-year period is
@@ -437,17 +446,17 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 $$\begin{equation}
 D_s^{\text{(BP-proc)}} = \left\\{\begin{array}{lr}
-A_{BPSV,s}\cdot G\\; & \\; s\in\\{1,2,3\\} \\\\
+A_{BPSV,s}\cdot S_R\\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
 \qquad(3.4)
 \end{equation}$$
 
 For a world population aged 65 and over of 0.8 billion, an uptake of
-80%, and a cost per dose of $G = 4.68$ USD, the procurement cost for
-BPSV is 3.02 billion USD.
+80%, and a cost per dose of $S_R = 6.29$ USD (the same as for SSV via
+reserved capacity), the procurement cost for BPSV is 4.06 billion USD.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.26 1.45 1.68 1.70 1.94 2.24
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.69 1.95 2.26 2.29 2.60 3.01
 
 ## 3.3 Delivery Cost Equation
 
@@ -466,7 +475,7 @@ $$\begin{equation}
 D^{\text{(S-del)}} = 
 \left\\{\begin{array}{lr}
 \sum_i\lambda N_i^{(15)}V_{i; 0}  & \lambda\leq \frac{1}{10} \\\\
-\sum_i\left(\frac{1}{10} V_{i; 0} + \left(\lambda-\frac{1}{10} \right)V_{i; 11} \right)N_i^{(15)} & \frac{1}{10} \leq \lambda\leq \frac{3}{10} \\\\
+\sum_i\left(\frac{1}{10} V_{i; 0} + \left(\lambda-\frac{1}{10} \right)V_{i; 11} \right)N_i^{(15)} & \frac{1}{10} < \lambda\leq \frac{3}{10} \\\\
 \sum_i\left(\frac{1}{10} V_{i; 0} + \frac{2}{10} V_{i; 11} + \left(\lambda-\frac{3}{10} \right)V_{i; 31}\right)N_i^{(15)} & \lambda> \frac{3}{10} 
 \end{array}\right.
 \qquad(3.5)
@@ -484,8 +493,8 @@ D^{\text{(S-del)}} =
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 74.73 94.52 103.66 105.46 115.06
-146.98
+Min. 1st Qu. Median Mean 3rd Qu. Max. 74.86 94.83 103.82 105.63 115.53
+146.57
 
 ### 3.3.2 BPSV
 
@@ -509,7 +518,7 @@ $$\begin{equation}
 D_{\text{BPSV},i} = 
 \left\\{\begin{array}{lr}
 N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{10}N_i^{(15)} \\\\
-\frac{N_i^{(15)}}{10} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{10} \right)V_{i; 11}  & \frac{1}{10}N_i^{(15)} \leq N_i^{(65)}\leq \frac{3}{10}N_i^{(15)} \\\\
+\frac{N_i^{(15)}}{10} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{10} \right)V_{i; 11}  & \frac{1}{10}N_i^{(15)} < N_i^{(65)}\leq \frac{3}{10}N_i^{(15)} \\\\
 \frac{N_i^{(15)}}{10} V_{i; 0} + \frac{2}{10}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{10}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{10} N_i^{(15)}
 \end{array}\right.
 \end{equation}$$
@@ -541,7 +550,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 4.01 5.96 6.91 7.06 8.05 12.18
+Min. 1st Qu. Median Mean 3rd Qu. Max. 4.12 5.99 6.95 7.08 8.04 12.29
 
 | Country | Country status | Study type | Financial Cost per dose (USD) | Source |
 |:---|----|:---|----|:---|
@@ -672,10 +681,11 @@ R&D investments): BAU & S01 & S12; S02 & S04; and S03 & S05.
 ## 4.3 Allocation
 
 Denote the weekly allocated doses at week $w$ from capacity $x$ to
-income level $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such
-that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We
-write $X_i = 2\cdot \lambda\cdot N_i^{(15)}$ as the maximum demand for
-income group $i$, representing two doses each for $\lambda=80$% of the
+income level $i$ $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$,
+such that
+$$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write
+$X_i = 2\cdot \lambda\cdot N_i^{(15)}$ as the maximum demand for income
+group $i$, representing two doses each for $\lambda=80$% of the
 population.
 
 $$\begin{equation}
