@@ -349,7 +349,7 @@ D_s^{\text{(BP-adRD)}} = \left\{\begin{array}{lr}
 \label{eq:bpsvrd}\end{equation}
 
 \includegraphics{README_files/figure-latex/posbpsv-1.pdf} Min. 1st Qu. Median Mean 3rd Qu. Max.
-0.03 0.10 0.13 0.14 0.17 0.42
+0.04 0.10 0.13 0.14 0.17 0.40
 
 \subsection{BPSV investigational reserve}\label{bpsv-investigational-reserve}
 
@@ -366,7 +366,7 @@ D_{s,y}^{\text{(BP-inv)}} = \left\{\begin{array}{lr}
 \label{eq:bpsvinv}\end{equation}
 
 \includegraphics{README_files/figure-latex/bpsvinv-1.pdf} Min. 1st Qu. Median Mean 3rd Qu. Max.
-1.17 1.27 1.38 1.39 1.52 1.66
+1.17 1.27 1.39 1.40 1.52 1.66
 
 \subsection{SSV capacity reservation}\label{ssv-capacity-reservation}
 
@@ -394,11 +394,11 @@ Min. 1st Qu. Median Mean 3rd Qu. Max.
 
 0.7
 Min. 1st Qu. Median Mean 3rd Qu. Max.
-6.55 6.93 7.35 7.38 7.82 8.33
+6.55 6.93 7.35 7.38 7.82 8.34
 
 2
 Min. 1st Qu. Median Mean 3rd Qu. Max.
-13.64 14.43 15.31 15.38 16.29 17.36
+13.64 14.44 15.32 15.38 16.30 17.37
 
 \subsection{Enabling activities}\label{enabling-activities}
 
@@ -420,7 +420,7 @@ For our scenarios, we have
 
 \includegraphics{README_files/figure-latex/en-1.pdf} 100
 Min. 1st Qu. Median Mean 3rd Qu. Max.
-7.21 7.62 8.09 8.12 8.61 9.17
+7.21 7.63 8.09 8.13 8.61 9.17
 
 200
 Min. 1st Qu. Median Mean 3rd Qu. Max.
@@ -477,15 +477,15 @@ We multiply by the number of candidates, \(N^{\text{(SSV)}}=18\), to get the tot
 
 \includegraphics{README_files/figure-latex/posssv-1.pdf} 365 Days Mission
 Min. 1st Qu. Median Mean 3rd Qu. Max.
-0.06 0.18 0.24 0.27 0.33 1.46
+0.07 0.18 0.25 0.28 0.33 1.53
 
 200 Days Mission
 Min. 1st Qu. Median Mean 3rd Qu. Max.
-0.02 0.07 0.10 0.13 0.16 1.14
+0.02 0.07 0.10 0.13 0.16 1.23
 
 100 Days Mission
 Min. 1st Qu. Median Mean 3rd Qu. Max.
-0.01 0.04 0.07 0.08 0.10 0.62
+0.01 0.05 0.07 0.08 0.10 0.67
 
 \subsubsection{BPSV}\label{bpsv}
 
@@ -502,7 +502,7 @@ D_s^{\text{(BP-resRD)}} = \left\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\lef
 \label{eq:bpsvresrd}\end{equation}
 
 \includegraphics{README_files/figure-latex/bpsvresrd-1.pdf} Min. 1st Qu. Median Mean 3rd Qu. Max.
-1 16 29 46 55 585
+1 16 29 46 56 616
 
 \subsection{Procurement cost calculation}\label{procurement-cost-calculation}
 
@@ -521,7 +521,7 @@ D_s^{\text{(BP-resRD)}} = \left\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\lef
 If we write annual demand in billions as \(A_{\cdot,s,y}\), then we would have costs, in billion USD, of:
 
 \begin{equation}
-D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R\cdot(1+M_p)\cdot(1+M_f)  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
+D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
 \label{eq:ssvproc}
 \end{equation}
 
@@ -543,15 +543,15 @@ The total number of doses produced in week \(w\) in scenario \(s\) is \(Z_{T,s,w
 
 \begin{equation}
 D_s^{\text{(BP-proc)}} = \left\{\begin{array}{lr}
-A_{BPSV,s}\cdot G\; & \; s\in\{1,2,3\} \\
+A_{BPSV,s}\cdot S_R\; & \; s\in\{1,2,3\} \\
 0  \; & \; s\notin\{1,2,3\}
 \end{array}\right.
 \label{eq:bpsvproc}\end{equation}
 
-For a world population aged 65 and over of 0.8 billion, an uptake of 80\%, and a cost per dose of \(G = 4.68\) USD, the procurement cost for BPSV is 3.02 billion USD.
+For a world population aged 65 and over of 0.8 billion, an uptake of 80\%, and a cost per dose of \(S_R = 6.29\) USD (the same as for SSV via reserved capacity), the procurement cost for BPSV is 4.06 billion USD.
 
 Min. 1st Qu. Median Mean 3rd Qu. Max.
-1.26 1.45 1.67 1.70 1.94 2.24
+1.69 1.95 2.25 2.29 2.61 3.01
 
 \subsection{Delivery Cost Equation}\label{delivery-cost-equation}
 
@@ -573,7 +573,7 @@ D^{\text{(S-del)}} =
 \label{eq:ssvdel}\end{equation}
 
 \includegraphics{README_files/figure-latex/deliverycost-1.pdf} Min. 1st Qu. Median Mean 3rd Qu. Max.
-76.27 94.88 104.11 105.70 115.16 147.15
+73.82 94.39 103.50 105.38 115.20 148.18
 
 \subsubsection{BPSV}\label{bpsv-2}
 
@@ -613,7 +613,7 @@ The logic of this is as follows:
 \end{itemize}
 
 \includegraphics{README_files/figure-latex/bpsvdelivery-1.pdf} Min. 1st Qu. Median Mean 3rd Qu. Max.
-3.98 5.94 6.90 7.06 8.05 12.35
+3.88 5.95 6.92 7.07 8.05 12.26
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
