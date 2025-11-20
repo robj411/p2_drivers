@@ -181,7 +181,7 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.03 0.10 0.13 0.14 0.17 0.47
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.04 0.10 0.13 0.14 0.17 0.44
 
 ## 2.2 BPSV investigational reserve
 
@@ -210,7 +210,7 @@ discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.17 1.27 1.39 1.39 1.52 1.66
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.17 1.27 1.39 1.40 1.52 1.66
 
 ## 2.3 SSV capacity reservation
 
@@ -246,11 +246,11 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.88 3.06 3.08 3.26 3.47
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.89 3.07 3.08 3.26 3.47
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.92 7.35 7.38 7.82 8.34
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.93 7.36 7.38 7.82 8.34
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.42 15.31 15.38 16.29
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.43 15.33 15.38 16.29
 17.37
 
 ## 2.4 Enabling activities
@@ -285,7 +285,7 @@ years with uniformly distributed discount rate.
 
 </div>
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.62 8.09 8.12 8.61 9.17
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.63 8.10 8.13 8.61 9.17
 
 200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.24 3.24 3.30 3.37
 
@@ -328,9 +328,11 @@ PoO (License)</span>
 **These don’t match the spreadsheet results**
 
 Trial costs are adjusted for the duration of the trial, which depend on
-the R&D investment, denoted $\zeta\in\{365, 200, 100\}$:
-$$T_{\zeta,i} = \frac{W_{i;\zeta}^{(S)}}{W_{i;365}^{(S)}}T_i.$$ Then the
-total cost is
+the R&D investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$:
+
+$$T_{\zeta,i} = \frac{W_{i;\zeta}^{(S)}}{W_{i;365}^{(S)}}T_i.$$
+
+Then the total cost is
 
 $$\begin{equation}
 D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_iT_{\zeta(s),i} + (1+I) \hat{P}_LL\right)
@@ -352,14 +354,14 @@ SSV candidates
 
 </div>
 
-365 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.05 0.18 0.25
-0.28 0.33 1.78
+365 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.06 0.19 0.25
+0.28 0.33 1.74
 
 200 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.02 0.07 0.11
-0.13 0.16 1.47
+0.14 0.16 1.28
 
 100 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.01 0.05 0.07
-0.08 0.10 0.79
+0.08 0.10 0.69
 
 ### 3.1.2 BPSV
 
@@ -389,7 +391,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1 15 30 46 55 757
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1 16 30 47 57 625
 
 ## 3.2 Procurement cost calculation
 
@@ -419,7 +421,7 @@ If we write annual demand in billions as $A_{\cdot,s,y}$, then we would
 have costs, in billion USD, of:
 
 $$\begin{equation}
-D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
+D_{s}^{\text{(S-proc)}} = \min\lbrace A_{SSV,s,y},M_C\rbrace\cdot S_R  + \max\lbrace A_{SSV,s,y}-M_C,0\rbrace\cdot S_U
 \qquad(3.3)
 \end{equation}$$
 
@@ -456,7 +458,7 @@ For a world population aged 65 and over of 0.8 billion, an uptake of
 80%, and a cost per dose of $S_R = 6.29$ USD (the same as for SSV via
 reserved capacity), the procurement cost for BPSV is 4.06 billion USD.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.69 1.94 2.25 2.28 2.60 3.01
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.69 1.95 2.25 2.29 2.60 3.01
 
 ## 3.3 Delivery Cost Equation
 
@@ -469,7 +471,7 @@ WB status demand/0.8 \* 0.2 \* (11-30% cost) + WB status demand/0.8 \*
 **These values are not correct**
 
 For populations aged 15 and above $N_i^{(15)}$ in income group
-$i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, we have delivery cost:
+$i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, we have delivery cost:
 
 $$\begin{equation}
 D^{\text{(S-del)}} = 
@@ -493,8 +495,8 @@ D^{\text{(S-del)}} =
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 75.17 94.52 103.56 105.46 115.12
-144.69
+Min. 1st Qu. Median Mean 3rd Qu. Max. 75.01 94.67 103.55 105.56 115.31
+147.61
 
 ### 3.3.2 BPSV
 
@@ -550,7 +552,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 3.92 5.95 6.90 7.07 8.06 12.27
+Min. 1st Qu. Median Mean 3rd Qu. Max. 3.98 5.97 6.96 7.09 8.08 12.26
 
 | Country | Country status | Study type | Financial Cost per dose (USD) | Source |
 |:---|----|:---|----|:---|
@@ -612,9 +614,9 @@ weeks taken for vaccine approval can be written as follows:
 
 $$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$
 
-for $j\in\\{365, 200, 100\\}$. These work out as 68, 27, and 13 weeks,
-respectively. Thus “week 0” for manufacturing occurs 61, 20, and 6
-weeks, respectively, after the new pathogen has been sequenced. We
+for $j\in\lbrace 365, 200, 100\rbrace$. These work out as 68, 27, and 13
+weeks, respectively. Thus “week 0” for manufacturing occurs 61, 20, and
+6 weeks, respectively, after the new pathogen has been sequenced. We
 denote this variable $w_s^{(0)}$.
 
 ## 4.2 Production
@@ -634,7 +636,7 @@ where $s=0$ denotes the BAU scenario. By definition,
 $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
 
 Then the number of doses, in billions, that are made from capacity
-$x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
+$x\in \lbrace R, E, B\rbrace$ in week $w$ of scenario $s$ is:
 
 $$\begin{equation}
 Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
@@ -683,10 +685,12 @@ R&D investments): BAU & S01 & S12; S02 & S04; and S03 & S05.
 Denote the weekly allocated doses at week $w$ from capacity $x$ to
 income level $i$ $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$,
 such that
-$$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write
-$X_i = 2\cdot \lambda\cdot N_i^{(15)}$ as the maximum demand for income
-group $i$, representing two doses each for $\lambda=80$% of the
-population.
+
+$$K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.$$
+
+We write $X_i = 2\cdot \lambda\cdot N_i^{(15)}$ as the maximum demand
+for income group $i$, representing two doses each for $\lambda=80$% of
+the population.
 
 $$\begin{equation}
 k_{s,R,i,w} = \left\\{ \begin{array}{lr}
@@ -710,7 +714,7 @@ The logic of this reads as follows:
 - Once UMIC reach their total demand, all doses from reserved capacity
   go to LLMIC
 
-For $x\in\\{E,B\\}$,
+For $x\in\lbrace E,B\rbrace$,
 
 $$\begin{equation}
 k_{s,x,i,w} = \left\\{ \begin{array}{lr}

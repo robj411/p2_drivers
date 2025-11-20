@@ -2,12 +2,6 @@
 title: "The Costing Model"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::pdf_document2: 
     #   --filter=pandoc-xnos
     toc: false
@@ -20,6 +14,12 @@ output:
     fig_caption: yes
     # includes:
     #   in_header: "preamble.tex"
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -562,7 +562,11 @@ $$D_y^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-resRD)}} + D_s^{\te
 
 **These don't match the spreadsheet results**
 
-Trial costs are adjusted for the duration of the trial, which depend on the R\&D investment, denoted $\zeta\in\{365, 200, 100\}$: $$T_{\zeta,i} = \frac{W_{i;\zeta}^{(S)}}{W_{i;365}^{(S)}}T_i.$$ Then the total cost is
+Trial costs are adjusted for the duration of the trial, which depend on the R\&D investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$: 
+
+$$T_{\zeta,i} = \frac{W_{i;\zeta}^{(S)}}{W_{i;365}^{(S)}}T_i.$$ 
+
+Then the total cost is
 
 \begin{equation}
 D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_iT_{\zeta(s),i} + (1+I) \hat{P}_LL\right)
@@ -656,7 +660,7 @@ This cost is used both for SSV doses manufactured using reserved capacity, and a
 If we write annual demand in billions as $A_{\cdot,s,y}$, then we would have costs, in billion USD, of:
 
 \begin{equation}
-D_{s}^{\text{(S-proc)}} = \min\\{A_{SSV,s,y},M_C\\}\cdot S_R  + \max\\{A_{SSV,s,y}-M_C,0\\}\cdot S_U
+D_{s}^{\text{(S-proc)}} = \min\lbrace A_{SSV,s,y},M_C\rbrace\cdot S_R  + \max\lbrace A_{SSV,s,y}-M_C,0\rbrace\cdot S_U
 (\#eq:ssvproc)
 \end{equation}
 
@@ -796,7 +800,7 @@ print(round(summary(bpsvproc*at_yr_15),2))
 **These values are not correct**
 
 
-For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\{\text{LIC, LMIC, UMIC, HIC}\}$, we have delivery cost:
+For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, we have delivery cost:
 
 ```{r}
 eqtext = 'D^{\\text{(S-del)}} = 
@@ -1124,7 +1128,7 @@ Facility transition occurs $F=7$ weeks before vaccine approval, which in turn de
 $$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$
 
 
-for $j\in\\{365, 200, 100\\}$. These work out as `r time_to_approval[1]`, `r time_to_approval[2]`, and `r time_to_approval[3]` weeks, respectively. Thus "week 0" for manufacturing occurs `r time_to_approval[1]-7`, `r time_to_approval[2]-7`, and `r time_to_approval[3]-7` weeks, respectively, after the new pathogen has been sequenced. We denote this variable $w_s^{(0)}$.
+for $j\in\lbrace 365, 200, 100\rbrace$. These work out as `r time_to_approval[1]`, `r time_to_approval[2]`, and `r time_to_approval[3]` weeks, respectively. Thus "week 0" for manufacturing occurs `r time_to_approval[1]-7`, `r time_to_approval[2]-7`, and `r time_to_approval[3]-7` weeks, respectively, after the new pathogen has been sequenced. We denote this variable $w_s^{(0)}$.
 
 
 
@@ -1146,7 +1150,7 @@ if (knitr::is_html_output()) {
 
 where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
 
-Then the number of doses, in billions, that are made from capacity $x\in \\{R, E, B\\}$ in week $w$ of scenario $s$ is:
+Then the number of doses, in billions, that are made from capacity $x\in \lbrace R, E, B\rbrace$ in week $w$ of scenario $s$ is:
 
 
 ```{r}
@@ -1190,7 +1194,11 @@ In Figure \@ref(fig:supply), the following scenarios have identical supply (beca
 
 ## Allocation
 
-Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $i$ $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that $$K_{s,i,w} = \sum_{x\in\\{R,E,B\\}}\sum_{j=0}^w k_{s,x,i,j}.$$ We write $X_i = 2\cdot \lambda\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for $\lambda=80$\% of the population.
+Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $i$ $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that 
+
+$$K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.$$ 
+
+We write $X_i = 2\cdot \lambda\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for $\lambda=80$\% of the population.
 
 ```{r}
 eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
@@ -1219,7 +1227,7 @@ The logic of this reads as follows:
 
 
 
-For $x\in\\{E,B\\}$,
+For $x\in\lbrace E,B\rbrace$,
 
 
 ```{r}
