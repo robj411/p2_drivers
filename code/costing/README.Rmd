@@ -479,7 +479,7 @@ for(i in unique(capres_costs$V2)){
 **This matches the spreadsheet results**
 
 
-Denote the "Days Mission" by $\zeta$, so that $\zeta\in\{365, 200, 100\}$. Then annual costs, $E=700$ million, accumulate depending on the year and the mission:
+Denote the "Days Mission" by $\zeta$, so that $\zeta\in\lbrace 365, 200, 100 \rbrace$. Then annual costs, $E=700$ million, accumulate depending on the year and the mission:
 
 ```{r}
 eqtext = 'D_{s,y}^{\\text{(en)}} = \\left\\{\\begin{array}{lr}E & \\zeta(s)=200 \\;\\&\\; y\\leq 5 \\; |\\; \\zeta(s)=100\\; \\& \\;y\\leq 15 \\\\ 

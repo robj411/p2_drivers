@@ -181,7 +181,7 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.03 0.10 0.13 0.14 0.17 0.45
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.03 0.10 0.13 0.14 0.17 0.47
 
 ## 2.2 BPSV investigational reserve
 
@@ -210,7 +210,7 @@ discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.17 1.27 1.39 1.40 1.51 1.66
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.17 1.27 1.39 1.39 1.52 1.66
 
 ## 2.3 SSV capacity reservation
 
@@ -246,20 +246,20 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.89 3.07 3.08 3.26 3.47
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.88 3.06 3.08 3.26 3.47
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.94 7.36 7.39 7.81 8.34
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.92 7.35 7.38 7.82 8.34
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.45 15.34 15.39 16.28
-17.36
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.42 15.31 15.38 16.29
+17.37
 
 ## 2.4 Enabling activities
 
 **This matches the spreadsheet results**
 
 Denote the “Days Mission” by $\zeta$, so that
-$\zeta\in\{365, 200, 100\}$. Then annual costs, $E=700$ million,
-accumulate depending on the year and the mission:
+$\zeta\in\lbrace 365, 200, 100 \rbrace$. Then annual costs, $E=700$
+million, accumulate depending on the year and the mission:
 
 $$\begin{equation}
 D_{s,y}^{\text{(en)}} = \left\\{\begin{array}{lr}E & \zeta(s)=200 \\;\\&\\; y\leq 5 \\; |\\; \zeta(s)=100\\; \\& \\;y\leq 15 \\\\ 
@@ -285,7 +285,7 @@ years with uniformly distributed discount rate.
 
 </div>
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.63 8.10 8.13 8.60 9.17
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.62 8.09 8.12 8.61 9.17
 
 200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.24 3.24 3.30 3.37
 
@@ -352,14 +352,14 @@ SSV candidates
 
 </div>
 
-365 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.06 0.18 0.25
-0.28 0.33 1.75
+365 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.05 0.18 0.25
+0.28 0.33 1.78
 
-200 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.02 0.07 0.10
-0.13 0.16 1.45
+200 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.02 0.07 0.11
+0.13 0.16 1.47
 
 100 Days Mission Min. 1st Qu. Median Mean 3rd Qu. Max. 0.01 0.05 0.07
-0.08 0.10 0.78
+0.08 0.10 0.79
 
 ### 3.1.2 BPSV
 
@@ -389,7 +389,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1 15 29 46 56 735
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1 15 30 46 55 757
 
 ## 3.2 Procurement cost calculation
 
@@ -456,7 +456,7 @@ For a world population aged 65 and over of 0.8 billion, an uptake of
 80%, and a cost per dose of $S_R = 6.29$ USD (the same as for SSV via
 reserved capacity), the procurement cost for BPSV is 4.06 billion USD.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.69 1.95 2.26 2.29 2.60 3.01
+Min. 1st Qu. Median Mean 3rd Qu. Max. 1.69 1.94 2.25 2.28 2.60 3.01
 
 ## 3.3 Delivery Cost Equation
 
@@ -493,8 +493,8 @@ D^{\text{(S-del)}} =
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 74.86 94.83 103.82 105.63 115.53
-146.57
+Min. 1st Qu. Median Mean 3rd Qu. Max. 75.17 94.52 103.56 105.46 115.12
+144.69
 
 ### 3.3.2 BPSV
 
@@ -550,7 +550,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 4.12 5.99 6.95 7.08 8.04 12.29
+Min. 1st Qu. Median Mean 3rd Qu. Max. 3.92 5.95 6.90 7.07 8.06 12.27
 
 | Country | Country status | Study type | Financial Cost per dose (USD) | Source |
 |:---|----|:---|----|:---|
