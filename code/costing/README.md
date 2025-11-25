@@ -29,7 +29,7 @@ The Costing Model
   - [5.3 Allocation](#53-allocation)
   - [5.4 Delivery](#54-delivery)
 - [6 Parameter samples](#6-parameter-samples)
-- [7 Attributions / Authors](#7-attributions--authors)
+- [7 Contributors](#7-contributors)
 - [8 References](#8-references)
 
 <!-- # Figures (temporary) {.unlisted .unnumbered} -->
@@ -69,8 +69,8 @@ application.
 | $M_C$ | man_curr | Current annual manufacturing volume; billion doses | Constant | 9 |  | Linksbridge SPC (2025) |
 | $F$ | week_trans_start | Facility transition start; weeks before vaccine approval | Constant | 7 |  |  |
 | $I_R$ | weeks_init_res | Weeks to initial manufacturing, reserved infrastructure | Constant | 12 |  | Vaccines Europe (2023) |
-| $I_{E,0}$ | weeks_init_ex_nb | Weeks to initial manufacturing, existing and unreserved infrastructure | Constant | 30 |  | Vaccines Europe (2023) |
-| $I_{E,B}$ | weeks_init_ex_bp | Weeks to initial manufacturing, existing and unreserved infrastructure | Constant | 12 |  | Vaccines Europe (2023) |
+| $I_{E,0}$ | weeks_init_ex_nb | Weeks to initial manufacturing when there’s no BPSV, existing and unreserved infrastructure | Constant | 30 |  | Vaccines Europe (2023) |
+| $I_{E,1}$ | weeks_init_ex_bp | Weeks to initial manufacturing when there’s BPSV, existing and unreserved infrastructure | Constant | 12 |  | Vaccines Europe (2023) |
 | $I_B$ | weeks_init_bui | Weeks to initial manufacturing, built and unreserved infrastructure | Constant | 48 |  |  |
 | $C_R$ | weeks_scale_res | Weeks to scale up to full capacity, reserved infrastructure | Constant | 10 |  | Vaccines Europe (2023) |
 | $C_E$ | weeks_scale_ex | Weeks to scale up to full capacity, existing and unreserved infrastructure | Constant | 16 |  |  |
@@ -206,7 +206,7 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.04 0.10 0.13 0.14 0.17 0.50
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.04 0.10 0.13 0.14 0.17 0.44
 
 Target: 146 (103 135 177)
 
@@ -285,12 +285,12 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.89 3.07 3.08 3.26 3.47
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.89 3.06 3.08 3.26 3.47
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.93 7.37 7.39 7.82 8.34
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.93 7.35 7.39 7.83 8.33
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.45 15.35 15.39 16.29
-17.37
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.45 15.32 15.39 16.32
+17.36
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -330,7 +330,7 @@ years with uniformly distributed discount rate.
 
 </div>
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.63 8.11 8.13 8.61 9.17
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.63 8.09 8.13 8.62 9.17
 
 200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.24 3.24 3.30 3.37
 
@@ -407,8 +407,8 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 | 0.01 |  0.04   |  0.07  | 0.08 |  0.11   | 0.56 |
-| 200 |  0   |  0.01   |  0.02  | 0.03 |  0.04   | 0.47 |
+| 365 | 0.01 |  0.04   |  0.07  | 0.08 |  0.11   | 0.62 |
+| 200 |  0   |  0.01   |  0.02  | 0.03 |  0.04   | 0.45 |
 | 100 |  0   |  0.02   |  0.03  | 0.03 |  0.04   | 0.27 |
 
 Targets:
@@ -447,7 +447,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.2 2.1 4.0 8.1 8.5 242.9
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.2 2.1 4.1 8.1 8.7 221.3
 
 Target: 14 (3 5 10)
 
@@ -494,19 +494,19 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 | Scenario | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:--------:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-|   BAU    | 128  |   152   |  182   | 185  |   216   | 258  |
-|   S01    | 130  |   154   |  184   | 187  |   218   | 260  |
-|   S02    | 118  |   140   |  167   | 170  |   198   | 236  |
-|   S03    | 100  |   118   |  141   | 143  |   167   | 199  |
-|   S04    | 116  |   138   |  165   | 168  |   196   | 234  |
-|   S05    |  95  |   113   |  135   | 137  |   159   | 190  |
-|   S06    | 134  |   158   |  188   | 192  |   222   | 264  |
-|   S07    | 124  |   147   |  175   | 177  |   206   | 245  |
-|   S08    | 106  |   125   |  149   | 151  |   175   | 208  |
-|   S09    | 133  |   157   |  187   | 190  |   220   | 262  |
-|   S10    | 121  |   143   |  170   | 173  |   200   | 238  |
-|   S11    |  99  |   117   |  139   | 141  |   164   | 194  |
-|   S12    | 128  |   152   |  182   | 185  |   216   | 258  |
+|   BAU    | 128  |   152   |  181   | 185  |   217   | 258  |
+|   S01    | 130  |   154   |  183   | 187  |   219   | 260  |
+|   S02    | 118  |   140   |  166   | 170  |   199   | 236  |
+|   S03    | 100  |   118   |  140   | 143  |   167   | 198  |
+|   S04    | 116  |   138   |  164   | 168  |   197   | 234  |
+|   S05    |  95  |   113   |  134   | 137  |   160   | 190  |
+|   S06    | 134  |   158   |  187   | 192  |   223   | 264  |
+|   S07    | 124  |   147   |  174   | 178  |   207   | 245  |
+|   S08    | 106  |   125   |  148   | 151  |   176   | 208  |
+|   S09    | 133  |   157   |  186   | 190  |   221   | 262  |
+|   S10    | 121  |   143   |  169   | 173  |   201   | 237  |
+|   S11    |  99  |   117   |  138   | 141  |   165   | 194  |
+|   S12    | 128  |   152   |  181   | 185  |   217   | 258  |
 
 Costs summed and discounted from year 16 to year 20, billion USD
 
@@ -540,7 +540,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2.79 3.22 3.73 3.77 4.29 4.97
+Min. 1st Qu. Median Mean 3rd Qu. Max. 2.79 3.22 3.71 3.77 4.31 4.96
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -579,33 +579,33 @@ D^{\text{(S-del)}} =
 
 </div>
 
-     BAU Min.   : 77.8    1st Qu.:101.6    Median :111.5    Mean   :113.6   
-     S01 Min.   : 78.79   1st Qu.:102.19   Median :111.98   Mean   :113.87  
-     S02 Min.   : 78.17   1st Qu.:101.66   Median :111.66   Mean   :113.79  
-     S03 Min.   : 78.4    1st Qu.:101.9    Median :111.8    Mean   :113.9   
-     S04 Min.   : 78.6    1st Qu.:102.2    Median :111.9    Mean   :113.9   
-     S05 Min.   : 78.18   1st Qu.:101.84   Median :111.60   Mean   :113.56  
-     S06 Min.   : 78.64   1st Qu.:102.27   Median :112.18   Mean   :114.27  
-     S07 Min.   : 79.87   1st Qu.:103.23   Median :113.00   Mean   :114.98  
-     S08 Min.   : 80.26   1st Qu.:103.59   Median :113.36   Mean   :115.36  
-     S09 Min.   : 80.65   1st Qu.:104.14   Median :114.25   Mean   :116.33  
-     S10 Min.   : 80.93   1st Qu.:104.20   Median :114.01   Mean   :116.02  
-     S11 Min.   : 81.15   1st Qu.:104.37   Median :114.20   Mean   :116.20  
-     S12 Min.   : 77.31   1st Qu.:101.06   Median :110.81   Mean   :112.87  
+     BAU Min.   : 80.82   1st Qu.:101.49   Median :111.36   Mean   :113.52  
+     S01 Min.   : 81.86   1st Qu.:102.02   Median :111.68   Mean   :113.81  
+     S02 Min.   : 81.26   1st Qu.:101.58   Median :111.56   Mean   :113.74  
+     S03 Min.   : 81.49   1st Qu.:101.79   Median :111.67   Mean   :113.83  
+     S04 Min.   : 81.63   1st Qu.:102.11   Median :111.78   Mean   :113.85  
+     S05 Min.   : 81.23   1st Qu.:101.76   Median :111.41   Mean   :113.50  
+     S06 Min.   : 81.6    1st Qu.:102.2    Median :112.1    Mean   :114.2   
+     S07 Min.   : 82.83   1st Qu.:103.18   Median :112.89   Mean   :114.93  
+     S08 Min.   : 83.2    1st Qu.:103.5    Median :113.2    Mean   :115.3   
+     S09 Min.   : 83.47   1st Qu.:104.05   Median :114.15   Mean   :116.28  
+     S10 Min.   : 83.83   1st Qu.:104.13   Median :113.86   Mean   :115.97  
+     S11 Min.   : 84.04   1st Qu.:104.31   Median :114.01   Mean   :116.15  
+     S12 Min.   : 80.45   1st Qu.:101.01   Median :110.72   Mean   :112.83  
                                           
-     BAU 3rd Qu.:124.4    Max.   :158.4   
-     S01 3rd Qu.:124.46   Max.   :158.35  
-     S02 3rd Qu.:124.72   Max.   :159.18  
-     S03 3rd Qu.:124.7    Max.   :158.9   
-     S04 3rd Qu.:124.5    Max.   :157.8   
-     S05 3rd Qu.:124.16   Max.   :157.56  
-     S06 3rd Qu.:125.15   Max.   :158.92  
-     S07 3rd Qu.:125.57   Max.   :158.48  
-     S08 3rd Qu.:126.05   Max.   :158.82  
-     S09 3rd Qu.:127.42   Max.   :161.36  
-     S10 3rd Qu.:126.73   Max.   :159.82  
-     S11 3rd Qu.:126.91   Max.   :160.20  
-     S12 3rd Qu.:123.49   Max.   :157.60  
+     BAU 3rd Qu.:124.24   Max.   :161.23  
+     S01 3rd Qu.:124.27   Max.   :160.95  
+     S02 3rd Qu.:124.62   Max.   :161.59  
+     S03 3rd Qu.:124.57   Max.   :161.42  
+     S04 3rd Qu.:124.25   Max.   :160.99  
+     S05 3rd Qu.:123.94   Max.   :160.60  
+     S06 3rd Qu.:125.0    Max.   :161.7   
+     S07 3rd Qu.:125.31   Max.   :161.66  
+     S08 3rd Qu.:125.7    Max.   :161.9   
+     S09 3rd Qu.:127.27   Max.   :163.28  
+     S10 3rd Qu.:126.51   Max.   :162.44  
+     S11 3rd Qu.:126.71   Max.   :162.54  
+     S12 3rd Qu.:123.34   Max.   :160.67  
 
 Targets:
 
@@ -673,7 +673,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 6.61 9.63 11.22 11.45 13.05 20.05
+Min. 1st Qu. Median Mean 3rd Qu. Max. 6.49 9.60 11.20 11.45 13.08 20.03
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -965,7 +965,15 @@ by country income level
 
 ![](README_files/figure-gfm/parsamples-1.png)<!-- -->![](README_files/figure-gfm/parsamples-2.png)<!-- -->![](README_files/figure-gfm/parsamples-3.png)<!-- -->![](README_files/figure-gfm/parsamples-4.png)<!-- -->![](README_files/figure-gfm/parsamples-5.png)<!-- -->![](README_files/figure-gfm/parsamples-6.png)<!-- -->![](README_files/figure-gfm/parsamples-7.png)<!-- -->![](README_files/figure-gfm/parsamples-8.png)<!-- -->![](README_files/figure-gfm/parsamples-9.png)<!-- -->![](README_files/figure-gfm/parsamples-10.png)<!-- -->![](README_files/figure-gfm/parsamples-11.png)<!-- -->![](README_files/figure-gfm/parsamples-12.png)<!-- -->![](README_files/figure-gfm/parsamples-13.png)<!-- -->![](README_files/figure-gfm/parsamples-14.png)<!-- -->![](README_files/figure-gfm/parsamples-15.png)<!-- -->![](README_files/figure-gfm/parsamples-16.png)<!-- -->![](README_files/figure-gfm/parsamples-17.png)<!-- -->![](README_files/figure-gfm/parsamples-18.png)<!-- -->![](README_files/figure-gfm/parsamples-19.png)<!-- -->![](README_files/figure-gfm/parsamples-20.png)<!-- -->![](README_files/figure-gfm/parsamples-21.png)<!-- -->![](README_files/figure-gfm/parsamples-22.png)<!-- -->![](README_files/figure-gfm/parsamples-23.png)<!-- -->![](README_files/figure-gfm/parsamples-24.png)<!-- -->![](README_files/figure-gfm/parsamples-25.png)<!-- -->![](README_files/figure-gfm/parsamples-26.png)<!-- -->![](README_files/figure-gfm/parsamples-27.png)<!-- -->![](README_files/figure-gfm/parsamples-28.png)<!-- -->
 
-# 7 Attributions / Authors
+# 7 Contributors
+
+Model: Peter Windus, Andy Torkelson
+
+Data: Peter Windus, Andy Torkelson, Damian Walker
+
+Documentation: Peter Windus, Andy Torkelson, Rob Johnson
+
+R code: Rob Johnson
 
 # 8 References
 

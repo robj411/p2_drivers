@@ -480,6 +480,7 @@ inv_cost_per_year = (cost_bpsvinv/3*pall$bpsv_inv_res + pall$cost_bpsv_res)/1e6
 time_to_bpsv = pall$duration_0 + pall$duration_1 + pall$duration_2
 inv_cost = inv_cost_per_year*sapply(1:nsamples,function(x)sum(1/(1+pall$discount[x])^((time_to_bpsv[x]+1):15)))
 
+
 ggplot() +
   geom_histogram(aes(x=inv_cost)) +
   theme_bw(base_size = 15) +
@@ -1909,6 +1910,15 @@ for(i in 1:length(params))
 ```
 
 
-# Attributions / Authors
+# Contributors
+
+Model: Peter Windus, Andy Torkelson
+
+Data: Peter Windus, Andy Torkelson, Damian Walker
+
+Documentation: Peter Windus, Andy Torkelson, Rob Johnson
+
+R code: Rob Johnson
+
 
 # References
