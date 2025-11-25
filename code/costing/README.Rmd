@@ -2,6 +2,12 @@
 title: "The Costing Model"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::pdf_document2: 
     #   --filter=pandoc-xnos
     toc: false
@@ -14,12 +20,6 @@ output:
     fig_caption: yes
     # includes:
     #   in_header: "preamble.tex"
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -57,6 +57,8 @@ library(statmod)
 library(TruncExpFam)
 library(EnvStats)
 library(extraDistr)
+library(PearsonDS)
+library(ggpubr)
 
 
 panderOptions('round',2)
@@ -82,7 +84,8 @@ format_to_print2 <- function(x,z=2){
 }
 
 nsamples = 10000
-nweeks = 208
+nweeks = 5*52
+nyears = ceiling(nweeks/52)
 dms = c(365, 200, 100)
 suffixes = c('res','ex','bui')
 pcs = c(0,11,31)
@@ -102,6 +105,7 @@ col14 = which(grepl('14',colnames(ildata)))
 col64 = which(grepl('64',colnames(ildata)))
 for(i in 1:nrow(ildata)){
   print(ildata$Entity[i])
+  print(sum(as.numeric(ildata[i,popcols])))
   print(sum(as.numeric(ildata[i,popcols[popcols>col14]])))
   print(sum(as.numeric(ildata[i,popcols[popcols>col64]])))
 }
@@ -122,7 +126,7 @@ This document describes the costing model that is used in the CEPI application.
 
 caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
 caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
-lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1. Inverse Gaussian distributions have as a mean Parameter 1, and as a shape Parameter 2. Log normal distributions have as a mean Parameter 1, and as a standard deviation Parameter 2. Inverse Gamma distributions have shape Parameter 1 and scale Parameter 2. Beta Prime distributions have shape Parameters 1 and 2, and scale Parameter 3. Where given, distributions are truncated at bounds.'
+lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1. Inverse Gaussian distributions have as a mean Parameter 1, and as a shape Parameter 2. Log normal distributions have as a mean Parameter 1, and as a standard deviation Parameter 2. PearsonV distributions have shape Parameter 1, scale Parameter 2, and location 0. PearsonVI distributions have shape Parameters 1 and 2, scale Parameter 3, and location 0. Where given, distributions are truncated at bounds.'
 capscopy = caps
 if (knitr::is_html_output()) {
   # cat(paste0("```math\n",eqtext,"\n```",collapse=''))
@@ -152,16 +156,18 @@ for(i in 1:nrow(caps)){
     distcall = function(nsamples) rexp(nsamples, rate = 1/parameters[1])
   }else if(caps$Distribution[i]=='Inverse Gaussian'){ # s = dispersion
     distcall = function(nsamples) rinvgauss(nsamples, mean = parameters[1], shape = parameters[2])
-  }else if(caps$Distribution[i]=='Inverse Gamma'){ 
+  }else if(caps$Distribution[i]=='PearsonV'){ 
     distcall = function(nsamples) rinvgamma(nsamples, alpha = parameters[1], beta = parameters[2])
+    # distcall = function(nsamples) rpearsonV(nsamples, shape = parameters[1], scale = parameters[2], location = 0)
   }else if(caps$Distribution[i]=='Log normal'){ 
     m <- parameters[1]
     s <- parameters[2]
     location <- log(m^2 / sqrt(s^2 + m^2))
     shape <- sqrt(log(1 + (s^2 / m^2)))
     distcall = function(nsamples) rlnorm(nsamples, meanlog = location, sdlog = shape)
-  }else if(caps$Distribution[i]=='Beta prime'){ 
-    distcall = function(nsamples) rbetapr(nsamples, shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
+  }else if(caps$Distribution[i]=='PearsonVI'){ 
+    # distcall = function(nsamples) rbetapr(nsamples, shape1 = parameters[1], shape2 = parameters[2], scale = parameters[3])
+    distcall = function(nsamples) rpearsonVI(nsamples, a = parameters[1], b = parameters[2], scale = parameters[3], location=0)
   }else if(caps$Distribution[i]=='Triangular'){
     distcall = function(nsamples) rtri(nsamples,min=parameters[1],mode=parameters[2],max=parameters[3])
   }else if(caps$Distribution[i]=='Multinomial'){
@@ -188,7 +194,10 @@ for(i in 1:nrow(caps)){
     pall[[caps$Code[i]]] = params[[caps$Description[i]]]
   }
 }
+```
 
+
+```{r}
 
 ## model variables ######################################################
 
@@ -201,6 +210,10 @@ crs= c(0, 0.7, 2)
 
 ## populations and vaccine demand
 
+pops = sapply(paste0('pop_',ics,'_0'),function(x)pall[[x]])
+pops0 = pops[1:3]
+pops0[3] = sum(pops[3:4])
+
 pops = sapply(paste0('pop_',ics,'_15'),function(x)pall[[x]])
 pops3 = pops[1:3]
 pops3[3] = sum(pops[3:4])
@@ -210,9 +223,10 @@ pops365 = pops65[1:3]
 pops365[3] = sum(pops65[3:4])
 # popfracs65 = pops365/sum(pops365)
 
-demand65 = pall$final_vaccine_coverage*pops365 # total bpsv doses per income level
+demand65 = pall$final_vaccine_coverage*pops365 / (1-pall$vaccine_wastage) # total bpsv doses per income level
+popfracs65 = pops365/sum(pops365)
 
-demand15 = pall$final_vaccine_coverage*pops3*2
+demand15 = pall$final_vaccine_coverage*pops3*2 / (1-pall$vaccine_wastage)
 popfracs15 = pops3/sum(pops3)
 
 
@@ -235,7 +249,10 @@ for(j in 1:length(dms)){
   }
 }
 
-timescale = t(apply(phase_duration,1,function(x)x/phase_duration[1,]))
+old_durations = do.call(cbind,sapply(paste0('duration_',0:3),function(x)52*pall[[x]]))
+timescale = lapply(1:nrow(phase_duration),function(x)
+  sapply(1:length(phase_duration[x,]),function(y)phase_duration[x,y]/old_durations[,y])
+  )
 
 
 ## trial success-weighted costs
@@ -246,7 +263,7 @@ pos = sapply(paste0('pos_',0:3),function(x) pall[[x]])
 pto = t(apply(pos, 1, function (y) sapply(1:length(y),function(x) prod(y[1:x]))))
 
 # save bpsv from phase 2 for later
-pto_bpsv_phase3 = pall$n_bpsv_candidates*pto[,3]
+pto_bpsv_phase3 = pto[,3]
 
 # add 1 column for probability of phase 0 to occur
 pto = cbind(1, pto)
@@ -260,21 +277,33 @@ inex_weight = pall$inex_weight
 # cost per phase is a weighted sum
 inex_costs = inex_weight * inex + (1-inex_weight) * ex
 
-
-
-## ssv r&d costs
-
-ssv_rd_costlist = lapply(1:length(dms),function(x) t(apply(inex_costs,1, function (r) r*timescale[x,]/timescale[1,])))
-
-# add licence cost column (adjusted for inflation)
-ssv_rd_costsamples = lapply( 1:length(ssv_rd_costlist), function(x) cbind( rowSums( cbind(ssv_rd_costlist[[x]], (1+pall$inflation)*pall$cost_lic)*pto), paste0(dms[x], ' Days Mission')) )
-
 ## bpsv reactive r&d costs
 
-bpsvresrd = pto_bpsv_phase3 * (pall$duration_3/phase_duration[1,4] * inex_costs[,4] + pos[,4]*(1+pall$inflation)*pall$cost_lic)
+bpsvresrd = pall$n_bpsv_candidates * pto_bpsv_phase3 * (pall$duration_3_resp/old_durations[,4] * ex[,4] + pos[,4]*(1+pall$inflation)*pall$cost_lic)
+
+```
 
 
-## delivery costs by income level 
+```{r}
+
+#
+## ssv r&d costs #####################################
+
+ssv_phasecost = lapply(1:length(dms),function(x) sapply(1:ncol(ex), function (r) ex[,r]*timescale[[x]][,r]))
+
+# add licence cost column (adjusted for inflation)
+ssv_phase_liccost = lapply( 1:length(ssv_phasecost), function(x)  cbind(ssv_phasecost[[x]], (1+pall$inflation)*pall$cost_lic))
+
+# adjust for pto
+ssv_phase_pto = lapply( 1:length(ssv_phase_liccost), function(x) ssv_phase_liccost[[x]]*pto)
+
+# prep for plot
+ssv_rd_costsamples = lapply( 1:length(ssv_phase_pto), function(x) cbind( rowSums( ssv_phase_pto[[x]]), paste0(dms[x], ' Days Mission')) )
+
+
+## delivery costs by income level  #####################################
+
+cost_res = pall$cost_cogs*(1+pall$profit)*(1+pall$cost_travel)
 
 # get costs per dose
 icpc = apply(expand.grid(ics,pcs), 1, function(x) paste0('cost_',x[1],'_',as.numeric(x[2])))
@@ -296,9 +325,12 @@ scennames = c('BAU',paste0('S',sprintf("%02d", 1:12)))
 pop_proportional = c(1,1,2,2,1,1,1,2,2,1,2,2,2)
 scen_dm = c(1, 1,1,1, 1,1, 2,2,2, 3,3,3, 1)
 scen_capres = c(1, 1,2,3, 2,3, 1,2,3, 1,2,3, 1)
+bpsv_scen = rep(F,length(scennames))
+bpsv_scen[2:4] = T
 
 rates = matrix(rep(c(.07, .07, .02), length(scennames)),ncol=length(incomelevels),byrow=T)
 rates[13,3] = 0.04
+
 
 
 ```
@@ -325,7 +357,24 @@ $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^
 
 **These values match the spreadsheet results**
 
-**I have set the weight of inexperienced manufacturer to 0.9**
+
+
+| Developer | Licensure Experience | 
+|---|---| 
+| CalTech | No | 
+| SK Bio | Yes | 
+| Codiak | No | 
+| Panacea | No | 
+| NEC Onco| No | 
+| Intravacc | No | 
+| VIDO | No | 
+| IVI | No | 
+
+Table: (\#tab:inex) Manufacturers working on BPSV and whether or not they have licensure experience 
+
+ 
+
+
 
 Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
 
@@ -338,9 +387,11 @@ if (knitr::is_html_output()) {
 }
 ```
 
-and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (assuming $\omega = `r pall$inex_weight`$):
+and the cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (with $\omega = `r pall$inex_weight`$):
 
-$$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}} = 8$ candidates is
+$$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ 
+
+Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}} = 8$ candidates is
 
 
 
@@ -379,20 +430,35 @@ ggplot() + geom_histogram(aes(bpsv_rd_costsamples_dyd)) +
 
 
 print(round(summary(bpsv_rd_costsamples_dyd),2))
+
 ```
+
+Target: 146 (103 135 177)
+
+
 
 ## BPSV investigational reserve
 
-**These are slightly too high. Could be the cost per dose.**
+**The stockpile cost (annual) is correct, at around 162 thousand, but the total cost is slightly too high**
 
 
-The cost per dose per year is $A_1 = `r pall$cost_bpsvinv`$ USD. Then the cost to maintain the reserve of 100,000 doses is
+The time taken to complete development of the BPSV up to the end of phase II, from which point it is stockpiled, is:
+
+$$Y^{(B)} = Y_0^{(B)} + Y_1^{(B)} + Y_2^{(B)}.$$
+
+```{r}
+
+cost_bpsvinv = pall$cost_cogs*(1-pall$cost_ff)*(1+pall$profit)
+
+```
+
+The cost of goods supplied is $G = `r pall$cost_cogs`$. Then the cost of drug substance is $G(1-M_f)(1+M_p) = `r round(cost_bpsvinv,2)`$ USD per dose. The reserve is replenished every three years. Then the annual cost to maintain the reserve of $A_4 =`r format_to_print(pall$bpsv_inv_res)`$ doses is
 
 ```{r}
 eqtext = 'D_{s,y}^{\\text{(BP-inv)}} = \\left\\{\\begin{array}{lr}
-100000 A_1
-\\; & \\; s\\in\\{1,2,3\\} \\;\\&\\;y>5\\\\
-0  \\; & \\; s\\notin\\{1,2,3\\}\\;\\|\\;y\\leq 5
+ A_4\\frac{1}{3}G  (1-M_f)(1+M_p) + A_1
+\\; & \\; s\\in\\{1,2,3\\} \\;\\&\\;y>Y^{(B)}\\\\
+0  \\; & \\; s\\notin\\{1,2,3\\}\\;\\|\\;y\\leq Y^{(B)}
 \\end{array}\\right.
 (\\#eq:bpsvinv)'
 if (knitr::is_html_output()) {
@@ -402,28 +468,29 @@ if (knitr::is_html_output()) {
 }
 ```
 
+where $A_1 = `r format_to_print(pall$cost_bpsv_res,0)`$ USD is the annual reservation cost.
 
-```{r bpsvinv,fig.cap='BPSV investigational reserve costs accumulated from year 6 to year 15 with uniformly distributed discount rate.'}
+```{r bpsvinv,fig.cap='BPSV investigational reserve costs accumulated from the completion of Phase II to year 15 with uniformly distributed discount rate.'}
 
 
 capres_costs = as.data.frame(do.call(rbind,lapply(1:length(crs),function(x) cbind( (crs[x] + pall$hic_cap_res)*pall$cost_capres*fifteen_yr_discount_weight, crs[x]))))
 
-inv_cost = pall$cost_bpsvinv*(fifteen_yr_discount_weight-five_yr_discount_weight) *100000/1e6
+inv_cost_per_year = (cost_bpsvinv/3*pall$bpsv_inv_res + pall$cost_bpsv_res)/1e6
 
-
+time_to_bpsv = pall$duration_0 + pall$duration_1 + pall$duration_2
+inv_cost = inv_cost_per_year*sapply(1:nsamples,function(x)sum(1/(1+pall$discount[x])^((time_to_bpsv[x]+1):15)))
 
 ggplot() +
   geom_histogram(aes(x=inv_cost)) +
   theme_bw(base_size = 15) +
-  labs(x='Cost, million USD',y='')
+  labs(x='Cost up to year 15, million USD',y='')
 
 
 print(round(summary(inv_cost),2))
 
-
 ```
 
-
+Target: 1 (0.9 1 1.1)
 
 ## SSV capacity reservation
 
@@ -471,8 +538,17 @@ for(i in unique(capres_costs$V2)){
   cat('\n')
 }
 
-
 ```
+
+Targets: 
+3,086	(2,897 3,074 3,269)
+
+7,407	(6,954 7,378 7,845)	
+
+15,431	(14,487	15,370	16,344)
+		
+
+
 
 ## Enabling activities
 
@@ -528,7 +604,16 @@ for(i in unique(enabling_costs$V1)){
 }
 
 
+
+
 ```
+
+Targets:
+
+3,242	(3,182 3,241 3,302)
+
+8,126 (7,629 8,094 8,607)
+
 
 # Response cost equation 
 
@@ -560,16 +645,16 @@ $$D_y^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-resRD)}} + D_s^{\te
 
 ### SSV
 
-**These don't match the spreadsheet results**
+**These don't match the spreadsheet results. Values too low.**
 
 Trial costs are adjusted for the duration of the trial, which depend on the R\&D investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$: 
 
-$$T_{\zeta,i} = \frac{W_{i;\zeta}^{(S)}}{W_{i;365}^{(S)}}T_i.$$ 
+$$T_{\zeta,i}^{(e)} = \frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}.$$ 
 
 Then the total cost is
 
 \begin{equation}
-D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_iT_{\zeta(s),i} + (1+I) \hat{P}_LL\right)
+D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_iT_{\zeta(s),i}^{(e)} + (1+I) \hat{P}_LL\right)
 (\#eq:ssvrd)
 \end{equation}
 
@@ -590,30 +675,39 @@ ggplot(ssv_rd_plot) + geom_histogram(aes(Cost/1e9*pall$n_ssv_candidates)) +
   theme_bw(base_size=15) +
   labs(x='Billion USD',y='',title='')
 
-
-for(i in unique(ssv_rd_plot$Investment)){
+pander(as.data.frame(cbind(DM=dms,do.call(rbind,lapply(unique(ssv_rd_plot$Investment), function(i){
   subs = subset(ssv_rd_plot, Investment==i)
-  cat(i)
-  cat('\n')
-  print(round(summary(subs$Cost/1e9*pall$n_ssv_candidates*at_yr_15),2))
-  cat('\n')
+  round(summary(subs$Cost/1e9*pall$n_ssv_candidates*at_yr_15),2)
 }
+)))))
 
 ```
 
+
+Targets:
+
+284 (105 170 283)
+
+195 (61 97 164)
+
+118 (35 61 108)
+
+
+
+
 ### BPSV
 
-**This is quite different from the spreadsheet results**
+**This is a little higher than the spreadsheet results**
 
 
 **I have basically assumed the same as SSV except for the numbers given (8 candidates and 18 weeks)**
 
 
-The BPSV has $N^{\text{(BPSV)}}=8$ candidates. Those that have passed through Phases 0 to 2 prior to the outbreak go through Phase 3 during the response. The duration is $Y_3^{(B)}=18$ weeks. Thus we write the BPSV R\&D response cost
+The BPSV has $N^{\text{(BPSV)}}=8$ candidates. Those that have passed through Phases 0 to 2 prior to the outbreak go through Phase 3 during the response. The duration is $W_3^{(B)}=18$ weeks. Thus we write the BPSV R\&D response cost
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-resRD)}} = \\left\\{\\begin{array}{lr}N^{\\text{(BPSV)}}\\hat{P}_3\\left(\\frac{Y_3^{(B)}}{W_{3;365}^{(S)}}\\left(\\omega T_3^{(n)} + (1-\\omega)T_3^{(e)}\\right) + (1+I) P_3L\\right) \\; & \\; s\\in\\{1,2,3\\} \\\\
+eqtext = 'D_s^{\\text{(BP-resRD)}} = \\left\\{\\begin{array}{lr}N^{\\text{(BPSV)}}\\hat{P}_3\\left(\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + (1+I) P_3L\\right) \\; & \\; s\\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\\notin\\{1,2,3\\}
 \\end{array}\\right.
 (\\#eq:bpsvresrd)'
@@ -631,40 +725,35 @@ ggplot() + geom_histogram(aes(bpsvresrd/1e6)) +
   theme_bw(base_size=15) +
   labs(x='Cost, million USD',y='',title='')
 
-print(round(summary(bpsvresrd/1e6*at_yr_15)))
+print(round(summary(bpsvresrd/1e6*at_yr_15),1))
 
 ```
+
+Target: 14 (3 5 10)
+
 
 
 ## Procurement cost calculation
 
-<span style="color:red;"> Scenario 1: Annual demand under 6.6B  </span>
+The cost per dose comes from the cost of goods supplied ($G = `r pall$cost_cogs`$) adjusted for profits ($M_p = `r pall$profit`$) and the transportation cost ($M_t = `r pall$cost_travel`$).
 
-<span style="color:red;"> Annual demand \* $6.29 \* 1.14 \* 1.2 </span>
+$S_R = G(1+M_p)(1+M_t)$ evaluates to `r round(cost_res,2)`.
 
-<span style="color:red;"> Scenario 2: Annual demand over 6.6B </span>
-
-<span style="color:red;"> Annual demand * $18.94 </span>
-
-The cost per dose comes from the cost of goods supplied ($G = `r pall$cost_bpsv`$) adjusted for profits ($M_p = `r pall$profit`$) and the fill/finish cost ($M_f = `r pall$cost_ff`$).
-
-$G(1+M_p)(1+M_f)$ evaluates to `r round(pall$cost_bpsv*(1+pall$profit)*(1+pall$cost_ff),3)`, which is slightly more than the given cost per reserved dose, $S_R = `r pall$cost_res`$.
-
-This cost is used both for SSV doses manufactured using reserved capacity, and all BPSV doses.
+This cost is used both for SSV doses manufactured using reserved capacity, and all newly manufactured BPSV doses.
 
 ### SSV
 
-**This is quite different from the spreadsheet results**
+**These values are close, but not identical, to the spreadsheet results if I adjust for the total demand**
 
 
-If we write annual demand in billions as $A_{\cdot,s,y}$, then we would have costs, in billion USD, of:
+If we write annual demand in billions as $A_{SSV,s,y}$, then we would have costs, in billion USD, of:
 
 \begin{equation}
-D_{s}^{\text{(S-proc)}} = \min\lbrace A_{SSV,s,y},M_C\rbrace\cdot S_R  + \max\lbrace A_{SSV,s,y}-M_C,0\rbrace\cdot S_U
+D_{s,y}^{\text{(S-proc)}} = \min\lbrace A_{SSV,s,y},M_C\rbrace\cdot S_R  + \max\lbrace A_{SSV,s,y}-M_C,0\rbrace\cdot S_U
 (\#eq:ssvproc)
 \end{equation}
 
-Here, $S_R = `r pall$cost_res`$ is the cost per reserved dose and $S_U = `r pall$cost_un`$ the cost per unreserved dose in USD. 
+Here, $S_R = `r round(cost_res,2)`$ is the cost per reserved dose and $S_U = `r pall$cost_un`$ the cost per unreserved dose in USD. 
 
 The total number of doses produced in week $w$ in scenario $s$ is $Z_{T,s,w}$ (see Equation \@ref(eq:supply)). The total in a one-year period is 
 
@@ -676,38 +765,74 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 
 dose_supply = function(week, w0, weeks_init, weeks_scale, man_cap){
-  if((week - w0) < weeks_init){
+  if((week - w0) <= weeks_init){
     doses = 0
-  }else if((week - w0) < (weeks_init + weeks_scale)){
-    doses = man_cap/52 * (week - w0 - weeks_init + 1) / weeks_scale
+  }else if((week - w0) <= (weeks_init + weeks_scale)){
+    doses = man_cap/52 * (week - w0 - weeks_init ) / weeks_scale
   }else{
     doses = man_cap/52
   }
   return(doses)
 }
 
+### bpsv
+
+bpsv_w0 = pall$duration_3_resp
+
+man_cap_bpsv = pall$man_curr - pall$hic_cap_res
+bpsv_supplies <- c()
+w = 0
+while(sum(bpsv_supplies)<1){ # sum(demand65/1e9)
+  w = w+1
+  (bpsv_supplies[w] = dose_supply(week=w, w0=0, weeks_init=weeks_init[['res']], weeks_scale=weeks_scale[['res']], man_cap=man_cap_bpsv))
+}
+b_cumulative = cumsum(bpsv_supplies)
+bpsv_weeks = w
+
+b_supply <- data.frame(doses=b_cumulative,week=1:bpsv_weeks)
+
+total_bpsv_made = sum(bpsv_supplies)
+
+
+```
+
+
+```{r ssvsup}
+
+## ssv
+##!! overwrite transition start
+time_to_approval = round(dms/7)
 supplies <- cumulative <- list()
-for(i in 1:length(scen_dm)){
-  supplies[[i]] = list()
+max_demand = sum(demand15)*2
+s=1; x='ex'
+for(s in 1:length(scen_dm)){
+  supplies[[s]] = list()
   
-  w0 = time_to_approval[scen_dm[i]]
-  man_cap_res = (pall$hic_cap_res+crs)[scen_capres[i]]
+  if(bpsv_scen[s]==T){
+    weeks_init[['ex']] = pall$weeks_init_ex_bp
+  }else{
+    weeks_init[['ex']] = pall$weeks_init_ex_nb
+  }
+  
+  w0 = time_to_approval[scen_dm[s]] - pall$week_trans_start
+  man_cap_res = (pall$hic_cap_res+crs)[scen_capres[s]]
   
   man_cap_ex = pall$man_curr - man_cap_res
   man_cap_bui = pall$man_glo - pall$man_curr
   
   man_cap = c(man_cap_res, man_cap_ex, man_cap_bui)
   names(man_cap) = suffixes
-  
-  for(x in suffixes){
-    supplies[[i]][[x]] = c()
-    for(w in 1:nweeks){
-      supplies[[i]][[x]][w] = dose_supply(week=w, w0=w0, weeks_init=weeks_init[[x]], weeks_scale=weeks_scale[[x]], man_cap=man_cap[[x]])
+  for(x in suffixes) supplies[[s]][[x]] = rep(0,nweeks)
+  for(y in 1:nyears){
+    for(x in suffixes){
+      for(w in ((y-1)*52+1):min(y*52,nweeks)){
+        if(sum(unlist(supplies[[s]]))<max_demand/1e9){
+          supplies[[s]][[x]][w] = dose_supply(week=w, w0=w0, weeks_init=weeks_init[[x]], weeks_scale=weeks_scale[[x]], man_cap=man_cap[[x]])
+        }
+      }
     }
   }
-  
-  cumulative[[i]] = cumsum(Reduce("+",supplies[[i]]))
-  
+  cumulative[[s]] = cumsum(Reduce("+",supplies[[s]]))
 }
 
 t_supply <- as.data.frame(do.call(rbind,lapply(1:length(scennames),function(x)cbind(scen=scennames[x],doses=cumulative[[x]],week=1:nweeks))))
@@ -728,21 +853,39 @@ for(un in unique(scens$comb)){
 ```{r costperyear,fig.cap='SSV procurement cost'}
 
 cost_per_year <- list()
+s=1
 for(s in 1:length(scennames)){
+  # capacity distribution
+  man_cap_res = (pall$hic_cap_res+crs)[scen_capres[s]]
+  # supplied doses
   sup = supplies[[s]]
   res = sup[[1]]
   exbui = sup[[2]] + sup[[3]]
-  annual_res_doses = sapply(1:ceiling(nweeks/52),function(y) sum(na.omit(res[(1:52) + (y-1)*52])))
-  annual_exbui_doses = sapply(1:ceiling(nweeks/52),function(y) sum(na.omit(exbui[(1:52) + (y-1)*52])))
+  # total doses per year
+  annual_res_doses = sapply(1:nyears,function(y) sum(na.omit(res[(1:52) + (y-1)*52])))
+  annual_exbui_doses = sapply(1:nyears,function(y) sum(na.omit(exbui[(1:52) + (y-1)*52])))
   annual_doses = annual_res_doses + annual_exbui_doses
-  cost_per_year[[s]] = c(sapply(1:ceiling(nweeks/52), function(y) 
-    min(pall$man_curr,annual_doses[y])*pall$cost_res #*(1+pall$profit)*(1+pall$cost_ff) 
-    + max(annual_doses[y]-pall$man_curr, 0)*pall$cost_un
+  booster1 <- booster2 <- ssv_doses <- rep(0,nyears)
+  for(y in 1:nyears){
+    ssv_doses[y] = min(annual_doses[y], sum(demand15)/1e9-sum(ssv_doses))
+  }
+  booster_doses = annual_doses - ssv_doses
+  for(y in 2:nyears){
+    booster1[y] = min(ssv_doses[y-1]/2, cumsum(booster_doses)[y]-sum(booster1[1:(y-1)]))
+  }
+  for(y in 3:nyears){
+    booster2[y] = min(booster1[y-1], cumsum(booster_doses)[y]-sum(booster1[1:y])-sum(booster2[1:(y-1)]))
+  }
+  total_doses = ssv_doses + booster1 + booster2
+  # price according to utilisation of reserved capacity
+  cost_per_year[[s]] = c(sapply(1:nyears, function(y) 
+    min(man_cap_res,total_doses[y])*cost_res 
+    + max(total_doses[y]-man_cap_res, 0)*pall$cost_un
     ), scennames[s])
 }
 
 cpy = data.frame(do.call(rbind,cost_per_year))
-colnames(cpy) = c(paste0('Year ',1:ceiling(nweeks/52)),'Scenario')
+colnames(cpy) = c(paste0('Year ',1:nyears),'Scenario')
 cpymelt = reshape2::melt(cpy,id.vars='Scenario')
 cpymelt$variable = as.numeric(cpymelt$variable)
 cpymelt$value = as.numeric(cpymelt$value)
@@ -753,17 +896,44 @@ ggplot(cpymelt) +
   labs(x='Year',y='Procurement cost, billion USD')
 
 
+
+
+
+pander(as.data.frame(cbind(Scenario=scennames,do.call(rbind,lapply(cost_per_year, function(x)round(summary(20.884/2/(sum(demand15)/1e9)*rowSums(sapply(1:nyears,function(y) as.numeric(x[y])/(1+pall$discount)^c(15+y))))))))),caption = 'Costs summed and discounted from year 16 to year 20, billion USD')
+
+
+
+
 ```
+
+
+
+Targets:
+
+184,127	(	151,271	180,171	214,966	)
+187,255	(	154,376	183,358	218,147	)
+165,976	(	136,961	162,544	193,238	)
+138,384	(	114,281	135,548	161,043	)
+167,519	(	137,713	163,938	195,495	)
+135,910	(	111,925	133,050	158,444	)
+189,820	(	157,000	185,976	220,684	)
+169,549	(	140,293	166,133	197,067	)
+141,440	(	117,134	138,613	164,309	)
+189,878	(	157,295	186,091	220,526	)
+168,378	(	139,564	165,035	195,494	)
+137,984	(	114,513	135,278	160,078	)
+178,766	(	146,883	174,927	208,686	)
+
 
 
 ### BPSV
 
-**This is quite different from the spreadsheet results**
+**This is pretty close**
 
 
 ```{r}
 eqtext = 'D_s^{\\text{(BP-proc)}} = \\left\\{\\begin{array}{lr}
-A_{BPSV,s}\\cdot S_R\\; & \\; s\\in\\{1,2,3\\} \\\\
+A_{BPSV,s}\\cdot S_R +  A_4(M_f+M_t)(1+M_p)G\\; & \\; s\\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\\notin\\{1,2,3\\}
 \\end{array}\\right.
 (\\#eq:bpsvproc)'
@@ -777,11 +947,15 @@ if (knitr::is_html_output()) {
 
 ```{r bpsvproc}
 
-bpsvproc = pall$cost_res*sum(demand65)/1e9
+bpsv_ff_trans = (pall$cost_ff+pall$cost_travel)*pall$cost_cogs*(1+pall$profit)
+
+bpsvproc = cost_res*total_bpsv_made + pall$bpsv_inv_res*bpsv_ff_trans/1e9
 
 ```
 
-For a world population aged 65 and over of `r round(sum(pops365)/1e9,1)` billion, an uptake of 80\%, and a cost per dose of $S_R = `r pall$cost_res`$ USD (the same as for SSV via reserved capacity), the procurement cost for BPSV is `r round(bpsvproc,2)` billion USD.
+For a world population aged 65 and over of `r round(sum(pops365)/1e9,1)` billion, an uptake of 80\% (accounting for wastage of `r pall$vaccine_wastage`), and a cost per dose of $S_R = `r round(cost_res,2)`$ USD (the same as for SSV via reserved capacity), the procurement cost for BPSV is `r round(bpsvproc,2)` billion USD.
+
+Although `r total_bpsv_made` billion doses are manufactured, as manufacturing stops once one billion doses have been made.
 
 
 
@@ -791,13 +965,17 @@ print(round(summary(bpsvproc*at_yr_15),2))
 
 ```
 
+
+Target: 3,628 (3,062 3,568 4,165)
+
+
 ## Delivery Cost Equation
 
 <span style="color:red;">  WB status demand/0.8 * 0.1 * (0-10% cost) + WB status demand/0.8  * 0.2 * (11-30% cost) + WB status demand/0.8 * 0.5 * (30-80% cost) </span>
 
 ### SSV
 
-**These values are not correct**
+**These values are ballpark correct but too concentrated**
 
 
 For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, we have delivery cost:
@@ -821,10 +999,24 @@ if (knitr::is_html_output()) {
 
 <!-- $$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)}V_{LMIC; j} + N_{LIC}^{(15)}V_{LIC; j} \right)$$ -->
 
-```{r allocation}
+```{r bpsvallocation}
 
 
-## allocation 
+## bpsv allocation
+b_cumulative = b_cumulative + 0.0001
+
+b_allocations = t(popfracs65 %*% t(b_cumulative))
+
+
+b_alloc = as.data.frame(b_allocations)
+b_alloc$Week = 1:bpsv_weeks
+colnames(b_alloc)[1:3] = c('HIC','UMIC','LLMIC')
+
+```
+
+
+```{r ssvallocation}
+## ssv allocation 
 
 
 allocate_res_doses = function(cum_received, new_doses){
@@ -881,49 +1073,92 @@ for(s in 1:length(scennames)){
   colnames(alloc[[s]])[1:3] = c('HIC','UMIC','LLMIC')
 }
 
+
 ```
 
 
-```{r delivery}
+```{r bpsvdelivery}
 
 
-## delivery
+## bpsv delivery
 
 
+dose_delivery <- list()
+for(il in 1:ncol(rates)){
+  max_doses_each_wk = rates[1,il] * pops0[il]/1e9
+  # new doses in per week
+  doses_per_week = diff(c(0,b_alloc[,il]))
+  doses <- rep(0,bpsv_weeks)
+  doses_left = 0
+  for(w in 1:bpsv_weeks){
+    # doses this week = stock plus flow
+    doses_left = doses_left + doses_per_week[w]
+    if(w>pall$duration_3_res)
+    # doses given are the minimum of: the delivery rate; the doses left (per population); the fraction of the population still unvaccinated
+      doses[w] =  min(max_doses_each_wk, doses_left, max(0,demand65[il] - sum(doses)) )
+    # subtract doses given to update the stock
+    doses_left = doses_left - doses[w]
+  }
+  dose_delivery[[il]] = cumsum(doses)
+}
+dose_delivery = as.data.frame(do.call(cbind,dose_delivery))
+dose_delivery$Week = 1:bpsv_weeks
+
+```
+
+```{r ssvdelivery}
+
+## ssv delivery
+s=1
 second_dose_delivery <- all_dose_delivery <- list()
 for(s in 1:nrow(rates)){
   second_dose_delivery[[s]] <- all_dose_delivery[[s]] <- list()
+  il=1
   for(il in 1:ncol(rates)){
-    rateperdose = rates[s,il]/2
+    max_doses_each_wk = rates[s,il] * pops0[il]/1e9
     # new doses in per week
     doses_per_week = c(0, diff(alloc[[s]][,il]))
-    first_doses <- second_doses <- c()
+    first_doses <- second_doses <- alldoses <- rep(0,nweeks)
     doses_left = 0
     for(w in 1:nweeks){
+      max_doses_this_week = max_doses_each_wk
       # doses this week = stock plus flow
       doses_left = doses_left + doses_per_week[w]
-      # first doses given are the minimum of: the delivery rate; the doses left (per population); the fraction of the population still unvaccinated
-      first_doses[w] =  min(rateperdose, doses_left/(pops3[il]/1e9), max(0,demand15[il]/pops3[il]/2 - sum(first_doses)) )
-      # subtract doses given to update the stock
-      doses_left = doses_left - first_doses[w]
-      if(w>3){
-        # second doses given are the minimum of: the delivery rate; the doses left (per population); the fraction of the population vaccinated once, at least three weeks ago, but not twice.
-        second_doses[w] = min(rateperdose, doses_left/(pops3[il]/1e9), max(0, sum(first_doses[1:(w-3)])-sum(second_doses)))
+      if(w > time_to_approval[scen_dm[s]]){
+        if(w>4){
+          # second doses given are the minimum of: the delivery rate; the doses left (per population); the fraction of the population vaccinated once, at least three weeks ago, but not twice.
+          second_doses[w] = min(max_doses_this_week, doses_left, max(0, sum(first_doses[1:(w-4)])-sum(second_doses)))
+          # subtract doses given to update the stock
+          doses_left = doses_left - second_doses[w]
+          # update max this week
+          max_doses_this_week = max_doses_each_wk - second_doses[w]
+        }
+        # first doses given are the minimum of: the (remaining) delivery rate; the doses left (per population); the fraction of the population still unvaccinated
+        first_doses[w] =  min(max_doses_this_week, doses_left, max(0,demand15[il]/1e9/2 - sum(first_doses)) )
         # subtract doses given to update the stock
-        doses_left = doses_left - second_doses[w]
-      }else{
-        second_doses[w] = 0
+        doses_left = doses_left - first_doses[w]
+        alldoses[w] = second_doses[w]+first_doses[w]
       }
     }
-    second_dose_delivery[[s]][[il]] = data.frame(doses=cumsum(second_doses), il=incomelevels[il], Week=1:nweeks)
-    all_dose_delivery[[s]][[il]] = data.frame(doses=cumsum(second_doses+first_doses))
+    # all_dose_delivery in billions
+    all_dose_delivery[[s]][[il]] = cumsum(alldoses)
+    # second_dose_delivery in percentage
+    second_dose_delivery[[s]][[il]] = data.frame(doses=cumsum(second_doses)/(pops0[il]/1e9)*100, il=incomelevels[il], Week=1:nweeks)
   }
   second_dose_delivery[[s]] = do.call(rbind,second_dose_delivery[[s]])
-  all_dose_delivery[[s]] = do.call(cbind,all_dose_delivery[[s]])
+  all_dose_delivery[[s]] = as.data.frame(do.call(cbind,all_dose_delivery[[s]]))
   second_dose_delivery[[s]]$Scenario = scennames[s]
   all_dose_delivery[[s]]$Scenario = scennames[s]
   all_dose_delivery[[s]]$Week = 1:nweeks
 }
+
+# 
+# ggplot(subset(do.call(rbind,second_dose_delivery),Scenario%in%scennames)) +
+#   geom_line(aes(x=Week,colour=Scenario,y=doses)) +
+#   facet_wrap(~factor(il,levels=incomelevels)) +
+#   theme_bw(base_size = 15) +
+#   scale_x_continuous(limits=c(0,100)) +
+#   labs(x='Week',y='Second-dose coverage, percent population',colour='Scenario')
 
 ```
 
@@ -941,17 +1176,23 @@ for(s in 1:length(scennames)){
   for(j in 1:length(incomelevels)){
     # the jth column is HIC, UMIC or LLMIC
     # which(scendoses[,1] <= 0.1)
-    costvec[which(scendoses[,j] > 0.1 & scendoses[,1] <= 0.3)] <- 2
-    costvec[which(scendoses[,j] > 0.3)] <- 3
-    
+    popj = pops3[j]/1e9
+    costvec[which(scendoses[,j]/popj > 0.1 & scendoses[,j]/popj <= 0.3)] <- 2
+    costvec[which(scendoses[,j]/popj > 0.3)] <- 3
+    x=1
     costsamples = sapply(1:length(costvec),function(x) {
       lab = paste0('cost_',tolower(incomelevels)[j],'_',as.numeric(pcs[costvec[x]]))
       cost_per_dose[[lab]]
       })
     
+    weeklycountrycosts = apply(costsamples, 1, function(x) x*c(0,diff(scendoses[,j])))
+    dim(weeklycountrycosts)
+    annualcountrycosts = sapply(1:nyears, function(x) colSums(weeklycountrycosts[1:52+((x-1)*52),]))
+    # discount to starting year
+    dcountrycosts = t(sapply(1:nsamples, function(x) annualcountrycosts[x,]/(1+pall$discount[x])^c(0:(nyears-1))))
+    countrycosts = rowSums(dcountrycosts)
     # add country levels together, multiplying by population size
-    ssv_delivery_costs[,s] = ssv_delivery_costs[,s] + pops3[j]/1e9 * apply(costsamples, 1, function(x) sum(x*c(0,diff(scendoses[,j]))))
-    
+    ssv_delivery_costs[,s] = ssv_delivery_costs[,s] + countrycosts
   }
 }
 
@@ -967,15 +1208,30 @@ ggplot(reshape2::melt(ssv_delivery_costs)) +
 
 
 # lapply(all_dose_delivery,function(x)
-#   sapply(1:ceiling(nweeks/52),function(y) 
+#   sapply(1:nyears,function(y) 
 #     apply(na.omit(x[(1:52) + (y-1)*52, 1:3]), 1, function(z) z*
 #     )
 # )
 
-print(summary(unlist(ssv_delivery_costs)))
+print(t(summary(ssv_delivery_costs)))
 
 ```
 
+Targets:
+
+114,526	(	90,654	110,005	134,444	)
+114,771	(	91,321	111,130	134,341	)
+114,769	(	91,620	110,604	133,752	)
+114,811	(	91,647	110,815	133,856	)
+114,527	(	91,170	110,664	133,720	)
+114,615	(	91,074	110,653	133,836	)
+115,095	(	91,858	111,205	134,355	)
+115,634	(	92,514	111,639	134,375	)
+116,385	(	93,116	112,183	135,664	)
+117,196	(	93,427	113,114	136,861	)
+116,913	(	93,536	112,957	136,414	)
+118,141	(	94,682	114,649	137,100	)
+113,540	(	89,745	109,012	132,595	)
 
 
 
@@ -984,7 +1240,7 @@ print(summary(unlist(ssv_delivery_costs)))
 
 ### BPSV
 
-**These values are too low**
+**These values match the spreadsheet results. (NB: more doses are purchased and delivered than there are eligible people in the population)**
 
 
 For the BPSV, which goes only to people aged 65 or older, with populations $N_i^{(65)}$, coverage is reached earlier in the process, so the cost is weighted more heavily towards start up and ramp up:
@@ -1029,13 +1285,13 @@ The logic of this is as follows:
 - If the number of people eligible for the BPSV is more than 30\% of the 15+ population, then the cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. The cost of the second tranche of doses, a number equal to 20\% of the 15+ population, is the "ramp up" amount. All remaining doses cost the "getting to scale" amount.
 
 
-```{r bpsvdelivery,fig.cap="BPSV delivery cost"}
+```{r bpsvdeliverycost,fig.cap="BPSV delivery cost"}
 
 del_cost_thresholds = sapply(c(1,3,8)/10,function(x) x*pops3) # points at which costs shift per income level
 bpsv_del_cost = 0
 for(i in 1:length(incomelevels)){
   icthresh = del_cost_thresholds[i,]
-  icdemand = demand65[i]
+  icdemand = max(dose_delivery[[i]])*1e9 # demand65[i]
   firstcost = cost_per_dose[[paste0('cost_',tolower(incomelevels[i]),'_0')]]
   if(icdemand < icthresh[1]){
     cost = icdemand * firstcost
@@ -1057,6 +1313,10 @@ ggplot() + geom_histogram(aes(x=bpsv_del_cost/1e9)) +
 print(round(summary(bpsv_del_cost/1e9*at_yr_15),2))
   
 ```
+
+
+Target: 11,206 (9,037 10,865 13,054)
+
 
 
 | Country | Country status | Study type | Financial Cost per dose (USD) | Source |
@@ -1084,6 +1344,262 @@ Table: (\#tab:delcosts) Literature review of global and country-specific deliver
 
 
 
+
+```{r}
+
+missions = paste0(dms[2:3],' Days Mission')
+caps = paste0(crs[2:3],' bn capacity')
+
+```
+
+
+
+
+```{r}
+
+## bringing together preparedness costs
+
+# bpsv_rd_costsamples_dyd
+bpsv_rd_costsamples_no_d = 8*rowSums(inex_costs[,1:3]*pto[,1:3])/1e9
+bpsv_rd_prep = as.data.frame(t(quantile(bpsv_rd_costsamples_no_d,c(1:3)/4)))
+bpsv_rd_prep$timing = 'One-off'
+bpsv_rd_prep$category = 'R&D'
+bpsv_rd_prep$type = 'BPSV'
+
+
+# enabling_costs
+enab = as.data.frame(t(sapply(c(5,15),function(x) quantile(pall$cost_enab*x,c(1:3)/4)/1e3)))
+enab$timing = 'One-off'
+enab$category = 'R&D'
+enab$type = missions
+
+# rbind(enab, bpsv_rd_prep)
+
+
+# inv_cost
+bpsv_inv_prep = as.data.frame(t(quantile(inv_cost_per_year,c(1:3)/4)))
+bpsv_inv_prep$timing = 'Per year'
+bpsv_inv_prep$category = 'Manufacturing'
+bpsv_inv_prep$type = 'BPSV'
+
+
+# capres_costs
+ssv_capres = as.data.frame(t(sapply(crs[2:3],function(x) quantile(x*pall$cost_capres,c(1:3)/4))))
+ssv_capres$timing = 'Per year'
+ssv_capres$category = 'Manufacturing'
+ssv_capres$type = caps
+
+timings = c('One-off','Per year','Per pandemic')
+types = c('BPSV', missions, caps, 'Equality + Delivery')
+prepdata = rbind(enab, bpsv_rd_prep,bpsv_inv_prep, ssv_capres)
+prepdata$timing = factor(prepdata$timing,levels=timings,labels=timings)
+prepdata$type = factor(prepdata$type,levels=types,labels=types)
+# ggplot(prepdata) + theme_bw(base_size = 15) +
+#   geom_hline(yintercept=0,colour='grey') +
+#   geom_vline(xintercept=0,colour='grey') +
+#   facet_wrap(~timing, scales='free') +
+#   geom_bar(aes(x=type,y=`50%`,fill=category),stat = 'identity', position = 'dodge') +
+#   geom_errorbar(position = position_dodge(width = 0.9), width=0.6,aes(x=type,group=category,ymin=`25%`,ymax=`75%`),show.legend = F) +
+#       theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+#   labs(x='',y='Million USD',fill='',size='',title='Costs vs. BAU')
+
+```
+
+
+```{r}
+
+## bringing together response costs
+
+# R&D
+
+# ssv_rd_plot 
+bau_vals = rowSums( ssv_phase_pto[[1]])
+ssv_rd_diff = lapply( 2:length(ssv_phase_pto), function(x) (rowSums( ssv_phase_pto[[x]]) - bau_vals)/1e9) 
+ssv_rd_df = as.data.frame(t(sapply( ssv_rd_diff, function(x) quantile(x,c(1:3)/4)) ))
+ssv_rd_df$timing = 'Per pandemic'
+ssv_rd_df$category = 'R&D'
+ssv_rd_df$type = missions
+
+# bpsvresrd
+bpsv_rd_res = as.data.frame(t(quantile(bpsvresrd/1e9,c(1:3)/4)))
+bpsv_rd_res$timing = 'Per pandemic'
+bpsv_rd_res$category = 'R&D'
+bpsv_rd_res$type = 'BPSV'
+
+# manufacturing
+
+# ssv; take scenarios c(1,5,6) ; already in billions
+bau_ref = sum(as.numeric(cost_per_year[[1]][1:nyears]))
+ssv_res_diff = lapply(c(5,6), function(x)sum(as.numeric(cost_per_year[[x]][1:nyears]))-bau_ref)
+ssv_res_df = as.data.frame(t(sapply(ssv_res_diff, function(x)quantile(x,c(1:3)/4))))
+ssv_res_df$timing = 'Per pandemic'
+ssv_res_df$category = 'Manufacturing'
+ssv_res_df$type = caps
+
+# bpsv; already in billions
+
+bpsv_proc_res = as.data.frame(t(quantile(bpsvproc,c(1:3)/4)))
+bpsv_proc_res$timing = 'Per pandemic'
+bpsv_proc_res$category = 'Manufacturing'
+bpsv_proc_res$type = 'BPSV'
+
+
+# delivery
+# ssv; in billions
+bau_del = ssv_delivery_costs[[1]]
+ssv_del_diff = lapply(c(5,6,13),function(x)ssv_delivery_costs[[x]]-bau_del)
+ssv_del_df = as.data.frame(t(sapply(ssv_del_diff,function(x)quantile(x,c(1:3)/4))))
+ssv_del_df$timing = 'Per pandemic'
+ssv_del_df$category = 'Delivery'
+ssv_del_df$type = c(caps, 'Equality + Delivery')
+
+# bpsv
+# quantile(bpsv_del_cost/1e9,c(1:3)/4)
+
+bpsv_del = as.data.frame(t(quantile(bpsv_del_cost/1e9,c(1:3)/4)))
+bpsv_del$timing = 'Per pandemic'
+bpsv_del$category = 'Delivery'
+bpsv_del$type = 'BPSV'
+
+
+datares = rbind(ssv_rd_df, bpsv_rd_res, ssv_res_df, bpsv_proc_res, bpsv_del, ssv_del_df)
+datares$timing = factor(datares$timing,levels=timings,labels=timings)
+datares$type = factor(datares$type,levels=types,labels=types)
+# ggplot(datares) + theme_bw(base_size = 15) +
+#   geom_hline(yintercept=0,colour='grey') +
+#   geom_vline(xintercept=0,colour='grey') +
+#   facet_wrap(~timing, scales='free') +
+#   geom_bar(aes(x=type,y=`50%`,fill=category),stat = 'identity', position = 'dodge') +
+#   geom_errorbar(position = position_dodge(width = 0.9), width=0.6,aes(x=type,group=category,ymin=`25%`,ymax=`75%`),show.legend = F) +
+#       theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+#   labs(x='',y='Billion USD',fill='',size='',title='Costs vs. BAU')
+
+datares$category = factor(datares$category,levels=c('R&D','Manufacturing','Delivery'))
+
+unitcosts = ggplot(rbind(subset(datares,category!=''),prepdata)) + theme_bw(base_size = 15) +
+  geom_hline(yintercept=0,colour='grey') +
+  geom_vline(xintercept=0,colour='grey') +
+  facet_wrap(~timing, scales='free', space = "free_x") +
+  geom_bar(aes(x=type,y=`50%`,fill=category),stat = 'identity', position = 'dodge') +
+  geom_errorbar(position = position_dodge(width = 0.9), width=0.6,aes(x=type,group=category,ymin=`25%`,ymax=`75%`),show.legend = F) +
+      theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
+  labs(x='',y='Billion USD',fill='',size='',title='A) Unit Costs vs. BAU') +
+  scale_y_continuous(n.breaks = 9) +
+  theme(legend.position = 'right')
+
+```
+
+```{r}
+## summing prep costs
+
+# bpsv scenarios
+# bpsv_rd_costsamples_dyd billions, discounted
+# inv_cost in millions, discounted
+# crs in billions
+bpsv_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile(bpsv_rd_costsamples_dyd + inv_cost/1e3 + crs[x] *pall$cost_capres*fifteen_yr_discount_weight,c(1:3)/4))))
+bpsv_ss$Scenario = scennames[2:4]
+bpsv_ss$Category = 'BPSV'
+bpsv_ss$Capacity = crs
+bpsv_ss$DM = 365
+
+capres_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile( crs[x] *pall$cost_capres*fifteen_yr_discount_weight,c(1:3)/4))))
+capres_ss$Scenario = scennames[c(1,5:6)]
+capres_ss$Category = '365DM'
+capres_ss$Capacity = crs
+capres_ss$DM = 365
+
+# enabling_costs5 in millions, discounted
+dm200_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile( crs[x] *pall$cost_capres*fifteen_yr_discount_weight + enabling_costs5/1e3,c(1:3)/4))))
+dm200_ss$Scenario = scennames[7:9]
+dm200_ss$Category = '200DM'
+dm200_ss$Capacity = crs
+dm200_ss$DM = 200
+
+# enabling_costs15 in millions, discounted
+dm100_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile( crs[x] *pall$cost_capres*fifteen_yr_discount_weight + enabling_costs15/1e3,c(1:3)/4))))
+dm100_ss$Scenario = scennames[10:12]
+dm100_ss$Category = '100DM'
+dm100_ss$Capacity = crs
+dm100_ss$DM = 100
+
+
+preps = rbind(bpsv_ss, capres_ss, dm200_ss, dm100_ss)
+preps = rbind(preps, capres_ss[1,])
+preps$Scenario[13] = scennames[13]
+preps$Category[13] = 'Equality + Delivery'
+```
+
+
+```{r}
+
+
+ssv_res_diff = lapply(c(1,5,6), function(x)sum(as.numeric(cost_per_year[[x]][1:nyears]))-sum(as.numeric(cost_per_year[[1]][1:nyears])))
+
+ssv_del_diff = lapply(ssv_delivery_costs,function(x)x-bau_del)
+
+all_resp_costs = list()
+s=1
+for(s in 1:length(scennames)){
+  total_costs = ssv_del_diff[[s]]
+  if(bpsv_scen[s]==T) total_costs <- total_costs + bpsvresrd/1e9 + bpsvproc + bpsv_del_cost/1e9
+  
+  whichcap = scen_capres[s]
+  total_costs <- total_costs + sum(as.numeric(cost_per_year[[s]][1:nyears]))-sum(as.numeric(cost_per_year[[1]][1:nyears]))
+  
+  if(scen_dm[s]>1) total_costs <- total_costs + ssv_rd_diff[[scen_dm[s]-1]]
+  
+  all_resp_costs[[s]] = quantile(total_costs*at_yr_15,c(1:3)/4)
+}
+  
+resps = as.data.frame(do.call(rbind,all_resp_costs))
+resps$Scenario = scennames
+resps$Category = preps$Category[match(resps$Scenario,preps$Scenario)]
+resps$Capacity = crs[scen_capres]
+resps$DM = dms[scen_dm]
+resps$timing = 'Response'
+preps$timing = 'Preparedness'
+
+melted = reshape2::melt(rbind(preps,resps),id.vars=c('Scenario','Category','Capacity','DM','timing'))
+melted$value = melted$value/113.8e3*100
+toplot = dcast(melted,formula=Scenario+Category+Capacity+DM~timing+variable)
+
+toplot$Category = factor(toplot$Category,levels=c('BPSV', '365DM','200DM','100DM', 'Equality + Delivery'),labels=c('BPSV', '365DM','200DM','100DM', 'Equality + Delivery'))
+
+fifcosts = ggplot(toplot) +
+  geom_hline(yintercept=0,colour='grey') +
+  geom_vline(xintercept=0,colour='grey') +
+  geom_abline(linetype=2,slope = -1,intercept = 0,
+              colour='navyblue',show.legend = T) +
+  geom_point(#show.legend = c('colour'=F),
+               aes(x=`Preparedness_50%`,y=`Response_50%`,colour=Category,size=factor(Capacity,levels=c(0,'0.7','2')))) +
+  geom_text(aes(x=`Preparedness_50%`+6e-4,y=`Response_50%`+3e-3,label=Scenario)) +
+  geom_errorbar(show.legend=F,aes(x=`Preparedness_50%`,colour=Category,ymin=`Response_25%`,ymax=`Response_75%`)) +
+  geom_errorbarh(show.legend=F,aes(y=`Response_50%`,colour=Category,xmin=`Preparedness_25%`,xmax=`Preparedness_75%`)) +
+  labs(linetype='',x='Total preparedness difference from BAU',y='Total response costs difference from BAU',colour='',size='Capacity\nreservation',
+       title='B) Relative costs of preparedness vs. response (compared to BAU; % GDP)') +
+  geom_segment(
+    aes(x = 0, xend = 0, y = 0, yend = 0, linetype = "Break even"),
+    inherit.aes = FALSE, alpha = 0, show.legend = TRUE
+  ) +
+  scale_linetype_manual(values = c("Break even" = "dashed")) +
+  guides(
+    linetype = guide_legend(
+      override.aes = list(colour = "navyblue",alpha=1),
+      title = NULL
+    ),
+    colour = guide_legend(title = NULL)#,
+  ) +
+  theme(legend.title = element_text(margin = margin(0,0))) +
+  theme_bw(base_size = 15)
+
+final = ggarrange(unitcosts, fifcosts, ncol=1)
+ggsave(final, filename='fig2alt.png',height=10,width=10)
+
+
+```
+
+
+
 # SSV delivery
 
 
@@ -1091,7 +1607,7 @@ Table: (\#tab:delcosts) Literature review of global and country-specific deliver
 |---|---|---|---|
 | Annual manufacturing volume | By scenario (0.5--2.5B)| 2.5B minus reserved volume | 6B |
 | Facility transition start | 7 weeks before vaccine approval | 7 weeks before vaccine approval | 7 weeks before vaccine approval |
-| Weeks to initial manufacturing | 12 | 30 | 48 |
+| Weeks to initial manufacturing | 12 | 12 (BPSV) or 30 (no BPSV) | 48 |
 | Scale-up weeks to full capacity | 10 | 16 | 16 |
 
 Table: Manufacturing response timeline assumptions 
@@ -1108,17 +1624,17 @@ Table: Manufacturing response timeline assumptions
 
  
 
-| Weeks from transition start |	Reserved Capacity (%)	 | Private Capacity (Existing; %)	| Private Capacity (Response; %) |
+| Weeks from transition start |	Reserved Capacity (%)	 | Existing Private Capacity (%)	| Response Private Capacity (%) |
 |---|---|---|---|
 | 0--11 |  |  |  |			
-| 12--21 |	Scaling from 0-100	 |  |  |				
+| 12--21 |	Scales from 0 to 100	 |  |  |				
 | 22--29 |	100		|   |  |			
-| 30--45 |	100 |	Scaling from 0-100	  |  |
+| 30--45 |	100 |	Scales from 0 to 100	  |  |
 | 46--47 |	100 |	100	  |  |
-| 48--63	 |100 |	100 |	Scaling from 0-100 |
+| 48--63	 |100 |	100 |	Scales from 0 to 100 |
 | 64+|	100 |	100 |	100 |
 
-Table: Vaccine Production Timeline
+Table: Vaccine Production Timeline when there is no BPSV. When BPSV is also modelled, Existing Private Capacity scales from 0 to 100 in weeks 12--21.
 
 
 ## Timing
@@ -1154,9 +1670,9 @@ Then the number of doses, in billions, that are made from capacity $x\in \lbrace
 
 
 ```{r}
-eqtext = 'Z_{x,s,w} = \\left\\{\\begin{array}{lr}0 & w-w_s^{(0)} < I_x \\\\ 
-\\frac{1}{52}\\frac{w-w_s^{(0)}-I_x+1}{C_x}M_{x,s} & w-w_s^{(0)}\\in[I_x, I_x+C_x) \\\\ 
-\\frac{1}{52}M_{x,s}  & w-w_s^{(0)}\\geq I_x+C_x
+eqtext = 'Z_{x,s,w} = \\left\\{\\begin{array}{lr}0 & w-w_s^{(0)} \\leq I_x \\\\ 
+\\frac{1}{52}\\frac{w-w_s^{(0)}-I_x}{C_x}M_{x,s} & w-w_s^{(0)}\\in(I_x, I_x+C_x] \\\\ 
+\\frac{1}{52}M_{x,s}  & w-w_s^{(0)}> I_x+C_x
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
@@ -1170,7 +1686,21 @@ if (knitr::is_html_output()) {
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\  -->
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\  -->
 
-where $I_R=12$ is the number of weeks to initial manufacturing for reserved capacity, $C_R=10$ is the number of weeks to scale up to full capacity; $I_E=30$ is the number of weeks to initial manufacturing for existing and unreserved capacity, $C_E=16$ is the number of weeks to scale up to full capacity; $I_B=48$ is the number of weeks to initial manufacturing for built and unreserved capacity, $C_B=16$ is the number of weeks to scale up to full capacity.
+where $I_R = `r pall$weeks_init_res`$ is the number of weeks to initial manufacturing for reserved capacity, $C_R = `r pall$weeks_scale_res`$ is the number of weeks to scale up to full capacity; $I_B = `r pall$weeks_init_bui`$ is the number of weeks to initial manufacturing for built and unreserved capacity, $C_B = `r pall$weeks_scale_bui`$ is the number of weeks to scale up to full capacity, and
+
+```{r}
+eqtext = 'I_E = \\left\\{\\begin{array}{lr}
+ I_{E,1} \\; & \\; s\\in\\{1,2,3\\} \\\\
+I_{E,0}  \\; & \\; s\\notin\\{1,2,3\\}
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
+
+where $I_{E,0} = `r pall$weeks_init_ex_nb`$ and $I_{E,1} = `r pall$weeks_init_ex_bp`$ are the number of weeks to initial manufacturing for existing and unreserved capacity, $C_E = `r pall$weeks_scale_ex`$ is the number of weeks to scale up to full capacity.
 
 Then the total number of doses produced in week $w$ is 
 
@@ -1198,7 +1728,10 @@ Denote the weekly allocated doses at week $w$ from capacity $x$ to income level 
 
 $$K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.$$ 
 
-We write $X_i = 2\cdot \lambda\cdot N_i^{(15)}$ as the maximum demand for income group $i$, representing two doses each for $\lambda=80$\% of the population.
+We write 
+
+$$X_i = \frac{2\cdot \lambda\cdot N_i^{(15)}}{1-\delta}$$
+as the maximum demand for income group $i$, representing two doses each for $\lambda=80$\% of the population assuming vaccine wastage of $\delta = `r pall$vaccine_wastage`$.
 
 ```{r}
 eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
@@ -1275,11 +1808,14 @@ ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
 
 ```{r scendelivery,fig.cap='Cumulative vaccine coverage (second SSV dose) by country income level'}
 
+
+
 ggplot(do.call(rbind,second_dose_delivery)) +
-  geom_line(aes(x=Week,colour=Scenario,y=doses*100)) +
+  geom_line(aes(x=Week*7,colour=Scenario,y=doses)) +
   facet_wrap(~factor(il,levels=incomelevels)) +
   theme_bw(base_size = 15) +
-  labs(x='Week',y='Second-dose coverage, percent population',colour='Scenario')
+  scale_x_continuous(limits=c(0,1300)) +
+  labs(x='Day',y='Second-dose coverage, percent population',colour='Scenario')
 
 
 ```
@@ -1290,7 +1826,71 @@ ggplot(do.call(rbind,second_dose_delivery)) +
 
 ## Timing
 
-The duration of the Phase three trial is 18 weeks. **The time to manufacturing transition is 12 weeks, and the time to manufacturing scale-up 10 weeks; these are the same as the reserved-capacity times for SSV. Are these reservations included in the preparedness cost?**
+The duration of the Phase three trial is $W_3^{(B)} = `r pall$duration_3_res`$ weeks. The time to manufacturing transition is $I_R = `r pall$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r pall$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV. 
+
+
+Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+pall$weeks_init_res`$ and dose distribution begins in week $1+W_3^{(B)} = `r 1+pall$duration_3_res`$.
+
+## Production
+
+The number of doses, in billions, that are made in week $w$ is:
+
+
+```{r}
+eqtext = 'Z_{w} = \\left\\{\\begin{array}{lr}0 & w < I_R \\\\ 
+\\frac{1}{52}\\frac{w-I_x+1}{C_x}M_{x,s} & w\\in[I_R, I_R+C_R) \\\\ 
+\\frac{1}{52}M_{x,s}  & w-1\\geq I_R+C_xR
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
+
+
+
+
+```{r bpsvsupply, fig.cap='BPSV doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen.'}
+
+ggplot(b_supply) + 
+  geom_line(aes(x=as.numeric(week),y=as.numeric(doses))) +
+  theme_bw(base_size = 15) +
+  labs(x='Week',y='Cumulative doses manufactured, billions',colour='Scenario')
+
+```
+
+
+## Allocation
+
+Doses are all allocated in proportion to the eligible population.
+
+
+
+
+```{r bpsvprocurement,fig.cap='BPSV doses procured by country income level'}
+
+ggplot(reshape2::melt(b_alloc,id.vars=c('Week'))) +
+  geom_line(aes(x=Week,colour=variable,y=value)) +
+  theme_bw(base_size = 15) +
+  labs(x='Week',y='Cumulative doses procured, billions',colour='Income level')
+
+```
+
+## Delivery
+
+**These values do not look correct**
+
+
+```{r bpsvdeliveryplot,fig.cap='BPSV vaccine coverage by country income level'}
+
+ggplot(reshape2::melt(dose_delivery,id.vars=c('Week'))) +
+  geom_line(aes(x=Week*7,colour=factor(variable,levels=c('V1','V2','V3'),labels=incomelevels),y=value)) +
+  theme_bw(base_size = 15) +
+  labs(x='Day',y='BPSV coverage, percent population',colour='Income level')
+
+
+```
 
 
 
