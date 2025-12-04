@@ -46,9 +46,9 @@ application.
 | $W_{0; 100}^{(S)}$ | weeks_P0_100 | SSV preclinical duration (100DM); weeks | Constant | 5 |  |  |
 | $W_{1; 365}^{(S)}$ | weeks_P1_365 | SSV phase I duration (365); weeks | Constant | 0 |  |  |
 | $W_{1; 200}^{(S)}$ | weeks_P1_200 | SSV phase I duration (200DM); weeks | Constant | 0 |  |  |
-| $W_{1; 100}^{(S)}$ | weeks_P1_100 | SSV phase I duration (100DM); weeks | Constant | 7 |  |  |
+| $W_{1; 100}^{(S)}$ | weeks_P1_100 | SSV phase I duration (100DM); weeks | Constant | 0 |  |  |
 | $W_{2; 365}^{(S)}$ | weeks_P2_365 | SSV phase II duration (365); weeks | Constant | 19 |  |  |
-| $W_{2; 200}^{(S)}$ | weeks_P2_200 | SSV phase II duration (200DM); weeks | Constant | 0 |  |  |
+| $W_{2; 200}^{(S)}$ | weeks_P2_200 | SSV phase II duration (200DM); weeks | Constant | 7 |  |  |
 | $W_{2; 100}^{(S)}$ | weeks_P2_100 | SSV phase II duration (100DM); weeks | Constant | 0 |  |  |
 | $W_{3; 365}^{(S)}$ | weeks_P3_365 | SSV phase III duration (365); weeks | Constant | 16 |  |  |
 | $W_{3; 200}^{(S)}$ | weeks_P3_200 | SSV phase III duration (200DM); weeks | Constant | 15 |  |  |
@@ -88,7 +88,7 @@ application.
 | $T_3^{(e)}$ | cost_3_ex | Cost, Phase III, experienced manufacturer; USD | PearsonV | 1.3147, 51397313 | 15000000, 910000000 | Gouglas et al. (2018) |
 | $T_3^{(n)}$ | cost_3_inex | Cost, Phase III, inexperienced manufacturer; USD | PearsonVI | 4.8928, 1.6933, 11400026 | 2500000, 400000000 | Gouglas et al. (2018) |
 | $\omega$ | inex_weight | Share of manufacturers that are inexperienced | Constant | 0.875 |  | See Table <a href="#tab:inex">2.1</a> |
-| $L$ | cost_lic | Licensure; USD | Constant | 287750 |  | Gouglas et al. (2018) |
+| $L$ | cost_lic | Licensure cost, 2018; USD | Constant | 287750 |  | Gouglas et al. (2018) |
 | $Y_0^{(B)}$ | duration_0 | BPSV preclinical duration; years | Multinomial | 1, 2 |  | CEPI (2022) |
 | $Y_1^{(B)}$ | duration_1 | BPSV Phase I duration; years | Multinomial | 1, 2 |  | CEPI (2022) |
 | $Y_2^{(B)}$ | duration_2 | BPSV Phase II duration; years | Constant | 2 |  | CEPI (2022) |
@@ -100,7 +100,7 @@ application.
 | $A_2$ | cost_capres | Advanced capacity reservation fee; USD per dose per year | Constant | 0.53 |  | Pfizer (2023) |
 | $S_U$ | cost_un | SSV procurement price, reactive capacity; USD per dose | Constant | 18.94 |  | Linksbridge SPC (2025) |
 | $E$ | cost_enab | Enabling activities; million USD per year | Constant | 700 |  | CEPI (2021) |
-| $I$ | inflation | Inflation (2018–2025) | Constant | 0.28 |  | U.S. Bureau of Labor Statistics (n.d.) |
+| $I$ | inflation | Inflation (2018 t0 2025) | Constant | 0.28 |  | U.S. Bureau of Labor Statistics (n.d.) |
 | $r$ | discount | Discount rate | Uniform | 0.02, 0.06 |  | Glennerster, Snyder, and Tan (2023) |
 | $M_p$ | profit | Profit margin | Constant | 0.2 |  | Kazaz (2021) |
 | $M_f$ | cost_ff | Fill/finish cost | Constant | 0.14 |  | Kazaz (2021) |
@@ -123,6 +123,9 @@ application.
 | $\lambda$ | final_vaccine_coverage | Final vaccine coverage, proportion of population | Constant | 0.8 |  | Model choice |
 | $A_4$ | bpsv_inv_res | Size of BPSV investigational reserve, doses | Constant | 100000 |  | Model choice |
 | $\delta$ | vaccine_wastage | Fraction of vaccine product expected to go to waste | Constant | 0.1 |  |  |
+| $Y^{(200)}$ | years_200 | Years of R&D to 200-day readiness | Constant | 5 |  |  |
+| $Y^{(100)}$ | years_100 | Years of R&D to 100-day readiness | Constant | 15 |  |  |
+| $Y_{rep}$ | bpsv_replenishment | Years after which BPSV doses are to be replaced | Constant | 3 |  |  |
 
 Notation and parametric assumptions for inputs to the costing model.
 Parameters are used as follows: uniform distributions go from Parameter
@@ -206,7 +209,7 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.04 0.10 0.13 0.14 0.17 0.44
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.06 0.10 0.14 0.15 0.19 0.36
 
 Target: 146 (103 135 177)
 
@@ -222,12 +225,12 @@ $$Y^{(B)} = Y_0^{(B)} + Y_1^{(B)} + Y_2^{(B)}.$$
 
 The cost of goods supplied is $G = 4.68$. Then the cost of drug
 substance is $G(1-M_f)(1+M_p) = 4.83$ USD per dose. The reserve is
-replenished every three years. Then the annual cost to maintain the
-reserve of $A_4 =100,000$ doses is
+replenished every $Y_{rep} = 3$ years. Then the annual cost to maintain
+the reserve of $A_4 =100,000$ doses is
 
 $$\begin{equation}
 D_{s,y}^{\text{(BP-inv)}} = \left\\{\begin{array}{lr}
- A_4\frac{1}{3}G  (1-M_f)(1+M_p) + A_1
+ \frac{A_4}{Y_{rep}}G  (1-M_f)(1+M_p) + A_1
 \\; & \\; s\in\\{1,2,3\\} \\;\\&\\;y>Y^{(B)}\\\\
 0  \\; & \\; s\notin\\{1,2,3\\}\\;\\|\\;y\leq Y^{(B)}
 \end{array}\right.
@@ -247,7 +250,7 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.78 0.97 1.08 1.09 1.20 1.46
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.78 0.94 1.07 1.08 1.20 1.45
 
 Target: 1 (0.9 1 1.1)
 
@@ -285,12 +288,12 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.89 3.06 3.08 3.26 3.47
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.87 3.00 3.05 3.23 3.47
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.55 6.93 7.35 7.39 7.83 8.33
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.56 6.89 7.20 7.32 7.76 8.32
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.64 14.45 15.32 15.39 16.32
-17.36
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.66 14.35 14.99 15.24 16.17
+17.34
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -330,11 +333,11 @@ years with uniformly distributed discount rate.
 
 </div>
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.63 8.09 8.13 8.62 9.17
-
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.24 3.24 3.30 3.37
-
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
+
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.22 3.23 3.29 3.36
+
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.22 7.58 7.92 8.05 8.54 9.16
 
 Targets:
 
@@ -362,17 +365,6 @@ $$D_y^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-resRD)}} + D_s^{\te
 - $D^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation (3.5)
 
 ## 3.1 Risk-adjusted R&D cost per candidate calculation
-
-<span style="color:red;">Sum of the cost of each phase multiplied by the
-likelihood of phase occurrence (probability of success for previous
-phases)</span>
-
-<span style="color:red;">Probability of Occurrence (PoO) = 1 \* PoS
-(PhaseN-1) …</span>
-
-<span style="color:red;">\$ (Preclin) \* PoO (Preclin) + \$ (Ph1) \* PoO
-(Ph1) + \$ (Ph2) \* PoO (Ph2) + \$ (Ph3) \* PoO (Ph3) + \$ (License) \*
-PoO (License)</span>
 
 ### 3.1.1 SSV
 
@@ -407,9 +399,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 | 0.01 |  0.04   |  0.07  | 0.08 |  0.11   | 0.62 |
-| 200 |  0   |  0.01   |  0.02  | 0.03 |  0.04   | 0.45 |
-| 100 |  0   |  0.02   |  0.03  | 0.03 |  0.04   | 0.27 |
+| 365 | 0.01 |  0.04   |  0.06  | 0.08 |   0.1   | 0.34 |
+| 200 | 0.01 |  0.02   |  0.03  | 0.04 |  0.05   | 0.21 |
+| 100 |  0   |  0.01   |  0.02  | 0.03 |  0.04   | 0.13 |
 
 Targets:
 
@@ -447,7 +439,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.2 2.1 4.1 8.1 8.7 221.3
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.4 2.0 4.4 8.1 7.4 95.1
 
 Target: 14 (3 5 10)
 
@@ -494,19 +486,19 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 | Scenario | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:--------:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-|   BAU    | 128  |   152   |  181   | 185  |   217   | 258  |
-|   S01    | 130  |   154   |  183   | 187  |   219   | 260  |
-|   S02    | 118  |   140   |  166   | 170  |   199   | 236  |
-|   S03    | 100  |   118   |  140   | 143  |   167   | 198  |
-|   S04    | 116  |   138   |  164   | 168  |   197   | 234  |
-|   S05    |  95  |   113   |  134   | 137  |   160   | 190  |
-|   S06    | 134  |   158   |  187   | 192  |   223   | 264  |
-|   S07    | 124  |   147   |  174   | 178  |   207   | 245  |
-|   S08    | 106  |   125   |  148   | 151  |   176   | 208  |
-|   S09    | 133  |   157   |  186   | 190  |   221   | 262  |
-|   S10    | 121  |   143   |  169   | 173  |   201   | 237  |
-|   S11    |  99  |   117   |  138   | 141  |   165   | 194  |
-|   S12    | 128  |   152   |  181   | 185  |   217   | 258  |
+|   BAU    | 128  |   149   |  170   | 180  |   211   | 257  |
+|   S01    | 130  |   151   |  172   | 182  |   213   | 258  |
+|   S02    | 119  |   137   |  156   | 165  |   194   | 235  |
+|   S03    | 100  |   116   |  132   | 139  |   163   | 197  |
+|   S04    | 117  |   135   |  154   | 164  |   192   | 233  |
+|   S05    |  95  |   110   |  125   | 133  |   156   | 189  |
+|   S06    | 135  |   156   |  177   | 187  |   219   | 264  |
+|   S07    | 125  |   145   |  164   | 173  |   203   | 245  |
+|   S08    | 107  |   123   |  140   | 148  |   173   | 208  |
+|   S09    | 133  |   154   |  175   | 185  |   216   | 260  |
+|   S10    | 121  |   140   |  159   | 168  |   196   | 236  |
+|   S11    | 100  |   116   |  131   | 139  |   162   | 195  |
+|   S12    | 128  |   149   |  170   | 180  |   211   | 257  |
 
 Costs summed and discounted from year 16 to year 20, billion USD
 
@@ -540,15 +532,11 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2.79 3.22 3.71 3.77 4.31 4.96
+Min. 1st Qu. Median Mean 3rd Qu. Max. 2.80 3.16 3.52 3.69 4.21 4.95
 
 Target: 3,628 (3,062 3,568 4,165)
 
 ## 3.3 Delivery Cost Equation
-
-<span style="color:red;">WB status demand/0.8 \* 0.1 \* (0-10% cost) +
-WB status demand/0.8 \* 0.2 \* (11-30% cost) + WB status demand/0.8 \*
-0.5 \* (30-80% cost)</span>
 
 ### 3.3.1 SSV
 
@@ -579,33 +567,33 @@ D^{\text{(S-del)}} =
 
 </div>
 
-     BAU Min.   : 80.82   1st Qu.:101.49   Median :111.36   Mean   :113.52  
-     S01 Min.   : 81.86   1st Qu.:102.02   Median :111.68   Mean   :113.81  
-     S02 Min.   : 81.26   1st Qu.:101.58   Median :111.56   Mean   :113.74  
-     S03 Min.   : 81.49   1st Qu.:101.79   Median :111.67   Mean   :113.83  
-     S04 Min.   : 81.63   1st Qu.:102.11   Median :111.78   Mean   :113.85  
-     S05 Min.   : 81.23   1st Qu.:101.76   Median :111.41   Mean   :113.50  
-     S06 Min.   : 81.6    1st Qu.:102.2    Median :112.1    Mean   :114.2   
-     S07 Min.   : 82.83   1st Qu.:103.18   Median :112.89   Mean   :114.93  
-     S08 Min.   : 83.2    1st Qu.:103.5    Median :113.2    Mean   :115.3   
-     S09 Min.   : 83.47   1st Qu.:104.05   Median :114.15   Mean   :116.28  
-     S10 Min.   : 83.83   1st Qu.:104.13   Median :113.86   Mean   :115.97  
-     S11 Min.   : 84.04   1st Qu.:104.31   Median :114.01   Mean   :116.15  
-     S12 Min.   : 80.45   1st Qu.:101.01   Median :110.72   Mean   :112.83  
+     BAU Min.   : 86.71   1st Qu.: 99.47   Median :105.35   Mean   :110.69  
+     S01 Min.   : 87.84   1st Qu.:100.31   Median :106.38   Mean   :111.87  
+     S02 Min.   : 88.86   1st Qu.:101.30   Median :107.42   Mean   :112.82  
+     S03 Min.   : 88.95   1st Qu.:101.41   Median :107.51   Mean   :112.86  
+     S04 Min.   : 86.93   1st Qu.: 99.74   Median :105.85   Mean   :111.22  
+     S05 Min.   : 87.32   1st Qu.:100.07   Median :106.18   Mean   :111.60  
+     S06 Min.   : 88.24   1st Qu.:100.60   Median :106.74   Mean   :112.25  
+     S07 Min.   : 89.18   1st Qu.:101.64   Median :107.92   Mean   :113.26  
+     S08 Min.   : 90.12   1st Qu.:102.08   Median :108.65   Mean   :114.13  
+     S09 Min.   : 90.1    1st Qu.:102.1    Median :108.4    Mean   :113.9   
+     S10 Min.   : 90.96   1st Qu.:102.74   Median :109.47   Mean   :114.97  
+     S11 Min.   : 91.58   1st Qu.:103.40   Median :110.12   Mean   :115.64  
+     S12 Min.   : 88.27   1st Qu.:100.44   Median :106.54   Mean   :112.10  
                                           
-     BAU 3rd Qu.:124.24   Max.   :161.23  
-     S01 3rd Qu.:124.27   Max.   :160.95  
-     S02 3rd Qu.:124.62   Max.   :161.59  
-     S03 3rd Qu.:124.57   Max.   :161.42  
-     S04 3rd Qu.:124.25   Max.   :160.99  
-     S05 3rd Qu.:123.94   Max.   :160.60  
-     S06 3rd Qu.:125.0    Max.   :161.7   
-     S07 3rd Qu.:125.31   Max.   :161.66  
-     S08 3rd Qu.:125.7    Max.   :161.9   
-     S09 3rd Qu.:127.27   Max.   :163.28  
-     S10 3rd Qu.:126.51   Max.   :162.44  
-     S11 3rd Qu.:126.71   Max.   :162.54  
-     S12 3rd Qu.:123.34   Max.   :160.67  
+     BAU 3rd Qu.:120.92   Max.   :153.50  
+     S01 3rd Qu.:122.63   Max.   :154.66  
+     S02 3rd Qu.:123.57   Max.   :155.54  
+     S03 3rd Qu.:123.58   Max.   :155.49  
+     S04 3rd Qu.:121.63   Max.   :153.74  
+     S05 3rd Qu.:122.20   Max.   :153.97  
+     S06 3rd Qu.:123.18   Max.   :155.02  
+     S07 3rd Qu.:124.45   Max.   :155.54  
+     S08 3rd Qu.:125.54   Max.   :156.28  
+     S09 3rd Qu.:125.2    Max.   :156.5   
+     S10 3rd Qu.:126.18   Max.   :157.21  
+     S11 3rd Qu.:126.62   Max.   :157.75  
+     S12 3rd Qu.:123.01   Max.   :155.23  
 
 Targets:
 
@@ -673,7 +661,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 6.49 9.60 11.20 11.45 13.08 20.03
+Min. 1st Qu. Median Mean 3rd Qu. Max. 7.17 9.53 10.61 11.06 12.48 16.49
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -698,6 +686,28 @@ Target: 11,206 (9,037 10,865 13,054)
 
 <span id="tab:delcosts"></span>Table 3.1: Literature review of global
 and country-specific delivery costs
+
+|    timing    |   category    |         type         |       Cost vs. BAU        |
+|:------------:|:-------------:|:--------------------:|:-------------------------:|
+|   One-off    |      R&D      |   200 days to SSV    |     $3.5$ ($3.5,3.5$)     |
+|   One-off    |      R&D      |   100 days to SSV    |      $10$ ($10,10$)       |
+|   One-off    |      R&D      |         BPSV         |    $0.15$ ($0.11,0.2$)    |
+|   Per year   | Manufacturing |         BPSV         |   $0.16$ ($0.16,0.16$)    |
+|   Per year   | Manufacturing | 0.7 billion capacity |   $0.37$ ($0.37,0.37$)    |
+|   Per year   | Manufacturing |  2 billion capacity  |     $1.1$ ($1.1,1.1$)     |
+| Per pandemic |      R&D      |   200 days to SSV    | $-0.059$ ($-0.11,-0.04$)  |
+| Per pandemic |      R&D      |   100 days to SSV    | $-0.08$ ($-0.13,-0.053$)  |
+| Per pandemic |      R&D      |         BPSV         | $0.0079$ ($0.0037,0.016$) |
+| Per pandemic | Manufacturing | 0.7 billion capacity |     $-35$ ($-35,-35$)     |
+| Per pandemic | Manufacturing |  2 billion capacity  |   $-100$ ($-100,-100$)    |
+| Per pandemic | Manufacturing |         BPSV         |     $6.7$ ($6.7,6.7$)     |
+| Per pandemic |   Delivery    |         BPSV         |      $20$ ($18,21$)       |
+| Per pandemic |   Delivery    | 0.7 billion capacity |    $0.53$ ($0.3,0.69$)    |
+| Per pandemic |   Delivery    |  2 billion capacity  |     $0.9$ ($0.6,1.2$)     |
+| Per pandemic |   Delivery    | Equality + Delivery  |      $1.4$ ($1,1.7$)      |
+
+Cost differences: investments vs. BAU, for different types of
+investment.
 
 # 4 SSV delivery
 
@@ -802,16 +812,28 @@ Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
 
 <img src="README_files/figure-gfm/supply-1.png" alt="Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
 <p class="caption">
-<span id="fig:supply"></span>Figure 4.1: Doses made available from
+<span id="fig:supply-1"></span>Figure 4.1: Doses made available from
 manufacturing per scenario. Weeks are in reference to the sequencing of
 the pathogen.
 </p>
 
 </div>
 
-In Figure <a href="#fig:supply">4.1</a>, the following scenarios have
-identical supply (because they have the same capacity reservations and
-R&D investments): BAU & S01 & S12; S02 & S04; and S03 & S05.
+<div class="figure">
+
+<img src="README_files/figure-gfm/supply-2.png" alt="Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
+<p class="caption">
+<span id="fig:supply-2"></span>Figure 4.2: Doses made available from
+manufacturing per scenario. Weeks are in reference to the sequencing of
+the pathogen.
+</p>
+
+</div>
+
+In Figure <a href="#fig:supply"><strong>??</strong></a>, the following
+scenarios have identical supply (because they have the same capacity
+reservations and R&D investments): BAU & S01 & S12; S02 & S04; and S03 &
+S05.
 
 ## 4.3 Allocation
 
@@ -879,7 +901,7 @@ The logic of this reads as follows:
 
 <img src="README_files/figure-gfm/procurement-1.png" alt="Doses procured by country income level"  />
 <p class="caption">
-<span id="fig:procurement"></span>Figure 4.2: Doses procured by country
+<span id="fig:procurement"></span>Figure 4.3: Doses procured by country
 income level
 </p>
 
@@ -893,7 +915,7 @@ income level
 
 <img src="README_files/figure-gfm/scendelivery-1.png" alt="Cumulative vaccine coverage (second SSV dose) by country income level"  />
 <p class="caption">
-<span id="fig:scendelivery"></span>Figure 4.3: Cumulative vaccine
+<span id="fig:scendelivery"></span>Figure 4.4: Cumulative vaccine
 coverage (second SSV dose) by country income level
 </p>
 
@@ -903,8 +925,8 @@ coverage (second SSV dose) by country income level
 
 ## 5.1 Timing
 
-The duration of the Phase three trial is $W_3^{(B)} = 18$ weeks. The
-time to manufacturing transition is $I_R = 12$ weeks, and the time to
+The duration of the Phase III trial is $W_3^{(B)} = 18$ weeks. The time
+to manufacturing transition is $I_R = 12$ weeks, and the time to
 manufacturing scale-up $C_R = 10$ weeks; these are the same as the
 reserved-capacity times for SSV.
 
