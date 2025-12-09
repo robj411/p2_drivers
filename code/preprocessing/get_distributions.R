@@ -274,6 +274,18 @@ for(i in 2:ncol(data)) data[,i] <- as.numeric(data[,i])
 
 data$`International tourism as a share of GDP` <- data$`Tourism as a share of GDP (%)`/100 * data$`International tourism as share of total tourism (%)`
 
+data$Country[data$Country=='Egypt'] <- 'Egypt, Arab Rep.'
+data$Country[data$Country=='Brunei'] <- 'Brunei Darussalam'
+data$Country[data$Country=='Hong Kong'] <- 'Hong Kong SAR, China'
+data$Country[data$Country=='Laos'] <- 'Lao PDR'
+data$Country[data$Country=='Russia'] <- 'Russian Federation'
+data$Country[data$Country=='Slovakia'] <- 'Slovak Republic'
+data$Country[data$Country=='South Korea'] <- 'Korea, Rep.'
+data$Country[data$Country=='Taiwan'] <- ''
+data$Country[data$Country=='Turkey'] <- 'Türkiye'
+data$Country[!data$Country%in%incomelevels$TableName]
+with(subset(data,!is.na(`International tourism as a share of GDP`)),table(incomelevels$IncomeGroup[match(Country,incomelevels$TableName)]))
+with(subset(data,!is.na(`International tourist arrivals, YTD change (%)`)),table(incomelevels$IncomeGroup[match(Country,incomelevels$TableName)]))
 
 ytd <- as.data.frame(readODS::read_ods(file.path(datapath,'tourism.ods'),sheet=2))
 
@@ -361,6 +373,7 @@ joineddata[,mostrecent:=max(date),by=country]
 joineddata <- subset(joineddata,date==mostrecent)
 joineddata[,gdp_to_gnippp:=NY.GNP.PCAP.PP.CD/NY.GDP.PCAP.CD]
 joineddata <- left_join(joineddata,setDT(incomelevels)[,.(Country.Code,IncomeGroup)],by=c('iso3c'="Country.Code"))
+with(joineddata,table(IncomeGroup))
 
 ggplot(joineddata) + geom_point(aes(x=NY.GDP.PCAP.CD,y=gdp_to_gnippp,colour=IncomeGroup)) + theme_bw(base_size = 15) +
   labs(x='GDP pc',y='GDP pc PPP / GDP pc',colour='')

@@ -5,6 +5,7 @@ library(squire)
 countrydatafile <- '../../data/country_data.csv'
 
 p2data <- read.csv(countrydatafile)
+
 p2countries <- p2data$country
 
 cmcols <- which(grepl('CM',colnames(p2data)))
@@ -40,6 +41,23 @@ matrices <- lapply(countries_to_get,function(cn)
 names(matrices) <- countries_to_get
 
 
+lapply(unique(squire::population$matrix), function(x)subset(unique(squire::population[,c(1,4)]),matrix==x))
+sapply(unique(squire::population$matrix), function(x)c(x,nrow(subset(unique(squire::population[,c(1,4)]),matrix==x))))
+# 14: india lmic, n=8
+# 7: netherlands hic, n=47
+# 12: china umic, n=41
+# 15: zimbabwe lmic, n=54
+# 13: peru umic, n=39
+# 2: belgium hic, n=1
+# 1: uk hic, n=3
+# 10: hong kong hic, n=2
+# 4: finland hic, n=1
+# 9: france hic, n=1
+# 3: germany hic, n=1
+# 8: italy hic, n=1
+# 6: luxembourg hic, n=1
+# 5: poland hic, n=1
+
 # update populations and matrices
 p2data[!rowindices,cmcols] <- NA
 for(i in 1:length(matrices)){
@@ -64,5 +82,9 @@ for(i in 1:length(matrices)){
 # View(p2data[,c(1,cmcols)])
 
 write.csv(p2data,countrydatafile,row.names = F, na="")
+
+
+with(subset(p2data,!is.na(wfhl1)),table(igroup))
+
 
 

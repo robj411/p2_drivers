@@ -164,6 +164,9 @@ councon <- unique(owid2020[,.(continent,iso_code)])
 
 minmob[,continent:=councon$continent[councon$iso_code==Code],by=.(Entity,date)]
 
+
+# with(minmob, table(incomelevels$IncomeGroup[match(Code,incomelevels$Country.Code)]))
+
 ## plot #########################################
 
 ggplot(subset(mobilityfull,Code%in%subset(minmob,response<40)$Code)) + 
