@@ -324,10 +324,11 @@ $p^{12}$ is the present value of lost earnings:
 $$p^{12} = \frac{1}{N_{j_{\text{school}}}}\sum_{a\in j_{\text{school}}}\tilde{N}_a\left( \frac{1-(1+r)^{-(m_Y+20-a)}}{r} -  \frac{1-(1+r)^{-(20-a)}}{r}\right)$$
 
 for discount rate $r=0.03$, number $\tilde{N}_a$ students currently age
-$a$, and expected number of years of work $m_Y=45$. $p^{13}$ is mean
-annual earnings (estimated using GDP multiplied by labour share of
-income (Feenstra, Inklaar, and Timmer 2015)), and $p^{15}=0.08$ is the
-rate of return for one year of education.
+$a$, and expected number of years of work $m_Y=45$ (see
+e.g. <https://en.wikipedia.org/wiki/Annuity>). $p^{13}$ is mean annual
+earnings (estimated using GDP multiplied by labour share of income
+(Feenstra, Inklaar, and Timmer 2015)), and $p^{15}=0.08$ is the rate of
+return for one year of education.
 
 The value $p^{16}$ represents the effectiveness of remote teaching,
 which we sample as a standard uniform random variable. We note that no
@@ -552,28 +553,27 @@ $j$. Where rates differ by vaccination status, there is an index $v$.
 
 ### 3.3.1 Vaccine effects
 
-| Quantity                              | BPSV   | SSV     |
-|:--------------------------------------|:-------|:--------|
-| Time to develop immunity              | 7 days | 28 days |
-| Effectiveness against infection       | 0.35   | 0.55    |
-| Effectiveness against hospitalisation | 0.75   | 0.95    |
-| Effect on transmission                | 0.35   | 0.35    |
-| Rate of waning                        | 0      | 0       |
+| Quantity                              | BPSV   | SSV    |
+|:--------------------------------------|:-------|:-------|
+| Time to develop immunity              | 7 days | 7 days |
+| Effectiveness against infection       | 0.35   | 0.55   |
+| Effectiveness against hospitalisation | 0.75   | 0.95   |
+| Effect on transmission                | 0.35   | 0.35   |
+| Rate of waning                        | 0      | 0      |
 
 <span id="tab:vaccineeffects"></span>Table 3.1: Vaccine effects. The
 Time to develop immunity is the average time it takes a person to go
 from the Susceptible compartment to the Vaccinated equivalent
-compartment, such that the rate of transition is 1/28 per for the case
-of the SSV, which corresponds to receipt of a second dose with a
-four-week delay following the first dose. The Effectiveness against
-infection is one minus the relative risk of infection of a vaccinated
-person compared to an unvaccinated person. The Effectiveness against
-hospitalisation is one minus the relative risk of hospitalisation of a
-vaccinated person compared to an unvaccinated person. The Effect on
-transmission is one minus the relative infectiousness of an infectious
-vaccinated person compared to an infectious unvaccinated person. The
-Rate of waning is the rate at which the vaccine effects decay over time.
-Parameter choices were made to align with Whittaker et al. (2024).
+compartment, so that the rate of transition is 1/7 (Liu et al. 2025).
+The Effectiveness against infection is one minus the relative risk of
+infection of a vaccinated person compared to an unvaccinated person. The
+Effectiveness against hospitalisation is one minus the relative risk of
+hospitalisation of a vaccinated person compared to an unvaccinated
+person. The Effect on transmission is one minus the relative
+infectiousness of an infectious vaccinated person compared to an
+infectious unvaccinated person. The Rate of waning is the rate at which
+the vaccine effects decay over time. Parameter choices were made to
+align with Whittaker et al. (2024).
 
 ## 3.4 Contact rates
 
@@ -4653,10 +4653,11 @@ and the \$16 Trillion Virus.” *JAMA* 324 (15).
 
 <div id="ref-Doohan2025" class="csl-entry">
 
-Doohan, P, R Johnson, A Lochen, D Haw, C Morgenstern, G Forchini, and K
-Hauck. 2025. “Mitigating Future Respiratory Pandemics in Low-, Middle-
-and High-Income Countries: A Modelling Study of Health, Economic and
-Educational Losses.” Imperial College London.
+Doohan, Patrick, Rob Johnson, Alessandra Løchen, Christian Morgenstern,
+David Haw, Alice Sabino, Edith Patouillard, Giovanni Forchini, and
+Katharina Hauck. 2025. “Mitigating Future Respiratory Pandemics in Low-,
+Middle- and High-Income Countries: A Modelling Study of Health, Economic
+and Educational Losses.” <https://doi.org/10.2139/ssrn.5711172>.
 
 </div>
 
@@ -4718,6 +4719,16 @@ Snapshot of Post-Pandemic Behaviour from the CoMix Study.” *Epidemics*
 Jones, Sarah P, Imperial College London Big Data Analytical Unit, and
 YouGov Plc. 2020. “Imperial College London YouGov Covid 19 Behaviour
 Tracker Data Hub.” <https://github.com/YouGov-Data/covid-19-tracker>.
+
+</div>
+
+<div id="ref-Liu2025" class="csl-entry">
+
+Liu, Chang, Tim K. Tsang, Sheena G. Sullivan, Benjamin J. Cowling, and
+Bingyi Yang. 2025. “Comparative Duration of Neutralizing Responses and
+Protections of COVID-19 Vaccination and Correlates of Protection.”
+*Nature Communications* 16 (1): 4748.
+<https://doi.org/10.1038/s41467-025-60024-9>.
 
 </div>
 
