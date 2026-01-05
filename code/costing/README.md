@@ -1,43 +1,93 @@
 The Costing Model
 ================
 
-- [1 Parameters](#1-parameters)
-- [2 Preparedness cost equation](#2-preparedness-cost-equation)
-  - [2.1 BPSV advanced R&D](#21-bpsv-advanced-rd)
-  - [2.2 BPSV investigational reserve](#22-bpsv-investigational-reserve)
-  - [2.3 SSV capacity reservation](#23-ssv-capacity-reservation)
-  - [2.4 Enabling activities](#24-enabling-activities)
-- [3 Response cost equation](#3-response-cost-equation)
-  - [3.1 Risk-adjusted R&D cost per candidate
-    calculation](#31-risk-adjusted-rd-cost-per-candidate-calculation)
-    - [3.1.1 SSV](#311-ssv)
-    - [3.1.2 BPSV](#312-bpsv)
-  - [3.2 Procurement cost calculation](#32-procurement-cost-calculation)
-    - [3.2.1 SSV](#321-ssv)
-    - [3.2.2 BPSV](#322-bpsv)
-  - [3.3 Delivery Cost Equation](#33-delivery-cost-equation)
-    - [3.3.1 SSV](#331-ssv)
-    - [3.3.2 BPSV](#332-bpsv)
-- [4 SSV delivery](#4-ssv-delivery)
-  - [4.1 Timing](#41-timing)
-  - [4.2 Production](#42-production)
-  - [4.3 Allocation](#43-allocation)
-  - [4.4 Delivery](#44-delivery)
-- [5 BPSV delivery](#5-bpsv-delivery)
+- [1 Questions and suggestions](#1-questions-and-suggestions)
+- [2 Parameters](#2-parameters)
+- [3 Preparedness cost equation](#3-preparedness-cost-equation)
+  - [3.1 BPSV advanced R&D](#31-bpsv-advanced-rd)
+  - [3.2 BPSV investigational reserve](#32-bpsv-investigational-reserve)
+  - [3.3 SSV capacity reservation](#33-ssv-capacity-reservation)
+  - [3.4 Enabling activities](#34-enabling-activities)
+- [4 Response cost equation](#4-response-cost-equation)
+  - [4.1 Risk-adjusted R&D cost per candidate
+    calculation](#41-risk-adjusted-rd-cost-per-candidate-calculation)
+    - [4.1.1 SSV](#411-ssv)
+    - [4.1.2 BPSV](#412-bpsv)
+  - [4.2 Procurement cost calculation](#42-procurement-cost-calculation)
+    - [4.2.1 SSV](#421-ssv)
+    - [4.2.2 BPSV](#422-bpsv)
+  - [4.3 Delivery Cost Equation](#43-delivery-cost-equation)
+    - [4.3.1 SSV](#431-ssv)
+    - [4.3.2 BPSV](#432-bpsv)
+- [5 SSV delivery](#5-ssv-delivery)
   - [5.1 Timing](#51-timing)
   - [5.2 Production](#52-production)
   - [5.3 Allocation](#53-allocation)
   - [5.4 Delivery](#54-delivery)
-- [6 Parameter samples](#6-parameter-samples)
-- [7 Contributors](#7-contributors)
-- [8 References](#8-references)
+- [6 BPSV delivery](#6-bpsv-delivery)
+  - [6.1 Timing](#61-timing)
+  - [6.2 Production](#62-production)
+  - [6.3 Allocation](#63-allocation)
+  - [6.4 Delivery](#64-delivery)
+- [7 Parameter samples](#7-parameter-samples)
+- [8 Contributors](#8-contributors)
+- [9 References](#9-references)
+
+# 1 Questions and suggestions
+
+Edit suggestions
+
+1.  On sheet “6. SARS-X R&D” there are two “SARS-X Preclin PoS”, and no
+    “Preclin Duration”. The “Preclinical / Trad Weeks” comes from Phase
+    1.  
+2.  Cell C18 on sheet “11. Delivery” -\> 10%
+3.  Stop first SSV doses at half the number of allocated doses. This
+    changes delivery costs slightly when deliveries stop just after a
+    change of year, due to discounting. It should not affect delivery in
+    the impact model.
+4.  In “12. Cashflow & PV”, it looks like Advance Cashflows discount to
+    2025, and Response Cashflows to 2024. We could correct the latter to
+    2025, or, better still, change both to 2026.
+5.  Why do booster doses start again in terms of cost per dose by phase
+    for delivery? Can I suggest the cost for delivering these doses
+    should be the third phase cost?
+
+Clarifications
+
+1.  14 BPSV candidates or 8?
+2.  Do all BPSV start at Phase 0, or do some start at Phase 1?
+3.  BPSV R&D costs appear to be inflated for inflation (28%) for BPSV
+    prep R&D but not licensure and not BPSV Phase 3. For SSV, phase
+    costs are inflated but licensure isn’t.
+4.  What is the stockpile upfront cost?
+5.  BPSV response R&D does not appear to depend on number of candidates,
+    probability of success, probability to occur, or inflation. Should
+    it?
+6.  SSV PoS uses a beta distribution and refers to COVID data (sheet
+    “PoS by Phase”). The formula to describe a beta distribution for
+    probability p using data is p~Beta(a, b), where a=successes+1 and
+    b=failures+1. So for preclinical we have p~Beta(97, 34). And in the
+    final phase, p~Beta(28, 9), because there were 35 remaining
+    candidates, of which 27 passed and 8 failed. Did I understand this
+    table correctly? And is there a source for these data?
+
+Nice to have?
+
+1.  Why was 1000000000 (1 billion) chosen as the target amount for BPSV
+    production? This can be rationalised by setting vaccine wastage to
+    0.3142532. (NB: no vaccine wastage is assumed for SSV.)
+2.  Some values in “1. Input Dashboard” are calculated rather than given
+    (e.g. cost for the capacity reservation, 160000000\*1.08/325000000;
+    BSPV investigational cost per dose, 12145636/1200000000; the
+    stockpile upfront cost, 138000000/1200000000 per dose). Can we
+    include the sources & rationale for these values?
 
 <!-- # Figures (temporary) {.unlisted .unnumbered} -->
 
 This document describes the costing model that is used in the CEPI
 application.
 
-# 1 Parameters
+# 2 Parameters
 
 | Math notation | Code | Description | Distribution | Parameters | Bounds | Source |
 |:--:|:--:|:--:|:--:|:--:|:--:|:--:|
@@ -53,18 +103,18 @@ application.
 | $W_{3; 365}^{(S)}$ | weeks_P3_365 | SSV phase III duration (365); weeks | Constant | 16 |  |  |
 | $W_{3; 200}^{(S)}$ | weeks_P3_200 | SSV phase III duration (200DM); weeks | Constant | 15 |  |  |
 | $W_{3; 100}^{(S)}$ | weeks_P3_100 | SSV phase III duration (100DM); weeks | Constant | 8 |  |  |
-| $V_{L; 0}$ | cost_lic_0 | Cost of vaccine delivery at start up (0–10%) in LIC; USD per dose | Triangular | 1, 1.5, 2 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{L; 11}$ | cost_lic_11 | Cost of vaccine delivery during ramp up (11–30%) in LIC; USD per dose | Triangular | 0.75, 1, 1.5 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{L; 31}$ | cost_lic_31 | Cost of vaccine delivery getting to scale (31–80%) in LIC; USD per dose | Triangular | 1, 2, 4 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{LM; 0}$ | cost_lmic_0 | Cost of vaccine delivery at start up (0–10%) in LMIC; USD per dose | Triangular | 3, 4.5, 6 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{LM; 11}$ | cost_lmic_11 | Cost of vaccine delivery during ramp up (11–30%) in LMIC; USD per dose | Triangular | 2.25, 3, 4.5 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{LM; 31}$ | cost_lmic_31 | Cost of vaccine delivery getting to scale (31–80%) in LMIC; USD per dose | Triangular | 1.5, 2, 2.5 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{UM; 0}$ | cost_umic_0 | Cost of vaccine delivery at start up (0–10%) in UMIC; USD per dose | Triangular | 6, 9, 12 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{UM; 11}$ | cost_umic_11 | Cost of vaccine delivery during ramp up (11–30%) in UMIC; USD per dose | Triangular | 4.5, 6, 9 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{UM; 31}$ | cost_umic_31 | Cost of vaccine delivery getting to scale (31–80%) in UMIC; USD per dose | Triangular | 3, 4, 5 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{H; 0}$ | cost_hic_0 | Cost of vaccine delivery at start up (0–10%) in HIC; USD per dose | Triangular | 30, 40, 75 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{H; 11}$ | cost_hic_11 | Cost of vaccine delivery during ramp up (11–30%) in HIC; USD per dose | Triangular | 30, 40, 75 |  | See Table <a href="#tab:delcosts">3.1</a> |
-| $V_{H; 31}$ | cost_hic_31 | Cost of vaccine delivery getting to scale (31–80%) in HIC; USD per dose | Triangular | 30, 40, 75 |  | See Table <a href="#tab:delcosts">3.1</a> |
+| $V_{L; 0}$ | cost_lic_0 | Cost of vaccine delivery at start up (0–10%) in LIC; USD per dose | Triangular | 1, 1.5, 2 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{L; 11}$ | cost_lic_11 | Cost of vaccine delivery during ramp up (11–30%) in LIC; USD per dose | Triangular | 0.75, 1, 1.5 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{L; 31}$ | cost_lic_31 | Cost of vaccine delivery getting to scale (31–80%) in LIC; USD per dose | Triangular | 1, 2, 4 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{LM; 0}$ | cost_lmic_0 | Cost of vaccine delivery at start up (0–10%) in LMIC; USD per dose | Triangular | 3, 4.5, 6 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{LM; 11}$ | cost_lmic_11 | Cost of vaccine delivery during ramp up (11–30%) in LMIC; USD per dose | Triangular | 2.25, 3, 4.5 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{LM; 31}$ | cost_lmic_31 | Cost of vaccine delivery getting to scale (31–80%) in LMIC; USD per dose | Triangular | 1.5, 2, 2.5 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{UM; 0}$ | cost_umic_0 | Cost of vaccine delivery at start up (0–10%) in UMIC; USD per dose | Triangular | 6, 9, 12 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{UM; 11}$ | cost_umic_11 | Cost of vaccine delivery during ramp up (11–30%) in UMIC; USD per dose | Triangular | 4.5, 6, 9 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{UM; 31}$ | cost_umic_31 | Cost of vaccine delivery getting to scale (31–80%) in UMIC; USD per dose | Triangular | 3, 4, 5 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{H; 0}$ | cost_hic_0 | Cost of vaccine delivery at start up (0–10%) in HIC; USD per dose | Triangular | 30, 40, 75 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{H; 11}$ | cost_hic_11 | Cost of vaccine delivery during ramp up (11–30%) in HIC; USD per dose | Triangular | 30, 40, 75 |  | See Table <a href="#tab:delcosts">4.1</a> |
+| $V_{H; 31}$ | cost_hic_31 | Cost of vaccine delivery getting to scale (31–80%) in HIC; USD per dose | Triangular | 30, 40, 75 |  | See Table <a href="#tab:delcosts">4.1</a> |
 | $M_G$ | man_glo | Global annual manufacturing volume; billion doses | Constant | 15 |  | Linksbridge SPC (2025) |
 | $M_C$ | man_curr | Current annual manufacturing volume; billion doses | Constant | 9 |  | Linksbridge SPC (2025) |
 | $F$ | week_trans_start | Facility transition start; weeks before vaccine approval | Constant | 7 |  |  |
@@ -75,10 +125,15 @@ application.
 | $C_R$ | weeks_scale_res | Weeks to scale up to full capacity, reserved infrastructure | Constant | 10 |  | Vaccines Europe (2023) |
 | $C_E$ | weeks_scale_ex | Weeks to scale up to full capacity, existing and unreserved infrastructure | Constant | 16 |  |  |
 | $C_B$ | weeks_scale_bui | Weeks to scale up to full capacity, built and unreserved infrastructure | Constant | 16 |  |  |
-| $P_0$ | pos_0 | Probability of success; preclinical | Multinomial | 0.40, 0.41, 0.41, 0.42, 0.48, 0.57 |  | Gouglas et al. (2018) |
-| $P_1$ | pos_1 | Probability of success; Phase I | Multinomial | 0.33, 0.40, 0.50, 0.68, 0.70, 0.72, 0.74, 0.77, 0.81, 0.90 |  | Gouglas et al. (2018) |
-| $P_2$ | pos_2 | Probability of success; Phase II | Multinomial | 0.22, 0.31, 0.33, 0.43, 0.46, 0.54, 0.58, 0.58, 0.74, 0.79 |  | Gouglas et al. (2018) |
-| $P_3$ | pos_3 | Probability of success; Phase III | Uniform | 0.4, 0.8 |  | Wong, Siah, and Lo (2019) |
+| $P_0^{\text{(BPSV)}}$ | pos_0 | Probability of success; preclinical | Multinomial | 0.40, 0.41, 0.41, 0.42, 0.48, 0.57 |  | Gouglas et al. (2018) |
+| $P_1^{\text{(BPSV)}}$ | pos_1 | Probability of success; Phase I | Multinomial | 0.33, 0.40, 0.50, 0.68, 0.70, 0.72, 0.74, 0.77, 0.81, 0.90 |  | Gouglas et al. (2018) |
+| $P_2^{\text{(BPSV)}}$ | pos_2 | Probability of success; Phase II | Multinomial | 0.22, 0.31, 0.33, 0.43, 0.46, 0.54, 0.58, 0.58, 0.74, 0.79 |  | Gouglas et al. (2018) |
+| $P_3^{\text{(BPSV)}}$ | pos_3 | Probability of success; Phase III | Uniform | 0.4, 0.8 |  | Wong, Siah, and Lo (2019) |
+| $X_0$ | covid_ssv_0 | COVID-19 candidates failed at preclinical | Constant | 33 |  |  |
+| $X_1$ | covid_ssv_1 | COVID-19 candidates failed at Phase 1 | Constant | 20 |  |  |
+| $X_2$ | covid_ssv_2 | COVID-19 candidates failed at Phase 2 | Constant | 8 |  |  |
+| $X_3$ | covid_ssv_3 | COVID-19 candidates failed at Phase 3 | Constant | 8 |  |  |
+| $X_4$ | covid_ssv_4 | COVID-19 candidates successful | Constant | 27 |  |  |
 | $T_0^{(e)}$ | cost_0_ex | Cost, preclinical, experienced manufacturer; USD | Exponential | 24213683 | 1700000, 140000000 | Gouglas et al. (2018) |
 | $T_0^{(n)}$ | cost_0_inex | Cost, preclinical, inexperienced manufacturer; USD | Inverse Gaussian | 7882792, 13455907 | 1700000, 37000000 | Gouglas et al. (2018) |
 | $T_1^{(e)}$ | cost_1_ex | Cost, Phase I, experienced manufacturer; USD | Inverse Gaussian | 15339198, 8076755 | 1900000, 70000000 | Gouglas et al. (2018) |
@@ -87,7 +142,7 @@ application.
 | $T_2^{(n)}$ | cost_2_inex | Cost, Phase II, inexperienced manufacturer; USD | Inverse Gaussian | 17124622, 35918793 | 4400000, 54000000 | Gouglas et al. (2018) |
 | $T_3^{(e)}$ | cost_3_ex | Cost, Phase III, experienced manufacturer; USD | PearsonV | 1.3147, 51397313 | 15000000, 910000000 | Gouglas et al. (2018) |
 | $T_3^{(n)}$ | cost_3_inex | Cost, Phase III, inexperienced manufacturer; USD | PearsonVI | 4.8928, 1.6933, 11400026 | 2500000, 400000000 | Gouglas et al. (2018) |
-| $\omega$ | inex_weight | Share of manufacturers that are inexperienced | Constant | 0.875 |  | See Table <a href="#tab:inex">2.1</a> |
+| $\omega$ | inex_weight | Share of manufacturers that are inexperienced | Constant | 0.875 |  | See Table <a href="#tab:inex">3.1</a> |
 | $L$ | cost_lic | Licensure cost, 2018; USD | Constant | 287750 |  | Gouglas et al. (2018) |
 | $Y_0^{(B)}$ | duration_0 | BPSV preclinical duration; years | Multinomial | 1, 2 |  | CEPI (2022) |
 | $Y_1^{(B)}$ | duration_1 | BPSV Phase I duration; years | Multinomial | 1, 2 |  | CEPI (2022) |
@@ -96,36 +151,40 @@ application.
 | $W_3^{(B)}$ | duration_3_resp | BPSV response Phase III duration; weeks | Constant | 18 |  |  |
 | $L^{(B)}$ | years_lic | Licensure duration; years | Constant | 2 |  | CEPI (2022) |
 | $G$ | cost_cogs | Drug substance cost; USD per dose | Constant | 4.68 |  | Kazaz (2021) |
-| $A_1$ | cost_bpsv_res | Annual BPSV reservation cost, USD | Constant | 1012 |  |  |
-| $A_2$ | cost_capres | Advanced capacity reservation fee; USD per dose per year | Constant | 0.53 |  | Pfizer (2023) |
-| $S_U$ | cost_un | SSV procurement price, reactive capacity; USD per dose | Constant | 18.94 |  | Linksbridge SPC (2025) |
+| $A_1$ | cost_bpsv_res | Annual BPSV reservation cost, USD per dose | Constant | 0.0101213633333333 |  |  |
+| $A_2$ | cost_capres | Advanced capacity reservation fee; USD per dose per year | Constant | 0.531692307692308 |  | Pfizer (2023) |
+| $S_U$ | cost_un | SSV procurement price, reactive capacity; USD per dose | Constant | 18.9392 |  | Linksbridge SPC (2025) |
 | $E$ | cost_enab | Enabling activities; million USD per year | Constant | 700 |  | CEPI (2021) |
-| $I$ | inflation | Inflation (2018 t0 2025) | Constant | 0.28 |  | U.S. Bureau of Labor Statistics (n.d.) |
+| $I$ | inflation | Inflation (2018 t0 2025) | Constant | 0.28 |  | U.S. BLS (2025) |
 | $r$ | discount | Discount rate | Uniform | 0.02, 0.06 |  | Glennerster, Snyder, and Tan (2023) |
 | $M_p$ | profit | Profit margin | Constant | 0.2 |  | Kazaz (2021) |
-| $M_f$ | cost_ff | Fill/finish cost | Constant | 0.14 |  | Kazaz (2021) |
+| $M_f$ | cost_ff | Fill/finish cost | Constant | 0.1398 |  | Kazaz (2021) |
 | $M_t$ | cost_travel | Cost to transport product | Constant | 0.12 |  | Kazaz (2021) |
-| $N_{HIC}^{(15)}$ | pop_hic_0 | Population, HIC | Constant | 1261155607 |  | OWID (2024) |
-| $N_{UMIC}^{(15)}$ | pop_umic_0 | Population, UMIC | Constant | 2811308942 |  | OWID (2024) |
-| $N_{LMIC}^{(15)}$ | pop_lmic_0 | Population, LMIC | Constant | 3253459082 |  | OWID (2024) |
-| $N_{LIC}^{(15)}$ | pop_lic_0 | Population, LIC | Constant | 736466395 |  | OWID (2024) |
-| $N_{HIC}^{(15)}$ | pop_hic_15 | Population aged 15 and older, HIC | Constant | 1062903718 |  | OWID (2024) |
-| $N_{UMIC}^{(15)}$ | pop_umic_15 | Population aged 15 and older, UMIC | Constant | 2258682374 |  | OWID (2024) |
-| $N_{LMIC}^{(15)}$ | pop_lmic_15 | Population aged 15 and older, LMIC | Constant | 2292686818 |  | OWID (2024) |
-| $N_{LIC}^{(15)}$ | pop_lic_15 | Population aged 15 and older, LIC | Constant | 431149981 |  | OWID (2024) |
-| $N_{HIC}^{(65)}$ | pop_hic_65 | Population aged 65 and older, HIC | Constant | 245880785 |  | OWID (2024) |
-| $N_{UMIC}^{(65)}$ | pop_umic_65 | Population aged 65 and older, UMIC | Constant | 340100977 |  | OWID (2024) |
-| $N_{LMIC}^{(65)}$ | pop_lmic_65 | Population aged 65 and older, LMIC | Constant | 196323876 |  | OWID (2024) |
-| $N_{LIC}^{(65)}$ | pop_lic_65 | Population aged 65 and older, LIC | Constant | 23832449 |  | OWID (2024) |
-| $N^{\text{(SSV)}}$ | n_ssv_candidates | Number of SSV candidates | Constant | 18 |  |  |
-| $N^{\text{(BPSV)}}$ | n_bpsv_candidates | Number of BPSV candidates | Constant | 8 |  | CEPI (2025) |
+| $N_{HIC}^{(0)}$ | pop_hic_0 | Population, HIC | Constant | 1260028362 |  |  |
+| $N_{UMIC}^{(0)}$ | pop_umic_0 | Population, UMIC | Constant | 2854556263.5 |  |  |
+| $N_{LMIC}^{(0)}$ | pop_lmic_0 | Population, LMIC | Constant | 3314048516 |  |  |
+| $N_{LIC}^{(0)}$ | pop_lic_0 | Population, LIC | Constant | 762656294\.5 |  |  |
+| $N_{HIC}^{(15)}$ | pop_hic_15 | Population aged 15 and older, HIC | Constant | 1064531991.5 |  |  |
+| $N_{UMIC}^{(15)}$ | pop_umic_15 | Population aged 15 and older, UMIC | Constant | 2308984518 |  |  |
+| $N_{LMIC}^{(15)}$ | pop_lmic_15 | Population aged 15 and older, LMIC | Constant | 2363976954.5 |  |  |
+| $N_{LIC}^{(15)}$ | pop_lic_15 | Population aged 15 and older, LIC | Constant | 450976596\.5 |  |  |
+| $N_{HIC}^{(65)}$ | pop_hic_65 | Population aged 65 and older, HIC | Constant | 256715334 |  |  |
+| $N_{UMIC}^{(65)}$ | pop_umic_65 | Population aged 65 and older, UMIC | Constant | 359824402\.5 |  |  |
+| $N_{LMIC}^{(65)}$ | pop_lmic_65 | Population aged 65 and older, LMIC | Constant | 215830985\.5 |  |  |
+| $N_{LIC}^{(65)}$ | pop_lic_65 | Population aged 65 and older, LIC | Constant | 24812768 |  |  |
+| $Q^{\text{(SSV)}}$ | q_ssv_successes | Probability of N or more SSV successes | Constant | 0.9 |  | Model choice |
+| $n^{\text{(SSV)}}$ | n_ssv_successes | Number of SSV successes | Constant | 5 |  | Model choice |
+| $N^{\text{(BPSV)}}$ | n_bpsv_candidates | Number of BPSV candidates | Constant | 14 |  | CEPI (2025) |
+| $N^{\text{(BPSV-1)}}$ | n_bpsv_p1 | Number of BPSV candidates starting at phase 1 | Constant | 1 |  |  |
 | $A_3$ | hic_cap_res | Reserved capacity for HIC, billions | Constant | 0.5 |  |  |
 | $\lambda$ | final_vaccine_coverage | Final vaccine coverage, proportion of population | Constant | 0.8 |  | Model choice |
 | $A_4$ | bpsv_inv_res | Size of BPSV investigational reserve, doses | Constant | 100000 |  | Model choice |
-| $\delta$ | vaccine_wastage | Fraction of vaccine product expected to go to waste | Constant | 0.1 |  |  |
+| $\delta$ | vaccine_wastage | Fraction of BPSV expected to go to waste | Constant | 0.3142532 |  | Model choice |
 | $Y^{(200)}$ | years_200 | Years of R&D to 200-day readiness | Constant | 5 |  |  |
 | $Y^{(100)}$ | years_100 | Years of R&D to 100-day readiness | Constant | 15 |  |  |
 | $Y_{rep}$ | bpsv_replenishment | Years after which BPSV doses are to be replaced | Constant | 3 |  |  |
+| $A_5$ | bpsv_res_upfront | BPSV reserve upfront cost, USD per dose | Constant | 0.115 |  |  |
+| $N^{\text{(boost)}}$ | n_boosters | Number of boosters given, one per year | Constant | 2 |  | Model choice |
 
 Notation and parametric assumptions for inputs to the costing model.
 Parameters are used as follows: uniform distributions go from Parameter
@@ -140,24 +199,26 @@ location 0. PearsonVI distributions have shape Parameters 1 and 2, scale
 Parameter 3, and location 0. Where given, distributions are truncated at
 bounds.
 
-# 2 Preparedness cost equation
+# 3 Preparedness cost equation
 
 <span style="color:red;">(BPSV R&D + BPSV Stockpile + SARS-X Reserved
 capacity + Enabling activities) / (1 + discount rate) ^ (year –
 2025)</span>
 
-$$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + D_{s,y}^{\\text{(en)}}\right)$$
+$$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^{\text{(BP-man)}} + D_{s,y}^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + D_{s,y}^{\\text{(en)}}\right)$$
 
 - $D_s^{\text{(BP-adRD)}}$ is the R&D cost of BPSV prior to an outbreak;
-  see Equation (2.1)
-- $D_{s,y}^{\text{(BP-inv)}}$ is the cost of maintaining an
-  investigational reserve of 100,000 BPSV doses; see Equation (2.2)
+  see Equation (3.1)
+- $D_{s,y}^{\text{(BP-man)}}$ is the upfront cost of maintaining an
+  investigational reserve of 100,000 BPSV doses; see Equation (3.2)
+- $D_{s,y}^{\text{(BP-inv)}}$ is the annual cost of maintaining an
+  investigational reserve of 100,000 BPSV doses; see Equation (3.3)
 - $D_s^{\text{(S-cap)}}$ is the cost of reserved capacity for SSV; see
-  Equation (2.3)
+  Equation (3.4)
 - $D_{s,y}^{\\text{(en)}}$ is the annual cost of enabling activities;
-  see Equation (2.4).
+  see Equation (3.5).
 
-## 2.1 BPSV advanced R&D
+## 3.1 BPSV advanced R&D
 
 **These values match the spreadsheet results**
 
@@ -172,7 +233,7 @@ $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^
 | VIDO      | No                   |
 | IVI       | No                   |
 
-<span id="tab:inex"></span>Table 2.1: Manufacturers working on BPSV and
+<span id="tab:inex"></span>Table 3.1: Manufacturers working on BPSV and
 whether or not they have licensure experience
 
 Probabilities of success for preclinical, Phase I, Phase II, and Phase
@@ -196,32 +257,46 @@ D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
  N^{\text{(BPSV)}}\sum_{i=0}^2 \hat{P}_iT_{i} \\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
-\qquad(2.1)
+\qquad(3.1)
 \end{equation}$$
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/posbpsv-1.png" alt="Risk-adjusted R&amp;D cost for 8 BPSV candidates"  />
 <p class="caption">
-<span id="fig:posbpsv"></span>Figure 2.1: Risk-adjusted R&D cost for 8
+<span id="fig:posbpsv"></span>Figure 3.1: Risk-adjusted R&D cost for 8
 BPSV candidates
 </p>
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.06 0.10 0.14 0.15 0.19 0.36
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.11 0.24 0.31 0.33 0.40 1.11
 
 Target: 146 (103 135 177)
 
-## 2.2 BPSV investigational reserve
+## 3.2 BPSV investigational reserve
 
-**The stockpile cost (annual) is correct, at around 162 thousand, but
-the total cost is slightly too high**
+**The annual cost annual is correct, at around 162 thousand, but the
+total cost is slightly too high**
 
 The time taken to complete development of the BPSV up to the end of
 phase II, from which point it is stockpiled, is:
 
 $$Y^{(B)} = Y_0^{(B)} + Y_1^{(B)} + Y_2^{(B)}.$$
+
+The upfront cost of securing the BPSV investigational reserve is
+
+$$\begin{equation}
+D_{s,y}^{\text{(BP-man)}} = \left\\{\begin{array}{lr}
+ A_4A_5
+\\; & \\; s\in\\{1,2,3\\} \\;\\&\\;y=Y^{(B)}\\\\
+0  \\; & \\; s\notin\\{1,2,3\\}\\;\\|\\;y\neq Y^{(B)}
+\end{array}\right.
+\qquad(3.2)
+\end{equation}$$
+
+where $A_4 =100,000$ is the size of the reserve and $A_5 =0.115$ is the
+cost per dose in USD.
 
 The cost of goods supplied is $G = 4.68$. Then the cost of drug
 substance is $G(1-M_f)(1+M_p) = 4.83$ USD per dose. The reserve is
@@ -234,33 +309,34 @@ D_{s,y}^{\text{(BP-inv)}} = \left\\{\begin{array}{lr}
 \\; & \\; s\in\\{1,2,3\\} \\;\\&\\;y>Y^{(B)}\\\\
 0  \\; & \\; s\notin\\{1,2,3\\}\\;\\|\\;y\leq Y^{(B)}
 \end{array}\right.
-\qquad(2.2)
+\qquad(3.3)
 \end{equation}$$
 
-where $A_1 = 1,012$ USD is the annual reservation cost.
+where $A_1 = 0$ USD is the annual reservation cost.
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/bpsvinv-1.png" alt="BPSV investigational reserve costs accumulated from the completion of Phase II to year 15 with uniformly distributed discount rate."  />
 <p class="caption">
-<span id="fig:bpsvinv"></span>Figure 2.2: BPSV investigational reserve
+<span id="fig:bpsvinv"></span>Figure 3.2: BPSV investigational reserve
 costs accumulated from the completion of Phase II to year 15 with
 uniformly distributed discount rate.
 </p>
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.78 0.94 1.07 1.08 1.20 1.45
+Min. 1st Qu. Median Mean 3rd Qu. Max. 778.1 968.3 1091.0 1093.1 1206.5
+1457.9
 
 Target: 1 (0.9 1 1.1)
 
-## 2.3 SSV capacity reservation
+## 3.3 SSV capacity reservation
 
 **This matches the spreadsheet results.**
 
-The cost per dose reservation per year is $A_2 = 0.53$ USD. Reservation
-sizes, in billions, depend on scenarios, including the $A_3 = 0.5$
-billion doses reserved for HIC, as follows:
+The cost per dose reservation per year is $A_2 = 0.5316923$ USD.
+Reservation sizes, in billions, depend on scenarios, including the
+$A_3 = 0.5$ billion doses reserved for HIC, as follows:
 
 $$\begin{equation}
 M_{R,s} = \left\\{\begin{array}{lr}A_3 & s\in\\{0, 1, 6, 9, 12\\} \\\\ 
@@ -272,28 +348,28 @@ Then the total cost per year is
 
 $$\begin{equation}
 D_s^{\text{(S-cap)}} =  M_{R,s} A_2
-\qquad(2.3)
+\qquad(3.4)
 \end{equation}$$
 
-The annual costs in billion USD are 0.265, 0.636, and 1.325,
+The annual costs in billion USD are 0.2658462, 0.6380308, and 1.3292308,
 respectively.
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/capres-1.png" alt="Capacity reservation costs accumulated over 15 years with uniformly distributed discount rate."  />
 <p class="caption">
-<span id="fig:capres"></span>Figure 2.3: Capacity reservation costs
+<span id="fig:capres"></span>Figure 3.3: Capacity reservation costs
 accumulated over 15 years with uniformly distributed discount rate.
 </p>
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.73 2.87 3.00 3.05 3.23 3.47
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.74 2.90 3.10 3.10 3.29 3.48
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.56 6.89 7.20 7.32 7.76 8.32
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.57 6.97 7.43 7.43 7.88 8.36
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.66 14.35 14.99 15.24 16.17
-17.34
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.69 14.52 15.48 15.48 16.43
+17.42
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -301,7 +377,7 @@ Targets: 3,086 (2,897 3,074 3,269)
 
 15,431 (14,487 15,370 16,344)
 
-## 2.4 Enabling activities
+## 3.4 Enabling activities
 
 **This matches the spreadsheet results**
 
@@ -312,7 +388,7 @@ million, accumulate depending on the year and the mission:
 $$\begin{equation}
 D_{s,y}^{\text{(en)}} = \left\\{\begin{array}{lr}E & \zeta(s)=200 \\;\\&\\; y\leq 5 \\; |\\; \zeta(s)=100\\; \\& \\;y\leq 15 \\\\ 
 0 & \zeta(s)=365 \\;|\\; y > 15 \\;|\\; \zeta(s)=200 \\;\\&\\; y \\;>\\; 5  \end{array}\right.
-\qquad(2.4)
+\qquad(3.5)
 \end{equation}$$
 
 For our scenarios, we have
@@ -327,7 +403,7 @@ $$\begin{equation}
 
 <img src="README_files/figure-gfm/en-1.png" alt="Enabling costs accumulated over 15 years with uniformly distributed discount rate."  />
 <p class="caption">
-<span id="fig:en"></span>Figure 2.4: Enabling costs accumulated over 15
+<span id="fig:en"></span>Figure 3.4: Enabling costs accumulated over 15
 years with uniformly distributed discount rate.
 </p>
 
@@ -335,9 +411,9 @@ years with uniformly distributed discount rate.
 
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.22 3.23 3.29 3.36
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.25 3.25 3.31 3.37
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.22 7.58 7.92 8.05 8.54 9.16
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.65 8.15 8.15 8.65 9.17
 
 Targets:
 
@@ -345,7 +421,7 @@ Targets:
 
 8,126 (7,629 8,094 8,607)
 
-# 3 Response cost equation
+# 4 Response cost equation
 
 <span style="color:red;">(BPSV R&D + SARS-X R&D + BPSV Procurement +
 SARS-X Procurement + BPSV Delivery + SARS-X Delivery) / (1 + discount
@@ -354,19 +430,19 @@ rate) ^ (year – 2025)</span>
 $$D_y^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-resRD)}} + D_s^{\text{(S-RD)}} + D_s^{\text{(BP-proc)}} + D_{s}^{\text{(S-proc)}} + D_s^{\text{(BP-del)}} + D^{\text{(S-del)}}\right)$$
 
 - $D_s^{\text{(BP-resRD)}}$ is the R&D cost of BPSV after an outbreak;
-  see Equation (3.2)
-- $D_s^{\text{(S-RD)}}$ is the R&D cost for SSV; see Equation (3.1)
+  see Equation (4.2)
+- $D_s^{\text{(S-RD)}}$ is the R&D cost for SSV; see Equation (4.1)
 - $D_s^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation
-  (3.4)
+  (4.4)
 - $D_{s}^{\text{(S-proc)}}$ is the cost of procuring SSV; see Equation
-  (3.3)
+  (4.3)
 - $D_s^{\text{(BP-del)}}$ is the cost of delivering BPSV; see Equation
-  (3.6)
-- $D^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation (3.5)
+  (4.6)
+- $D^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation (4.5)
 
-## 3.1 Risk-adjusted R&D cost per candidate calculation
+## 4.1 Risk-adjusted R&D cost per candidate calculation
 
-### 3.1.1 SSV
+### 4.1.1 SSV
 
 **These don’t match the spreadsheet results. Values too low.**
 
@@ -375,33 +451,52 @@ the R&D investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$:
 
 $$T_{\zeta,i}^{(e)} = \frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}.$$
 
+The probability of success of each phase comes from COVID-19 data.
+
+$$\begin{equation}
+P_i^{\text{(SSV)}} \sim \text{Beta}\left(\sum_{j=i+1}^4X_j+1, X_i + 1 \right)
+\end{equation}$$
+
+for $i \in \left\{0,1,2,3 \right\}$ where $X_i$ is the number of
+candidates that failed in phase $i$ and $X_4$ the number that succeeded.
+
 Then the total cost is
 
 $$\begin{equation}
-D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_iT_{\zeta(s),i}^{(e)} + (1+I) \hat{P}_LL\right)
-\qquad(3.1)
+D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}}T_{\zeta(s),i}^{(e)} + (1+I) \hat{P}_LL\right)
+\qquad(4.1)
 \end{equation}$$
 
 where $I$ is inflation from 2018 to 2025.
 
-We multiply by the number of candidates, $N^{\text{(SSV)}}=18$, to get
-the total cost from the weighted average per candidate.
+We multiply by the number of candidates, $N^{\text{(SSV)}}$, to get the
+total cost from the weighted average per candidate, where
+
+$$\begin{equation}
+N^{\text{(SSV)}} = n^{\text{(SSV)}} + F^{-1}_{NegBin}\left(Q^{\text{(SSV)}}; n^{\text{(SSV)}},  \hat{P}_3^{\text{(SSV)}} \right)
+\end{equation}$$
+
+is chosen to secure at least $n^{\text{(SSV)}}=5$ successful candidates
+with probability $Q^{\text{(SSV)}}=90\%$. Here,
+$F^{-1}_{NegBin}\left(q; n,  p \right)$ is the cumulative density of a
+negative binomial distribution with parameters $n$ and $p$ evaluated at
+quantile $q$.
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/posssv-1.png" alt="Risk-adjusted R&amp;D cost for 18 SSV candidates"  />
 <p class="caption">
-<span id="fig:posssv"></span>Figure 3.1: Risk-adjusted R&D cost for 18
+<span id="fig:posssv"></span>Figure 4.1: Risk-adjusted R&D cost for 18
 SSV candidates
 </p>
 
 </div>
 
-| DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
-|:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 | 0.01 |  0.04   |  0.06  | 0.08 |   0.1   | 0.34 |
-| 200 | 0.01 |  0.02   |  0.03  | 0.04 |  0.05   | 0.21 |
-| 100 |  0   |  0.01   |  0.02  | 0.03 |  0.04   | 0.13 |
+| DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max.  |
+|:---:|:----:|:-------:|:------:|:----:|:-------:|:-----:|
+| 365 |  17  |   111   |  183   | 299  |   278   | 60875 |
+| 200 |  10  |   59    |   95   | 196  |   151   | 57045 |
+| 100 |  4   |   32    |   57   | 113  |   96    | 30427 |
 
 Targets:
 
@@ -411,7 +506,7 @@ Targets:
 
 118 (35 61 108)
 
-### 3.1.2 BPSV
+### 4.1.2 BPSV
 
 **This is a little higher than the spreadsheet results**
 
@@ -427,23 +522,23 @@ $$\begin{equation}
 D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\left(\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + (1+I) P_3L\right) \\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
-\qquad(3.2)
+\qquad(4.2)
 \end{equation}$$
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/bpsvresrd-1.png" alt="Reactive R&amp;D cost for BPSV"  />
 <p class="caption">
-<span id="fig:bpsvresrd"></span>Figure 3.2: Reactive R&D cost for BPSV
+<span id="fig:bpsvresrd"></span>Figure 4.2: Reactive R&D cost for BPSV
 </p>
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.4 2.0 4.4 8.1 7.4 95.1
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.5 1.9 3.8 12.7 8.0 4614.5
 
 Target: 14 (3 5 10)
 
-## 3.2 Procurement cost calculation
+## 4.2 Procurement cost calculation
 
 The cost per dose comes from the cost of goods supplied ($G = 4.68$)
 adjusted for profits ($M_p = 0.2$) and the transportation cost
@@ -454,7 +549,7 @@ $S_R = G(1+M_p)(1+M_t)$ evaluates to 6.29.
 This cost is used both for SSV doses manufactured using reserved
 capacity, and all newly manufactured BPSV doses.
 
-### 3.2.1 SSV
+### 4.2.1 SSV
 
 **These values are close, but not identical, to the spreadsheet results
 if I adjust for the total demand**
@@ -464,14 +559,14 @@ have costs, in billion USD, of:
 
 $$\begin{equation}
 D_{s,y}^{\text{(S-proc)}} = \min\lbrace A_{SSV,s,y},M_C\rbrace\cdot S_R  + \max\lbrace A_{SSV,s,y}-M_C,0\rbrace\cdot S_U
-\qquad(3.3)
+\qquad(4.3)
 \end{equation}$$
 
-Here, $S_R = 6.29$ is the cost per reserved dose and $S_U = 18.94$ the
+Here, $S_R = 6.29$ is the cost per reserved dose and $S_U = 18.9392$ the
 cost per unreserved dose in USD.
 
 The total number of doses produced in week $w$ in scenario $s$ is
-$Z_{T,s,w}$ (see Equation (4.1)). The total in a one-year period is
+$Z_{T,s,w}$ (see Equation (5.1)). The total in a one-year period is
 
 $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
@@ -479,28 +574,28 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 <img src="README_files/figure-gfm/costperyear-1.png" alt="SSV procurement cost"  />
 <p class="caption">
-<span id="fig:costperyear"></span>Figure 3.3: SSV procurement cost
+<span id="fig:costperyear"></span>Figure 4.3: SSV procurement cost
 </p>
 
 </div>
 
-| Scenario | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
-|:--------:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-|   BAU    | 128  |   149   |  170   | 180  |   211   | 257  |
-|   S01    | 130  |   151   |  172   | 182  |   213   | 258  |
-|   S02    | 119  |   137   |  156   | 165  |   194   | 235  |
-|   S03    | 100  |   116   |  132   | 139  |   163   | 197  |
-|   S04    | 117  |   135   |  154   | 164  |   192   | 233  |
-|   S05    |  95  |   110   |  125   | 133  |   156   | 189  |
-|   S06    | 135  |   156   |  177   | 187  |   219   | 264  |
-|   S07    | 125  |   145   |  164   | 173  |   203   | 245  |
-|   S08    | 107  |   123   |  140   | 148  |   173   | 208  |
-|   S09    | 133  |   154   |  175   | 185  |   216   | 260  |
-|   S10    | 121  |   140   |  159   | 168  |   196   | 236  |
-|   S11    | 100  |   116   |  131   | 139  |   162   | 195  |
-|   S12    | 128  |   149   |  170   | 180  |   211   | 257  |
+| Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
+|:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
+|   BAU    | 134318 | 160663  | 193946 | 196097 | 229914  | 270988 |
+|   S01    | 137460 | 163947  | 197310 | 199396 | 233259  | 274200 |
+|   S02    | 122045 | 145449  | 174904 | 176728 | 206616  | 242704 |
+|   S03    | 101892 | 121357  | 145839 | 147344 | 172180  | 202138 |
+|   S04    | 126224 | 150921  | 182108 | 184114 | 215797  | 254253 |
+|   S05    | 99574  | 118869  | 143193 | 144729 | 169426  | 199325 |
+|   S06    | 140192 | 166760  | 200130 | 202149 | 235987  | 276718 |
+|   S07    | 125369 | 149083  | 178858 | 180654 | 210844  | 247167 |
+|   S08    | 104877 | 124626  | 149404 | 150886 | 176003  | 206188 |
+|   S09    | 140603 | 167024  | 200165 | 202141 | 235733  | 276087 |
+|   S10    | 124804 | 148189  | 177509 | 179247 | 208961  | 244630 |
+|   S11    | 102501 | 121584  | 145484 | 146883 | 171095  | 200113 |
+|   S12    | 130444 | 156009  | 188302 | 190386 | 223196  | 263039 |
 
-Costs summed and discounted from year 16 to year 20, billion USD
+Costs summed and discounted from year 16 to year 20, million USD
 
 Targets:
 
@@ -512,7 +607,7 @@ Targets:
 168,378 ( 139,564 165,035 195,494 ) 137,984 ( 114,513 135,278 160,078 )
 178,766 ( 146,883 174,927 208,686 )
 
-### 3.2.2 BPSV
+### 4.2.2 BPSV
 
 **This is pretty close**
 
@@ -521,24 +616,24 @@ D_s^{\text{(BP-proc)}} = \left\\{\begin{array}{lr}
 A_{BPSV,s}\cdot S_R +  A_4(M_f+M_t)(1+M_p)G\\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
-\qquad(3.4)
+\qquad(4.4)
 \end{equation}$$
 
-For a world population aged 65 and over of 0.8 billion, an uptake of 80%
-(accounting for wastage of 0.1), and a cost per dose of $S_R = 6.29$ USD
+For a world population aged 65 and over of 0.9 billion, an uptake of 80%
+(accounting for wastage of 31%), and a cost per dose of $S_R = 6.29$ USD
 (the same as for SSV via reserved capacity), the procurement cost for
 BPSV is 6.68 billion USD.
 
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2.80 3.16 3.52 3.69 4.21 4.95
+Min. 1st Qu. Median Mean 3rd Qu. Max. 2791 3233 3774 3796 4339 4966
 
 Target: 3,628 (3,062 3,568 4,165)
 
-## 3.3 Delivery Cost Equation
+## 4.3 Delivery Cost Equation
 
-### 3.3.1 SSV
+### 4.3.1 SSV
 
 **These values are ballpark correct but too concentrated**
 
@@ -552,7 +647,7 @@ D^{\text{(S-del)}} =
 \sum_i\left(\frac{1}{10} V_{i; 0} + \left(\lambda-\frac{1}{10} \right)V_{i; 11} \right)N_i^{(15)} & \frac{1}{10} < \lambda\leq \frac{3}{10} \\\\
 \sum_i\left(\frac{1}{10} V_{i; 0} + \frac{2}{10} V_{i; 11} + \left(\lambda-\frac{3}{10} \right)V_{i; 31}\right)N_i^{(15)} & \lambda> \frac{3}{10} 
 \end{array}\right.
-\qquad(3.5)
+\qquad(4.5)
 \end{equation}$$
 
 <!-- We set  -->
@@ -562,38 +657,38 @@ D^{\text{(S-del)}} =
 
 <img src="README_files/figure-gfm/deliverycost-1.png" alt="SSV delivery cost"  />
 <p class="caption">
-<span id="fig:deliverycost"></span>Figure 3.4: SSV delivery cost
+<span id="fig:deliverycost"></span>Figure 4.4: SSV delivery cost
 </p>
 
 </div>
 
-     BAU Min.   : 86.71   1st Qu.: 99.47   Median :105.35   Mean   :110.69  
-     S01 Min.   : 87.84   1st Qu.:100.31   Median :106.38   Mean   :111.87  
-     S02 Min.   : 88.86   1st Qu.:101.30   Median :107.42   Mean   :112.82  
-     S03 Min.   : 88.95   1st Qu.:101.41   Median :107.51   Mean   :112.86  
-     S04 Min.   : 86.93   1st Qu.: 99.74   Median :105.85   Mean   :111.22  
-     S05 Min.   : 87.32   1st Qu.:100.07   Median :106.18   Mean   :111.60  
-     S06 Min.   : 88.24   1st Qu.:100.60   Median :106.74   Mean   :112.25  
-     S07 Min.   : 89.18   1st Qu.:101.64   Median :107.92   Mean   :113.26  
-     S08 Min.   : 90.12   1st Qu.:102.08   Median :108.65   Mean   :114.13  
-     S09 Min.   : 90.1    1st Qu.:102.1    Median :108.4    Mean   :113.9   
-     S10 Min.   : 90.96   1st Qu.:102.74   Median :109.47   Mean   :114.97  
-     S11 Min.   : 91.58   1st Qu.:103.40   Median :110.12   Mean   :115.64  
-     S12 Min.   : 88.27   1st Qu.:100.44   Median :106.54   Mean   :112.10  
+     BAU Min.   : 68494   1st Qu.: 96151   Median :114903   Mean   :117231  
+     S01 Min.   : 68864   1st Qu.: 96528   Median :115223   Mean   :117560  
+     S02 Min.   : 68792   1st Qu.: 96358   Median :115127   Mean   :117421  
+     S03 Min.   : 68811   1st Qu.: 96378   Median :115146   Mean   :117440  
+     S04 Min.   : 68583   1st Qu.: 96231   Median :114979   Mean   :117306  
+     S05 Min.   : 68693   1st Qu.: 96327   Median :115073   Mean   :117400  
+     S06 Min.   : 67378   1st Qu.: 94227   Median :112373   Mean   :114477  
+     S07 Min.   : 67095   1st Qu.: 93648   Median :111617   Mean   :113688  
+     S08 Min.   : 66138   1st Qu.: 92231   Median :109879   Mean   :111903  
+     S09 Min.   : 54523   1st Qu.: 73898   Median : 87333   Mean   : 88768  
+     S10 Min.   : 61536   1st Qu.: 85379   Median :101274   Mean   :103138  
+     S11 Min.   : 59977   1st Qu.: 83154   Median : 98445   Mean   :100317  
+     S12 Min.   : 67689   1st Qu.: 95136   Median :113996   Mean   :116205  
                                           
-     BAU 3rd Qu.:120.92   Max.   :153.50  
-     S01 3rd Qu.:122.63   Max.   :154.66  
-     S02 3rd Qu.:123.57   Max.   :155.54  
-     S03 3rd Qu.:123.58   Max.   :155.49  
-     S04 3rd Qu.:121.63   Max.   :153.74  
-     S05 3rd Qu.:122.20   Max.   :153.97  
-     S06 3rd Qu.:123.18   Max.   :155.02  
-     S07 3rd Qu.:124.45   Max.   :155.54  
-     S08 3rd Qu.:125.54   Max.   :156.28  
-     S09 3rd Qu.:125.2    Max.   :156.5   
-     S10 3rd Qu.:126.18   Max.   :157.21  
-     S11 3rd Qu.:126.62   Max.   :157.75  
-     S12 3rd Qu.:123.01   Max.   :155.23  
+     BAU 3rd Qu.:134672   Max.   :206190  
+     S01 3rd Qu.:135015   Max.   :206438  
+     S02 3rd Qu.:134844   Max.   :206271  
+     S03 3rd Qu.:134866   Max.   :206291  
+     S04 3rd Qu.:134754   Max.   :206245  
+     S05 3rd Qu.:134856   Max.   :206316  
+     S06 3rd Qu.:131175   Max.   :199869  
+     S07 3rd Qu.:130197   Max.   :198112  
+     S08 3rd Qu.:128169   Max.   :194592  
+     S09 3rd Qu.:101171   Max.   :146127  
+     S10 3rd Qu.:118153   Max.   :176917  
+     S11 3rd Qu.:114885   Max.   :171419  
+     S12 3rd Qu.:133507   Max.   :204978  
 
 Targets:
 
@@ -605,7 +700,7 @@ Targets:
 116,913 ( 93,536 112,957 136,414 ) 118,141 ( 94,682 114,649 137,100 )
 113,540 ( 89,745 109,012 132,595 )
 
-### 3.3.2 BPSV
+### 4.3.2 BPSV
 
 **These values match the spreadsheet results. (NB: more doses are
 purchased and delivered than there are eligible people in the
@@ -622,7 +717,7 @@ D_s^{\text{(BP-del)}} =
 \\; & \\; s\in\\{1,2,3\\} \\\\
 0  \\; & \\; s\notin\\{1,2,3\\}
 \end{array}\right.
-\qquad(3.6)
+\qquad(4.6)
 \end{equation}$$
 
 $$\begin{equation}
@@ -656,12 +751,12 @@ The logic of this is as follows:
 
 <img src="README_files/figure-gfm/bpsvdeliverycost-1.png" alt="BPSV delivery cost"  />
 <p class="caption">
-<span id="fig:bpsvdeliverycost"></span>Figure 3.5: BPSV delivery cost
+<span id="fig:bpsvdeliverycost"></span>Figure 4.5: BPSV delivery cost
 </p>
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 7.17 9.53 10.61 11.06 12.48 16.49
+Min. 1st Qu. Median Mean 3rd Qu. Max. 6971 9855 11490 11747 13357 19642
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -684,32 +779,33 @@ Target: 11,206 (9,037 10,865 13,054)
 | Botswana | UMIC | Mixed | 19 | Kelsey Vaughan et al. (2025) |
 | South Africa | UMIC | Top down | 3.84 | Edoka et al. (2024) |
 
-<span id="tab:delcosts"></span>Table 3.1: Literature review of global
+<span id="tab:delcosts"></span>Table 4.1: Literature review of global
 and country-specific delivery costs
 
-|    timing    |   category    |         type         |       Cost vs. BAU        |
-|:------------:|:-------------:|:--------------------:|:-------------------------:|
-|   One-off    |      R&D      |   200 days to SSV    |     $3.5$ ($3.5,3.5$)     |
-|   One-off    |      R&D      |   100 days to SSV    |      $10$ ($10,10$)       |
-|   One-off    |      R&D      |         BPSV         |    $0.15$ ($0.11,0.2$)    |
-|   Per year   | Manufacturing |         BPSV         |   $0.16$ ($0.16,0.16$)    |
-|   Per year   | Manufacturing | 0.7 billion capacity |   $0.37$ ($0.37,0.37$)    |
-|   Per year   | Manufacturing |  2 billion capacity  |     $1.1$ ($1.1,1.1$)     |
-| Per pandemic |      R&D      |   200 days to SSV    | $-0.059$ ($-0.11,-0.04$)  |
-| Per pandemic |      R&D      |   100 days to SSV    | $-0.08$ ($-0.13,-0.053$)  |
-| Per pandemic |      R&D      |         BPSV         | $0.0079$ ($0.0037,0.016$) |
-| Per pandemic | Manufacturing | 0.7 billion capacity |     $-35$ ($-35,-35$)     |
-| Per pandemic | Manufacturing |  2 billion capacity  |   $-100$ ($-100,-100$)    |
-| Per pandemic | Manufacturing |         BPSV         |     $6.7$ ($6.7,6.7$)     |
-| Per pandemic |   Delivery    |         BPSV         |      $20$ ($18,21$)       |
-| Per pandemic |   Delivery    | 0.7 billion capacity |    $0.53$ ($0.3,0.69$)    |
-| Per pandemic |   Delivery    |  2 billion capacity  |     $0.9$ ($0.6,1.2$)     |
-| Per pandemic |   Delivery    | Equality + Delivery  |      $1.4$ ($1,1.7$)      |
+| timing | category | type | Cost vs. BAU |
+|:--:|:--:|:--:|:--:|
+| One-off | R&D | 200 days to SSV | $3.5$ ($3.5,3.5$) |
+| One-off | R&D | 100 days to SSV | $10$ ($10,10$) |
+| One-off | R&D | BPSV | $0.33$ ($0.26,0.43$) |
+| One-off | Manufacturing | BPSV | $12,000,000$ ($12,000,000,12,000,000$) |
+| Per year | Manufacturing | BPSV | $0.16$ ($0.16,0.16$) |
+| Per year | Manufacturing | 0.7 billion capacity | $0.37$ ($0.37,0.37$) |
+| Per year | Manufacturing | 2 billion capacity | $1.1$ ($1.1,1.1$) |
+| Per pandemic | R&D | 200 days to SSV | $-0.14$ ($-0.22,-0.082$) |
+| Per pandemic | R&D | 100 days to SSV | $-0.22$ ($-0.33,-0.14$) |
+| Per pandemic | R&D | BPSV | $0.0066$ ($0.0035,0.014$) |
+| Per pandemic | Manufacturing | 0.7 billion capacity | $-23,000$ ($-23,000,-23,000$) |
+| Per pandemic | Manufacturing | 2 billion capacity | $-99,000$ ($-99,000,-99,000$) |
+| Per pandemic | Manufacturing | BPSV | $6.7$ ($6.7,6.7$) |
+| Per pandemic | Delivery | BPSV | $20$ ($19,22$) |
+| Per pandemic | Delivery | 0.7 billion capacity | $140$ ($110,170$) |
+| Per pandemic | Delivery | 2 billion capacity | $310$ ($240,380$) |
+| Per pandemic | Delivery | Equality + Delivery | $-1,800$ ($-2,300,-1,400$) |
 
 Cost differences: investments vs. BAU, for different types of
 investment.
 
-# 4 SSV delivery
+# 5 SSV delivery
 
 | Category | Reserved capacity | Private response (existing capacity) | Private response (built capacity) |
 |:---|----|:---|:---|
@@ -739,7 +835,7 @@ Manufacturing response timeline assumptions
 Vaccine Production Timeline when there is no BPSV. When BPSV is also
 modelled, Existing Private Capacity scales from 0 to 100 in weeks 12–21.
 
-## 4.1 Timing
+## 5.1 Timing
 
 Facility transition occurs $F=7$ weeks before vaccine approval, which in
 turn depends on R&D investments. We have three levels in our scenarios,
@@ -753,7 +849,7 @@ weeks, respectively. Thus “week 0” for manufacturing occurs 45, 22, and
 7 weeks, respectively, after the new pathogen has been sequenced. We
 denote this variable $w_s^{(0)}$.
 
-## 4.2 Production
+## 5.2 Production
 
 The total global manufacturing volume is $M_G=15$ billion doses. The
 amount that is reserved, in billion doses, including the HIC-specific
@@ -805,14 +901,14 @@ Then the total number of doses produced in week $w$ is
 
 $$\begin{equation}
 Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
-\qquad(4.1)
+\qquad(5.1)
 \end{equation}$$
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/supply-1.png" alt="Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
 <p class="caption">
-<span id="fig:supply-1"></span>Figure 4.1: Doses made available from
+<span id="fig:supply-1"></span>Figure 5.1: Doses made available from
 manufacturing per scenario. Weeks are in reference to the sequencing of
 the pathogen.
 </p>
@@ -823,7 +919,7 @@ the pathogen.
 
 <img src="README_files/figure-gfm/supply-2.png" alt="Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
 <p class="caption">
-<span id="fig:supply-2"></span>Figure 4.2: Doses made available from
+<span id="fig:supply-2"></span>Figure 5.2: Doses made available from
 manufacturing per scenario. Weeks are in reference to the sequencing of
 the pathogen.
 </p>
@@ -835,7 +931,7 @@ scenarios have identical supply (because they have the same capacity
 reservations and R&D investments): BAU & S01 & S12; S02 & S04; and S03 &
 S05.
 
-## 4.3 Allocation
+## 5.3 Allocation
 
 Denote the weekly allocated doses at week $w$ from capacity $x$ to
 income level $i$ $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$,
@@ -848,7 +944,7 @@ We write
 $$X_i = \frac{2\cdot \lambda\cdot N_i^{(15)}}{1-\delta}$$ as the maximum
 demand for income group $i$, representing two doses each for
 $\lambda=80$% of the population assuming vaccine wastage of
-$\delta = 0.1$.
+$\delta = 0.3142532$.
 
 $$\begin{equation}
 k_{s,R,i,w} = \left\\{ \begin{array}{lr}
@@ -901,13 +997,13 @@ The logic of this reads as follows:
 
 <img src="README_files/figure-gfm/procurement-1.png" alt="Doses procured by country income level"  />
 <p class="caption">
-<span id="fig:procurement"></span>Figure 4.3: Doses procured by country
+<span id="fig:procurement"></span>Figure 5.3: Doses procured by country
 income level
 </p>
 
 </div>
 
-## 4.4 Delivery
+## 5.4 Delivery
 
 **These values do not look correct**
 
@@ -915,15 +1011,15 @@ income level
 
 <img src="README_files/figure-gfm/scendelivery-1.png" alt="Cumulative vaccine coverage (second SSV dose) by country income level"  />
 <p class="caption">
-<span id="fig:scendelivery"></span>Figure 4.4: Cumulative vaccine
+<span id="fig:scendelivery"></span>Figure 5.4: Cumulative vaccine
 coverage (second SSV dose) by country income level
 </p>
 
 </div>
 
-# 5 BPSV delivery
+# 6 BPSV delivery
 
-## 5.1 Timing
+## 6.1 Timing
 
 The duration of the Phase III trial is $W_3^{(B)} = 18$ weeks. The time
 to manufacturing transition is $I_R = 12$ weeks, and the time to
@@ -933,7 +1029,7 @@ reserved-capacity times for SSV.
 Facility transition occurs in week 1. Thus manufacturing begins in week
 $1+I_R = 13$ and dose distribution begins in week $1+W_3^{(B)} = 19$.
 
-## 5.2 Production
+## 6.2 Production
 
 The number of doses, in billions, that are made in week $w$ is:
 
@@ -948,14 +1044,14 @@ Z_{w} = \left\\{\begin{array}{lr}0 & w < I_R \\\\
 
 <img src="README_files/figure-gfm/bpsvsupply-1.png" alt="BPSV doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
 <p class="caption">
-<span id="fig:bpsvsupply"></span>Figure 5.1: BPSV doses made available
+<span id="fig:bpsvsupply"></span>Figure 6.1: BPSV doses made available
 from manufacturing per scenario. Weeks are in reference to the
 sequencing of the pathogen.
 </p>
 
 </div>
 
-## 5.3 Allocation
+## 6.3 Allocation
 
 Doses are all allocated in proportion to the eligible population.
 
@@ -963,13 +1059,13 @@ Doses are all allocated in proportion to the eligible population.
 
 <img src="README_files/figure-gfm/bpsvprocurement-1.png" alt="BPSV doses procured by country income level"  />
 <p class="caption">
-<span id="fig:bpsvprocurement"></span>Figure 5.2: BPSV doses procured by
+<span id="fig:bpsvprocurement"></span>Figure 6.2: BPSV doses procured by
 country income level
 </p>
 
 </div>
 
-## 5.4 Delivery
+## 6.4 Delivery
 
 **These values do not look correct**
 
@@ -977,17 +1073,17 @@ country income level
 
 <img src="README_files/figure-gfm/bpsvdeliveryplot-1.png" alt="BPSV vaccine coverage by country income level"  />
 <p class="caption">
-<span id="fig:bpsvdeliveryplot"></span>Figure 5.3: BPSV vaccine coverage
+<span id="fig:bpsvdeliveryplot"></span>Figure 6.3: BPSV vaccine coverage
 by country income level
 </p>
 
 </div>
 
-# 6 Parameter samples
+# 7 Parameter samples
 
 ![](README_files/figure-gfm/parsamples-1.png)<!-- -->![](README_files/figure-gfm/parsamples-2.png)<!-- -->![](README_files/figure-gfm/parsamples-3.png)<!-- -->![](README_files/figure-gfm/parsamples-4.png)<!-- -->![](README_files/figure-gfm/parsamples-5.png)<!-- -->![](README_files/figure-gfm/parsamples-6.png)<!-- -->![](README_files/figure-gfm/parsamples-7.png)<!-- -->![](README_files/figure-gfm/parsamples-8.png)<!-- -->![](README_files/figure-gfm/parsamples-9.png)<!-- -->![](README_files/figure-gfm/parsamples-10.png)<!-- -->![](README_files/figure-gfm/parsamples-11.png)<!-- -->![](README_files/figure-gfm/parsamples-12.png)<!-- -->![](README_files/figure-gfm/parsamples-13.png)<!-- -->![](README_files/figure-gfm/parsamples-14.png)<!-- -->![](README_files/figure-gfm/parsamples-15.png)<!-- -->![](README_files/figure-gfm/parsamples-16.png)<!-- -->![](README_files/figure-gfm/parsamples-17.png)<!-- -->![](README_files/figure-gfm/parsamples-18.png)<!-- -->![](README_files/figure-gfm/parsamples-19.png)<!-- -->![](README_files/figure-gfm/parsamples-20.png)<!-- -->![](README_files/figure-gfm/parsamples-21.png)<!-- -->![](README_files/figure-gfm/parsamples-22.png)<!-- -->![](README_files/figure-gfm/parsamples-23.png)<!-- -->![](README_files/figure-gfm/parsamples-24.png)<!-- -->![](README_files/figure-gfm/parsamples-25.png)<!-- -->![](README_files/figure-gfm/parsamples-26.png)<!-- -->![](README_files/figure-gfm/parsamples-27.png)<!-- -->![](README_files/figure-gfm/parsamples-28.png)<!-- -->
 
-# 7 Contributors
+# 8 Contributors
 
 Model: Peter Windus, Andy Torkelson
 
@@ -997,7 +1093,7 @@ Documentation: Peter Windus, Andy Torkelson, Rob Johnson
 
 R code: Rob Johnson
 
-# 8 References
+# 9 References
 
 <div id="refs" class="references csl-bib-body hanging-indent"
 entry-spacing="0">
@@ -1145,15 +1241,6 @@ Kenya.” *BMC Health Services Research* 22 (1): 439.
 
 </div>
 
-<div id="ref-OWID2024" class="csl-entry">
-
-OWID. 2024. “UN, World Population Prospects (2024) – Processed by Our
-World in Data. ‘Population, in Five-Year Age Groups – UN WPP’
-\[Dataset\]. United Nations, ‘World Population Prospects’ \[Original
-Data\].” <https://ourworldindata.org/grapher/population-by-age-group>.
-
-</div>
-
 <div id="ref-Oyatoye2023" class="csl-entry">
 
 Oyatoye, I. 2023. “Costs and Financing Gap of Delivering COVID-19
@@ -1192,9 +1279,9 @@ ThinkWell.
 
 </div>
 
-<div id="ref-U.S.BureauofLaborStatistics" class="csl-entry">
+<div id="ref-U.S.BLS2025" class="csl-entry">
 
-U.S. Bureau of Labor Statistics. n.d. “CPI Inflation Calculator.”
+U.S. BLS. 2025. “CPI Inflation Calculator.”
 <https://www.bls.gov/data/inflation_calculator.htm>.
 
 </div>

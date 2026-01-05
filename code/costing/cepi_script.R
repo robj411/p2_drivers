@@ -38,7 +38,7 @@ dms = c(365, 200, 100)
 
 caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
 
-rawpar <- get_parameters(nsamples=10000, nweeks=5*52)[[1]]
+rawpar <- get_parameters(nsamples=100)[[1]]
 
 
 
@@ -88,17 +88,19 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
   ## ssv supply
   ssv_supply = get_ssv_supply(dm=dm, capres=cr, bpsv=bpsvflag, weeks_init = WEEKS_INIT, weeks_scale = WEEKS_SCALE)
   supplies = ssv_supply[['supplies']]
-  ssv_py_inc_booster <- annualise_ssv_procurement(supplies)
   
   ## ssv allocation 
   allocation_functions = list(function_list, rep_res)[[propflag]]
   alloc_and_del = allocate_and_deliver_doses(allocation_functions, supplies, del_rates=rates,
-                                             time_to_approval=time_to_approval)
+                                             time_to_approval=time_to_approval, 
+                                             hic_only = pfixed$hic_cap_res/(cr+pfixed$hic_cap_res))
   alloc = alloc_and_del[['alloc']]
   second_dose_delivery = alloc_and_del[['second_dose_delivery']]
   all_dose_delivery <<- alloc_and_del[['all_dose_delivery']]
   second_dose_delivery$il = factor(second_dose_delivery$il, levels=INCOMELEVELS)
   second_dose_delivery = reshape2::dcast(second_dose_delivery,formula=Week~il,value.var='doses')
+  
+  ssv_py_inc_booster <- annualise_ssv_procurement(supplies, alloc, cap_res = pfixed$hic_cap_res + cr)
   
   # BPSV
   if(bpsvflag==T){
@@ -131,12 +133,15 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
     timescale = phase_duration/durations #get_duration_scalar(phase_duration,OLD_DURATIONS[i,])
     
     # parameters for functions
-    timescale = timescale
-    pos = POS[i,]
-    pto = PTO[i,]
+    pos = POS_SSV[i,]
+    pto = PTO_SSV[i,]
+    inflation = pardf$inflation[i]
     ex = EX[i,]
-    icost_lic = (1+pardf$inflation[i])*pardf$cost_lic[i]
-    n_ssv_candidates = pardf$n_ssv_candidates[i]
+    exi = (1+inflation)*ex
+    cost_lic = pardf$cost_lic[i]
+    icost_lic = (1+inflation)*cost_lic
+    n_ssv_successes = pardf$n_ssv_successes[i]
+    q_ssv_successes = pardf$q_ssv_successes[i]
     cost_un = pardf$cost_un[i]
     cost_res = pardf$cost_cogs[i]*(1+pardf$profit[i])*(1+pardf$cost_travel[i])
     discount = pardf$discount[i]
@@ -152,10 +157,11 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
     # ssv r&d
     ssv_rd_costsamples = get_ssv_randd_costs(pos = pos,
                                              pto = pto, 
-                                             ex = ex, 
+                                             exi = exi, 
                                              timescale = timescale, 
-                                             icost_lic = icost_lic, 
-                                             n_ssv_candidates = n_ssv_candidates)
+                                             cost_lic = cost_lic, 
+                                             n_ssv_successes, 
+                                             q_ssv_successes)
   
     # capacity reservations
     capres_costs_per_year = get_cap_res_cost(cap_cost_per_dose = cap_cost_per_dose, 
@@ -164,8 +170,7 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
     # procurement costs
     ssv_procurement_costs = get_ssv_procurement_costs(ssv_py_inc_booster = ssv_py_inc_booster, 
                                                       cost_res = cost_res, 
-                                                      cost_un = cost_un, 
-                                                      cap_res_vol = cr)
+                                                      cost_un = cost_un)
     ssv_proccost_discounted = sum(ssv_procurement_costs/(1+pardf$discount[i])^c(1:NYEARS))
     ssv_proccost_undiscounted = sum(ssv_procurement_costs)
   
@@ -173,11 +178,16 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
     ssv_delivery_costs_list = get_ssv_delivery_costs(all_ssv_delivered = all_dose_delivery, 
                                                      cost_per_dose = cost_per_dose,
                                                      discount = discount)
-  
+    dis_ssv_delivery_costs = ssv_delivery_costs_list[['dis_countrycosts']]
+    ssv_delivery_costs = ssv_delivery_costs_list[['countrycosts']]
+    
     # BPSV costs
     if(bpsvflag==T){
       
+      pos = POS_BPSV[i,]
+      pto = PTO_BPSV[i,]
       inex = INEX[i,]
+      inexi = (1+inflation)*inex
       inex_weight = pardf$inex_weight[i]
       n_bpsv_candidates = pardf$n_bpsv_candidates[i]
       cost_cogs = pardf$cost_cogs[i]
@@ -186,15 +196,20 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
       profit = pardf$profit[i]
       cost_bpsv_res = pardf$cost_bpsv_res[i]
       bpsv_replenishment = pardf$bpsv_replenishment[i]
+      n_bpsv_p1 = pardf$n_bpsv_p1[i]
+      bpsv_res_upfront = pardf$bpsv_res_upfront[i]
       
       bpsvcosts = get_bpsv_costs(total_bpsv = total_bpsv,
                                  pos = pos, 
                                  pto = pto, 
                                  ex = ex, 
-                                 inex = inex, 
+                                 exi= exi,
+                                 inexi = inexi, 
                                  inex_weight = inex_weight,
                                  n_bpsv_candidates = n_bpsv_candidates,
-                                 durations = durations[1:3]/52, # weeks
+                                 n_bpsv_p1 = n_bpsv_p1,
+                                 bpsv_res_upfront = bpsv_res_upfront,
+                                 y_durations = durations[1:3]/52,
                                  old_duration = durations[4], # years
                                  discount = discount,
                                  icost_lic = icost_lic,
@@ -209,30 +224,38 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
       bpsv_rd_costsamples_dyd = bpsvcosts[['bpsv_rd_costsamples_dyd']]
       bpsv_rd_costsamples_no_d = bpsvcosts[['bpsv_rd_costsamples_no_d']]
       bpsvresrd = bpsvcosts[['bpsvresrd']]
-      inv_cost_per_year = bpsvcosts[['inv_cost_per_year']]*1e3
+      inv_cost_per_year = bpsvcosts[['inv_cost_per_year']]
       bpsvproc = bpsvcosts[['bpsvproc']]
+      dis_upfront_bpsv = bpsvcosts[['dis_bpsv_upfront']]
+      upfront_bpsv = bpsvcosts[['bpsv_upfront']]
       
       bpsv_del_cost = get_bpsv_del_costs(bpsv_dose_delivery, cost_per_dose)
       # colnames(bpsv_dose_delivery) = INCOMELEVELS
     }else{
-      bpsv_rd_costsamples_no_d <- bpsv_rd_costsamples_dyd <- inv_cost_per_year <- bpsvresrd <- bpsvproc <- bpsv_del_cost <- 0
+      bpsv_rd_costsamples_no_d <- bpsv_rd_costsamples_dyd <- inv_cost_per_year <- bpsvresrd <- bpsvproc <- bpsv_del_cost <- upfront_bpsv <- dis_upfront_bpsv <- 0
     }
     outvec =     c(enabling_costs, bpsv_rd_costsamples_no_d,bpsv_rd_costsamples_dyd,
-      capres_costs_per_year, inv_cost_per_year,
-      ssv_rd_costsamples,ssv_proccost_discounted,ssv_proccost_undiscounted,
-      ssv_delivery_costs_list,bpsvresrd,bpsvproc,bpsv_del_cost)
+                   capres_costs_per_year, inv_cost_per_year,
+                   ssv_rd_costsamples,ssv_proccost_discounted,ssv_proccost_undiscounted,
+                   dis_ssv_delivery_costs,ssv_delivery_costs,
+                   bpsvresrd,bpsvproc,bpsv_del_cost)
     outvec
   } -> x
+  xmat = matrix(x, nrow=NSAMPLES, byrow=F)
+  # print(xmat)
   outcosts = list()
-  for(i in 1:ncol(x)) outcosts[[i]] = unname(x[,i])
+  for(i in 1:ncol(xmat)) outcosts[[i]] = unname(xmat[,i])
   names(outcosts) = c('enabling_costs', 'bpsv_rd_costsamples_no_d','bpsv_rd_costsamples_dyd',
                       'capres_costs_per_year', 'inv_cost_per_year',
                       'ssv_rd_costsamples','ssv_proccost_discounted','ssv_proccost_undiscounted',
-                      'ssv_delivery_costs_list','bpsvresrd','bpsvproc','bpsv_del_cost')
+                      'dis_ssv_delivery_costs','ssv_delivery_costs',
+                      'bpsvresrd','bpsvproc','bpsv_del_cost')
   for(i in names(outcosts)) assign(i, outcosts[[i]])
   
   ## return
   return(list(costs=list(upfront=list(enabling=enabling_costs,
+                                      upfront_bpsv=upfront_bpsv,
+                                      dis_upfront_bpsv=dis_upfront_bpsv,
                                       bpsv_rd_undiscounted=bpsv_rd_costsamples_no_d,
                                       bpsv_rd_discounted=bpsv_rd_costsamples_dyd),
                          annual=list(capres=capres_costs_per_year,
@@ -240,7 +263,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
                          response=list(ssv_rd=ssv_rd_costsamples,
                                       ssv_proc_discounted=ssv_proccost_discounted,
                                       ssv_proc_undiscounted=ssv_proccost_undiscounted,
-                                      ssv_delivery=ssv_delivery_costs_list,
+                                      ssv_delivery_discounted=dis_ssv_delivery_costs,
+                                      ssv_delivery_undiscounted=ssv_delivery_costs,
                                       bpsv_response_rd=bpsvresrd,
                                       bpsv_proc=bpsvproc,
                                       bpsv_delivery=bpsv_del_cost)),
@@ -266,7 +290,7 @@ format_to_print2 <- function(x,z=2){
 dm_rd_times <- cbind(0, pardf$years_200, pardf$years_100)
 
 scenario_results = list()
-for(s in 2:4){#1:nscen){
+for(s in 1:nscen){ #c(1,10)){# 
   
   dm = scenario_df$DM[s]
   whichdm <- which(dms==dm)
@@ -288,6 +312,28 @@ for(s in 2:4){#1:nscen){
   #   }
   # }
     
+  
+  thisscen = scenario_results[[s]]
+  allupfront = with(thisscen$costs$upfront, enabling + dis_upfront_bpsv + bpsv_rd_discounted)
+  allannual = with(thisscen$costs$annual, capres + investigational_reserve)
+  allresp = with(thisscen$costs$response, ssv_rd + ssv_proc_discounted + ssv_delivery_discounted + 
+                   bpsv_response_rd + bpsv_proc + bpsv_delivery)
+  
+  if(s==1){
+    bauallupfront = allupfront
+    bauallannual = allannual
+    bauallresp = allresp
+  }else{
+    diffallupfront = allupfront - bauallupfront
+    diffallannual = allannual - bauallannual
+    diffallresp = allresp - bauallresp
+    
+    cat(paste(scennames[s], ' & ', paste0(format_to_print2(quantile(diffallupfront, c(1,3)/4)),collapse='--{}')
+                , ' & ', paste0(format_to_print2(quantile(diffallannual, c(1,3)/4)),collapse='--{}')
+                , ' & ', paste0(format_to_print2(quantile(diffallresp, c(1,3)/4)),collapse='--{}'), '\n'
+    ))
+  }
+  
 }
 
 
