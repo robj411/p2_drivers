@@ -264,13 +264,15 @@ D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
 
 <img src="README_files/figure-gfm/posbpsv-1.png" alt="Risk-adjusted R&amp;D cost for 8 BPSV candidates"  />
 <p class="caption">
+
 <span id="fig:posbpsv"></span>Figure 3.1: Risk-adjusted R&D cost for 8
 BPSV candidates
 </p>
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.11 0.24 0.31 0.33 0.40 1.11
+Min. 1st Qu. Median Mean 3rd Qu. Max. 122.7 249.6 331.3 357.5 431.2
+1410.0
 
 Target: 146 (103 135 177)
 
@@ -318,6 +320,7 @@ where $A_1 = 0$ USD is the annual reservation cost.
 
 <img src="README_files/figure-gfm/bpsvinv-1.png" alt="BPSV investigational reserve costs accumulated from the completion of Phase II to year 15 with uniformly distributed discount rate."  />
 <p class="caption">
+
 <span id="fig:bpsvinv"></span>Figure 3.2: BPSV investigational reserve
 costs accumulated from the completion of Phase II to year 15 with
 uniformly distributed discount rate.
@@ -325,8 +328,8 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 778.1 968.3 1091.0 1093.1 1206.5
-1457.9
+Min. 1st Qu. Median Mean 3rd Qu. Max. 777.4 977.4 1085.0 1089.0 1196.9
+1464.1
 
 Target: 1 (0.9 1 1.1)
 
@@ -358,18 +361,19 @@ respectively.
 
 <img src="README_files/figure-gfm/capres-1.png" alt="Capacity reservation costs accumulated over 15 years with uniformly distributed discount rate."  />
 <p class="caption">
+
 <span id="fig:capres"></span>Figure 3.3: Capacity reservation costs
 accumulated over 15 years with uniformly distributed discount rate.
 </p>
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2.74 2.90 3.10 3.10 3.29 3.48
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2737 2883 3053 3073 3262 3484
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6.57 6.97 7.43 7.43 7.88 8.36
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6569 6919 7326 7374 7829 8361
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13.69 14.52 15.48 15.48 16.43
-17.42
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13686 14415 15263 15363 16311
+17418
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -403,6 +407,7 @@ $$\begin{equation}
 
 <img src="README_files/figure-gfm/en-1.png" alt="Enabling costs accumulated over 15 years with uniformly distributed discount rate."  />
 <p class="caption">
+
 <span id="fig:en"></span>Figure 3.4: Enabling costs accumulated over 15
 years with uniformly distributed discount rate.
 </p>
@@ -411,9 +416,9 @@ years with uniformly distributed discount rate.
 
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.25 3.25 3.31 3.37
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.23 3.24 3.30 3.37
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.65 8.15 8.15 8.65 9.17
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.59 8.04 8.09 8.59 9.17
 
 Targets:
 
@@ -486,6 +491,7 @@ quantile $q$.
 
 <img src="README_files/figure-gfm/posssv-1.png" alt="Risk-adjusted R&amp;D cost for 18 SSV candidates"  />
 <p class="caption">
+
 <span id="fig:posssv"></span>Figure 4.1: Risk-adjusted R&D cost for 18
 SSV candidates
 </p>
@@ -494,9 +500,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max.  |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:-----:|
-| 365 |  17  |   111   |  183   | 299  |   278   | 60875 |
-| 200 |  10  |   59    |   95   | 196  |   151   | 57045 |
-| 100 |  4   |   32    |   57   | 113  |   96    | 30427 |
+| 365 |  28  |   116   |  184   | 304  |   298   | 29912 |
+| 200 |  16  |   60    |   95   | 194  |   157   | 28020 |
+| 100 |  4   |   32    |   56   | 114  |   102   | 14948 |
 
 Targets:
 
@@ -529,12 +535,13 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 <img src="README_files/figure-gfm/bpsvresrd-1.png" alt="Reactive R&amp;D cost for BPSV"  />
 <p class="caption">
+
 <span id="fig:bpsvresrd"></span>Figure 4.2: Reactive R&D cost for BPSV
 </p>
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.5 1.9 3.8 12.7 8.0 4614.5
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.5 1.9 3.7 13.4 7.8 3115.1
 
 Target: 14 (3 5 10)
 
@@ -574,6 +581,7 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 <img src="README_files/figure-gfm/costperyear-1.png" alt="SSV procurement cost"  />
 <p class="caption">
+
 <span id="fig:costperyear"></span>Figure 4.3: SSV procurement cost
 </p>
 
@@ -581,19 +589,19 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 | Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
 |:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
-|   BAU    | 134318 | 160663  | 193946 | 196097 | 229914  | 270988 |
-|   S01    | 137460 | 163947  | 197310 | 199396 | 233259  | 274200 |
-|   S02    | 122045 | 145449  | 174904 | 176728 | 206616  | 242704 |
-|   S03    | 101892 | 121357  | 145839 | 147344 | 172180  | 202138 |
-|   S04    | 126224 | 150921  | 182108 | 184114 | 215797  | 254253 |
-|   S05    | 99574  | 118869  | 143193 | 144729 | 169426  | 199325 |
-|   S06    | 140192 | 166760  | 200130 | 202149 | 235987  | 276718 |
-|   S07    | 125369 | 149083  | 178858 | 180654 | 210844  | 247167 |
-|   S08    | 104877 | 124626  | 149404 | 150886 | 176003  | 206188 |
-|   S09    | 140603 | 167024  | 200165 | 202141 | 235733  | 276087 |
-|   S10    | 124804 | 148189  | 177509 | 179247 | 208961  | 244630 |
-|   S11    | 102501 | 121584  | 145484 | 146883 | 171095  | 200113 |
-|   S12    | 130444 | 156009  | 188302 | 190386 | 223196  | 263039 |
+|   BAU    | 130348 | 152620  | 180758 | 186150 | 218819  | 262922 |
+|   S01    | 133490 | 155890  | 184112 | 189448 | 222172  | 266134 |
+|   S02    | 118396 | 138165  | 163054 | 167741 | 196588  | 235288 |
+|   S03    | 101819 | 118781  | 140129 | 144142 | 168882  | 202051 |
+|   S04    | 120713 | 141277  | 167246 | 172212 | 202356  | 243016 |
+|   S05    | 97953  | 114493  | 135350 | 139311 | 163505  | 196059 |
+|   S06    | 135990 | 158465  | 186717 | 191995 | 224717  | 268493 |
+|   S07    | 123638 | 144034  | 169664 | 174447 | 204129  | 243819 |
+|   S08    | 103162 | 120102  | 141377 | 145333 | 169963  | 202857 |
+|   S09    | 136401 | 158750  | 186809 | 192021 | 224502  | 267863 |
+|   S10    | 123075 | 143186  | 168426 | 173104 | 202315  | 241284 |
+|   S11    | 100788 | 117150  | 137665 | 141449 | 165181  | 196786 |
+|   S12    | 128800 | 150800  | 178593 | 183918 | 216186  | 259743 |
 
 Costs summed and discounted from year 16 to year 20, million USD
 
@@ -627,7 +635,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2791 3233 3774 3796 4339 4966
+Min. 1st Qu. Median Mean 3rd Qu. Max. 2789 3176 3649 3727 4269 4964
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -651,44 +659,46 @@ D^{\text{(S-del)}} =
 \end{equation}$$
 
 <!-- We set  -->
+
 <!-- $$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)}V_{LMIC; j} + N_{LIC}^{(15)}V_{LIC; j} \right)$$ -->
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/deliverycost-1.png" alt="SSV delivery cost"  />
 <p class="caption">
+
 <span id="fig:deliverycost"></span>Figure 4.4: SSV delivery cost
 </p>
 
 </div>
 
-     BAU Min.   : 68494   1st Qu.: 96151   Median :114903   Mean   :117231  
-     S01 Min.   : 68864   1st Qu.: 96528   Median :115223   Mean   :117560  
-     S02 Min.   : 68792   1st Qu.: 96358   Median :115127   Mean   :117421  
-     S03 Min.   : 68811   1st Qu.: 96378   Median :115146   Mean   :117440  
-     S04 Min.   : 68583   1st Qu.: 96231   Median :114979   Mean   :117306  
-     S05 Min.   : 68693   1st Qu.: 96327   Median :115073   Mean   :117400  
-     S06 Min.   : 67378   1st Qu.: 94227   Median :112373   Mean   :114477  
-     S07 Min.   : 67095   1st Qu.: 93648   Median :111617   Mean   :113688  
-     S08 Min.   : 66138   1st Qu.: 92231   Median :109879   Mean   :111903  
-     S09 Min.   : 54523   1st Qu.: 73898   Median : 87333   Mean   : 88768  
-     S10 Min.   : 61536   1st Qu.: 85379   Median :101274   Mean   :103138  
-     S11 Min.   : 59977   1st Qu.: 83154   Median : 98445   Mean   :100317  
-     S12 Min.   : 67689   1st Qu.: 95136   Median :113996   Mean   :116205  
+     BAU Min.   : 62976   1st Qu.: 92482   Median :111310   Mean   :113681  
+     S01 Min.   : 63331   1st Qu.: 92843   Median :111646   Mean   :114012  
+     S02 Min.   : 63231   1st Qu.: 92684   Median :111500   Mean   :113868  
+     S03 Min.   : 63248   1st Qu.: 92705   Median :111520   Mean   :113888  
+     S04 Min.   : 63056   1st Qu.: 92558   Median :111388   Mean   :113756  
+     S05 Min.   : 63151   1st Qu.: 92652   Median :111478   Mean   :113845  
+     S06 Min.   : 63632   1st Qu.: 93156   Median :112008   Mean   :114348  
+     S07 Min.   : 63886   1st Qu.: 93411   Median :112283   Mean   :114613  
+     S08 Min.   : 64061   1st Qu.: 93584   Median :112477   Mean   :114797  
+     S09 Min.   : 65260   1st Qu.: 95636   Median :114315   Mean   :116500  
+     S10 Min.   : 64739   1st Qu.: 94505   Median :113272   Mean   :115600  
+     S11 Min.   : 64947   1st Qu.: 94785   Median :113494   Mean   :115841  
+     S12 Min.   : 62269   1st Qu.: 91477   Median :110075   Mean   :112651  
                                           
-     BAU 3rd Qu.:134672   Max.   :206190  
-     S01 3rd Qu.:135015   Max.   :206438  
-     S02 3rd Qu.:134844   Max.   :206271  
-     S03 3rd Qu.:134866   Max.   :206291  
-     S04 3rd Qu.:134754   Max.   :206245  
-     S05 3rd Qu.:134856   Max.   :206316  
-     S06 3rd Qu.:131175   Max.   :199869  
-     S07 3rd Qu.:130197   Max.   :198112  
-     S08 3rd Qu.:128169   Max.   :194592  
-     S09 3rd Qu.:101171   Max.   :146127  
-     S10 3rd Qu.:118153   Max.   :176917  
-     S11 3rd Qu.:114885   Max.   :171419  
-     S12 3rd Qu.:133507   Max.   :204978  
+     BAU 3rd Qu.:130528   Max.   :192986  
+     S01 3rd Qu.:130813   Max.   :193311  
+     S02 3rd Qu.:130692   Max.   :193103  
+     S03 3rd Qu.:130708   Max.   :193127  
+     S04 3rd Qu.:130594   Max.   :193060  
+     S05 3rd Qu.:130673   Max.   :193147  
+     S06 3rd Qu.:131113   Max.   :193645  
+     S07 3rd Qu.:131329   Max.   :193907  
+     S08 3rd Qu.:131488   Max.   :194088  
+     S09 3rd Qu.:132963   Max.   :196285  
+     S10 3rd Qu.:132188   Max.   :194984  
+     S11 3rd Qu.:132388   Max.   :195249  
+     S12 3rd Qu.:129482   Max.   :191572  
 
 Targets:
 
@@ -751,12 +761,13 @@ The logic of this is as follows:
 
 <img src="README_files/figure-gfm/bpsvdeliverycost-1.png" alt="BPSV delivery cost"  />
 <p class="caption">
+
 <span id="fig:bpsvdeliverycost"></span>Figure 4.5: BPSV delivery cost
 </p>
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 6971 9855 11490 11747 13357 19642
+Min. 1st Qu. Median Mean 3rd Qu. Max. 6787 9790 11319 11513 13013 19075
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -786,21 +797,21 @@ and country-specific delivery costs
 |:--:|:--:|:--:|:--:|
 | One-off | R&D | 200 days to SSV | $3.5$ ($3.5,3.5$) |
 | One-off | R&D | 100 days to SSV | $10$ ($10,10$) |
-| One-off | R&D | BPSV | $0.33$ ($0.26,0.43$) |
-| One-off | Manufacturing | BPSV | $12,000,000$ ($12,000,000,12,000,000$) |
+| One-off | R&D | BPSV | $0.35$ ($0.27,0.45$) |
+| One-off | Manufacturing | BPSV | $0.000012$ ($0.000012,0.000012$) |
 | Per year | Manufacturing | BPSV | $0.16$ ($0.16,0.16$) |
 | Per year | Manufacturing | 0.7 billion capacity | $0.37$ ($0.37,0.37$) |
 | Per year | Manufacturing | 2 billion capacity | $1.1$ ($1.1,1.1$) |
-| Per pandemic | R&D | 200 days to SSV | $-0.14$ ($-0.22,-0.082$) |
-| Per pandemic | R&D | 100 days to SSV | $-0.22$ ($-0.33,-0.14$) |
+| Per pandemic | R&D | 200 days to SSV | $-0.14$ ($-0.24,-0.088$) |
+| Per pandemic | R&D | 100 days to SSV | $-0.23$ ($-0.37,-0.15$) |
 | Per pandemic | R&D | BPSV | $0.0066$ ($0.0035,0.014$) |
-| Per pandemic | Manufacturing | 0.7 billion capacity | $-23,000$ ($-23,000,-23,000$) |
-| Per pandemic | Manufacturing | 2 billion capacity | $-99,000$ ($-99,000,-99,000$) |
+| Per pandemic | Manufacturing | 0.7 billion capacity | $-27$ ($-27,-27$) |
+| Per pandemic | Manufacturing | 2 billion capacity | $-92$ ($-92,-92$) |
 | Per pandemic | Manufacturing | BPSV | $6.7$ ($6.7,6.7$) |
 | Per pandemic | Delivery | BPSV | $20$ ($19,22$) |
-| Per pandemic | Delivery | 0.7 billion capacity | $140$ ($110,170$) |
-| Per pandemic | Delivery | 2 billion capacity | $310$ ($240,380$) |
-| Per pandemic | Delivery | Equality + Delivery | $-1,800$ ($-2,300,-1,400$) |
+| Per pandemic | Delivery | 0.7 billion capacity | $0.14$ ($0.11,0.17$) |
+| Per pandemic | Delivery | 2 billion capacity | $0.31$ ($0.24,0.38$) |
+| Per pandemic | Delivery | Equality + Delivery | $-1.9$ ($-2.3,-1.4$) |
 
 Cost differences: investments vs. BAU, for different types of
 investment.
@@ -817,9 +828,13 @@ investment.
 Manufacturing response timeline assumptions
 
 <!-- | Weeks from transition start | 0-11 | 12-21 | 22-29 | 30-45  | 46-47 | 48-63 | 64+ | -->
+
 <!-- |---|---|---|---|---|---|---|---| -->
+
 <!-- | Reserved Capacity (%)  || Scaling from 0-100 | 100 | 100 | 100 | 100 | 100 |  -->
+
 <!-- | Private Capacity (Existing; %)  || | | Scaling from 0-100 | 100 | 100 | 100 |  -->
+
 <!-- | Private Capacity (Response; %)  | | | |  | | Scaling from 0-100 | 100 | -->
 
 | Weeks from transition start | Reserved Capacity (%) | Existing Private Capacity (%) | Response Private Capacity (%) |
@@ -876,8 +891,11 @@ Z_{x,s,w} = \left\\{\begin{array}{lr}0 & w-w_s^{(0)} \leq I_x \\\\
 \end{equation}$$
 
 <!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
+
 <!-- \frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\  -->
+
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\  -->
+
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\  -->
 
 where $I_R = 12$ is the number of weeks to initial manufacturing for
@@ -908,6 +926,7 @@ Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
 
 <img src="README_files/figure-gfm/supply-1.png" alt="Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
 <p class="caption">
+
 <span id="fig:supply-1"></span>Figure 5.1: Doses made available from
 manufacturing per scenario. Weeks are in reference to the sequencing of
 the pathogen.
@@ -919,6 +938,7 @@ the pathogen.
 
 <img src="README_files/figure-gfm/supply-2.png" alt="Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
 <p class="caption">
+
 <span id="fig:supply-2"></span>Figure 5.2: Doses made available from
 manufacturing per scenario. Weeks are in reference to the sequencing of
 the pathogen.
@@ -997,6 +1017,7 @@ The logic of this reads as follows:
 
 <img src="README_files/figure-gfm/procurement-1.png" alt="Doses procured by country income level"  />
 <p class="caption">
+
 <span id="fig:procurement"></span>Figure 5.3: Doses procured by country
 income level
 </p>
@@ -1011,6 +1032,7 @@ income level
 
 <img src="README_files/figure-gfm/scendelivery-1.png" alt="Cumulative vaccine coverage (second SSV dose) by country income level"  />
 <p class="caption">
+
 <span id="fig:scendelivery"></span>Figure 5.4: Cumulative vaccine
 coverage (second SSV dose) by country income level
 </p>
@@ -1044,6 +1066,7 @@ Z_{w} = \left\\{\begin{array}{lr}0 & w < I_R \\\\
 
 <img src="README_files/figure-gfm/bpsvsupply-1.png" alt="BPSV doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
 <p class="caption">
+
 <span id="fig:bpsvsupply"></span>Figure 6.1: BPSV doses made available
 from manufacturing per scenario. Weeks are in reference to the
 sequencing of the pathogen.
@@ -1059,6 +1082,7 @@ Doses are all allocated in proportion to the eligible population.
 
 <img src="README_files/figure-gfm/bpsvprocurement-1.png" alt="BPSV doses procured by country income level"  />
 <p class="caption">
+
 <span id="fig:bpsvprocurement"></span>Figure 6.2: BPSV doses procured by
 country income level
 </p>
@@ -1073,6 +1097,7 @@ country income level
 
 <img src="README_files/figure-gfm/bpsvdeliveryplot-1.png" alt="BPSV vaccine coverage by country income level"  />
 <p class="caption">
+
 <span id="fig:bpsvdeliveryplot"></span>Figure 6.3: BPSV vaccine coverage
 by country income level
 </p>

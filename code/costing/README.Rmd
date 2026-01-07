@@ -502,7 +502,7 @@ Target: 146 (103 135 177)
 
 ```{r}
 
-bpsv_upfront = pardf$bpsv_res_upfront*pfixed$bpsv_inv_res
+bpsv_upfront = pardf$bpsv_res_upfront*pfixed$bpsv_inv_res/1e6 # millions
 
 
 ```
@@ -905,7 +905,7 @@ for(s in 1:nscen){
     
     
     ssv_proccost_discounted[[s]][i] = sum(sapply(1:NYEARS,function(x) ssv_procurement_costs/(1+pardf$discount[i])^x))
-    ssv_proccost_undiscounted[[s]][i] = sum(ssv_procurement_costs)
+    ssv_proccost_undiscounted[[s]][i] = sum(ssv_procurement_costs)/1e3 # billions to millions
   }
   cost_per_year[[s]] = c(ssv_procurement_costs, scennames[s])
 }
@@ -1212,7 +1212,7 @@ capas = paste0(crs[2:3],' billion capacity')
 ## bringing together preparedness costs
 
 # bpsv_rd_costsamples_dyd
-bpsv_rd_prep = as.data.frame(t(quantile(bpsv_rd_costsamples_no_d,c(1:3)/4)))
+bpsv_rd_prep = as.data.frame(t(quantile(bpsv_rd_costsamples_no_d/1e3,c(1:3)/4)))
 bpsv_rd_prep$timing = 'One-off'
 bpsv_rd_prep$category = 'R&D'
 bpsv_rd_prep$type = 'BPSV'
@@ -1227,7 +1227,7 @@ enab$type = missions
 # rbind(enab, bpsv_rd_prep)
 
 # upfront cost in million dollars
-bpsv_man = as.data.frame(t(quantile(bpsv_upfront*1e3,c(1:3)/4)))
+bpsv_man = as.data.frame(t(quantile(bpsv_upfront/1e3,c(1:3)/4)))
 bpsv_man$timing = 'One-off'
 bpsv_man$category = 'Manufacturing'
 bpsv_man$type = 'BPSV'
@@ -1304,7 +1304,7 @@ bpsv_proc_res$type = 'BPSV'
 # delivery
 # ssv; in billions
 bau_del = ssv_delivery_costs[[1]]
-ssv_del_diff = lapply(c(5,6,13),function(x)ssv_delivery_costs[[x]]-bau_del)
+ssv_del_diff = lapply(c(5,6,13),function(x)(ssv_delivery_costs[[x]]-bau_del)/1e3)
 ssv_del_df = as.data.frame(t(sapply(ssv_del_diff,function(x)quantile(x,c(1:3)/4))))
 ssv_del_df$timing = 'Per pandemic'
 ssv_del_df$category = 'Delivery'
@@ -1391,38 +1391,39 @@ preps$Category[13] = 'Equality + Delivery'
 
 ```{r}
 
-
-ssv_res_diff = lapply(c(1,5,6), function(x)ssv_proccost_undiscounted[[x]] - ssv_proccost_undiscounted[[1]])
-
-ssv_del_diff = lapply(ssv_delivery_costs,function(x)x-bau_del)
-
-all_resp_costs = list()
-s=1
-for(s in 1:length(scennames)){
-  total_costs = ssv_del_diff[[s]]
-  if(bpsv_scen[s]==T) total_costs <- total_costs + bpsvresrd/1e3 + bpsvproc + bpsv_del_cost/1e3
-  
-  whichcap = scen_capres[s]
-  total_costs <- total_costs + ssv_proccost_undiscounted[[s]] - ssv_proccost_undiscounted[[1]]
-  
-  if(scen_dm[s]>1) total_costs <- total_costs + ssv_rd_diff[[scen_dm[s]-1]]
-  
-  all_resp_costs[[s]] = quantile(total_costs*at_yr_15,c(1:3)/4)
+cost_samples = readRDS('../results/cost_samples.Rds')
+cost_diffs = list()
+for (i in 1:3){
+  cost_diffs[[i]] = cost_samples[[i]]
+  for(j in 1:ncol(cost_diffs[[i]]))
+    cost_diffs[[i]][,j] = cost_diffs[[i]][,j] - cost_samples[[i]][,1]
 }
-  
+all_resp_costs <- all_prep_costs <- list()
+
+for(s in 1:length(scennames)){
+  all_prep_costs[[s]] = quantile(cost_diffs[[1]][,s]+cost_diffs[[2]][,s]*fifteen_yr_discount_weight,c(1:3)/4)/1e3
+  all_resp_costs[[s]] = quantile(cost_diffs[[3]][,s]*at_yr_15,c(1:3)/4)/1e3
+}
+
+preps = as.data.frame(do.call(rbind,all_prep_costs))
+preps$Scenario = scennames
+preps$Category = c('365 days', rep('BPSV',3), rep('365 days',2),rep(c('200 days','100 days'),each=3), 'Equality + Delivery')
+preps$Capacity = crs[scen_capres]
+preps$DM = dms[scen_dm]
+preps$timing = 'Preparedness'
+
 resps = as.data.frame(do.call(rbind,all_resp_costs))
 resps$Scenario = scennames
 resps$Category = preps$Category[match(resps$Scenario,preps$Scenario)]
 resps$Capacity = crs[scen_capres]
 resps$DM = dms[scen_dm]
 resps$timing = 'Response'
-preps$timing = 'Preparedness'
 
 melted = reshape2::melt(rbind(preps,resps),id.vars=c('Scenario','Category','Capacity','DM','timing'))
-melted$value = melted$value/113.8e3*100
-toplot = dcast(melted,formula=Scenario+Category+Capacity+DM~timing+variable)
+# melted$value = melted$value/113.8e3*100
+toplot = reshape2::dcast(melted,formula=Scenario+Category+Capacity+DM~timing+variable)
 
-toplot$Category = factor(toplot$Category,levels=c('BPSV', '365DM','200DM','100DM', 'Equality + Delivery'),labels=c('BPSV', '365DM','200DM','100DM', 'Equality + Delivery'))
+toplot$Category = factor(toplot$Category,levels=c('BPSV', '365 days','200 days','100 days', 'Equality + Delivery'),labels=c('BPSV', '365 days','200 days','100 days', 'Equality + Delivery'))
 
 fifcosts = ggplot(toplot) +
   geom_hline(yintercept=0,colour='grey') +
@@ -1431,11 +1432,11 @@ fifcosts = ggplot(toplot) +
               colour='navyblue',show.legend = T) +
   geom_point(#show.legend = c('colour'=F),
                aes(x=`Preparedness_50%`,y=`Response_50%`,colour=Category,size=factor(Capacity,levels=c(0,'0.7','2')))) +
-  geom_text(aes(x=`Preparedness_50%`+6e-4,y=`Response_50%`+3e-3,label=Scenario)) +
+  geom_text(aes(x=`Preparedness_50%`+.8,y=`Response_50%`+2.5*(1-2*as.numeric(Scenario=='S12')),label=Scenario)) +
   geom_errorbar(show.legend=F,aes(x=`Preparedness_50%`,colour=Category,ymin=`Response_25%`,ymax=`Response_75%`)) +
   geom_errorbarh(show.legend=F,aes(y=`Response_50%`,colour=Category,xmin=`Preparedness_25%`,xmax=`Preparedness_75%`)) +
-  labs(linetype='',x='Total preparedness difference from BAU',y='Total response costs difference from BAU',colour='',size='Capacity\nreservation',
-       title='B) Relative costs of preparedness vs. response (compared to BAU; % GDP)') +
+  labs(linetype='',x='Preparedness costs',y='Response costs',colour='',size='Capacity\nreservation',
+       title='B) Preparedness vs. response (compared to BAU; billion USD)') +
   geom_segment(
     aes(x = 0, xend = 0, y = 0, yend = 0, linetype = "Break even"),
     inherit.aes = FALSE, alpha = 0, show.legend = TRUE
@@ -1453,7 +1454,6 @@ fifcosts = ggplot(toplot) +
 
 final = ggarrange(unitcosts, fifcosts, ncol=1)
 ggsave(final, filename='fig2alt.png',height=10,width=10)
-
 
 ```
 
