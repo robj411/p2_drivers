@@ -38,7 +38,7 @@ dms = c(365, 200, 100)
 
 caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
 
-rawpar <- get_parameters(nsamples=100)[[1]]
+rawpar <- get_parameters(nsamples=10000)[[1]]
 
 
 
@@ -290,6 +290,13 @@ format_to_print2 <- function(x,z=2){
 dm_rd_times <- cbind(0, pardf$years_200, pardf$years_100)
 
 scenario_results = list()
+tosave <- list()
+for(i in 1:3) tosave[[i]] <- list()
+
+
+sheet2 = read.csv('../../cepi_results/Delta_LIR_IQR_pc_GDP_BAU.csv',check.names = F)
+
+
 for(s in 1:nscen){ #c(1,10)){# 
   
   dm = scenario_df$DM[s]
@@ -299,19 +306,8 @@ for(s in 1:nscen){ #c(1,10)){#
   cr <- scenario_df$CR[s]
   propflag = scenario_df$Proportional[s]
   
-  # profvis::profvis({
     scenario_results[[s]] = get_scenario(dm, bpsvflag, cr, propflag, rates=scenrates[s,])
     # })
-  
-  # print(scennames[s])
-  # print(summary( scenario_results[[s]]$costs$upfront$bpsv_rd_discounted))
-  # for(j in 1:length(scenario_results[[s]]$costs)){
-  #   for(k in 1:length(scenario_results[[s]]$costs[[j]])){
-  #     print(names(scenario_results[[s]]$costs[[j]])[k])
-  #     print(format_to_print2(mean(scenario_results[[s]]$costs[[j]][[k]]),3))
-  #   }
-  # }
-    
   
   thisscen = scenario_results[[s]]
   allupfront = with(thisscen$costs$upfront, enabling + dis_upfront_bpsv + bpsv_rd_discounted)
@@ -323,21 +319,37 @@ for(s in 1:nscen){ #c(1,10)){#
     bauallupfront = allupfront
     bauallannual = allannual
     bauallresp = allresp
+    baucosts = list(allupfront, allannual, allresp)
+    
+    print(summary(with(thisscen$costs$response, ssv_rd + ssv_proc_undiscounted + ssv_delivery_undiscounted + 
+                         bpsv_response_rd + bpsv_proc + bpsv_delivery)))
   }else{
     diffallupfront = allupfront - bauallupfront
     diffallannual = allannual - bauallannual
     diffallresp = allresp - bauallresp
     
+    delta_lir = sheet2[match(scennames[s],sheet2$to), 3:4]
+    
     cat(paste(scennames[s], ' & ', paste0(format_to_print2(quantile(diffallupfront, c(1,3)/4)),collapse='--{}')
                 , ' & ', paste0(format_to_print2(quantile(diffallannual, c(1,3)/4)),collapse='--{}')
-                , ' & ', paste0(format_to_print2(quantile(diffallresp, c(1,3)/4)),collapse='--{}'), '\n'
+              , ' & ', paste0(format_to_print2(quantile(diffallresp, c(1,3)/4)),collapse='--{}')
+              , ' & ', paste0(delta_lir,collapse='--{}')
+              , '\\\\ \n'
     ))
+    
+    tosave[[1]][[scennames[s]]] <- allupfront
+    tosave[[2]][[scennames[s]]] <- allannual
+    tosave[[3]][[scennames[s]]] <- allresp
   }
   
 }
 
-
-
+if(NSAMPLES>=10000){
+  
+  
+  bounds = lapply(1:3,function(x) cbind(BAU=baucosts[[x]], do.call(cbind, tosave[[x]])))
+  saveRDS(bounds,file = '../results/cost_samples.Rds')
+}
     
       
 
