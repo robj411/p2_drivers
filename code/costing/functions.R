@@ -129,7 +129,6 @@ get_parameters = function(nsamples = 100){
   
   # probability of success per phase for bpsv
   POS_BPSV <<- matrix(sapply(paste0('pos_',0:3), function(x) pardf[[x]]), ncol=4, byrow=F)
-  print(POS_BPSV)
   # probability to occur is the product of prior phases
   PTO_BPSV = POS_BPSV
   for(i in 2:4) PTO_BPSV[,i] = apply(POS_BPSV[,1:i, drop = FALSE],1,prod)
@@ -287,16 +286,32 @@ get_ssv_supply = function(dm=365, capres=0, bpsv=F, weeks_init, weeks_scale){
 
 
 annualise_ssv_procurement = function(supplies, alloc, cap_res){
-  # supplied doses
+  # supplied doses are per week
+  # browser()
   res = supplies[[1]]
   exbui = supplies[[2]] + supplies[[3]]
+  # allocated doses are cumulative
+  total_alloc = rowSums(alloc[,1:4])
+  
+  ssv_first_schedule = diff(c(0, sapply(1:NYEARS,function(y) total_alloc[y*52])))
+  # print(sum(ssv_first_schedule))
+  first_schedule_completes = which(total_alloc >= sum(ssv_first_schedule))[1]
+  # print(DEMAND15/1e9)
+  # print(alloc[first_schedule_completes,])
+  
+  res_fs = res[1:first_schedule_completes]
+  un_fs = exbui[1:first_schedule_completes]
+  
+  # max production per year for fs
+  max_annual_res_fs = sapply(1:NYEARS,function(y) sum(na.omit(res_fs[(1:52) + (y-1)*52])))
+  max_annual_exbui_fs = sapply(1:NYEARS,function(y) sum(na.omit(un_fs[(1:52) + (y-1)*52])))
+  
+  fs_res = pmin(ssv_first_schedule, max_annual_res_fs)
+  fs_un = pmin(max_annual_exbui_fs, ssv_first_schedule - fs_res)
+  
   # max production per year
   max_annual_res_doses = sapply(1:NYEARS,function(y) sum(na.omit(res[(1:52) + (y-1)*52])))
   max_annual_exbui_doses = sapply(1:NYEARS,function(y) sum(na.omit(exbui[(1:52) + (y-1)*52])))
-  
-  ssv_first_schedule = diff(c(0, sapply(1:NYEARS,function(y) rowSums(alloc[,1:4])[y*52])))
-  fs_res = pmin(ssv_first_schedule, max_annual_res_doses)
-  fs_un = pmin(max_annual_exbui_doses, ssv_first_schedule - fs_res)
   
   res_left_for_booster = max_annual_res_doses - fs_res
   un_left_for_booster = max_annual_exbui_doses - fs_un
@@ -310,7 +325,12 @@ annualise_ssv_procurement = function(supplies, alloc, cap_res){
   
   annual_res_doses = booster_res + fs_res
   annual_exbui_doses = booster_un + fs_un
-  annual_res_doses + annual_exbui_doses
+  # print(sum(annual_res_doses + annual_exbui_doses))
+  # print(sum(fs_res+fs_un))
+  # print(sum(fs_res))
+  # print(sum(fs_un))
+  # print(sum(booster_res))
+  # print(sum(booster_un))
   list(res=annual_res_doses, un=annual_exbui_doses)
 }
 
@@ -419,10 +439,11 @@ allocate_and_deliver_doses = function(allocation_functions, supplies, del_rates,
       allocation_res = allocation_functions[[x]](cum_received = current_count, 
                                                  new_doses=new_doses, 
                                                  hic_only = ifelse(x=='res',hic_only,0))
-      week_count = week_count + allocation_res
+      # week_count = week_count + allocation_res
+      current_count = current_count + allocation_res
     }
-    
-    cumulative_doses[w,] = current_count + week_count
+    # cumulative_doses[w,] = current_count + week_count
+    cumulative_doses[w,] = current_count
   }
   alloc = as.data.frame(cumulative_doses)
   alloc$Week = 1:NWEEKS
