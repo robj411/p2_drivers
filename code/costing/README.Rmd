@@ -1683,14 +1683,15 @@ $$K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.$$
 We write 
 
 $$X_i = \frac{2\cdot \lambda\cdot N_i^{(15)}}{1-\delta}$$
-as the maximum demand for income group $i$, representing two doses each for $\lambda = `r rawpar$vaccine_coverage*100`$% of the population assuming vaccine wastage of $\delta = `r rawpar$vaccine_wastage`$.
+as the maximum demand for income group $i$, representing two doses each for $\lambda = `r rawpar$vaccine_coverage*100`$% of the population assuming vaccine wastage of $\delta = `r round(rawpar$vaccine_wastage,2)`$.
 
 ```{r}
 eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
-Z_{R,s,w}             & K_{s,\\text{HIC},w} < A_3 \\;\\&\\; i=\\text{HIC} \\\\
-0                     & K_{s,\\text{HIC},w} < A_3 \\;\\&\\; i\\neq\\text{HIC} \\\\
-\\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & A_3 < K_{s,\\text{HIC},w} < X_{\\text{HIC}} \\\\
-\\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\;  K_{s,\\text{UMIC},w} < X_{\\text{HIC}} \\;\\&\\; i\\neq\\text{HIC}\\\\
+\\frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\\text{HIC},w} <  X_{\\text{HIC}}\\;\\&\\; i=\\text{HIC} \\\\
+\\frac{M_{R,s}-A_3}{M_{R,s}}Z_{R,s,w}                    & K_{s,\\text{HIC},w} < X_{\\text{HIC}} \\;\\&\\; i\\neq\\text{HIC} \\\\
+0 & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\; i=\\text{HIC}\\\\
+\\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\;  K_{s,\\text{UMIC},w} < X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{HIC}\\\\
+0 & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{LLMIC}\\\\
 Z_{R,s,w}             & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{LLMIC}
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
@@ -1703,7 +1704,7 @@ if (knitr::is_html_output()) {
 
 The logic of this reads as follows:
 
-- $A_3=0.5$ billion doses per year from reserved capacity go exclusively to HIC
+- $A_3=0.5$ billion doses per year from reserved capacity go exclusively to HIC, which is expressed as a fraction of the total reservation, $M_{R,s}$
 - Any remaining reserved capacity doses are allocated according to population
 - Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC, LMIC and LIC
 
