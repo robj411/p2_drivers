@@ -731,7 +731,7 @@ for $i \in \lbrace 0,1,2,3 \rbrace$ where $X_i$ is the number of candidates that
 Then the total cost is
 
 \begin{equation}
-D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}}  T_{\zeta(s),i}^{(e)} +  \hat{P}_4^{\text{(SSV)}} T_4\right)
+D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3  T_{\zeta(s),i}^{(e)} \hat{P}_i^{\text{(SSV)}} +  \hat{P}_4^{\text{(SSV)}} T_4\right)
 (\#eq:ssvrd)
 \end{equation}
 

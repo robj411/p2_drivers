@@ -264,8 +264,8 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 21.06 56.55 72.37 79.44 96.02
-236.14
+Min. 1st Qu. Median Mean 3rd Qu. Max. 24.47 52.84 70.97 76.61 92.52
+252.10
 
 Target: 146 (103 135 177)
 
@@ -321,8 +321,8 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 777.0 965.6 1077.7 1085.9 1191.0
-1465.0
+Min. 1st Qu. Median Mean 3rd Qu. Max. 777.2 966.1 1078.8 1086.5 1193.8
+1464.9
 
 Target: 1 (0.9 1 1.1)
 
@@ -359,12 +359,12 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2737 2894 3060 3079 3254 3484
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2737 2877 3063 3079 3265 3484
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6569 6947 7344 7389 7809 8362
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6570 6905 7352 7389 7837 8362
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13685 14472 15301 15393 16270
-17420
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13687 14386 15316 15395 16326
+17421
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -408,7 +408,7 @@ years with uniformly distributed discount rate.
 
 200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.24 3.24 3.30 3.37
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.62 8.06 8.11 8.57 9.17
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.58 8.07 8.11 8.60 9.17
 
 Targets:
 
@@ -460,7 +460,7 @@ candidates that failed in phase $i$ and $X_4$ the number that succeeded.
 Then the total cost is
 
 $$\begin{equation}
-D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}}  T_{\zeta(s),i}^{(e)} +  \hat{P}_4^{\text{(SSV)}} T_4\right)
+D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3  T_{\zeta(s),i}^{(e)} \hat{P}_i^{\text{(SSV)}} +  \hat{P}_4^{\text{(SSV)}} T_4\right)
 \qquad(4.1)
 \end{equation}$$
 
@@ -494,9 +494,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 |  32  |   59    |   76   |  81  |   99    | 215  |
-| 200 |  16  |   28    |   35   |  37  |   44    |  94  |
-| 100 |  12  |   21    |   27   |  29  |   36    |  78  |
+| 365 |  22  |   40    |   47   |  48  |   56    |  97  |
+| 200 |  10  |   19    |   22   |  23  |   26    |  45  |
+| 100 |  5   |    9    |   11   |  11  |   13    |  24  |
 
 Targets:
 
@@ -534,7 +534,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.1 1.1 2.1 6.2 4.2 278.2
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.1 1.0 2.1 6.0 4.2 930.9
 
 Target: 14 (3 5 10)
 
@@ -581,17 +581,17 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 | Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
 |:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
-|   BAU    | 130311 | 154432  | 182060 | 187172 | 217250  | 263002 |
-|   S01    | 133452 | 157710  | 185416 | 190472 | 220605  | 266213 |
-|   S02    | 120678 | 142950  | 168447 | 173155 | 200909  | 243089 |
-|   S03    | 97925  | 115837  | 136314 | 140067 | 162345  | 196117 |
-|   S04    | 135952 | 160289  | 188020 | 193020 | 223155  | 268572 |
-|   S05    | 123604 | 145689  | 170847 | 175376 | 202712  | 243890 |
-|   S06    | 103133 | 121477  | 142358 | 146104 | 168788  | 202917 |
-|   S07    | 136363 | 160563  | 188103 | 193038 | 222953  | 267941 |
-|   S08    | 123041 | 144817  | 169589 | 174018 | 200923  | 241354 |
-|   S09    | 100761 | 118477  | 138610 | 142192 | 164051  | 196843 |
-|   S10    | 128763 | 152590  | 179879 | 184928 | 214636  | 259822 |
+|   BAU    | 130372 | 151694  | 182609 | 187283 | 219400  | 263021 |
+|   S01    | 133514 | 154959  | 185967 | 190581 | 222752  | 266233 |
+|   S02    | 120735 | 140422  | 168955 | 173257 | 202891  | 243107 |
+|   S03    | 97971  | 113805  | 136721 | 140148 | 163934  | 196132 |
+|   S04    | 136014 | 157532  | 188570 | 193126 | 225295  | 268591 |
+|   S05    | 123660 | 143188  | 171346 | 175473 | 204653  | 243908 |
+|   S06    | 103180 | 119400  | 142772 | 146184 | 170397  | 202931 |
+|   S07    | 136425 | 157823  | 188649 | 193142 | 225074  | 267960 |
+|   S08    | 123097 | 142352  | 170080 | 174112 | 202830  | 241371 |
+|   S09    | 100806 | 116472  | 139009 | 142268 | 165599  | 196857 |
+|   S10    | 128824 | 149885  | 180422 | 185037 | 216759  | 259841 |
 
 Costs summed and discounted from year 16 to year 20, million USD
 
@@ -624,7 +624,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2789 3207 3671 3744 4244 4965
+Min. 1st Qu. Median Mean 3rd Qu. Max. 2790 3160 3680 3746 4279 4965
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -661,29 +661,29 @@ for a final vaccine coverage of \$= \$.
 
 </div>
 
-     BAU Min.   : 66952   1st Qu.: 95878   Median :112973   Mean   :115447  
-     S01 Min.   : 67276   1st Qu.: 96251   Median :113308   Mean   :115781  
-     S02 Min.   : 67029   1st Qu.: 95966   Median :113052   Mean   :115523  
-     S03 Min.   : 67126   1st Qu.: 96068   Median :113144   Mean   :115612  
-     S04 Min.   : 67627   1st Qu.: 96630   Median :113656   Mean   :116118  
-     S05 Min.   : 67901   1st Qu.: 96945   Median :113922   Mean   :116383  
-     S06 Min.   : 68089   1st Qu.: 97142   Median :114113   Mean   :116568  
-     S07 Min.   : 69510   1st Qu.: 98863   Median :115832   Mean   :118291  
-     S08 Min.   : 68822   1st Qu.: 97958   Median :114897   Mean   :117375  
-     S09 Min.   : 69048   1st Qu.: 98207   Median :115137   Mean   :117618  
-     S10 Min.   : 66137   1st Qu.: 94824   Median :111820   Mean   :114403  
+     BAU Min.   : 66877   1st Qu.: 94430   Median :112252   Mean   :115088  
+     S01 Min.   : 67237   1st Qu.: 94795   Median :112579   Mean   :115419  
+     S02 Min.   : 66954   1st Qu.: 94511   Median :112328   Mean   :115164  
+     S03 Min.   : 67045   1st Qu.: 94608   Median :112423   Mean   :115253  
+     S04 Min.   : 67584   1st Qu.: 95162   Median :112952   Mean   :115755  
+     S05 Min.   : 67846   1st Qu.: 95449   Median :113240   Mean   :116020  
+     S06 Min.   : 68034   1st Qu.: 95639   Median :113461   Mean   :116204  
+     S07 Min.   : 69372   1st Qu.: 97409   Median :115240   Mean   :117918  
+     S08 Min.   : 68799   1st Qu.: 96566   Median :114308   Mean   :117007  
+     S09 Min.   : 69037   1st Qu.: 96843   Median :114561   Mean   :117248  
+     S10 Min.   : 66163   1st Qu.: 93306   Median :111206   Mean   :114048  
                                           
-     BAU 3rd Qu.:131233   Max.   :195702  
-     S01 3rd Qu.:131579   Max.   :195952  
-     S02 3rd Qu.:131310   Max.   :195763  
-     S03 3rd Qu.:131400   Max.   :195840  
-     S04 3rd Qu.:131886   Max.   :196250  
-     S05 3rd Qu.:132109   Max.   :196468  
-     S06 3rd Qu.:132266   Max.   :196636  
-     S07 3rd Qu.:133875   Max.   :198454  
-     S08 3rd Qu.:133005   Max.   :197403  
-     S09 3rd Qu.:133245   Max.   :197642  
-     S10 3rd Qu.:130311   Max.   :194568  
+     BAU 3rd Qu.:132187   Max.   :200211  
+     S01 3rd Qu.:132480   Max.   :200449  
+     S02 3rd Qu.:132254   Max.   :200270  
+     S03 3rd Qu.:132333   Max.   :200341  
+     S04 3rd Qu.:132839   Max.   :200724  
+     S05 3rd Qu.:133106   Max.   :200938  
+     S06 3rd Qu.:133309   Max.   :201086  
+     S07 3rd Qu.:135026   Max.   :202831  
+     S08 3rd Qu.:134000   Max.   :201752  
+     S09 3rd Qu.:134277   Max.   :201948  
+     S10 3rd Qu.:131180   Max.   :199024  
 
 Targets:
 
@@ -751,7 +751,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 6966 9674 11348 11569 13126 19355
+Min. 1st Qu. Median Mean 3rd Qu. Max. 7060 9756 11322 11542 13079 19989
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -782,7 +782,7 @@ $$1$$ 0.5316923
 | timing | category | type | Cost vs. BAU |
 |:--:|:--:|:--:|:--:|
 | One-off | Manufacturing | BPSV | $0.000012$ ($0.000012,0.000012$) |
-| One-off | R&D | BPSV | $0.076$ ($0.06,0.1$) |
+| One-off | R&D | BPSV | $0.074$ ($0.057,0.098$) |
 | One-off | R&D | 200 days to SSV | $3.5$ ($3.5,3.5$) |
 | One-off | R&D | 100 days to SSV | $10$ ($10,10$) |
 | Per year | Manufacturing | BPSV | $0.16$ ($0.16,0.16$) |
@@ -790,14 +790,14 @@ $$1$$ 0.5316923
 | Per year | Manufacturing | 2 billion capacity | $1.1$ ($1.1,1.1$) |
 | Per pandemic | Delivery | BPSV | $20$ ($19,22$) |
 | Per pandemic | Delivery | 0.7 billion capacity | $0.14$ ($0.11,0.17$) |
-| Per pandemic | Delivery | 2 billion capacity | $0.31$ ($0.24,0.37$) |
-| Per pandemic | Delivery | Equality + Delivery | $-1.9$ ($-2.4,-1.5$) |
+| Per pandemic | Delivery | 2 billion capacity | $0.31$ ($0.23,0.37$) |
+| Per pandemic | Delivery | Equality + Delivery | $-1.9$ ($-2.4,-1.4$) |
 | Per pandemic | Manufacturing | BPSV | $6.7$ ($6.7,6.7$) |
 | Per pandemic | Manufacturing | 0.7 billion capacity | $-27$ ($-27,-27$) |
 | Per pandemic | Manufacturing | 2 billion capacity | $-92$ ($-92,-92$) |
-| Per pandemic | R&D | BPSV | $0.0038$ ($0.002,0.0079$) |
-| Per pandemic | R&D | 200 days to SSV | $-0.075$ ($-0.1,-0.055$) |
-| Per pandemic | R&D | 100 days to SSV | $-0.088$ ($-0.11,-0.068$) |
+| Per pandemic | R&D | BPSV | $0.0037$ ($0.0019,0.0076$) |
+| Per pandemic | R&D | 200 days to SSV | $-0.045$ ($-0.052,-0.038$) |
+| Per pandemic | R&D | 100 days to SSV | $-0.065$ ($-0.074,-0.058$) |
 
 Cost differences: investments vs. BAU, for different types of
 investment.
