@@ -473,7 +473,7 @@ where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025. Then the total 
 
 ```{r}
 eqtext = 'D_s^{\\text{(BP-adRD)}} = \\left\\{\\begin{array}{lr}
- (N^{\\text{(BPSV)}}-N^{\\text{(BPSV-1)}})\\sum_{i=0}^2 \\hat{P}_i^{(0)}T_{i} + N^{\\text{(BPSV-1)}}\\sum_{i=1}^2 \\hat{P}_i^{(1)}T_{i} \\; & \\; s=1 \\\\
+ \\left(N^{\\text{(BPSV)}}-N^{\\text{(BPSV-1)}}\\right)\\sum_{i=0}^2 \\hat{P}_i^{(0)}T_{i} + N^{\\text{(BPSV-1)}}\\sum_{i=1}^2 \\hat{P}_i^{(1)}T_{i} \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
 \\end{array}\\right.
 (\\#eq:bpsvrd)'
@@ -574,7 +574,7 @@ Target: 1 (0.9 1 1.1)
 **This matches the spreadsheet results.**
 
 
-The cost per dose reservation per year is $A_2 = `r rawpar$cost_capres`$ USD. Reservation sizes, in billions, depend on scenarios, including the $A_3 = `r rawpar$hic_cap_res`$ billion doses reserved for HIC, as follows:
+The cost per dose reservation per year is $A_2 = `r round(rawpar$cost_capres,2)`$ USD. Reservation sizes, in billions, depend on scenarios, including the $A_3 = `r rawpar$hic_cap_res`$ billion doses reserved for HIC, as follows:
 
 ```{r}
 eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
@@ -594,7 +594,7 @@ D_s^{\text{(S-cap)}} =  M_{R,s} A_2
 (\#eq:ssvcap)
 \end{equation}
 
-The annual costs in billion USD are `r 0.5*rawpar$cost_capres`, `r 1.2*rawpar$cost_capres`, and `r 2.5*rawpar$cost_capres`, respectively.
+The annual costs in billion USD are `r round(0.5*rawpar$cost_capres,2)`, `r round(1.2*rawpar$cost_capres,2)`, and `r round(2.5*rawpar$cost_capres,2)`, respectively.
 
 ```{r capres,fig.cap='Capacity reservation costs accumulated over 15 years with uniformly distributed discount rate.'}
 
@@ -731,7 +731,7 @@ for $i \in \lbrace 0,1,2,3 \rbrace$ where $X_i$ is the number of candidates that
 Then the total cost is
 
 \begin{equation}
-D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}}  T_{\zeta(s),i}^{(e)} +  \hat{P}_4 T_4\right)
+D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}}  T_{\zeta(s),i}^{(e)} +  \hat{P}_4^{\text{(SSV)}} T_4\right)
 (\#eq:ssvrd)
 \end{equation}
 
