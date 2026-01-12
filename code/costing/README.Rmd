@@ -33,18 +33,6 @@ always_allow_html: true
 
 
 
-# Questions and suggestions
-
-2. Do all BPSV start at Phase 0, or do some start at Phase 1?
-3. BPSV R&D costs appear to be inflated for inflation (28%) for BPSV prep R&D but not licensure and not BPSV Phase 3. For SSV, phase costs are inflated but licensure isn't.
-4. What is the stockpile upfront cost?
-5. BPSV response R&D does not appear to depend on number of candidates, probability of success, probability to occur, or inflation. Should it?
-6. SSV PoS uses a beta distribution and refers to COVID data (sheet "PoS by Phase"). The formula to describe a beta distribution for probability p using data is p~Beta(a, b), where a=successes+1 and b=failures+1. So for preclinical we have p~Beta(97, 34). And in the final phase, p~Beta(28, 9), because there were 35 remaining candidates, of which 27 passed and 8 failed. Did I understand this table correctly? And is there a source for these data?
-
-Nice to have?
-
-1. Why was 1000000000 (1 billion) chosen as the target amount for BPSV production? This can be rationalised by setting vaccine wastage to 0.3142532. (NB: no vaccine wastage is assumed for SSV.)
-2. Some values in "1. Input Dashboard" are calculated rather than given (e.g. cost for the capacity reservation, 160000000*1.08/325000000;  BSPV investigational cost per dose, 12145636/1200000000; the stockpile upfront cost, 138000000/1200000000 per dose). Can we include the sources & rationale for these values?
 
 
 <!-- # Figures (temporary) {.unlisted .unnumbered} -->
@@ -552,7 +540,7 @@ if (knitr::is_html_output()) {
 }
 ```
 
-where $A_1 = `r format_to_print(rawpar$cost_bpsv_res,0)`$ USD is the annual reservation cost.
+where $A_1 = `r round(rawpar$cost_bpsv_res,2)`$ USD is the annual reservation cost per dose.
 
 ```{r bpsvinv,fig.cap='BPSV investigational reserve costs accumulated from the completion of Phase II to year 15 with uniformly distributed discount rate.'}
 
@@ -735,15 +723,6 @@ D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}
 (\#eq:ssvrd)
 \end{equation}
 
-```{r}
-eqtext = 'D_s^{\\text{(S-RD)}} = N^{\\text{(SSV)}}\\left(\\sum_{i=0}^3 \\hat{P}_i^{\\text{(SSV)}}  T_{\\zeta(s),i}^{(e)} +  \\hat{P}_4^{\\text{(SSV)}} T_4\\right)
-(\\#eq:ssvrd)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
-```
 
 
 We multiply by the number of candidates, $N^{\text{(SSV)}}$, to get the total cost from the weighted average per candidate, where
