@@ -436,7 +436,7 @@ Table: (\#tab:inex) Manufacturers working on BPSV and whether or not they have l
 Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
 
 ```{r}
-eqtext = '\\hat{P}_i = \\left\\{\\begin{array}{lr}1 & i=0 \\\\ 
+eqtext = '\\hat{P}_i^{(0)} = \\left\\{\\begin{array}{lr}1 & i=0 \\\\ 
 \\prod_{j=0}^{i-1}P_j & i>0 
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
@@ -446,7 +446,24 @@ if (knitr::is_html_output()) {
 }
 ```
 
-for $i \in \{0,1,2,3,4\}$, with $i=4$ corresponding to licensure. The cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (with $\omega = `r rawpar$inex_weight`$):
+for $i \in \{0,1,2,3,4\}$, with $i=4$ corresponding to licensure. 
+
+For $N^{\text{(BPSV-1)}} = `r rawpar$n_bpsv_p1`$ candidate(s), which have already been through the preclinical phase, we have
+
+```{r}
+eqtext = '\\hat{P}_i^{(1)} = \\left\\{\\begin{array}{lr}1 & i=1 \\\\ 
+\\prod_{j=1}^{i-1}P_j & i>1 
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
+} else {
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
+}
+```
+
+for $i \in \{1,2,3,4\}$.
+
+The cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (with $\omega = `r rawpar$inex_weight`$):
 
 $$T_{i} = (1+I)(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}).$$ 
 
@@ -456,7 +473,7 @@ where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025. Then the total 
 
 ```{r}
 eqtext = 'D_s^{\\text{(BP-adRD)}} = \\left\\{\\begin{array}{lr}
- N^{\\text{(BPSV)}}\\sum_{i=0}^2 \\hat{P}_iT_{i} \\; & \\; s=1 \\\\
+ (N^{\\text{(BPSV)}}-N^{\\text{(BPSV-1)}})\\sum_{i=0}^2 \\hat{P}_i^{(0)}T_{i} + N^{\\text{(BPSV-1)}}\\sum_{i=1}^2 \\hat{P}_i^{(1)}T_{i} \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
 \\end{array}\\right.
 (\\#eq:bpsvrd)'
@@ -1697,7 +1714,8 @@ eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
 0 & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{UMIC}\\\\
 \\frac{N_{i}}{N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\;  K_{s,\\text{LMIC},w} < X_{\\text{LMIC}} \\;\\&\\; i\\notin  \\lbrace\\text{HIC},\\text{UMIC}\\rbrace\\\\
 0 & K_{s,\\text{LMIC},w} \\geq X_{\\text{LMIC}} \\;\\&\\; i=\\text{LMIC}\\\\
-Z_{R,s,w}             & K_{s,\\text{LMIC},w} \\geq X_{\\text{LMIC}} \\;\\&\\; K_{s,\\text{LIC},w} < X_{\\text{LIC}} \\;\\&\\; i=\\text{LIC}
+Z_{R,s,w}             & K_{s,\\text{LMIC},w} \\geq X_{\\text{LMIC}} \\;\\&\\; K_{s,\\text{LIC},w} < X_{\\text{LIC}} \\;\\&\\; i=\\text{LIC}\\\\
+0 & K_{s,\\text{LIC},w} \\geq X_{\\text{LIC}} 
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
