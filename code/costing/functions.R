@@ -19,7 +19,7 @@ get_parameters = function(nsamples = 100){
   
   for(i in 1:nrow(caps)){
     parameters <- as.numeric(strsplit(caps$Parameters[i],',')[[1]])
-    bounds <- as.numeric(strsplit(caps$Bounds[i],',')[[1]])
+    # bounds <- as.numeric(strsplit(caps$Bounds[i],',')[[1]])
     if(caps$Distribution[i]=='Uniform'){
       distcall = function(nsamples) runif(nsamples,parameters[1],parameters[2])
     }else if(caps$Distribution[i]=='Exponential'){
@@ -658,10 +658,12 @@ get_bpsv_costs = function(total_bpsv, pos, pto, ex, exi, inexi,
   inex_costs_per_year_from1 = c(rep_year(exi[2],1, y_durations[2]), rep_year(exi[3],pos[2], y_durations[3]))
   d_inex_costs_per_year_from1 = inex_costs_per_year_from1 * dc^(0:(length(inex_costs_per_year_from1)-1))
   
-  bpsv_rd_costsamples_dyd = ((n_bpsv_candidates - n_bpsv_p1)*sum(d_inex_costs_per_year) + 
-                               n_bpsv_p1*sum(d_inex_costs_per_year_from1))/1e6 # million
-  bpsv_rd_costsamples_no_d = ((n_bpsv_candidates - n_bpsv_p1)*sum(inex_costs_per_year) + 
-                                n_bpsv_p1*sum(inex_costs_per_year_from1))/1e6 # million
+  bpsv_rd_costsamples_dyd_py = ((n_bpsv_candidates - n_bpsv_p1)*d_inex_costs_per_year + 
+                               n_bpsv_p1*d_inex_costs_per_year_from1)/1e6 # million
+  bpsv_rd_costsamples_no_d_py = ((n_bpsv_candidates - n_bpsv_p1)*inex_costs_per_year + 
+                                n_bpsv_p1*inex_costs_per_year_from1)/1e6 # million
+  bpsv_rd_costsamples_dyd = sum(bpsv_rd_costsamples_dyd_py)
+  bpsv_rd_costsamples_no_d = sum(bpsv_rd_costsamples_no_d_py)
   
   ## bpsv reactive r&d costs
   bpsvresrd = n_bpsv_candidates * pto[4] * (pfixed$duration_3_resp/old_duration * exi[4] + pos[4]*icost_lic)/1e6
@@ -691,6 +693,8 @@ get_bpsv_costs = function(total_bpsv, pos, pto, ex, exi, inexi,
   # return
   list(bpsv_rd_costsamples_dyd=bpsv_rd_costsamples_dyd,
        bpsv_rd_costsamples_no_d=bpsv_rd_costsamples_no_d,
+       bpsv_rd_costsamples_dyd_py=bpsv_rd_costsamples_dyd_py,
+       bpsv_rd_costsamples_no_d_py=bpsv_rd_costsamples_no_d_py,
        bpsvresrd=bpsvresrd,
        inv_cost_per_year=inv_cost_per_year,
        bpsvproc=bpsvproc,
