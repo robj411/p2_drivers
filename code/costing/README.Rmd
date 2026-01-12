@@ -774,7 +774,7 @@ Targets:
 **I have basically assumed the same as SSV except for the numbers given (8 candidates and 18 weeks)**
 
 
-The BPSV has $N^{\text{(BPSV)}}=8$ candidates. Those that have passed through Phases 0 to 2 prior to the outbreak go through Phase 3 during the response. The duration is $W_3^{(B)}=18$ weeks. Thus we write the BPSV R\&D response cost
+The BPSV has $N^{\text{(BPSV)}}$ candidates. Those that have passed through Phases 0 to 2 prior to the outbreak go through Phase 3 during the response. The duration is $W_3^{(B)}=18$ weeks. Thus we write the BPSV R\&D response cost
 
 
 ```{r}
@@ -824,7 +824,7 @@ D_{s,y}^{\text{(S-proc)}} = \min\lbrace A_{SSV,s,y},M_C\rbrace\cdot S_R  + \max\
 (\#eq:ssvproc)
 \end{equation}
 
-Here, $S_R = `r round(cost_res,2)`$ is the cost per reserved dose and $S_U = `r rawpar$cost_un`$ the cost per unreserved dose in USD. 
+Here, $S_R = `r round(cost_res,2)`$ is the cost per reserved dose and $S_U = `r round(rawpar$cost_un,2)`$ the cost per unreserved dose in USD. 
 
 The total number of doses produced in week $w$ in scenario $s$ is $Z_{T,s,w}$ (see Equation \@ref(eq:supply)). The total in a one-year period is 
 
@@ -929,8 +929,6 @@ Targets:
 
 184,127	(	151,271	180,171	214,966	)
 187,255	(	154,376	183,358	218,147	)
-165,976	(	136,961	162,544	193,238	)
-138,384	(	114,281	135,548	161,043	)
 167,519	(	137,713	163,938	195,495	)
 135,910	(	111,925	133,050	158,444	)
 189,820	(	157,000	185,976	220,684	)
@@ -1003,6 +1001,9 @@ if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
 }
 ```
+
+
+for a final vaccine coverage of $\lambda = `r rawpar$vaccine_coverage`$.
 
 <!-- We set  -->
 
@@ -1571,7 +1572,7 @@ Table: Vaccine Production Timeline when there is no BPSV. When BPSV is also mode
 
 ## Timing
 
-Facility transition occurs $I_0=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to a 100 Days Mission, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
+Facility transition occurs $I_0=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to SSVs available in 100 days, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
 
 $$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$
 
@@ -1649,8 +1650,8 @@ t_supply <- as.data.frame(do.call(rbind,lapply(1:length(scennames),function(x)cb
 
 names(cumulative) = scennames
 
-scens = setDT(data.frame(scen=scennames, capres = scen_capres, dm = scen_dm))
-scens[,comb := paste0(capres,dm)]
+scens = setDT(data.frame(scen=scennames, capres = scen_capres, dm = scen_dm, bpsv = as.numeric(bpsv_scen)))
+scens[,comb := paste0(capres,dm,bpsv)]
 scens[,N:=.N,by=comb]
 sames <- list()
 for(un in unique(scens$comb)){
@@ -1663,12 +1664,12 @@ ggplot(t_supply) +
   geom_line(aes(x=as.numeric(week),y=as.numeric(doses),colour=factor(scen,levels=scennames))) +
   theme_bw(base_size = 15) +
   labs(x='Week',y='Cumulative doses manufactured, billions',colour='Scenario')
-ggplot(subset(t_supply,scen%in%scennames[2])) + 
-  geom_line(aes(x=as.numeric(week),y=as.numeric(doses),colour=factor(scen,levels=scennames))) +
-  theme_bw(base_size = 15) +
-  labs(x='Week',y='Cumulative doses manufactured, billions',colour='Scenario') +
-  scale_x_continuous(limits= c(55,65)) + 
-  scale_y_continuous(limits=c(0,1/2))
+# ggplot(subset(t_supply,scen%in%scennames[2])) + 
+#   geom_line(aes(x=as.numeric(week),y=as.numeric(doses),colour=factor(scen,levels=scennames))) +
+#   theme_bw(base_size = 15) +
+#   labs(x='Week',y='Cumulative doses manufactured, billions',colour='Scenario') +
+#   scale_x_continuous(limits= c(55,65)) + 
+#   scale_y_continuous(limits=c(0,1/2))
 ```
 
 In Figure \@ref(fig:supply), the following scenarios have identical supply (because they have the same capacity reservations and R\&D investments): `r paste0(sames[[1]],collapse=' & ')`.
@@ -1682,7 +1683,7 @@ $$K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.$$
 We write 
 
 $$X_i = \frac{2\cdot \lambda\cdot N_i^{(15)}}{1-\delta}$$
-as the maximum demand for income group $i$, representing two doses each for $\lambda=80$\% of the population assuming vaccine wastage of $\delta = `r rawpar$vaccine_wastage`$.
+as the maximum demand for income group $i$, representing two doses each for $\lambda = `r rawpar$vaccine_coverage*100`$% of the population assuming vaccine wastage of $\delta = `r rawpar$vaccine_wastage`$.
 
 ```{r}
 eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
@@ -1702,11 +1703,9 @@ if (knitr::is_html_output()) {
 
 The logic of this reads as follows:
 
-- The first $A_3=0.5$ billion doses from reserved capacity go exclusively to HIC
-- None go to UMIC and LLMIC
-- When HIC coverage is between 500 million and its total demand, reserved capacity doses are allocated according to population
-- Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC and LLMIC
-- Once UMIC reach their total demand, all doses from reserved capacity go to LLMIC
+- $A_3=0.5$ billion doses per year from reserved capacity go exclusively to HIC
+- Any remaining reserved capacity doses are allocated according to population
+- Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC, LMIC and LIC
 
 
 
