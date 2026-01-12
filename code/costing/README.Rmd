@@ -735,6 +735,16 @@ D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}
 (\#eq:ssvrd)
 \end{equation}
 
+```{r}
+eqtext = 'D_s^{\\text{(S-RD)}} = N^{\\text{(SSV)}}\\left(\\sum_{i=0}^3 \\hat{P}_i^{\\text{(SSV)}}  T_{\\zeta(s),i}^{(e)} +  \\hat{P}_4^{\\text{(SSV)}} T_4\\right)
+(\\#eq:ssvrd)'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
+
 
 We multiply by the number of candidates, $N^{\text{(SSV)}}$, to get the total cost from the weighted average per candidate, where
 
