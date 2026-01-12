@@ -960,7 +960,7 @@ if (knitr::is_html_output()) {
 ```
 
 
-For a world population aged 65 and over of `r round(sum(POPS65)/1e9,1)` billion, an uptake of 80\% (accounting for wastage of `r round(100*rawpar$vaccine_wastage)`\%), and a cost per dose of $S_R = `r round(cost_res,2)`$ USD (the same as for SSV via reserved capacity), the procurement cost for BPSV is `r round(bpsvproc[1]/1e3,2)` billion USD.
+For a world population aged 65 and over of `r round(sum(POPS65)/1e9,1)` billion, an uptake of `r 100*rawpar$final_vaccine_coverage`\% (accounting for wastage of `r round(100*rawpar$vaccine_wastage)`\%), and a cost per dose of $S_R = `r round(cost_res,2)`$ USD (the same as for SSV via reserved capacity), the procurement cost for BPSV is `r round(bpsvproc[1]/1e3,2)` billion USD.
 
 Although `r b_tot` billion doses are manufactured, as manufacturing stops once one billion doses have been made.
 
@@ -1682,17 +1682,22 @@ $$K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.$$
 
 We write 
 
-$$X_i = \frac{2\cdot \lambda\cdot N_i^{(15)}}{1-\delta}$$
-as the maximum demand for income group $i$, representing two doses each for $\lambda = `r rawpar$vaccine_coverage*100`$% of the population assuming vaccine wastage of $\delta = `r round(rawpar$vaccine_wastage,2)`$.
+$$X_i = 2\cdot \lambda\cdot N_i^{(15)}$$
+
+as the maximum demand for income group $i$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population.
+
+<!-- assuming vaccine wastage of $\delta = `r round(rawpar$vaccine_wastage,2)`$. -->
 
 ```{r}
 eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
 \\frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\\text{HIC},w} <  X_{\\text{HIC}}\\;\\&\\; i=\\text{HIC} \\\\
-\\frac{M_{R,s}-A_3}{M_{R,s}}Z_{R,s,w}                    & K_{s,\\text{HIC},w} < X_{\\text{HIC}} \\;\\&\\; i\\neq\\text{HIC} \\\\
+\\frac{M_{R,s}-A_3}{M_{R,s}}\\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w}                    & K_{s,\\text{HIC},w} < X_{\\text{HIC}}  \\\\
 0 & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\; i=\\text{HIC}\\\\
-\\frac{N_{i}}{N_{UMIC}+N_{LLMIC}}Z_{R,s,w} & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\;  K_{s,\\text{UMIC},w} < X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{HIC}\\\\
-0 & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{LLMIC}\\\\
-Z_{R,s,w}             & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{LLMIC}
+\\frac{N_{i}}{N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\;  K_{s,\\text{UMIC},w} < X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{HIC}\\\\
+0 & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{UMIC}\\\\
+\\frac{N_{i}}{N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\;  K_{s,\\text{LMIC},w} < X_{\\text{LMIC}} \\;\\&\\; i\\notin  \\lbrace\\text{HIC},\\text{UMIC}\\rbrace\\\\
+0 & K_{s,\\text{LMIC},w} \\geq X_{\\text{LMIC}} \\;\\&\\; i=\\text{LMIC}\\\\
+Z_{R,s,w}             & K_{s,\\text{LMIC},w} \\geq X_{\\text{LMIC}} \\;\\&\\; K_{s,\\text{LIC},w} < X_{\\text{LIC}} \\;\\&\\; i=\\text{LIC}
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
@@ -1706,7 +1711,7 @@ The logic of this reads as follows:
 
 - $A_3=0.5$ billion doses per year from reserved capacity go exclusively to HIC, which is expressed as a fraction of the total reservation, $M_{R,s}$
 - Any remaining reserved capacity doses are allocated according to population
-- Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC, LMIC and LIC
+- Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC, LMIC and LIC, and so on
 
 
 
