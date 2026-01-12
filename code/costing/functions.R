@@ -667,7 +667,7 @@ get_bpsv_costs = function(total_bpsv, pos, pto, ex, exi, inexi,
   
   ## bpsv reactive r&d costs
   bpsvresrd = n_bpsv_candidates * pto[4] * (pfixed$duration_3_resp/old_duration * exi[4] + pos[4]*icost_lic)/1e6
-  bpsvresrd = (pfixed$duration_3_resp/old_duration * ex[4] + cost_lic)/1e6
+  # bpsvresrd = (pfixed$duration_3_resp/old_duration * ex[4] + cost_lic)/1e6
   
   ## investigational reserve costs
   

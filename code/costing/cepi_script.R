@@ -48,16 +48,16 @@ rawpar <- get_parameters(nsamples=10000)[[1]]
 
 ## scenario inputs
 
-scennames = c('BAU',paste0('S',sprintf("%02d", 1:12)))
+scennames = c('BAU',paste0('S',sprintf("%02d", 1:10)))
 nscen = length(scennames)
-pop_proportional = c(1,1,2,2,1,1,1,2,2,1,2,2,2)
-scen_dm = c(1, 1,1,1, 1,1, 2,2,2, 3,3,3, 1)
-scen_capres = c(1, 1,2,3, 2,3, 1,2,3, 1,2,3, 1)
+pop_proportional = c(1,1,1,1,1,2,2,1,2,2,2)
+scen_dm = c(1, 1, 1,1, 2,2,2, 3,3,3, 1)
+scen_capres = c(1, 1, 2,3, 1,2,3, 1,2,3, 1)
 bpsv_scen = rep(F,length(scennames))
-bpsv_scen[2:4] = T
+bpsv_scen[2] = T
 
 scenrates = matrix(rep(basic_rates, nscen), ,ncol=length(INCOMELEVELS),byrow=T)
-scenrates[13,3:4] = 0.04
+scenrates[nscen,3:4] = 0.04
 
 scenario_df = data.frame(Scenario=scennames, Proportional=pop_proportional, DM=dms[scen_dm], CR=crs[scen_capres], BPSV=bpsv_scen, scenrates)
 
@@ -313,8 +313,15 @@ for(s in 1:nscen){ #c(1,10)){#
   thisscen = scenario_results[[s]]
   allupfront = with(thisscen$costs$upfront, enabling + dis_upfront_bpsv + bpsv_rd_discounted)
   allannual = with(thisscen$costs$annual, capres + investigational_reserve)
-  allresp = with(thisscen$costs$response, ssv_rd + ssv_proc_discounted + ssv_delivery_discounted + 
+  allrespdis = with(thisscen$costs$response, ssv_rd + ssv_proc_discounted + ssv_delivery_discounted + 
                    bpsv_response_rd + bpsv_proc + bpsv_delivery)
+  allresp = with(thisscen$costs$response, ssv_rd + ssv_proc_undiscounted + ssv_delivery_undiscounted + 
+                   bpsv_response_rd + bpsv_proc + bpsv_delivery)
+  
+  scenario_results[[s]]$costs$upfront$totalupfront = allupfront
+  scenario_results[[s]]$costs$annual$totalannual = allannual
+  scenario_results[[s]]$costs$response$totaldiscounted = allrespdis
+  scenario_results[[s]]$costs$response$totalundiscounted = allresp
   
   if(s==1){
     bauallupfront = allupfront
@@ -322,8 +329,8 @@ for(s in 1:nscen){ #c(1,10)){#
     bauallresp = allresp
     baucosts = list(allupfront, allannual, allresp)
     
-    print(summary(with(thisscen$costs$response, ssv_rd + ssv_proc_undiscounted + ssv_delivery_undiscounted + 
-                         bpsv_response_rd + bpsv_proc + bpsv_delivery)))
+    # print(summary(with(thisscen$costs$response, ssv_rd + ssv_proc_undiscounted + ssv_delivery_undiscounted + 
+                         # bpsv_response_rd + bpsv_proc + bpsv_delivery)))
   }else{
     diffallupfront = allupfront - bauallupfront
     diffallannual = allannual - bauallannual
@@ -340,7 +347,7 @@ for(s in 1:nscen){ #c(1,10)){#
     
     tosave[[1]][[scennames[s]]] <- allupfront
     tosave[[2]][[scennames[s]]] <- allannual
-    tosave[[3]][[scennames[s]]] <- allresp
+    tosave[[3]][[scennames[s]]] <- allrespdis
   }
   
 }
@@ -362,8 +369,10 @@ cat(paste0('\\renewcommand*{\\MinNumber}{',min(reachday),'} \n\\renewcommand*{\\
 if(NSAMPLES>=10000){
   bounds = lapply(1:3,function(x) cbind(BAU=baucosts[[x]], do.call(cbind, tosave[[x]])))
   saveRDS(bounds,file = '../results/cost_samples.Rds')
+  
+  saveRDS(scenario_results,file = '../results/all_cost_samples.Rds')
+  
 }
-    
       
 
 scenario_results[[s]]$delivery$ssv -> deliveries
