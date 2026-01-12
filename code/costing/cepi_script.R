@@ -269,7 +269,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
                                       bpsv_proc=bpsvproc,
                                       bpsv_delivery=bpsv_del_cost)),
               delivery=list(bpsv=combine_llmic(POPS0[4], POPS0[3], bpsv_dose_delivery),
-                            ssv=combine_llmic(POPS0[4], POPS0[3], second_dose_delivery))))
+                            ssv=combine_llmic(POPS0[4], POPS0[3], second_dose_delivery),
+                            ssv4=second_dose_delivery)))
 }
   
 decimalplaces <- function(x) {
@@ -344,14 +345,57 @@ for(s in 1:nscen){ #c(1,10)){#
   
 }
 
+poptarget = POPS15/POPS0
+reachday = matrix(0,nrow=nscen,ncol=4)
+for(s in 1:nscen){
+  thisscen = scenario_results[[s]]$delivery$ssv4
+  for(j in 2:ncol(thisscen)){
+    index = which(thisscen[,j]>0.4*poptarget[j-1])[1]
+    reachday[s,j-1] = thisscen[index,1]
+  }
+}
+sapply(1:nscen,function(x) cat(paste(paste0(c(scennames[x], reachday[x,]), collapse=' & '),'\\\\\n'))) -> x
+
+cat(paste0('\\renewcommand*{\\MinNumber}{',min(reachday),'} \n\\renewcommand*{\\MaxNumber}{',max(reachday),'}'))
+
+
 if(NSAMPLES>=10000){
-  
-  
   bounds = lapply(1:3,function(x) cbind(BAU=baucosts[[x]], do.call(cbind, tosave[[x]])))
   saveRDS(bounds,file = '../results/cost_samples.Rds')
 }
     
       
+
+scenario_results[[s]]$delivery$ssv -> deliveries
+
+
+diurnise_deliveries = function(deliveries){
+  # dimension of daily rollout
+  maxdays = max(deliveries$Week)*7
+  # matrix for results
+  daily_doses = matrix(0,ncol=ncol(deliveries),nrow=maxdays)
+  # one income level at a time
+  for(j in 2:ncol(deliveries)){
+    # deliveries are cumulative
+    doses_per_week = diff(c(0,deliveries[,j]))
+    # final week with deliveries
+    last_week = length(doses_per_week) - which(rev(doses_per_week)>0)[1] + 1
+    # take the recent max
+    penultimate_week_doses = max(doses_per_week[last_week-c(1:8)]) 
+    for(i in 1:last_week){
+      # week to day
+      daily_doses[(i-1)*7+1:7,j] = rep(doses_per_week[i],7)/7*100
+    }
+    # extend indefinitely - allows for different population sizes
+    daily_doses[last_week:maxdays, j] = penultimate_week_doses/7
+  }
+  daily_doses[,1] = 1:maxdays
+  colnames(daily_doses) = colnames(deliveries)
+  colnames(daily_doses)[1] = 'Day' 
+  daily_doses
+}
+
+diurnise_deliveries(deliveries)[(69*6):(70*7),]
 
 
       
