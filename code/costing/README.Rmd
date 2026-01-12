@@ -286,16 +286,12 @@ bpsv_rd_costsamples_dyd <- bpsv_rd_costsamples_no_d <- bpsvresrd <-
   inv_cost_per_year <- time_to_bpsv <- bpsvproc <- rep(0,NSAMPLES)
 bpsv_rd_py = list(); for(i in 1:2) bpsv_rd_py[[i]] = matrix(0,nrow=NSAMPLES,ncol=15)
 for(i in 1:NSAMPLES){
-  inflation = pardf$inflation[i]
-  ex = EX[i,]
-  exi = (1+inflation)*ex
-  inex = INEX[i,]
-  inexi = (1+inflation)*inex
+  exi = EX[i,]
+  inexi = INEX[i,]
   randd_costs = get_bpsv_costs(b_tot, 
                                cost_res = cost_res,
                                pos = POS_BPSV[i,],
                                pto = PTO_BPSV[i,],
-                                ex = ex,
                                 exi = exi,
                                 inexi = inexi,
                                 inex_weight = pardf$inex_weight[i],
@@ -305,7 +301,7 @@ for(i in 1:NSAMPLES){
                                 n_bpsv_p1 = pardf$n_bpsv_p1[i],
                                 bpsv_res_upfront = pardf$bpsv_res_upfront[i],
                                 n_bpsv_candidates = pardf$n_bpsv_candidates[i],
-                                icost_lic = (1+pardf$inflation[i])*pardf$cost_lic[i],
+                                cost_lic = pardf$cost_lic[i],
                                 cost_cogs = pardf$cost_cogs[i],
                                 cost_ff = pardf$cost_ff[i],
                                 cost_travel = pardf$cost_travel[i],
@@ -341,11 +337,8 @@ for(x in 1:length(dms)){
   # ssv_phase_pto[[x]] = matrix(0,NSAMPLES,5)
   ssv_rd_costsamples[[x]] = rep(0,NSAMPLES)
   for(i in 1:NSAMPLES){
-    inflation = pardf$inflation[i]
     ex = EX[i,]
-    exi = (1+inflation)*ex
     cost_lic = pardf$cost_lic[i]
-    icost_lic = (1+inflation)*cost_lic
     n_ssv_successes = pardf$n_ssv_successes[i]
     q_ssv_successes = pardf$q_ssv_successes[i]
     randd_costs = get_ssv_randd_costs(timescale = timescale[[x]][i,],
@@ -444,7 +437,7 @@ Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $
 
 ```{r}
 eqtext = '\\hat{P}_i = \\left\\{\\begin{array}{lr}1 & i=0 \\\\ 
-\\prod_{j=0}^{i-1}P_j & i\\>0 
+\\prod_{j=0}^{i-1}P_j & i>0 
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
   cat(paste0("```math\n",eqtext,"\n```",collapse=''))
@@ -455,9 +448,9 @@ if (knitr::is_html_output()) {
 
 for $i \in \{0,1,2,3,4\}$, with $i=4$ corresponding to licensure. The cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (with $\omega = `r rawpar$inex_weight`$):
 
-$$T_{i} = \omega T_i^{(n)} + (1-\omega)T_i^{(e)}.$$ 
+$$T_{i} = (1+I)(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}).$$ 
 
-Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}}$ candidates is
+where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025. Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}}$ candidates is
 
 
 
@@ -513,8 +506,8 @@ The upfront cost of securing the investigational reserve is
 ```{r}
 eqtext = 'D_{s,y}^{\\text{(BP-man)}} = \\left\\{\\begin{array}{lr}
  A_4A_5
-\\; & \\; s=1 \\;\\&\\;y=Y^{(B)}\\\\
-0  \\; & \\; s\\neq 1\\;\\|\\;y\\neq Y^{(B)}
+\\; & \\; s=1 \\;\\&\\;y=Y^{(B)}+1\\\\
+0  \\; & \\; s\\neq 1\\;\\|\\;y\\neq Y^{(B)}+1
 \\end{array}\\right.
 (\\#eq:bpsvadman)'
 if (knitr::is_html_output()) {
@@ -706,7 +699,9 @@ $$D_y^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-resRD)}} + D_s^{\te
 
 Trial costs are adjusted for the duration of the trial, which depend on the R\&D investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$: 
 
-$$T_{\zeta,i}^{(e)} = \frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}.$$ 
+$$T_{\zeta,i}^{(e)} = (1+I)\frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}.$$ 
+
+where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025. 
 
 The probability of success of each phase comes from COVID-19 data.
 
@@ -714,16 +709,15 @@ The probability of success of each phase comes from COVID-19 data.
 P_i^{\text{(SSV)}} \sim \text{Beta}\left(\sum_{j=i+1}^4X_j+1, X_i + 1 \right)
 \end{equation}
 
-for $i \in \left\{0,1,2,3 \right\}$ where $X_i$ is the number of candidates that failed in phase $i$ and $X_4$ the number that succeeded.
+for $i \in \lbrace 0,1,2,3 \rbrace$ where $X_i$ is the number of candidates that failed in phase $i$ and $X_4$ the number that succeeded.
 
 Then the total cost is
 
 \begin{equation}
-D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}}T_{\zeta(s),i}^{(e)} + (1+I) \hat{P}_4 T_4\right)
+D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}}  T_{\zeta(s),i}^{(e)} +  \hat{P}_4 T_4\right)
 (\#eq:ssvrd)
 \end{equation}
 
-where $I$ is inflation from 2018 to 2025. 
 
 We multiply by the number of candidates, $N^{\text{(SSV)}}$, to get the total cost from the weighted average per candidate, where
 
@@ -731,7 +725,7 @@ We multiply by the number of candidates, $N^{\text{(SSV)}}$, to get the total co
 N^{\text{(SSV)}} = n^{\text{(SSV)}} + F^{-1}_{NegBin}\left(Q^{\text{(SSV)}}; n^{\text{(SSV)}},  \hat{P}_3^{\text{(SSV)}} \right)
 \end{equation}
 
-is chosen to secure at least $n^{\text{(SSV)}}=5$ successful candidates with probability $Q^{\text{(SSV)}}=90\%$. Here, $F^{-1}_{NegBin}\left(q; n,  p \right)$ is the cumulative density of a negative binomial distribution with parameters $n$ and $p$ evaluated at quantile $q$.
+is chosen to secure at least $n^{\text{(SSV)}} = `r rawpar$n_ssv_successes`$ successful candidates with probability $Q^{\text{(SSV)}} = `r 100*rawpar$q_ssv_successes`$%. Here, $F^{-1}_{NegBin}\left(q; n,  p \right)$ is the cumulative density of a negative binomial distribution with parameters $n$ and $p$ evaluated at quantile $q$.
 
 ```{r posssv,fig.cap='Risk-adjusted R&D cost for 18 SSV candidates'}
 
@@ -784,7 +778,7 @@ The BPSV has $N^{\text{(BPSV)}}=8$ candidates. Those that have passed through Ph
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-resRD)}} = \\left\\{\\begin{array}{lr}N^{\\text{(BPSV)}}\\hat{P}_3\\left(\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + (1+I) P_3 T_4\\right) \\; & \\; s=1 \\\\
+eqtext = 'D_s^{\\text{(BP-resRD)}} = \\left\\{\\begin{array}{lr}N^{\\text{(BPSV)}}\\hat{P}_3\\left( (1+I)\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\\right) \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
 \\end{array}\\right.
 (\\#eq:bpsvresrd)'

@@ -135,11 +135,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
     # parameters for functions
     pos = POS_SSV[i,]
     pto = PTO_SSV[i,]
-    inflation = pardf$inflation[i]
-    ex = EX[i,]
-    exi = (1+inflation)*ex
+    exi = EX[i,]
     cost_lic = pardf$cost_lic[i]
-    icost_lic = (1+inflation)*cost_lic
     n_ssv_successes = pardf$n_ssv_successes[i]
     q_ssv_successes = pardf$q_ssv_successes[i]
     cost_un = pardf$cost_un[i]
@@ -186,8 +183,7 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
       
       pos = POS_BPSV[i,]
       pto = PTO_BPSV[i,]
-      inex = INEX[i,]
-      inexi = (1+inflation)*inex
+      inexi = INEX[i,]
       inex_weight = pardf$inex_weight[i]
       n_bpsv_candidates = pardf$n_bpsv_candidates[i]
       cost_cogs = pardf$cost_cogs[i]
@@ -202,7 +198,6 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
       bpsvcosts = get_bpsv_costs(total_bpsv = total_bpsv,
                                  pos = pos, 
                                  pto = pto, 
-                                 ex = ex, 
                                  exi= exi,
                                  inexi = inexi, 
                                  inex_weight = inex_weight,
@@ -212,7 +207,7 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
                                  y_durations = durations[1:3]/52,
                                  old_duration = durations[4], # years
                                  discount = discount,
-                                 icost_lic = icost_lic,
+                                 cost_lic = cost_lic,
                                  bpsv_replenishment = bpsv_replenishment,
                                  cost_cogs = cost_cogs,
                                  cost_bpsv_res = cost_bpsv_res,

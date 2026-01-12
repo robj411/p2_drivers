@@ -151,8 +151,8 @@ get_parameters = function(nsamples = 100){
   
   
   # costs of experienced and inexperienced manufacturers per phase
-  EX <<- matrix(sapply(paste0('cost_',0:3,'_ex'),function(x) pardf[[x]]),ncol=4,byrow=F)
-  INEX <<- matrix(sapply(paste0('cost_',0:3,'_inex'),function(x) pardf[[x]]),ncol=4,byrow=F)
+  EX <<- matrix(sapply(paste0('cost_',0:3,'_ex'),function(x) pardf[[x]]*pardf$inflation),ncol=4,byrow=F)
+  INEX <<- matrix(sapply(paste0('cost_',0:3,'_inex'),function(x) pardf[[x]]*pardf$inflation),ncol=4,byrow=F)
   
   
   
@@ -543,7 +543,7 @@ get_ssv_randd_costs = function(pos, pto=NULL, exi, timescale, cost_lic, n_ssv_su
   
   ssv_phasecost = exi * timescale 
   
-  # add licence cost column (adjusted for inflation)
+  # add licence cost column 
   ssv_phase_liccost = c(ssv_phasecost, cost_lic)
   
   # adjust for pto
@@ -630,7 +630,6 @@ get_bpsv_costs = function(total_bpsv, pos, pto, ex, exi, inexi,
                           old_duration = 104,
                           discount = 0,
                           cost_lic = 287750,
-                          icost_lic = 368320,
                           cost_bpsv_res = 0.01012,
                           cost_res = 6.29,
                           bpsv_replenishment = 3,
@@ -666,7 +665,7 @@ get_bpsv_costs = function(total_bpsv, pos, pto, ex, exi, inexi,
   bpsv_rd_costsamples_no_d = sum(bpsv_rd_costsamples_no_d_py)
   
   ## bpsv reactive r&d costs
-  bpsvresrd = n_bpsv_candidates * pto[4] * (pfixed$duration_3_resp/old_duration * exi[4] + pos[4]*icost_lic)/1e6
+  bpsvresrd = n_bpsv_candidates * pto[4] * (pfixed$duration_3_resp/old_duration * exi[4] + pos[4]*cost_lic)/1e6
   # bpsvresrd = (pfixed$duration_3_resp/old_duration * ex[4] + cost_lic)/1e6
   
   ## investigational reserve costs
