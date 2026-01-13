@@ -826,7 +826,7 @@ This cost is used both for SSV doses manufactured using reserved capacity, and a
 We write billion doses procured from channel $x\in\lbrace R,E,B \rbrace$ in year $y$ and scenario $s$ as $A_{x,s,y}$ (see Equation \@ref(eq:supply)). Then the total cost, in billion USD, is:
 
 \begin{equation}
-D_{s,y}^{\text{(S-proc)}} = A_{R,s,y} S_R  + \sum_{x\in\lbrace E,B} \lbrace A_{x,s,y} S_U
+D_{s,y}^{\text{(S-proc)}} = A_{R,s,y} S_R  + \sum_{x\in\lbrace E,B \rbrace}  A_{x,s,y} S_U
 (\#eq:ssvproc)
 \end{equation}
 
@@ -1785,11 +1785,10 @@ if (knitr::is_html_output()) {
 }
 ```
 
+and
+
 ```{r}
-eqtext = 'A_{x,s,y}^{(2)} = \\left\\{ \\begin{array}{lr}
-\\min(A_{s,y}^{(2)}, M_R - A_{R,s,y}^{(1)})            & x=R \\\\
-\\max(A_{s,y}^{(2)} - A_{R,s,y}^{(2)}, 0)            & x\\in\\lbrace E, B \\rbrace 
-\\end{array}\\right.'
+eqtext = 'A_{x,s,y}^{(2)} = \\min(A_{s,y}^{(2)}, M_R - A_{R,s,y}^{(1)})'
 if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
@@ -1797,9 +1796,20 @@ if (knitr::is_html_output()) {
 }
 ```
 
+for $x=R$ and
 
+```{r}
+eqtext = 'A_{x,s,y}^{(2)} = \\max(A_{s,y}^{(2)} - A_{R,s,y}^{(2)}, 0)'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
-and
+for $x\in\lbrace E, B \rbrace$.
+
+Then
 
 \begin{equation}
 A_{x,s,y} = A_{x,s,y}^{(1)} + A_{x,s,y}^{(2)}.
