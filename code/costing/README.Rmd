@@ -823,18 +823,16 @@ This cost is used both for SSV doses manufactured using reserved capacity, and a
 **These values are close, but not identical, to the spreadsheet results if I adjust for the total demand**
 
 
-If we write annual demand in billions as $A_{SSV,s,y}$, then we would have costs, in billion USD, of:
+We write billion doses procured from channel $x\in\lbrace R,E,B \rbrace$ in year $y$ and scenario $s$ as $A_{x,s,y}$ (see Equation \@ref(eq:supply)). Then the total cost, in billion USD, is:
 
 \begin{equation}
-D_{s,y}^{\text{(S-proc)}} = \min\lbrace A_{SSV,s,y},M_C\rbrace\cdot S_R  + \max\lbrace A_{SSV,s,y}-M_C,0\rbrace\cdot S_U
+D_{s,y}^{\text{(S-proc)}} = A_{R,s,y} S_R  + \sum_{x\in\lbrace E,B} \lbrace A_{x,s,y} S_U
 (\#eq:ssvproc)
 \end{equation}
 
 Here, $S_R = `r round(cost_res,2)`$ is the cost per reserved dose and $S_U = `r round(rawpar$cost_un,2)`$ the cost per unreserved dose in USD. 
 
-The total number of doses produced in week $w$ in scenario $s$ is $Z_{T,s,w}$ (see Equation \@ref(eq:supply)). The total in a one-year period is 
 
-$$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 
 ```{r ssvsup}
@@ -1206,41 +1204,43 @@ capas = paste0(crs[2:3],' billion capacity')
 
 ## bringing together preparedness costs
 
+iqrs = c(1:3)/4
+
 # bpsv_rd_costsamples_dyd
-bpsv_rd_prep = as.data.frame(t(quantile(bpsv_rd_costsamples_no_d/1e3,c(1:3)/4)))
-bpsv_rd_prep$timing = 'One-off'
+bpsv_rd_prep = as.data.frame(t(quantile(bpsv_rd_costsamples_no_d/1e3,iqrs)))
+bpsv_rd_prep$timing = 'Upfront'
 bpsv_rd_prep$category = 'R&D'
 bpsv_rd_prep$type = 'BPSV'
 
 
 # enabling_costs
-enab = as.data.frame(t(sapply(c(5,15),function(x) quantile(rawpar$cost_enab*x,c(1:3)/4)/1e3)))
-enab$timing = 'One-off'
+enab = as.data.frame(t(sapply(c(5,15),function(x) quantile(rawpar$cost_enab*x,iqrs)/1e3)))
+enab$timing = 'Upfront'
 enab$category = 'R&D'
 enab$type = missions
 
 # rbind(enab, bpsv_rd_prep)
 
 # upfront cost in million dollars
-bpsv_man = as.data.frame(t(quantile(bpsv_upfront/1e3,c(1:3)/4)))
-bpsv_man$timing = 'One-off'
+bpsv_man = as.data.frame(t(quantile(bpsv_upfront/1e3,iqrs)))
+bpsv_man$timing = 'Upfront'
 bpsv_man$category = 'Manufacturing'
 bpsv_man$type = 'BPSV'
 
 # inv_cost in millions
-bpsv_inv_prep = as.data.frame(t(quantile(inv_cost_per_year,c(1:3)/4)))
+bpsv_inv_prep = as.data.frame(t(quantile(inv_cost_per_year,iqrs)))
 bpsv_inv_prep$timing = 'Per year'
 bpsv_inv_prep$category = 'Manufacturing'
 bpsv_inv_prep$type = 'BPSV'
 
 
 # capres_costs
-ssv_capres = as.data.frame(t(sapply(crs[2:3],function(x) quantile(x*rawpar$cost_capres,c(1:3)/4))))
+ssv_capres = as.data.frame(t(sapply(crs[2:3],function(x) quantile(x*rawpar$cost_capres,iqrs))))
 ssv_capres$timing = 'Per year'
 ssv_capres$category = 'Manufacturing'
 ssv_capres$type = capas
 
-timings = c('One-off','Per year','Per pandemic')
+timings = c('Upfront','Per year','Per pandemic')
 types = c('BPSV', missions, capas, 'Equality + Delivery')
 prepdata = rbind(enab, bpsv_rd_prep,bpsv_man,bpsv_inv_prep, ssv_capres)
 prepdata$timing = factor(prepdata$timing,levels=timings,labels=timings)
@@ -1284,7 +1284,6 @@ rdplot = ggplot(df)  +
 ggsave(rdplot, filename='rdplot.png')
 
 
-rawpar$cost_capres
 costperyear = sapply(crs+pfixed$hic_cap_res, function(x) rawpar$cost_capres*x)
 df = do.call(rbind, lapply(1:length(crs),function(y)
   data.frame(
@@ -1336,13 +1335,13 @@ ggsave(bpplot, filename='bpplot.png')
 # ssv_rd_plot 
 bau_vals = ssv_rd_costsamples[[1]]
 ssv_rd_diff = lapply( 2:length(ssv_rd_costsamples), function(x) ( ssv_rd_costsamples[[x]] - bau_vals)/1e3) 
-ssv_rd_df = as.data.frame(t(sapply( ssv_rd_diff, function(x) quantile(x,c(1:3)/4)) ))
+ssv_rd_df = as.data.frame(t(sapply( ssv_rd_diff, function(x) quantile(x,iqrs)) ))
 ssv_rd_df$timing = 'Per pandemic'
 ssv_rd_df$category = 'R&D'
 ssv_rd_df$type = missions
 
 # bpsvresrd
-bpsv_rd_res = as.data.frame(t(quantile(bpsvresrd/1e3,c(1:3)/4)))
+bpsv_rd_res = as.data.frame(t(quantile(bpsvresrd/1e3,iqrs)))
 bpsv_rd_res$timing = 'Per pandemic'
 bpsv_rd_res$category = 'R&D'
 bpsv_rd_res$type = 'BPSV'
@@ -1352,14 +1351,14 @@ bpsv_rd_res$type = 'BPSV'
 # ssv; take scenarios c(1,3,4) ; already in billions
 bau_ref = ssv_proccost_undiscounted[[1]]
 ssv_res_diff = lapply(c(3,4), function(x)ssv_proccost_undiscounted[[x]] - bau_ref)
-ssv_res_df = as.data.frame(t(sapply(ssv_res_diff, function(x)quantile(x,c(1:3)/4))))
+ssv_res_df = as.data.frame(t(sapply(ssv_res_diff, function(x)quantile(x,iqrs))))
 ssv_res_df$timing = 'Per pandemic'
 ssv_res_df$category = 'Manufacturing'
 ssv_res_df$type = capas
 
 # bpsv; in billions
 
-bpsv_proc_res = as.data.frame(t(quantile(bpsvproc/1e3,c(1:3)/4)))
+bpsv_proc_res = as.data.frame(t(quantile(bpsvproc/1e3,iqrs)))
 bpsv_proc_res$timing = 'Per pandemic'
 bpsv_proc_res$category = 'Manufacturing'
 bpsv_proc_res$type = 'BPSV'
@@ -1370,15 +1369,15 @@ bpsv_proc_res$type = 'BPSV'
 # ssv; in billions
 bau_del = ssv_delivery_costs[[1]]
 ssv_del_diff = lapply(c(3,4,11),function(x)(ssv_delivery_costs[[x]]-bau_del)/1e3)
-ssv_del_df = as.data.frame(t(sapply(ssv_del_diff,function(x)quantile(x,c(1:3)/4))))
+ssv_del_df = as.data.frame(t(sapply(ssv_del_diff,function(x)quantile(x,iqrs))))
 ssv_del_df$timing = 'Per pandemic'
 ssv_del_df$category = 'Delivery'
 ssv_del_df$type = c(capas, 'Equality + Delivery')
 
 # bpsv
-# quantile(bpsv_del_cost/1e9,c(1:3)/4)
+# quantile(bpsv_del_cost/1e9,iqrs)
 
-bpsv_del = as.data.frame(t(quantile(bpsv_del_cost/1e3,c(1:3)/4)))
+bpsv_del = as.data.frame(t(quantile(bpsv_del_cost/1e3,iqrs)))
 bpsv_del$timing = 'Per pandemic'
 bpsv_del$category = 'Delivery'
 bpsv_del$type = 'BPSV'
@@ -1409,6 +1408,25 @@ unitcosts = ggplot(unitplot) + theme_bw(base_size = 15) +
   labs(x='',y='Billion USD',fill='',size='',title='A) Unit Costs vs. BAU') +
   scale_y_continuous(n.breaks = 9) +
   theme(legend.position = 'right')
+ggsave(unitcosts + labs(title=''), filename='unit.png',height=5,width=10)
+
+
+```
+
+
+```{r}
+
+setDT(unitplot)
+
+unitplot[,`Cost vs. BAU` := paste0('$',format_to_print2(`50%`) ,'$ ($',format_to_print2(`25%`),',',format_to_print2(`75%`),'$)'),by=.(timing,category,type)]
+
+lg = 'Cost differences: investments vs. BAU, for different types of investment.'
+
+setorder(unitplot,timing, category, type)
+
+if (!knitr::is_html_output()) {
+  cat(pander(unitplot[,-c(1:3)],caption=lg, missing = ""))
+}
 
 ```
 
@@ -1422,29 +1440,29 @@ unitcosts = ggplot(unitplot) + theme_bw(base_size = 15) +
 # bpsv_rd_costsamples_dyd billions, discounted
 # inv_cost in millions, discounted
 # crs in billions
-bpsv_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile(bpsv_rd_costsamples_dyd + inv_cost/1e3 + crs[x] *rawpar$cost_capres*fifteen_yr_discount_weight,c(1:3)/4))))
-bpsv_ss$Scenario = scennames[2:4]
+bpsv_ss = as.data.frame(t(quantile(bpsv_rd_costsamples_dyd + inv_cost/1e3 + crs[1] *rawpar$cost_capres*fifteen_yr_discount_weight,iqrs)))
+bpsv_ss$Scenario = scennames[2]
 bpsv_ss$Category = 'BPSV'
-bpsv_ss$Capacity = crs
+bpsv_ss$Capacity = crs[1]
 bpsv_ss$DM = 365
 
 
-capres_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile( crs[x] *rawpar$cost_capres*fifteen_yr_discount_weight,c(1:3)/4))))
-capres_ss$Scenario = scennames[c(1,5:6)]
+capres_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile( crs[x] *rawpar$cost_capres*fifteen_yr_discount_weight,iqrs))))
+capres_ss$Scenario = scennames[c(1,3:4)]
 capres_ss$Category = '365DM'
 capres_ss$Capacity = crs
 capres_ss$DM = 365
 
 # enabling_costs5 in millions, discounted
-dm200_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile( crs[x] *rawpar$cost_capres*fifteen_yr_discount_weight + enabling_costs_list[[2]]/1e3,c(1:3)/4))))
-dm200_ss$Scenario = scennames[7:9]
+dm200_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile( crs[x] *rawpar$cost_capres*fifteen_yr_discount_weight + enabling_costs_list[[2]]/1e3,iqrs))))
+dm200_ss$Scenario = scennames[5:7]
 dm200_ss$Category = '200DM'
 dm200_ss$Capacity = crs
 dm200_ss$DM = 200
 
 # enabling_costs15 in millions, discounted
-dm100_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile( crs[x] *rawpar$cost_capres*fifteen_yr_discount_weight + enabling_costs_list[[3]]/1e3,c(1:3)/4))))
-dm100_ss$Scenario = scennames[10:12]
+dm100_ss = as.data.frame(t(sapply(1:length(crs),function(x) quantile( crs[x] *rawpar$cost_capres*fifteen_yr_discount_weight + enabling_costs_list[[3]]/1e3,iqrs))))
+dm100_ss$Scenario = scennames[8:10]
 dm100_ss$Category = '100DM'
 dm100_ss$Capacity = crs
 dm100_ss$DM = 100
@@ -1452,8 +1470,8 @@ dm100_ss$DM = 100
 
 preps = rbind(bpsv_ss, capres_ss, dm200_ss, dm100_ss)
 preps = rbind(preps, capres_ss[1,])
-preps$Scenario[13] = scennames[13]
-preps$Category[13] = 'Equality + Delivery'
+preps$Scenario[11] = scennames[11]
+preps$Category[11] = 'Equality + Delivery'
 ```
 
 
@@ -1469,8 +1487,8 @@ for (i in 1:3){
 all_resp_costs <- all_prep_costs <- list()
 
 for(s in 1:length(scennames)){
-  all_prep_costs[[s]] = quantile(cost_diffs[[1]][,s]+cost_diffs[[2]][,s]*fifteen_yr_discount_weight,c(1:3)/4)/1e3
-  all_resp_costs[[s]] = quantile(cost_diffs[[3]][,s]*at_yr_15,c(1:3)/4)/1e3
+  all_prep_costs[[s]] = quantile(cost_diffs[[1]][,s]+cost_diffs[[2]][,s]*fifteen_yr_discount_weight,iqrs)/1e3
+  all_resp_costs[[s]] = quantile(cost_diffs[[3]][,s]*at_yr_15,iqrs)/1e3
 }
 
 preps = as.data.frame(do.call(rbind,all_prep_costs))
@@ -1492,23 +1510,24 @@ melted = reshape2::melt(rbind(preps,resps),id.vars=c('Scenario','Category','Capa
 toplot = reshape2::dcast(melted,formula=Scenario+Category+Capacity+DM~timing+variable)
 
 toplot$Category = factor(toplot$Category,levels=c('BPSV', '365 days','200 days','100 days', 'Equality + Delivery'),labels=c('BPSV', '365 days','200 days','100 days', 'Equality + Delivery'))
+toplot$Capacity = factor(toplot$Capacity,levels=c(0, 0.7, 2),labels=c('0.5 billion', '1.2 billion','2.5 billion'))
 
 fifcosts = ggplot(toplot) +
   geom_hline(yintercept=0,colour='grey') +
   geom_vline(xintercept=0,colour='grey') +
   geom_abline(linetype=2,slope = -1,intercept = 0,
               colour='navyblue',show.legend = T) +
-  geom_point(#show.legend = c('colour'=F),
-               aes(x=`Preparedness_50%`,y=`Response_50%`,colour=Category,size=factor(Capacity,levels=c(0,'0.7','2')))) +
-  geom_text(aes(x=`Preparedness_50%`+.8,y=`Response_50%`+2.5*(1-2*as.numeric(Scenario=='S12')),label=Scenario)) +
-  geom_errorbar(show.legend=F,aes(x=`Preparedness_50%`,colour=Category,ymin=`Response_25%`,ymax=`Response_75%`)) +
-  geom_errorbarh(show.legend=F,aes(y=`Response_50%`,colour=Category,xmin=`Preparedness_25%`,xmax=`Preparedness_75%`)) +
-  labs(linetype='',x='Preparedness costs',y='Response costs',colour='',size='Capacity\nreservation',
-       title='B) Preparedness vs. response (compared to BAU; billion USD)') +
   geom_segment(
     aes(x = 0, xend = 0, y = 0, yend = 0, linetype = "Break even"),
     inherit.aes = FALSE, alpha = 0, show.legend = TRUE
   ) +
+  geom_point(#show.legend = c('colour'=F),
+               aes(x=`Preparedness_50%`,y=`Response_50%`,colour=Category,size=Capacity)) +
+  geom_text(aes(x=`Preparedness_50%`+.8,y=`Response_50%`+2.5*(1-2*as.numeric(Scenario=='S10')),label=Scenario)) +
+  geom_errorbar(show.legend=F,aes(x=`Preparedness_50%`,colour=Category,ymin=`Response_25%`,ymax=`Response_75%`), width = 0) +
+  geom_errorbarh(show.legend=F,aes(y=`Response_50%`,colour=Category,xmin=`Preparedness_25%`,xmax=`Preparedness_75%`), width = 0) +
+  labs(linetype='',x='Preparedness costs',y='Response costs',colour='',size='Capacity\nreservation',
+       title='B) Preparedness vs. response (compared to BAU; billion USD)') +
   scale_linetype_manual(values = c("Break even" = "dashed")) +
   guides(
     linetype = guide_legend(
@@ -1521,30 +1540,17 @@ fifcosts = ggplot(toplot) +
   theme_bw(base_size = 15)
 
 final = ggarrange(unitcosts, fifcosts, ncol=1)
-ggsave(final, filename='fig2alt.png',height=10,width=10)
+ggsave(fifcosts + labs(title=''), filename='fifteen.png',height=6,width=10)
 
 ```
 
-```{r}
-
-setDT(unitplot)
-
-unitplot[,`Cost vs. BAU` := paste0('$',format_to_print2(`50%`) ,'$ ($',format_to_print2(`25%`),',',format_to_print2(`75%`),'$)'),by=.(timing,category,type)]
-
-lg = 'Cost differences: investments vs. BAU, for different types of investment.'
-
-setorder(unitplot,timing, category, type)
-cat(pander(unitplot[,-c(1:3)],caption=lg, missing = ""))
-
-
-```
 
 # SSV delivery
 
 
 | Category | Reserved capacity | Private response (existing capacity)  | Private response (built capacity)  |
 |---|---|---|---|
-| Annual manufacturing volume | By scenario (0.5--2.5B)| 2.5B minus reserved volume | 6B |
+| Annual manufacturing volume | By scenario (0.5--2.5B)| 9B minus reserved volume | 6B |
 | Facility transition start | 7 weeks before vaccine approval | 7 weeks before vaccine approval | 7 weeks before vaccine approval |
 | Weeks to initial manufacturing | 12 | 12 (BPSV) or 30 (no BPSV) | 48 |
 | Scale-up weeks to full capacity | 10 | 16 | 16 |
@@ -1641,12 +1647,14 @@ if (knitr::is_html_output()) {
 
 where $I_{E,0} = `r rawpar$weeks_init_ex_nb`$ and $I_{E,1} = `r rawpar$weeks_init_ex_bp`$ are the number of weeks to initial manufacturing for existing and unreserved capacity, $C_E = `r rawpar$weeks_scale_ex`$ is the number of weeks to scale up to full capacity.
 
-Then the total number of doses produced in week $w$ is 
+<!-- Then the total number of doses produced in week $w$ is  -->
 
-\begin{equation}
-Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
-(\#eq:supply)
-\end{equation}
+<!-- \begin{equation} -->
+<!-- Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}. -->
+<!-- \end{equation} -->
+
+
+
 
 
 
@@ -1688,23 +1696,25 @@ $$K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.$$
 
 We write 
 
-$$X_i = 2\cdot \lambda\cdot N_i^{(15)}$$
+$$L_i = 2\cdot \lambda\cdot N_i^{(15)}$$
 
-as the maximum demand for income group $i$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population.
+as the total demand for first-schedule doses for income group $i$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population.
+
+
 
 <!-- assuming vaccine wastage of $\delta = `r round(rawpar$vaccine_wastage,2)`$. -->
 
 ```{r}
 eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
-\\frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\\text{HIC},w} <  X_{\\text{HIC}}\\;\\&\\; i=\\text{HIC} \\\\
-\\frac{M_{R,s}-A_3}{M_{R,s}}\\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w}                    & K_{s,\\text{HIC},w} < X_{\\text{HIC}}  \\\\
-0 & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\; i=\\text{HIC}\\\\
-\\frac{N_{i}}{N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\;  K_{s,\\text{UMIC},w} < X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{HIC}\\\\
-0 & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{UMIC}\\\\
-\\frac{N_{i}}{N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\;  K_{s,\\text{LMIC},w} < X_{\\text{LMIC}} \\;\\&\\; i\\notin  \\lbrace\\text{HIC},\\text{UMIC}\\rbrace\\\\
-0 & K_{s,\\text{LMIC},w} \\geq X_{\\text{LMIC}} \\;\\&\\; i=\\text{LMIC}\\\\
-Z_{R,s,w}             & K_{s,\\text{LMIC},w} \\geq X_{\\text{LMIC}} \\;\\&\\; K_{s,\\text{LIC},w} < X_{\\text{LIC}} \\;\\&\\; i=\\text{LIC}\\\\
-0 & K_{s,\\text{LIC},w} \\geq X_{\\text{LIC}} 
+\\frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\\text{HIC},w} <  L_{\\text{HIC}}\\;\\&\\; i=\\text{HIC} \\\\
+\\frac{M_{R,s}-A_3}{M_{R,s}}\\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w}                    & K_{s,\\text{HIC},w} < L_{\\text{HIC}}  \\\\
+0 & K_{s,\\text{HIC},w} \\geq L_{\\text{HIC}} \\;\\&\\; i=\\text{HIC}\\\\
+\\frac{N_{i}}{N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\\text{HIC},w} \\geq L_{\\text{HIC}} \\;\\&\\;  K_{s,\\text{UMIC},w} < L_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{HIC}\\\\
+0 & K_{s,\\text{UMIC},w} \\geq L_{\\text{UMIC}} \\;\\&\\; i=\\text{UMIC}\\\\
+\\frac{N_{i}}{N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\\text{UMIC},w} \\geq L_{\\text{UMIC}} \\;\\&\\;  K_{s,\\text{LMIC},w} < L_{\\text{LMIC}} \\;\\&\\; i\\notin  \\lbrace\\text{HIC},\\text{UMIC}\\rbrace\\\\
+0 & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; i=\\text{LMIC}\\\\
+Z_{R,s,w}             & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; K_{s,\\text{LIC},w} < L_{\\text{LIC}} \\;\\&\\; i=\\text{LIC}\\\\
+0 & K_{s,\\text{LIC},w} \\geq L_{\\text{LIC}} 
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
@@ -1728,12 +1738,14 @@ For $x\in\lbrace E,B\rbrace$,
 
 ```{r}
 eqtext = 'k_{s,x,i,w} = \\left\\{ \\begin{array}{lr}
-Z_{x,s,w}            & K_{s,\\text{HIC},w} < X_{\\text{HIC}} \\;\\&\\; i=\\text{HIC} \\\\
-0                     & K_{s,\\text{HIC},w} < X_{\\text{HIC}} \\;\\&\\; i\\neq\\text{HIC} \\\\
-Z_{x,s,w}            & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\; K_{s,\\text{UMIC},w} < X_{\\text{UMIC}} \\;\\&\\; i=\\text{UMIC} \\\\
-0                     & K_{s,\\text{HIC},w} \\geq X_{\\text{HIC}} \\;\\&\\; K_{s,\\text{UMIC},w} < X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{UMIC} \\\\
-Z_{x,s,w}            & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i=\\text{LLMIC} \\\\
-0                     & K_{s,\\text{UMIC},w} \\geq X_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{LLMIC} 
+Z_{x,s,w}            & K_{s,\\text{HIC},w} < L_{\\text{HIC}} \\;\\&\\; i=\\text{HIC} \\\\
+0                     & K_{s,\\text{HIC},w} < L_{\\text{HIC}} \\;\\&\\; i\\neq\\text{HIC} \\\\
+Z_{x,s,w}            & K_{s,\\text{HIC},w} \\geq L_{\\text{HIC}} \\;\\&\\; K_{s,\\text{UMIC},w} < L_{\\text{UMIC}} \\;\\&\\; i=\\text{UMIC} \\\\
+0                     & K_{s,\\text{HIC},w} \\geq L_{\\text{HIC}} \\;\\&\\; K_{s,\\text{UMIC},w} < L_{\\text{UMIC}} \\;\\&\\; i\\neq\\text{UMIC} \\\\
+Z_{x,s,w}            & K_{s,\\text{UMIC},w} \\geq L_{\\text{UMIC}} \\;\\&\\; K_{s,\\text{LMIC},w} < L_{\\text{LMIC}} \\;\\&\\; i=\\text{LMIC} \\\\
+0                     & K_{s,\\text{UMIC},w} \\geq L_{\\text{UMIC}} \\;\\&\\; K_{s,\\text{LMIC},w} < L_{\\text{LMIC}} \\;\\&\\; i\\neq\\text{LMIC} \\\\
+Z_{x,s,w}            & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; i=\\text{LIC} \\\\
+0                     & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; i\\neq\\text{LIC} 
 \\end{array}\\right.'
 if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
@@ -1744,13 +1756,55 @@ if (knitr::is_html_output()) {
 
 The logic of this reads as follows:
 
-- Until HIC demand is reached, all doses from unreserved capacity go to HIC
-- None go to UMIC and LLMIC
-- Once HIC demand has been met and until UMIC demand is reached, all doses from unreserved capacity go to UMIC
-- None go to HIC and LLMIC
-- Once HIC and UMIC demand have been met, all remaining doses from unreserved capacity go to LLMIC
-- None go to UMIC and HIC
+- Until HIC demand is reached, all doses from unreserved capacity go to HIC. None go to UMIC, LMIC and LIC.
+- Once HIC demand has been met and until UMIC demand is reached, all doses from unreserved capacity go to UMIC. None go to HIC, LMIC and LIC.
+- Once HIC and UMIC demand have been met and until LMIC demand is reached, all doses from unreserved capacity go to LMIC. None go to HIC, UMIC and LIC.
+- Once HIC, UMIC and LMIC demand have been met, all remaining doses from unreserved capacity go to LIC. None go to LMIC, UMIC and HIC.
 
+
+
+Total supply of first-schedule doses in each year period is 
+
+\begin{equation}
+A_{x,s,y}^{(1)} = \sum_i\sum_{w\in y}k_{s,x,i,w}.
+\end{equation}
+
+We assume, for every second dose of SSV, a booster will be given one year later for $N^{\text{(boost)}} = `r rawpar$n_boosters`$ years.
+
+Thus 
+
+```{r}
+eqtext = 'A_{s,y}^{(2)} = \\left\\{ \\begin{array}{lr}
+\\frac{1}{2}\\sum_{x}A_{x,s,y-1}^{(1)}            & y=2 \\\\
+\\frac{1}{2}\\sum_{x}\\left(A_{x,s,y-1}^{(1)} + A_{x,s,y-2}^{(1)}\\right)            & y>2 
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
+
+```{r}
+eqtext = 'A_{x,s,y}^{(2)} = \\left\\{ \\begin{array}{lr}
+\\min(A_{s,y}^{(2)}, M_R - A_{R,s,y}^{(1)})            & x=R \\\\
+\\max(A_{s,y}^{(2)} - A_{R,s,y}^{(2)}, 0)            & x\\in\\lbrace E, B \\rbrace 
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
+
+
+
+and
+
+\begin{equation}
+A_{x,s,y} = A_{x,s,y}^{(1)} + A_{x,s,y}^{(2)}.
+(\#eq:supply)
+\end{equation}
 
 
 

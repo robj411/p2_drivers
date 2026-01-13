@@ -234,8 +234,8 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 25.33 55.56 72.54 78.57 94.69
-238.61
+Min. 1st Qu. Median Mean 3rd Qu. Max. 18.41 54.39 71.66 77.80 92.67
+265.08
 
 Target: 146 (103 135 177)
 
@@ -291,8 +291,8 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 779.4 975.5 1089.2 1091.3 1203.7
-1464.3
+Min. 1st Qu. Median Mean 3rd Qu. Max. 778.7 970.9 1086.1 1090.7 1193.7
+1462.4
 
 Target: 1 (0.9 1 1.1)
 
@@ -329,11 +329,11 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2737 2911 3092 3087 3251 3483
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2738 2892 3078 3085 3258 3483
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6569 6987 7420 7409 7802 8359
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6570 6940 7387 7405 7820 8359
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13686 14557 15459 15435 16255
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13688 14459 15389 15427 16291
 17415
 
 Targets: 3,086 (2,897 3,074 3,269)
@@ -376,9 +376,9 @@ years with uniformly distributed discount rate.
 
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.19 3.25 3.24 3.30 3.37
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.18 3.24 3.24 3.30 3.37
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.67 8.14 8.13 8.56 9.17
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.61 8.10 8.12 8.58 9.17
 
 Targets:
 
@@ -459,9 +459,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 |  34  |   60    |   77   |  83  |   101   | 221  |
-| 200 |  14  |   23    |   30   |  31  |   38    |  81  |
-| 100 |  9   |   17    |   22   |  25  |   31    |  71  |
+| 365 |  26  |   44    |   52   |  54  |   62    | 133  |
+| 200 |  16  |   26    |   32   |  33  |   39    |  83  |
+| 100 |  7   |   13    |   16   |  16  |   19    |  44  |
 
 Targets:
 
@@ -499,7 +499,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.1 1.0 2.1 5.1 4.6 198.1
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.1 1.1 2.1 5.4 4.4 285.5
 
 Target: 14 (3 5 10)
 
@@ -519,21 +519,17 @@ capacity, and all newly manufactured BPSV doses.
 **These values are close, but not identical, to the spreadsheet results
 if I adjust for the total demand**
 
-If we write annual demand in billions as $A_{SSV,s,y}$, then we would
-have costs, in billion USD, of:
+We write billion doses procured from channel $x\in\lbrace R,E,B \rbrace$
+in year $y$ and scenario $s$ as $A_{x,s,y}$ (see Equation (4.1)). Then
+the total cost, in billion USD, is:
 
 $$\begin{equation}
-D_{s,y}^{\text{(S-proc)}} = \min\lbrace A_{SSV,s,y},M_C\rbrace\cdot S_R  + \max\lbrace A_{SSV,s,y}-M_C,0\rbrace\cdot S_U
+D_{s,y}^{\text{(S-proc)}} = A_{R,s,y} S_R  + \sum_{x\in\lbrace E,B} \lbrace A_{x,s,y} S_U
 \qquad(3.3)
 \end{equation}$$
 
 Here, $S_R = 6.29$ is the cost per reserved dose and $S_U = 18.94$ the
 cost per unreserved dose in USD.
-
-The total number of doses produced in week $w$ in scenario $s$ is
-$Z_{T,s,w}$ (see Equation (4.1)). The total in a one-year period is
-
-$$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 <div class="figure">
 
@@ -546,17 +542,17 @@ $$A_{SSV,s,y} = \sum_{w\in y}Z_{T,s,w}.$$
 
 | Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
 |:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
-|   BAU    | 130336 | 157154  | 187613 | 188510 | 216687  | 262802 |
-|   S01    | 133478 | 160443  | 190977 | 191815 | 220043  | 266015 |
-|   S02    | 120702 | 145462  | 173571 | 174389 | 200389  | 242905 |
-|   S03    | 97944  | 117856  | 140426 | 141060 | 161929  | 195970 |
-|   S04    | 135978 | 163027  | 193578 | 194366 | 222594  | 268374 |
-|   S05    | 123627 | 148173  | 175888 | 176598 | 202203  | 243711 |
-|   S06    | 103152 | 123539  | 146541 | 147119 | 168366  | 202768 |
-|   S07    | 136389 | 163283  | 193619 | 194376 | 222396  | 267746 |
-|   S08    | 123064 | 147265  | 174549 | 175223 | 200423  | 241178 |
-|   S09    | 100780 | 120467  | 142640 | 143171 | 163645  | 196700 |
-|   S10    | 128788 | 155278  | 185364 | 186249 | 214080  | 259625 |
+|   BAU    | 130406 | 154013  | 185158 | 188373 | 218077  | 262798 |
+|   S01    | 133548 | 157290  | 188519 | 191673 | 221431  | 266011 |
+|   S02    | 120766 | 142564  | 171307 | 174262 | 201671  | 242902 |
+|   S03    | 97996  | 115527  | 138609 | 140956 | 162957  | 195967 |
+|   S04    | 136048 | 159868  | 191122 | 194218 | 223978  | 268371 |
+|   S05    | 123691 | 145307  | 173660 | 176463 | 203459  | 243708 |
+|   S06    | 103206 | 121159  | 144692 | 147006 | 169407  | 202765 |
+|   S07    | 136459 | 160144  | 191182 | 194227 | 223769  | 267742 |
+|   S08    | 123127 | 144440  | 172358 | 175087 | 201656  | 241175 |
+|   S09    | 100831 | 118170  | 140859 | 143060 | 164646  | 196698 |
+|   S10    | 128857 | 152176  | 182940 | 186114 | 215453  | 259621 |
 
 Costs summed and discounted from year 16 to year 20, million USD
 
@@ -589,7 +585,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2789 3253 3763 3767 4235 4962
+Min. 1st Qu. Median Mean 3rd Qu. Max. 2790 3199 3722 3764 4257 4962
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -626,29 +622,29 @@ for a final vaccine coverage of \$= \$.
 
 </div>
 
-     BAU Min.   : 64906   1st Qu.: 96144   Median :114392   Mean   :115660  
-     S01 Min.   : 65270   1st Qu.: 96526   Median :114695   Mean   :115992  
-     S02 Min.   : 64990   1st Qu.: 96229   Median :114463   Mean   :115735  
-     S03 Min.   : 65089   1st Qu.: 96329   Median :114545   Mean   :115825  
-     S04 Min.   : 65593   1st Qu.: 96860   Median :114975   Mean   :116328  
-     S05 Min.   : 65856   1st Qu.: 97145   Median :115212   Mean   :116594  
-     S06 Min.   : 66031   1st Qu.: 97338   Median :115413   Mean   :116778  
-     S07 Min.   : 67352   1st Qu.: 99117   Median :116949   Mean   :118484  
-     S08 Min.   : 66727   1st Qu.: 98213   Median :116181   Mean   :117579  
-     S09 Min.   : 66937   1st Qu.: 98495   Median :116364   Mean   :117820  
-     S10 Min.   : 64144   1st Qu.: 94818   Median :113300   Mean   :114623  
+     BAU Min.   : 62544   1st Qu.: 95506   Median :112554   Mean   :115279  
+     S01 Min.   : 62897   1st Qu.: 95838   Median :112878   Mean   :115608  
+     S02 Min.   : 62627   1st Qu.: 95584   Median :112626   Mean   :115354  
+     S03 Min.   : 62725   1st Qu.: 95677   Median :112709   Mean   :115443  
+     S04 Min.   : 63186   1st Qu.: 96190   Median :113169   Mean   :115945  
+     S05 Min.   : 63453   1st Qu.: 96494   Median :113417   Mean   :116210  
+     S06 Min.   : 63618   1st Qu.: 96688   Median :113602   Mean   :116394  
+     S07 Min.   : 64855   1st Qu.: 98550   Median :115602   Mean   :118100  
+     S08 Min.   : 64310   1st Qu.: 97512   Median :114454   Mean   :117195  
+     S09 Min.   : 64527   1st Qu.: 97763   Median :114724   Mean   :117436  
+     S10 Min.   : 61842   1st Qu.: 94464   Median :111648   Mean   :114246  
                                           
-     BAU 3rd Qu.:132033   Max.   :193362  
-     S01 3rd Qu.:132338   Max.   :193633  
-     S02 3rd Qu.:132109   Max.   :193424  
-     S03 3rd Qu.:132201   Max.   :193497  
-     S04 3rd Qu.:132724   Max.   :193925  
-     S05 3rd Qu.:132995   Max.   :194144  
-     S06 3rd Qu.:133126   Max.   :194303  
-     S07 3rd Qu.:134676   Max.   :196053  
-     S08 3rd Qu.:133777   Max.   :195047  
-     S09 3rd Qu.:133990   Max.   :195265  
-     S10 3rd Qu.:130908   Max.   :192250  
+     BAU 3rd Qu.:132175   Max.   :189513  
+     S01 3rd Qu.:132451   Max.   :189758  
+     S02 3rd Qu.:132236   Max.   :189565  
+     S03 3rd Qu.:132312   Max.   :189625  
+     S04 3rd Qu.:132756   Max.   :190039  
+     S05 3rd Qu.:133040   Max.   :190228  
+     S06 3rd Qu.:133240   Max.   :190378  
+     S07 3rd Qu.:134846   Max.   :191977  
+     S08 3rd Qu.:133970   Max.   :191038  
+     S09 3rd Qu.:134147   Max.   :191237  
+     S10 3rd Qu.:131314   Max.   :188460  
 
 Targets:
 
@@ -716,7 +712,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 7013 9842 11411 11596 13069 18788
+Min. 1st Qu. Median Mean 3rd Qu. Max. 6787 9872 11504 11694 13297 18445
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -742,36 +738,11 @@ Target: 11,206 (9,037 10,865 13,054)
 <span id="tab:delcosts"></span>Table 3.1: Literature review of global
 and country-specific delivery costs
 
-$$1$$ 0.5316923
-
-| timing | category | type | Cost vs. BAU |
-|:--:|:--:|:--:|:--:|
-| One-off | Manufacturing | BPSV | $0.000012$ ($0.000012,0.000012$) |
-| One-off | R&D | BPSV | $0.077$ ($0.059,0.1$) |
-| One-off | R&D | 200 days to SSV | $3.5$ ($3.5,3.5$) |
-| One-off | R&D | 100 days to SSV | $10$ ($10,10$) |
-| Per year | Manufacturing | BPSV | $0.16$ ($0.16,0.16$) |
-| Per year | Manufacturing | 0.7 billion capacity | $0.37$ ($0.37,0.37$) |
-| Per year | Manufacturing | 2 billion capacity | $1.1$ ($1.1,1.1$) |
-| Per pandemic | Delivery | BPSV | $20$ ($19,22$) |
-| Per pandemic | Delivery | 0.7 billion capacity | $0.14$ ($0.11,0.17$) |
-| Per pandemic | Delivery | 2 billion capacity | $0.3$ ($0.24,0.37$) |
-| Per pandemic | Delivery | Equality + Delivery | $-1.8$ ($-2.3,-1.4$) |
-| Per pandemic | Manufacturing | BPSV | $6.7$ ($6.7,6.7$) |
-| Per pandemic | Manufacturing | 0.7 billion capacity | $-27$ ($-27,-27$) |
-| Per pandemic | Manufacturing | 2 billion capacity | $-92$ ($-92,-92$) |
-| Per pandemic | R&D | BPSV | $0.0037$ ($0.0019,0.0081$) |
-| Per pandemic | R&D | 200 days to SSV | $-0.085$ ($-0.11,-0.066$) |
-| Per pandemic | R&D | 100 days to SSV | $-0.097$ ($-0.13,-0.077$) |
-
-Cost differences: investments vs. BAU, for different types of
-investment.
-
 # 4 SSV delivery
 
 | Category | Reserved capacity | Private response (existing capacity) | Private response (built capacity) |
 |:---|----|:---|:---|
-| Annual manufacturing volume | By scenario (0.5–2.5B) | 2.5B minus reserved volume | 6B |
+| Annual manufacturing volume | By scenario (0.5–2.5B) | 9B minus reserved volume | 6B |
 | Facility transition start | 7 weeks before vaccine approval | 7 weeks before vaccine approval | 7 weeks before vaccine approval |
 | Weeks to initial manufacturing | 12 | 12 (BPSV) or 30 (no BPSV) | 48 |
 | Scale-up weeks to full capacity | 10 | 16 | 16 |
@@ -860,12 +831,10 @@ where $I_{E,0} = 30$ and $I_{E,1} = 12$ are the number of weeks to
 initial manufacturing for existing and unreserved capacity, $C_E = 16$
 is the number of weeks to scale up to full capacity.
 
-Then the total number of doses produced in week $w$ is
-
-$$\begin{equation}
-Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}.
-\qquad(4.1)
-\end{equation}$$
+<!-- Then the total number of doses produced in week $w$ is  -->
+<!-- \begin{equation} -->
+<!-- Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}. -->
+<!-- \end{equation} -->
 
 <div class="figure">
 
@@ -892,24 +861,24 @@ $$K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.$$
 
 We write
 
-$$X_i = 2\cdot \lambda\cdot N_i^{(15)}$$
+$$L_i = 2\cdot \lambda\cdot N_i^{(15)}$$
 
-as the maximum demand for income group $i$, representing two doses each
-for $\lambda = 80$% of the population.
+as the total demand for first-schedule doses for income group $i$,
+representing two doses each for $\lambda = 80$% of the population.
 
 <!-- assuming vaccine wastage of $\delta = 0.31$. -->
 
 $$\begin{equation}
 k_{s,R,i,w} = \left\\{ \begin{array}{lr}
-\frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\text{HIC},w} <  X_{\text{HIC}}\\;\\&\\; i=\text{HIC} \\\\
-\frac{M_{R,s}-A_3}{M_{R,s}}\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w}                    & K_{s,\text{HIC},w} < X_{\text{HIC}}  \\\\
-0 & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; i=\text{HIC}\\\\
-\frac{N_{i}}{N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i\neq\text{HIC}\\\\
-0 & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{UMIC}\\\\
-\frac{N_{i}}{N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\;  K_{s,\text{LMIC},w} < X_{\text{LMIC}} \\;\\&\\; i\notin  \lbrace\text{HIC},\text{UMIC}\rbrace\\\\
-0 & K_{s,\text{LMIC},w} \geq X_{\text{LMIC}} \\;\\&\\; i=\text{LMIC}\\\\
-Z_{R,s,w}             & K_{s,\text{LMIC},w} \geq X_{\text{LMIC}} \\;\\&\\; K_{s,\text{LIC},w} < X_{\text{LIC}} \\;\\&\\; i=\text{LIC}\\\\
-0 & K_{s,\text{LIC},w} \geq X_{\text{LIC}} 
+\frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\text{HIC},w} <  L_{\text{HIC}}\\;\\&\\; i=\text{HIC} \\\\
+\frac{M_{R,s}-A_3}{M_{R,s}}\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w}                    & K_{s,\text{HIC},w} < L_{\text{HIC}}  \\\\
+0 & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \\;\\&\\; i=\text{HIC}\\\\
+\frac{N_{i}}{N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < L_{\text{UMIC}} \\;\\&\\; i\neq\text{HIC}\\\\
+0 & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \\;\\&\\; i=\text{UMIC}\\\\
+\frac{N_{i}}{N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \\;\\&\\;  K_{s,\text{LMIC},w} < L_{\text{LMIC}} \\;\\&\\; i\notin  \lbrace\text{HIC},\text{UMIC}\rbrace\\\\
+0 & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \\;\\&\\; i=\text{LMIC}\\\\
+Z_{R,s,w}             & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \\;\\&\\; K_{s,\text{LIC},w} < L_{\text{LIC}} \\;\\&\\; i=\text{LIC}\\\\
+0 & K_{s,\text{LIC},w} \geq L_{\text{LIC}} 
 \end{array}\right.
 \end{equation}$$
 
@@ -927,26 +896,61 @@ For $x\in\lbrace E,B\rbrace$,
 
 $$\begin{equation}
 k_{s,x,i,w} = \left\\{ \begin{array}{lr}
-Z_{x,s,w}            & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} < X_{\text{HIC}} \\;\\&\\; i\neq\text{HIC} \\\\
-Z_{x,s,w}            & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i=\text{UMIC} \\\\
-0                     & K_{s,\text{HIC},w} \geq X_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < X_{\text{UMIC}} \\;\\&\\; i\neq\text{UMIC} \\\\
-Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i=\text{LLMIC} \\\\
-0                     & K_{s,\text{UMIC},w} \geq X_{\text{UMIC}} \\;\\&\\; i\neq\text{LLMIC} 
+Z_{x,s,w}            & K_{s,\text{HIC},w} < L_{\text{HIC}} \\;\\&\\; i=\text{HIC} \\\\
+0                     & K_{s,\text{HIC},w} < L_{\text{HIC}} \\;\\&\\; i\neq\text{HIC} \\\\
+Z_{x,s,w}            & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < L_{\text{UMIC}} \\;\\&\\; i=\text{UMIC} \\\\
+0                     & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < L_{\text{UMIC}} \\;\\&\\; i\neq\text{UMIC} \\\\
+Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \\;\\&\\; K_{s,\text{LMIC},w} < L_{\text{LMIC}} \\;\\&\\; i=\text{LMIC} \\\\
+0                     & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \\;\\&\\; K_{s,\text{LMIC},w} < L_{\text{LMIC}} \\;\\&\\; i\neq\text{LMIC} \\\\
+Z_{x,s,w}            & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \\;\\&\\; i=\text{LIC} \\\\
+0                     & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \\;\\&\\; i\neq\text{LIC} 
 \end{array}\right.
 \end{equation}$$
 
 The logic of this reads as follows:
 
 - Until HIC demand is reached, all doses from unreserved capacity go to
-  HIC
-- None go to UMIC and LLMIC
+  HIC. None go to UMIC, LMIC and LIC.
 - Once HIC demand has been met and until UMIC demand is reached, all
-  doses from unreserved capacity go to UMIC
-- None go to HIC and LLMIC
-- Once HIC and UMIC demand have been met, all remaining doses from
-  unreserved capacity go to LLMIC
-- None go to UMIC and HIC
+  doses from unreserved capacity go to UMIC. None go to HIC, LMIC and
+  LIC.
+- Once HIC and UMIC demand have been met and until LMIC demand is
+  reached, all doses from unreserved capacity go to LMIC. None go to
+  HIC, UMIC and LIC.
+- Once HIC, UMIC and LMIC demand have been met, all remaining doses from
+  unreserved capacity go to LIC. None go to LMIC, UMIC and HIC.
+
+Total supply of first-schedule doses in each year period is
+
+$$\begin{equation}
+A_{x,s,y}^{(1)} = \sum_i\sum_{w\in y}k_{s,x,i,w}.
+\end{equation}$$
+
+We assume, for every second dose of SSV, a booster will be given one
+year later for $N^{\text{(boost)}} = 2$ years.
+
+Thus
+
+$$\begin{equation}
+A_{s,y}^{(2)} = \left\\{ \begin{array}{lr}
+\frac{1}{2}\sum_{x}A_{x,s,y-1}^{(1)}            & y=2 \\\\
+\frac{1}{2}\sum_{x}\left(A_{x,s,y-1}^{(1)} + A_{x,s,y-2}^{(1)}\right)            & y>2 
+\end{array}\right.
+\end{equation}$$
+
+$$\begin{equation}
+A_{x,s,y}^{(2)} = \left\\{ \begin{array}{lr}
+\min(A_{s,y}^{(2)}, M_R - A_{R,s,y}^{(1)})            & x=R \\\\
+\max(A_{s,y}^{(2)} - A_{R,s,y}^{(2)}, 0)            & x\in\lbrace E, B \rbrace 
+\end{array}\right.
+\end{equation}$$
+
+and
+
+$$\begin{equation}
+A_{x,s,y} = A_{x,s,y}^{(1)} + A_{x,s,y}^{(2)}.
+\qquad(4.1)
+\end{equation}$$
 
 <div class="figure">
 
