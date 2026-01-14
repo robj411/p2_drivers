@@ -378,6 +378,19 @@ rates[nscen,3:4] = 0.04
 ```
 
 
+
+```{r}
+printeq = function(eqtext){
+  if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+}
+
+
+```
+
 ```{r}
 printmath = function(eqtext){
   if (knitr::is_html_output()) {
@@ -438,11 +451,8 @@ Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $
 eqtext = '\\hat{P}_i^{(0)} = \\left\\{\\begin{array}{lr}1 & i=0 \\\\ 
 \\prod_{j=0}^{i-1}P_j & i>0 
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
-}
+printmath(eqtext)
+
 ```
 
 for $i \in \{0,1,2,3,4\}$, with $i=4$ corresponding to licensure. 
@@ -453,11 +463,8 @@ For $N^{\text{(BPSV-1)}} = `r rawpar$n_bpsv_p1`$ candidate(s), which have alread
 eqtext = '\\hat{P}_i^{(1)} = \\left\\{\\begin{array}{lr}1 & i=1 \\\\ 
 \\prod_{j=1}^{i-1}P_j & i>1 
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
-}
+printmath(eqtext)
+
 ```
 
 for $i \in \{1,2,3,4\}$.
@@ -482,13 +489,7 @@ eqtext = 'D_s^{\\text{(BP-adRD)}} = \\left\\{\\begin{array}{lr}
 0  \\; & \\; s\\neq 1
 \\end{array}\\right.
 (\\#eq:bpsvrd)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
-
-
+printeq(eqtext)
 ```
 
 ```{r posbpsv,fig.cap='Risk-adjusted R&D cost for 8 BPSV candidates'}
@@ -536,11 +537,8 @@ eqtext = 'D_{s,y}^{\\text{(BP-man)}} = \\left\\{\\begin{array}{lr}
 0  \\; & \\; s\\neq 1\\;\\|\\;y\\neq Y^{(B)}+1
 \\end{array}\\right.
 (\\#eq:bpsvadman)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
+
 ```
 
 where $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ is the size of the reserve and $A_5 =`r format_to_print2(rawpar$bpsv_res_upfront,3)`$ is the cost per dose in USD.
@@ -554,11 +552,8 @@ eqtext = 'D_{s,y}^{\\text{(BP-inv)}} = \\left\\{\\begin{array}{lr}
 0  \\; & \\; s\\neq 1\\;\\|\\;y\\leq Y^{(B)}
 \\end{array}\\right.
 (\\#eq:bpsvinv)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
+
 ```
 
 where $A_1 = `r round(rawpar$cost_bpsv_res,2)`$ USD is the annual reservation cost per dose.
@@ -589,11 +584,8 @@ The cost per dose reservation per year is $A_2 = `r round(rawpar$cost_capres,2)`
 eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
 A_3+0.7 & s\\in\\{2, 5, 8\\} \\\\ 
 A_3+2 & s\\in\\{3, 6, 9\\} \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
+
 ```
 
 Then the total cost per year is
@@ -602,11 +594,8 @@ Then the total cost per year is
 ```{r}
 eqtext = 'D_s^{\\text{(S-cap)}} =  M_{R,s} A_2
 (\\#eq:ssvcap)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
+
 ```
 
 The annual costs in billion USD are `r round(0.5*rawpar$cost_capres,2)`, `r round(1.2*rawpar$cost_capres,2)`, and `r round(2.5*rawpar$cost_capres,2)`, respectively.
@@ -653,11 +642,8 @@ Denote the "Days Mission" by $\zeta$, so that $\zeta\in\lbrace 365, 200, 100 \rb
 eqtext = 'D_{s,y}^{\\text{(en)}} = \\left\\{\\begin{array}{lr}E & \\zeta(s)=200 \\;\\&\\; y\\leq 5 \\; |\\; \\zeta(s)=100\\; \\& \\;y\\leq 15 \\\\ 
 0 & \\zeta(s)=365 \\;|\\; y > 15 \\;|\\; \\zeta(s)=200 \\;\\&\\; y \\;>\\; 5  \\end{array}\\right.
 (\\#eq:enable)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
+
 ```
 
 For our scenarios, we have 
@@ -667,11 +653,8 @@ For our scenarios, we have
 eqtext = '\\zeta(s) = \\left\\{\\begin{array}{lr} 365 & s\\in\\{0, 1, 2, 3, 10\\} \\\\ 
 200 & s\\in\\{4, 5, 6\\} \\\\ 
 100 & s\\in\\{7, 8, 9\\} \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
+
 ```
 
 
@@ -752,11 +735,8 @@ The probability of success of each phase comes from COVID-19 data.
 
 ```{r}
 eqtext = 'P_i^{\\text{(SSV)}} \\sim \\text{Beta}\\left(\\sum_{j=i+1}^4X_j+1, X_i + 1 \\right)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
+
 ```
 
 for $i \in \lbrace 0,1,2,3 \rbrace$ where $X_i$ is the number of candidates that failed in phase $i$ and $X_4$ the number that succeeded.
@@ -767,11 +747,8 @@ Then the total cost is
 ```{r}
 eqtext = 'D_s^{\\text{(S-RD)}} = N^{\\text{(SSV)}}\\left(\\sum_{i=0}^3 \\hat{P}_i^{\\text{(SSV)}} \\cdot T_{\\zeta(s),i}^{(e)} +  \\hat{P}_4^{\\text{(SSV)}} T_4\\right)
 (\\#eq:ssvrd)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
+
 ```
 
 
@@ -781,11 +758,8 @@ We multiply by the number of candidates, $N^{\text{(SSV)}}$, to get the total co
 
 ```{r}
 eqtext = 'N^{\\text{(SSV)}} = n^{\\text{(SSV)}} + F^{-1}_{NegBin}\\left(Q^{\\text{(SSV)}}; n^{\\text{(SSV)}},  \\hat{P}_3^{\\text{(SSV)}} \\right)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
+
 ```
 
 is chosen to secure at least $n^{\text{(SSV)}} = `r rawpar$n_ssv_successes`$ successful candidates with probability $Q^{\text{(SSV)}} = `r 100*rawpar$q_ssv_successes`$%. Here, $F^{-1}_{NegBin}\left(q; n,  p \right)$ is the cumulative density of a negative binomial distribution with parameters $n$ and $p$ evaluated at quantile $q$.
@@ -845,11 +819,8 @@ eqtext = 'D_s^{\\text{(BP-resRD)}} = \\left\\{\\begin{array}{lr}N^{\\text{(BPSV)
 0  \\; & \\; s\\neq 1
 \\end{array}\\right.
 (\\#eq:bpsvresrd)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
+
 ```
 
 
@@ -886,11 +857,8 @@ We write billion doses procured from channel $x\in\lbrace R,E,B \rbrace$ in year
 ```{r}
 eqtext = 'D_{s,y}^{\\text{(S-proc)}} = A_{R,s,y} S_R  + \\sum_{x\\in\\lbrace E,B \\rbrace}  A_{x,s,y} S_U
 (\\#eq:ssvproc)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
+
 ```
 
 Here, $S_R = `r round(cost_res,2)`$ is the cost per reserved dose and $S_U = `r round(rawpar$cost_un,2)`$ the cost per unreserved dose in USD. 
@@ -1019,11 +987,8 @@ A_{BPSV,s}\\cdot S_R +  A_4(M_f+M_t)(1+M_p)G\\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
 \\end{array}\\right.
 (\\#eq:bpsvproc)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
+
 ```
 
 
@@ -1070,11 +1035,8 @@ V_{i; 0}h_{s,i,w}  & \\sum_{j=1}^{w-1}h_{s,i,w}\\leq \\frac{1}{10}L_i \\\\
 V_{i; 10}h_{s,i,w}  & \\frac{1}{10}L_i < \\sum_{j=1}^{w-1}h_{s,i,w}\\leq \\frac{3}{10}L_i  \\\\
 V_{i; 30}h_{s,i,w}  & \\frac{3}{10}L_i < \\sum_{j=1}^{w-1}h_{s,i,w}
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
+
 ```
 
 
@@ -1084,11 +1046,8 @@ Then the delivery cost in year $y$ and scenario $s$ is
 eqtext = 'D_{s,y}^{\\text{(S-del)}} = 
 \\sum_{w\\in y} \\sum_i H_{s,i,w}
 (\\#eq:ssvdel)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
+
 ```
 
 
@@ -1187,7 +1146,7 @@ eqtext = 'D_s^{\\text{(BP-del)}} =
 0  \\; & \\; s\\neq 1
 \\end{array}\\right.
 (\\#eq:bspvdel)'
-printmath(eqtext)
+printeq(eqtext)
 ```
 
 
@@ -1669,18 +1628,6 @@ for $j\in\lbrace 365, 200, 100\rbrace$. These work out as `r time_to_approval[1]
 
 
 ## Production
-
-```{r}
-printeq = function(eqtext){
-  if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
-}
-
-
-```
 
 
 ```{r}
