@@ -1868,11 +1868,12 @@ Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group 
 
 ```{r, results='asis', echo=FALSE}
 eqtext <- r"( h_{s,i,w}^{(1)} =
-\max\left\lbrace 0,\,
-\min\left\lbrace K_{s,i,w} - h_{s,i,w}^{(2)} - \sum_{j=1}^2 \sum_{k=1}^{w-1} h_{s,i,k}^{(j)},\,
+\max\Bigl\lbrace 0,\,
+\min\Bigl\lbrace
+K_{s,i,w} - h_{s,i,w}^{(2)} - \sum_{j=1}^2 \sum_{k=1}^{w-1} h_{s,i,k}^{(j)},\,
 L_i/2 - \sum_{k=1}^{w-1} h_{s,i,k}^{(1)}
-\right\rbrace
-\right\rbrace )"
+\Bigr\rbrace
+\Bigr\rbrace )"
 cat(paste0("$$\n", eqtext, "\n$$\n"))
 
 # eqtext <- 'h_{s,i,w}^{(1)} =
