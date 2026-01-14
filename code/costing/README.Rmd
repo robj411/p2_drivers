@@ -1929,14 +1929,6 @@ printmath(eqtext)
 
 
 
-```{r}
-eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-printmath(eqtext)
-```
-
-
-
-
 Available doses are $K_{s,i,w}$, 
 
 <!-- the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far.  -->
@@ -1945,11 +1937,7 @@ First doses stop being given once $L_i/2$ is reached.
 
 ```{r}
 eqtext = 'h_{s,i,w}^{(1)} = ( 0 )'
-if (knitr::is_html_output()) {
-  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
-} else {
-  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
-}
+printmath(eqtext)
 ```
 
 ```{r,eval=F}
