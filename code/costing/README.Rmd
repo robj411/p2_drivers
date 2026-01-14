@@ -448,9 +448,9 @@ Table: (\#tab:inex) Manufacturers working on BPSV and whether or not they have l
 Probabilities of success for preclinical, Phase I, Phase II, and Phase III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence are:
 
 ```{r}
-eqtext = '\\hat{P}_i^{(0)} = \\left\\{\\begin{array}{lr}1 & i=0 \\\\ 
+eqtext = '\\hat{P}_i^{(0)} = \\begin{cases}1 & i=0 \\\\ 
 \\prod_{j=0}^{i-1}P_j & i>0 
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 
 ```
@@ -460,9 +460,9 @@ for $i \in \{0,1,2,3,4\}$, with $i=4$ corresponding to licensure.
 For $N^{\text{(BPSV-1)}} = `r rawpar$n_bpsv_p1`$ candidate(s), which have already been through the preclinical phase, we have
 
 ```{r}
-eqtext = '\\hat{P}_i^{(1)} = \\left\\{\\begin{array}{lr}1 & i=1 \\\\ 
+eqtext = '\\hat{P}_i^{(1)} = \\begin{cases}1 & i=1 \\\\ 
 \\prod_{j=1}^{i-1}P_j & i>1 
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 
 ```
@@ -484,10 +484,10 @@ where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025. Then the total 
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-adRD)}} = \\left\\{\\begin{array}{lr}
+eqtext = 'D_s^{\\text{(BP-adRD)}} = \\begin{cases}
  \\left(N^{\\text{(BPSV)}}-N^{\\text{(BPSV-1)}}\\right)\\sum_{i=0}^2 \\hat{P}_i^{(0)}T_{i} + N^{\\text{(BPSV-1)}}\\sum_{i=1}^2 \\hat{P}_i^{(1)}T_{i} \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
-\\end{array}\\right.
+\\end{cases}
 (\\#eq:bpsvrd)'
 printeq(eqtext)
 ```
@@ -531,11 +531,11 @@ printmath(eqtext)
 The upfront cost of securing the investigational reserve is
 
 ```{r}
-eqtext = 'D_{s,y}^{\\text{(BP-man)}} = \\left\\{\\begin{array}{lr}
+eqtext = 'D_{s,y}^{\\text{(BP-man)}} = \\begin{cases}
  A_4A_5
 \\; & \\; s=1 \\;\\&\\;y=Y^{(B)}+1\\\\
 0  \\; & \\; s\\neq 1\\;\\|\\;y\\neq Y^{(B)}+1
-\\end{array}\\right.
+\\end{cases}
 (\\#eq:bpsvadman)'
 printeq(eqtext)
 
@@ -546,11 +546,11 @@ where $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ is the size of the reserve
 The cost of goods supplied is $G = `r rawpar$cost_cogs`$. Then the cost of drug substance is $G(1-M_f)(1+M_p) = `r round(rawpar$cost_cogs*(1-rawpar$cost_ff)*(1+rawpar$profit),2)`$ USD per dose. The reserve is replenished every $Y_{rep} = `r rawpar$bpsv_replenishment`$ years. Then the annual cost to maintain the reserve of $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ doses is
 
 ```{r}
-eqtext = 'D_{s,y}^{\\text{(BP-inv)}} = \\left\\{\\begin{array}{lr}
+eqtext = 'D_{s,y}^{\\text{(BP-inv)}} = \\begin{cases}
  \\frac{A_4}{Y_{rep}}G  (1-M_f)(1+M_p) + A_1
 \\; & \\; s=1 \\;\\&\\;y>Y^{(B)}\\\\
 0  \\; & \\; s\\neq 1\\;\\|\\;y\\leq Y^{(B)}
-\\end{array}\\right.
+\\end{cases}
 (\\#eq:bpsvinv)'
 printeq(eqtext)
 
@@ -581,9 +581,9 @@ Target: 1 (0.9 1 1.1)
 The cost per dose reservation per year is $A_2 = `r round(rawpar$cost_capres,2)`$ USD. Reservation sizes, in billions, depend on scenarios, including the $A_3 = `r rawpar$hic_cap_res`$ billion doses reserved for HIC, as follows:
 
 ```{r}
-eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
+eqtext = 'M_{R,s} = \\begin{cases}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
 A_3+0.7 & s\\in\\{2, 5, 8\\} \\\\ 
-A_3+2 & s\\in\\{3, 6, 9\\} \\end{array}\\right.'
+A_3+2 & s\\in\\{3, 6, 9\\} \\end{cases}'
 printmath(eqtext)
 
 ```
@@ -639,8 +639,8 @@ Targets:
 Denote the "Days Mission" by $\zeta$, so that $\zeta\in\lbrace 365, 200, 100 \rbrace$. Then annual costs, $E=700$ million, accumulate depending on the year and the mission:
 
 ```{r}
-eqtext = 'D_{s,y}^{\\text{(en)}} = \\left\\{\\begin{array}{lr}E & \\zeta(s)=200 \\;\\&\\; y\\leq 5 \\; |\\; \\zeta(s)=100\\; \\& \\;y\\leq 15 \\\\ 
-0 & \\zeta(s)=365 \\;|\\; y > 15 \\;|\\; \\zeta(s)=200 \\;\\&\\; y \\;>\\; 5  \\end{array}\\right.
+eqtext = 'D_{s,y}^{\\text{(en)}} = \\begin{cases}E & \\zeta(s)=200 \\;\\&\\; y\\leq 5 \\; |\\; \\zeta(s)=100\\; \\& \\;y\\leq 15 \\\\ 
+0 & \\zeta(s)=365 \\;|\\; y > 15 \\;|\\; \\zeta(s)=200 \\;\\&\\; y \\;>\\; 5  \\end{cases}
 (\\#eq:enable)'
 printeq(eqtext)
 
@@ -650,9 +650,9 @@ For our scenarios, we have
 
 
 ```{r}
-eqtext = '\\zeta(s) = \\left\\{\\begin{array}{lr} 365 & s\\in\\{0, 1, 2, 3, 10\\} \\\\ 
+eqtext = '\\zeta(s) = \\begin{cases} 365 & s\\in\\{0, 1, 2, 3, 10\\} \\\\ 
 200 & s\\in\\{4, 5, 6\\} \\\\ 
-100 & s\\in\\{7, 8, 9\\} \\end{array}\\right.'
+100 & s\\in\\{7, 8, 9\\} \\end{cases}'
 printmath(eqtext)
 
 ```
@@ -815,9 +815,9 @@ The BPSV has $N^{\text{(BPSV)}}$ candidates. Those that have passed through Phas
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-resRD)}} = \\left\\{\\begin{array}{lr}N^{\\text{(BPSV)}}\\hat{P}_3\\left( (1+I)\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\\right) \\; & \\; s=1 \\\\
+eqtext = 'D_s^{\\text{(BP-resRD)}} = \\begin{cases}N^{\\text{(BPSV)}}\\hat{P}_3\\left( (1+I)\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\\right) \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
-\\end{array}\\right.
+\\end{cases}
 (\\#eq:bpsvresrd)'
 printeq(eqtext)
 
@@ -982,10 +982,10 @@ Targets:
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-proc)}} = \\left\\{\\begin{array}{lr}
+eqtext = 'D_s^{\\text{(BP-proc)}} = \\begin{cases}
 A_{BPSV,s}\\cdot S_R +  A_4(M_f+M_t)(1+M_p)G\\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
-\\end{array}\\right.
+\\end{cases}
 (\\#eq:bpsvproc)'
 printeq(eqtext)
 
@@ -1030,11 +1030,11 @@ We write the delivery cost for $h_{s,i,w}$ doses given in week $w$ and country t
 
 ```{r}
 eqtext = 'H_{s,i,w} = 
-\\left\\{\\begin{array}{lr}
+\\begin{cases}
 V_{i; 0}h_{s,i,w}  & \\sum_{j=1}^{w-1}h_{s,i,w}\\leq \\frac{1}{10}L_i \\\\
 V_{i; 10}h_{s,i,w}  & \\frac{1}{10}L_i < \\sum_{j=1}^{w-1}h_{s,i,w}\\leq \\frac{3}{10}L_i  \\\\
 V_{i; 30}h_{s,i,w}  & \\frac{3}{10}L_i < \\sum_{j=1}^{w-1}h_{s,i,w}
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 
 ```
@@ -1140,11 +1140,11 @@ For the BPSV, which goes only to people aged 65 or older, with populations $N_i^
 
 ```{r}
 eqtext = 'D_s^{\\text{(BP-del)}} = 
-\\left\\{\\begin{array}{lr}
+\\begin{cases}
 \\sum_{i}D_{\\text{BPSV},i}
 \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
-\\end{array}\\right.
+\\end{cases}
 (\\#eq:bspvdel)'
 printeq(eqtext)
 ```
@@ -1153,11 +1153,11 @@ printeq(eqtext)
 
 ```{r}
 eqtext = 'D_{\\text{BPSV},i} = 
-\\left\\{\\begin{array}{lr}
+\\begin{cases}
 N_i^{(65)}V_{i; 0}  & N_i^{(65)}\\leq \\frac{1}{10}N_i^{(15)} \\\\
 \\frac{N_i^{(15)}}{10} V_{i; 0} + \\left(N_i^{(65)}-\\frac{N_i^{(15)}}{10} \\right)V_{i; 11}  & \\frac{1}{10}N_i^{(15)} < N_i^{(65)}\\leq \\frac{3}{10}N_i^{(15)} \\\\
 \\frac{N_i^{(15)}}{10} V_{i; 0} + \\frac{2}{10}N_i^{(15)} V_{i; 11} + \\left(N_i^{(65)}-\\frac{3}{10}N_i^{(15)} \\right)V_{i; 31} & N_i^{(65)}> \\frac{3}{10} N_i^{(15)}
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 ```
 
@@ -1634,9 +1634,9 @@ for $j\in\lbrace 365, 200, 100\rbrace$. These work out as `r time_to_approval[1]
 The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, including the HIC-specific reservation of $A_3=0.5$ billion doses, depends on the scenarios as follows:
 
 ```{r}
-eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
+eqtext = 'M_{R,s} = \\begin{cases}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
 A_3 + 0.7 & s\\in\\{2, 5, 8\\} \\\\ 
-A_3 + 2 & s\\in\\{3, 6, 9\\} \\end{array}\\right.'
+A_3 + 2 & s\\in\\{3, 6, 9\\} \\end{cases}'
 printmath(eqtext)
 ```
 
@@ -1646,10 +1646,10 @@ Then the number of doses, in billions, that are made from capacity $x\in \lbrace
 
 
 ```{r}
-eqtext = 'Z_{x,s,w} = \\left\\{\\begin{array}{lr}0 & w-w_s^{(0)} \\leq I_x \\\\ 
+eqtext = 'Z_{x,s,w} = \\begin{cases}0 & w-w_s^{(0)} \\leq I_x \\\\ 
 \\frac{1}{52}\\frac{w-w_s^{(0)}-I_x}{C_x}M_{x,s} & w-w_s^{(0)}\\in(I_x, I_x+C_x] \\\\ 
 \\frac{1}{52}M_{x,s}  & w-w_s^{(0)}> I_x+C_x
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 ```
 
@@ -1661,10 +1661,10 @@ printmath(eqtext)
 where $I_R = `r rawpar$weeks_init_res`$ is the number of weeks to initial manufacturing for reserved capacity, $C_R = `r rawpar$weeks_scale_res`$ is the number of weeks to scale up to full capacity; $I_B = `r rawpar$weeks_init_bui`$ is the number of weeks to initial manufacturing for built and unreserved capacity, $C_B = `r rawpar$weeks_scale_bui`$ is the number of weeks to scale up to full capacity, and
 
 ```{r}
-eqtext = 'I_E = \\left\\{\\begin{array}{lr}
+eqtext = 'I_E = \\begin{cases}
  I_{E,1} \\; & \\; s=1 \\\\
 I_{E,0}  \\; & \\; s\\neq 1
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 ```
 
@@ -1723,7 +1723,7 @@ printmath(eqtext)
 <!-- assuming vaccine wastage of $\delta = `r round(rawpar$vaccine_wastage,2)`$. -->
 
 ```{r}
-eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
+eqtext = 'k_{s,R,i,w} = \\begin{cases}
 \\frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\\text{HIC},w} <  L_{\\text{HIC}}\\;\\&\\; i=\\text{HIC} \\\\
 \\frac{M_{R,s}-A_3}{M_{R,s}}\\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w}                    & K_{s,\\text{HIC},w} < L_{\\text{HIC}}  \\\\
 0 & K_{s,\\text{HIC},w} \\geq L_{\\text{HIC}} \\;\\&\\; i=\\text{HIC}\\\\
@@ -1733,7 +1733,7 @@ eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
 0 & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; i=\\text{LMIC}\\\\
 Z_{R,s,w}             & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; K_{s,\\text{LIC},w} < L_{\\text{LIC}} \\;\\&\\; i=\\text{LIC}\\\\
 0 & K_{s,\\text{LIC},w} \\geq L_{\\text{LIC}} 
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 ```
 
@@ -1751,7 +1751,7 @@ For $x\in\lbrace E,B\rbrace$,
 
 
 ```{r}
-eqtext = 'k_{s,x,i,w} = \\left\\{ \\begin{array}{lr}
+eqtext = 'k_{s,x,i,w} = \\begin{cases}
 Z_{x,s,w}            & K_{s,\\text{HIC},w} < L_{\\text{HIC}} \\;\\&\\; i=\\text{HIC} \\\\
 0                     & K_{s,\\text{HIC},w} < L_{\\text{HIC}} \\;\\&\\; i\\neq\\text{HIC} \\\\
 Z_{x,s,w}            & K_{s,\\text{HIC},w} \\geq L_{\\text{HIC}} \\;\\&\\; K_{s,\\text{UMIC},w} < L_{\\text{UMIC}} \\;\\&\\; i=\\text{UMIC} \\\\
@@ -1760,7 +1760,7 @@ Z_{x,s,w}            & K_{s,\\text{UMIC},w} \\geq L_{\\text{UMIC}} \\;\\&\\; K_{
 0                     & K_{s,\\text{UMIC},w} \\geq L_{\\text{UMIC}} \\;\\&\\; K_{s,\\text{LMIC},w} < L_{\\text{LMIC}} \\;\\&\\; i\\neq\\text{LMIC} \\\\
 Z_{x,s,w}            & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; i=\\text{LIC} \\\\
 0                     & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; i\\neq\\text{LIC} 
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 ```
 
@@ -1786,10 +1786,10 @@ We assume, for every second dose of SSV, a booster will be given one year later 
 Thus 
 
 ```{r}
-eqtext = 'A_{s,y}^{(2)} = \\left\\{ \\begin{array}{lr}
+eqtext = 'A_{s,y}^{(2)} = \\begin{cases}
 \\frac{1}{2}\\sum_{x}A_{x,s,y-1}^{(1)}            & y=2 \\\\
 \\frac{1}{2}\\sum_{x}\\left(A_{x,s,y-1}^{(1)} + A_{x,s,y-2}^{(1)}\\right)            & y>2 
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 ```
 

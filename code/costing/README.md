@@ -192,9 +192,9 @@ III are $P_0$, $P_1$, $P_2$ and $P_3$. Then probabilities of occurrence
 are:
 
 ``` math
-\hat{P}_i^{(0)} = \left\{\begin{array}{lr}1 & i=0 \\ 
+\hat{P}_i^{(0)} = \begin{cases}1 & i=0 \\ 
 \prod_{j=0}^{i-1}P_j & i>0 
-\end{array}\right.
+\end{cases}
 ```
 
 for $i \in \{0,1,2,3,4\}$, with $i=4$ corresponding to licensure.
@@ -203,9 +203,9 @@ For $N^{\text{(BPSV-1)}} = 1$ candidate(s), which have already been
 through the preclinical phase, we have
 
 ``` math
-\hat{P}_i^{(1)} = \left\{\begin{array}{lr}1 & i=1 \\ 
+\hat{P}_i^{(1)} = \begin{cases}1 & i=1 \\ 
 \prod_{j=1}^{i-1}P_j & i>1 
-\end{array}\right.
+\end{cases}
 ```
 
 for $i \in \{1,2,3,4\}$.
@@ -223,10 +223,10 @@ where $I = 0.28$ is inflation from 2018 to 2025. Then the total weighted
 cost for phases 0 through 2 for $N^{\text{(BPSV)}}$ candidates is
 
 $$\begin{equation}
-D_s^{\text{(BP-adRD)}} = \left\\{\begin{array}{lr}
+D_s^{\text{(BP-adRD)}} = \begin{cases}
  \left(N^{\text{(BPSV)}}-N^{\text{(BPSV-1)}}\right)\sum_{i=0}^2 \hat{P}_i^{(0)}T_{i} + N^{\text{(BPSV-1)}}\sum_{i=1}^2 \hat{P}_i^{(1)}T_{i} \\; & \\; s=1 \\\\
 0  \\; & \\; s\neq 1
-\end{array}\right.
+\end{cases}
 \qquad(2.1)
 \end{equation}$$
 
@@ -240,8 +240,8 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 58.57 64.29 72.26 95.27 83.54
-284.11
+Min. 1st Qu. Median Mean 3rd Qu. Max. 48.19 57.84 62.99 73.13 77.27
+132.76
 
 Target: 146 (103 135 177)
 
@@ -261,11 +261,11 @@ Y^{(B)} = Y_0^{(B)} + Y_1^{(B)} + Y_2^{(B)}.
 The upfront cost of securing the investigational reserve is
 
 $$\begin{equation}
-D_{s,y}^{\text{(BP-man)}} = \left\\{\begin{array}{lr}
+D_{s,y}^{\text{(BP-man)}} = \begin{cases}
  A_4A_5
 \\; & \\; s=1 \\;\\&\\;y=Y^{(B)}+1\\\\
 0  \\; & \\; s\neq 1\\;\\|\\;y\neq Y^{(B)}+1
-\end{array}\right.
+\end{cases}
 \qquad(2.2)
 \end{equation}$$
 
@@ -278,11 +278,11 @@ replenished every $Y_{rep} = 3$ years. Then the annual cost to maintain
 the reserve of $A_4 =100,000$ doses is
 
 $$\begin{equation}
-D_{s,y}^{\text{(BP-inv)}} = \left\\{\begin{array}{lr}
+D_{s,y}^{\text{(BP-inv)}} = \begin{cases}
  \frac{A_4}{Y_{rep}}G  (1-M_f)(1+M_p) + A_1
 \\; & \\; s=1 \\;\\&\\;y>Y^{(B)}\\\\
 0  \\; & \\; s\neq 1\\;\\|\\;y\leq Y^{(B)}
-\end{array}\right.
+\end{cases}
 \qquad(2.3)
 \end{equation}$$
 
@@ -299,8 +299,8 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 919.6 1023.2 1048.5 1105.3 1177.2
-1439.1
+Min. 1st Qu. Median Mean 3rd Qu. Max. 818.4 1000.6 1184.2 1122.7 1251.5
+1294.1
 
 Target: 1 (0.9 1 1.1)
 
@@ -313,9 +313,9 @@ sizes, in billions, depend on scenarios, including the $A_3 = 0.5$
 billion doses reserved for HIC, as follows:
 
 ``` math
-M_{R,s} = \left\{\begin{array}{lr}A_3 & s\in\{0, 1, 4, 7, 10\} \\ 
+M_{R,s} = \begin{cases}A_3 & s\in\{0, 1, 4, 7, 10\} \\ 
 A_3+0.7 & s\in\{2, 5, 8\} \\ 
-A_3+2 & s\in\{3, 6, 9\} \end{array}\right.
+A_3+2 & s\in\{3, 6, 9\} \end{cases}
 ```
 
 Then the total cost per year is
@@ -337,12 +337,12 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2748 2796 3075 3073 3304 3442
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2818 3089 3190 3189 3326 3443
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6595 6711 7379 7375 7930 8262
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6763 7413 7656 7652 7981 8263
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13739 13981 15373 15364 16520
-17212
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 14090 15444 15951 15943 16628
+17216
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -359,17 +359,17 @@ $\zeta\in\lbrace 365, 200, 100 \rbrace$. Then annual costs, $E=700$
 million, accumulate depending on the year and the mission:
 
 $$\begin{equation}
-D_{s,y}^{\text{(en)}} = \left\\{\begin{array}{lr}E & \zeta(s)=200 \\;\\&\\; y\leq 5 \\; |\\; \zeta(s)=100\\; \\& \\;y\leq 15 \\\\ 
-0 & \zeta(s)=365 \\;|\\; y > 15 \\;|\\; \zeta(s)=200 \\;\\&\\; y \\;>\\; 5  \end{array}\right.
+D_{s,y}^{\text{(en)}} = \begin{cases}E & \zeta(s)=200 \\;\\&\\; y\leq 5 \\; |\\; \zeta(s)=100\\; \\& \\;y\leq 15 \\\\ 
+0 & \zeta(s)=365 \\;|\\; y > 15 \\;|\\; \zeta(s)=200 \\;\\&\\; y \\;>\\; 5  \end{cases}
 \qquad(2.5)
 \end{equation}$$
 
 For our scenarios, we have
 
 ``` math
-\zeta(s) = \left\{\begin{array}{lr} 365 & s\in\{0, 1, 2, 3, 10\} \\ 
+\zeta(s) = \begin{cases} 365 & s\in\{0, 1, 2, 3, 10\} \\ 
 200 & s\in\{4, 5, 6\} \\ 
-100 & s\in\{7, 8, 9\} \end{array}\right.
+100 & s\in\{7, 8, 9\} \end{cases}
 ```
 
 <div class="figure">
@@ -384,9 +384,9 @@ years with uniformly distributed discount rate.
 
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.15 3.24 3.24 3.31 3.35
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.15 3.25 3.28 3.28 3.32 3.35
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.24 7.36 8.10 8.09 8.70 9.06
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.42 8.13 8.40 8.40 8.76 9.07
 
 Targets:
 
@@ -472,9 +472,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 |  21  |   23    |   29   |  31  |   33    |  56  |
-| 200 |  10  |   12    |   14   |  15  |   17    |  25  |
-| 100 |  8   |    9    |   10   |  11  |   12    |  20  |
+| 365 |  40  |   64    |   70   |  80  |   99    | 115  |
+| 200 |  17  |   28    |   30   |  33  |   40    |  46  |
+| 100 |  10  |   16    |   19   |  22  |   28    |  33  |
 
 Targets:
 
@@ -497,9 +497,9 @@ the response. The duration is $W_3^{(B)}=18$ weeks. Thus we write the
 BPSV R&D response cost
 
 $$\begin{equation}
-D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\left( (1+I)\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\right) \\; & \\; s=1 \\\\
+D_s^{\text{(BP-resRD)}} = \begin{cases}N^{\text{(BPSV)}}\hat{P}_3\left( (1+I)\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\right) \\; & \\; s=1 \\\\
 0  \\; & \\; s\neq 1
-\end{array}\right.
+\end{cases}
 \qquad(3.2)
 \end{equation}$$
 
@@ -512,7 +512,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.5 2.4 5.2 11.3 9.0 51.2
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.3 1.0 1.9 7.0 3.7 50.1
 
 Target: 14 (3 5 10)
 
@@ -555,17 +555,17 @@ cost per unreserved dose in USD.
 
 | Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
 |:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
-|   BAU    | 131920 | 139146  | 185604 | 187338 | 226864  | 254386 |
-|   S01    | 135073 | 142345  | 188931 | 190598 | 230201  | 257636 |
-|   S02    | 122165 | 128837  | 171712 | 173301 | 209774  | 235148 |
-|   S03    | 99121  | 104490  | 138921 | 140170 | 169448  | 189764 |
-|   S04    | 137580 | 144881  | 191504 | 193112 | 232720  | 260040 |
-|   S05    | 125082 | 131707  | 174004 | 175456 | 211386  | 236156 |
-|   S06    | 104361 | 109865  | 144971 | 146163 | 175979  | 196508 |
-|   S07    | 137983 | 145245  | 191546 | 193112 | 232433  | 259495 |
-|   S08    | 124499 | 131035  | 172681 | 174080 | 209444  | 233765 |
-|   S09    | 101947 | 107266  | 141113 | 142232 | 170965  | 190690 |
-|   S10    | 130353 | 137491  | 183379 | 185090 | 224132  | 251314 |
+|   BAU    | 142461 | 187083  | 205384 | 206312 | 231067  | 254552 |
+|   S01    | 145680 | 190446  | 208749 | 209636 | 234394  | 257801 |
+|   S02    | 131898 | 173083  | 189964 | 190814 | 213650  | 235301 |
+|   S03    | 106952 | 140033  | 153573 | 154238 | 172552  | 189886 |
+|   S04    | 148227 | 193047  | 211325 | 212175 | 236898  | 260204 |
+|   S05    | 134744 | 175406  | 191984 | 192751 | 215174  | 236304 |
+|   S06    | 112387 | 146141  | 159892 | 160521 | 179119  | 196631 |
+|   S07    | 148573 | 193091  | 211223 | 212049 | 236573  | 259657 |
+|   S08    | 134029 | 174075  | 190378 | 191115 | 213165  | 233910 |
+|   S09    | 109702 | 142254  | 155492 | 156080 | 173984  | 190808 |
+|   S10    | 140766 | 184841  | 202916 | 203832 | 228283  | 251477 |
 
 Costs summed and discounted from year 16 to year 20, million USD
 
@@ -583,10 +583,10 @@ Targets:
 **This is pretty close**
 
 $$\begin{equation}
-D_s^{\text{(BP-proc)}} = \left\\{\begin{array}{lr}
+D_s^{\text{(BP-proc)}} = \begin{cases}
 A_{BPSV,s}\cdot S_R +  A_4(M_f+M_t)(1+M_p)G\\; & \\; s=1 \\\\
 0  \\; & \\; s\neq 1
-\end{array}\right.
+\end{cases}
 \qquad(3.4)
 \end{equation}$$
 
@@ -598,7 +598,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2817 2943 3723 3740 4398 4831
+Min. 1st Qu. Median Mean 3rd Qu. Max. 3001 3754 4053 4060 4464 4834
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -627,11 +627,11 @@ rollout.
 
 ``` math
 H_{s,i,w} = 
-\left\{\begin{array}{lr}
+\begin{cases}
 V_{i; 0}h_{s,i,w}  & \sum_{j=1}^{w-1}h_{s,i,w}\leq \frac{1}{10}L_i \\
 V_{i; 10}h_{s,i,w}  & \frac{1}{10}L_i < \sum_{j=1}^{w-1}h_{s,i,w}\leq \frac{3}{10}L_i  \\
 V_{i; 30}h_{s,i,w}  & \frac{3}{10}L_i < \sum_{j=1}^{w-1}h_{s,i,w}
-\end{array}\right.
+\end{cases}
 ```
 
 Then the delivery cost in year $y$ and scenario $s$ is
@@ -651,29 +651,29 @@ D_{s,y}^{\text{(S-del)}} =
 
 </div>
 
-     BAU Min.   : 80577   1st Qu.: 90719   Median :110674   Mean   :117999  
-     S01 Min.   : 80946   1st Qu.: 91088   Median :110982   Mean   :118317  
-     S02 Min.   : 80665   1st Qu.: 90804   Median :110749   Mean   :118074  
-     S03 Min.   : 80767   1st Qu.: 90906   Median :110841   Mean   :118164  
-     S04 Min.   : 81316   1st Qu.: 91503   Median :111349   Mean   :118659  
-     S05 Min.   : 81631   1st Qu.: 91812   Median :111621   Mean   :118925  
-     S06 Min.   : 81842   1st Qu.: 92036   Median :111815   Mean   :119110  
-     S07 Min.   : 83630   1st Qu.: 93911   Median :113697   Mean   :120836  
-     S08 Min.   : 82713   1st Qu.: 92946   Median :112663   Mean   :119914  
-     S09 Min.   : 82971   1st Qu.: 93218   Median :112914   Mean   :120155  
-     S10 Min.   : 79502   1st Qu.: 89618   Median :109562   Mean   :116964  
+     BAU Min.   : 88763   1st Qu.:107246   Median :123428   Mean   :128123  
+     S01 Min.   : 89120   1st Qu.:107569   Median :123693   Mean   :128425  
+     S02 Min.   : 88838   1st Qu.:107321   Median :123486   Mean   :128191  
+     S03 Min.   : 88930   1st Qu.:107409   Median :123558   Mean   :128273  
+     S04 Min.   : 89425   1st Qu.:107904   Median :123959   Mean   :128741  
+     S05 Min.   : 89673   1st Qu.:108158   Median :124164   Mean   :128983  
+     S06 Min.   : 89838   1st Qu.:108338   Median :124310   Mean   :129155  
+     S07 Min.   : 91107   1st Qu.:109965   Median :125560   Mean   :130856  
+     S08 Min.   : 90492   1st Qu.:109137   Median :124951   Mean   :129929  
+     S09 Min.   : 90696   1st Qu.:109375   Median :125146   Mean   :130160  
+     S10 Min.   : 87976   1st Qu.:106314   Median :122703   Mean   :127082  
                                           
-     BAU 3rd Qu.:129887   Max.   :186264  
-     S01 3rd Qu.:130182   Max.   :186518  
-     S02 3rd Qu.:129956   Max.   :186327  
-     S03 3rd Qu.:130039   Max.   :186400  
-     S04 3rd Qu.:130495   Max.   :186796  
-     S05 3rd Qu.:130736   Max.   :187020  
-     S06 3rd Qu.:130903   Max.   :187175  
-     S07 3rd Qu.:132378   Max.   :188889  
-     S08 3rd Qu.:131623   Max.   :187924  
-     S09 3rd Qu.:131840   Max.   :188147  
-     S10 3rd Qu.:129021   Max.   :185202  
+     BAU 3rd Qu.:140092   Max.   :182260  
+     S01 3rd Qu.:140385   Max.   :182555  
+     S02 3rd Qu.:140161   Max.   :182331  
+     S03 3rd Qu.:140244   Max.   :182414  
+     S04 3rd Qu.:140721   Max.   :182919  
+     S05 3rd Qu.:140976   Max.   :183187  
+     S06 3rd Qu.:141157   Max.   :183381  
+     S07 3rd Qu.:143139   Max.   :185384  
+     S08 3rd Qu.:141972   Max.   :184186  
+     S09 3rd Qu.:142216   Max.   :184418  
+     S10 3rd Qu.:138814   Max.   :180934  
 
 Targets:
 
@@ -697,21 +697,21 @@ the cost is weighted more heavily towards start up and ramp up:
 
 $$\begin{equation}
 D_s^{\text{(BP-del)}} = 
-\left\\{\begin{array}{lr}
+\begin{cases}
 \sum_{i}D_{\text{BPSV},i}
 \\; & \\; s=1 \\\\
 0  \\; & \\; s\neq 1
-\end{array}\right.
+\end{cases}
 \qquad(3.6)
 \end{equation}$$
 
 ``` math
 D_{\text{BPSV},i} = 
-\left\{\begin{array}{lr}
+\begin{cases}
 N_i^{(65)}V_{i; 0}  & N_i^{(65)}\leq \frac{1}{10}N_i^{(15)} \\
 \frac{N_i^{(15)}}{10} V_{i; 0} + \left(N_i^{(65)}-\frac{N_i^{(15)}}{10} \right)V_{i; 11}  & \frac{1}{10}N_i^{(15)} < N_i^{(65)}\leq \frac{3}{10}N_i^{(15)} \\
 \frac{N_i^{(15)}}{10} V_{i; 0} + \frac{2}{10}N_i^{(15)} V_{i; 11} + \left(N_i^{(65)}-\frac{3}{10}N_i^{(15)} \right)V_{i; 31} & N_i^{(65)}> \frac{3}{10} N_i^{(15)}
-\end{array}\right.
+\end{cases}
 ```
 
 The logic of this is as follows:
@@ -741,7 +741,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 7634 9215 12087 11965 14444 17113
+Min. 1st Qu. Median Mean 3rd Qu. Max. 9206 10492 12138 12157 13514 15750
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -822,9 +822,9 @@ reservation of $A_3=0.5$ billion doses, depends on the scenarios as
 follows:
 
 ``` math
-M_{R,s} = \left\{\begin{array}{lr}A_3 & s\in\{0, 1, 4, 7, 10\} \\ 
+M_{R,s} = \begin{cases}A_3 & s\in\{0, 1, 4, 7, 10\} \\ 
 A_3 + 0.7 & s\in\{2, 5, 8\} \\ 
-A_3 + 2 & s\in\{3, 6, 9\} \end{array}\right.
+A_3 + 2 & s\in\{3, 6, 9\} \end{cases}
 ```
 
 where $s=0$ denotes the BAU scenario. By definition,
@@ -834,10 +834,10 @@ Then the number of doses, in billions, that are made from capacity
 $x\in \lbrace R, E, B\rbrace$ in week $w$ of scenario $s$ is:
 
 ``` math
-Z_{x,s,w} = \left\{\begin{array}{lr}0 & w-w_s^{(0)} \leq I_x \\ 
+Z_{x,s,w} = \begin{cases}0 & w-w_s^{(0)} \leq I_x \\ 
 \frac{1}{52}\frac{w-w_s^{(0)}-I_x}{C_x}M_{x,s} & w-w_s^{(0)}\in(I_x, I_x+C_x] \\ 
 \frac{1}{52}M_{x,s}  & w-w_s^{(0)}> I_x+C_x
-\end{array}\right.
+\end{cases}
 ```
 
 <!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
@@ -852,10 +852,10 @@ built and unreserved capacity, $C_B = 16$ is the number of weeks to
 scale up to full capacity, and
 
 ``` math
-I_E = \left\{\begin{array}{lr}
+I_E = \begin{cases}
  I_{E,1} \; & \; s=1 \\
 I_{E,0}  \; & \; s\neq 1
-\end{array}\right.
+\end{cases}
 ```
 
 where $I_{E,0} = 30$ and $I_{E,1} = 12$ are the number of weeks to
@@ -890,7 +890,7 @@ K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.
 <!-- assuming vaccine wastage of $\delta = 0.31$. -->
 
 ``` math
-k_{s,R,i,w} = \left\{ \begin{array}{lr}
+k_{s,R,i,w} = \begin{cases}
 \frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\text{HIC},w} <  L_{\text{HIC}}\;\&\; i=\text{HIC} \\
 \frac{M_{R,s}-A_3}{M_{R,s}}\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w}                    & K_{s,\text{HIC},w} < L_{\text{HIC}}  \\
 0 & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \;\&\; i=\text{HIC}\\
@@ -900,7 +900,7 @@ k_{s,R,i,w} = \left\{ \begin{array}{lr}
 0 & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \;\&\; i=\text{LMIC}\\
 Z_{R,s,w}             & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \;\&\; K_{s,\text{LIC},w} < L_{\text{LIC}} \;\&\; i=\text{LIC}\\
 0 & K_{s,\text{LIC},w} \geq L_{\text{LIC}} 
-\end{array}\right.
+\end{cases}
 ```
 
 The logic of this reads as follows:
@@ -916,7 +916,7 @@ The logic of this reads as follows:
 For $x\in\lbrace E,B\rbrace$,
 
 ``` math
-k_{s,x,i,w} = \left\{ \begin{array}{lr}
+k_{s,x,i,w} = \begin{cases}
 Z_{x,s,w}            & K_{s,\text{HIC},w} < L_{\text{HIC}} \;\&\; i=\text{HIC} \\
 0                     & K_{s,\text{HIC},w} < L_{\text{HIC}} \;\&\; i\neq\text{HIC} \\
 Z_{x,s,w}            & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \;\&\; K_{s,\text{UMIC},w} < L_{\text{UMIC}} \;\&\; i=\text{UMIC} \\
@@ -925,7 +925,7 @@ Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \;\&\; K_{s,\tex
 0                     & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \;\&\; K_{s,\text{LMIC},w} < L_{\text{LMIC}} \;\&\; i\neq\text{LMIC} \\
 Z_{x,s,w}            & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \;\&\; i=\text{LIC} \\
 0                     & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \;\&\; i\neq\text{LIC} 
-\end{array}\right.
+\end{cases}
 ```
 
 The logic of this reads as follows:
@@ -953,10 +953,10 @@ year later for $N^{\text{(boost)}} = 2$ years.
 Thus
 
 ``` math
-A_{s,y}^{(2)} = \left\{ \begin{array}{lr}
+A_{s,y}^{(2)} = \begin{cases}
 \frac{1}{2}\sum_{x}A_{x,s,y-1}^{(1)}            & y=2 \\
 \frac{1}{2}\sum_{x}\left(A_{x,s,y-1}^{(1)} + A_{x,s,y-2}^{(1)}\right)            & y>2 
-\end{array}\right.
+\end{cases}
 ```
 
 and
