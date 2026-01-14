@@ -1093,11 +1093,6 @@ if (knitr::is_html_output()) {
 
 
 
-<!-- We set  -->
-
-<!-- $$V_{LLMIC; j} = \frac{1}{N_{LMIC}^{(15)} + N_{LIC}^{(15)}} \left(N_{LMIC}^{(15)}V_{LMIC; j} + N_{LIC}^{(15)}V_{LIC; j} \right)$$ -->
-
-
 
 ```{r ssvallocation}
 
@@ -1772,19 +1767,6 @@ In Figure \@ref(fig:supply), the following scenarios have identical supply (beca
 
 ## Allocation
 
-```{r}
-eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-printmath(eqtext)
-```
-
-
-
-```{r}
-eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-printmath(eqtext)
-```
-
-
 
 Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $i$ $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that 
 
@@ -1829,6 +1811,19 @@ The logic of this reads as follows:
 - Any remaining reserved capacity doses are allocated according to population
 - Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC, LMIC and LIC, and so on
 
+
+
+```{r}
+eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
+printmath(eqtext)
+```
+
+
+
+```{r}
+eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
+printmath(eqtext)
+```
 
 
 
