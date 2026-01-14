@@ -598,10 +598,16 @@ if (knitr::is_html_output()) {
 
 Then the total cost per year is
 
-\begin{equation}
-D_s^{\text{(S-cap)}} =  M_{R,s} A_2
-(\#eq:ssvcap)
-\end{equation}
+
+```{r}
+eqtext = 'D_s^{\\text{(S-cap)}} =  M_{R,s} A_2
+(\\#eq:ssvcap)'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 The annual costs in billion USD are `r round(0.5*rawpar$cost_capres,2)`, `r round(1.2*rawpar$cost_capres,2)`, and `r round(2.5*rawpar$cost_capres,2)`, respectively.
 
@@ -743,26 +749,44 @@ where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025.
 
 The probability of success of each phase comes from COVID-19 data.
 
-\begin{equation}
-P_i^{\text{(SSV)}} \sim \text{Beta}\left(\sum_{j=i+1}^4X_j+1, X_i + 1 \right)
-\end{equation}
+
+```{r}
+eqtext = 'P_i^{\\text{(SSV)}} \\sim \\text{Beta}\\left(\\sum_{j=i+1}^4X_j+1, X_i + 1 \\right)'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 for $i \in \lbrace 0,1,2,3 \rbrace$ where $X_i$ is the number of candidates that failed in phase $i$ and $X_4$ the number that succeeded.
 
 Then the total cost is
 
-\begin{equation}
-D_s^{\text{(S-RD)}} = N^{\text{(SSV)}}\left(\sum_{i=0}^3 \hat{P}_i^{\text{(SSV)}} \cdot T_{\zeta(s),i}^{(e)} +  \hat{P}_4^{\text{(SSV)}} T_4\right)
-(\#eq:ssvrd)
-\end{equation}
+
+```{r}
+eqtext = 'D_s^{\\text{(S-RD)}} = N^{\\text{(SSV)}}\\left(\\sum_{i=0}^3 \\hat{P}_i^{\\text{(SSV)}} \\cdot T_{\\zeta(s),i}^{(e)} +  \\hat{P}_4^{\\text{(SSV)}} T_4\\right)
+(\\#eq:ssvrd)'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 
 
 We multiply by the number of candidates, $N^{\text{(SSV)}}$, to get the total cost from the weighted average per candidate, where
 
-\begin{equation}
-N^{\text{(SSV)}} = n^{\text{(SSV)}} + F^{-1}_{NegBin}\left(Q^{\text{(SSV)}}; n^{\text{(SSV)}},  \hat{P}_3^{\text{(SSV)}} \right)
-\end{equation}
+
+```{r}
+eqtext = 'N^{\\text{(SSV)}} = n^{\\text{(SSV)}} + F^{-1}_{NegBin}\\left(Q^{\\text{(SSV)}}; n^{\\text{(SSV)}},  \\hat{P}_3^{\\text{(SSV)}} \\right)'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 is chosen to secure at least $n^{\text{(SSV)}} = `r rawpar$n_ssv_successes`$ successful candidates with probability $Q^{\text{(SSV)}} = `r 100*rawpar$q_ssv_successes`$%. Here, $F^{-1}_{NegBin}\left(q; n,  p \right)$ is the cumulative density of a negative binomial distribution with parameters $n$ and $p$ evaluated at quantile $q$.
 
