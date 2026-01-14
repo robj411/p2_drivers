@@ -740,7 +740,7 @@ Trial costs are adjusted for the duration of the trial, which depend on the R\&D
 
 
 ```{r}
-eqtext = 'T_{\\zeta,i}^{(e)} = (1+I)\frac{W_{i;\\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}'
+eqtext = 'T_{\\zeta,i}^{(e)} = (1+I)\\frac{W_{i;\\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}'
 printmath(eqtext)
 ```
 
@@ -882,10 +882,16 @@ This cost is used both for SSV doses manufactured using reserved capacity, and a
 
 We write billion doses procured from channel $x\in\lbrace R,E,B \rbrace$ in year $y$ and scenario $s$ as $A_{x,s,y}$ (see Equation \@ref(eq:supply)). Then the total cost, in billion USD, is:
 
-\begin{equation}
-D_{s,y}^{\text{(S-proc)}} = A_{R,s,y} S_R  + \sum_{x\in\lbrace E,B \rbrace}  A_{x,s,y} S_U
-(\#eq:ssvproc)
-\end{equation}
+
+```{r}
+eqtext = 'D_{s,y}^{\\text{(S-proc)}} = A_{R,s,y} S_R  + \\sum_{x\\in\\lbrace E,B \\rbrace}  A_{x,s,y} S_U
+(\\#eq:ssvproc)'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 Here, $S_R = `r round(cost_res,2)`$ is the cost per reserved dose and $S_U = `r round(rawpar$cost_un,2)`$ the cost per unreserved dose in USD. 
 
