@@ -1859,7 +1859,7 @@ h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.
 Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far. First doses stop being given once $L_i/2$ is reached.
 
 \begin{equation}
-h_{s,i,w}^{(1)} = \max\lbrace 0 \rbrace
+h_{s,i,w}^{(1)} = \max( 0 )
 \end{equation}
 
 
