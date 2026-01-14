@@ -1850,11 +1850,7 @@ printmath(eqtext)
 
 
 
-Available doses are $K_{s,i,w}$, 
-
-the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far.
-
-First doses stop being given once $L_i/2$ is reached.
+Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far. First doses stop being given once $L_i/2$ is reached.
 
 ```{r,eval=T}
 eqtext = 'h_{s,i,w}^{(1)} =
@@ -1866,6 +1862,20 @@ L_i/2 - \\sum_{k=1}^{w-1} h_{s,i,k}^{(1)}
 printmath(eqtext)
 ```
 
+
+Booster doses are given for $j=2+k$ for $k=\lbrace 1,...,N^{(boost)}\rbrace$:
+
+```{r}
+eqtext = 'h_{s,i,w}^{(2+k)} = h_{s,i,w-52k}^{(2)}.'
+printmath(eqtext)
+```
+
+Total doses are therefore
+
+```{r}
+eqtext = 'h_{s,i,w} = \\sum_{j=1}^{2+N^{(boost)}}h_{s,i,w}^{(j)}.'
+printmath(eqtext)
+```
 
 
 ```{r scendelivery,fig.cap='Cumulative vaccine coverage (second SSV dose) by country income level'}
