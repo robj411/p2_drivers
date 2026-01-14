@@ -1678,6 +1678,18 @@ for $j\in\lbrace 365, 200, 100\rbrace$. These work out as `r time_to_approval[1]
 
 ## Production
 
+```{r}
+printeq = function(eqtext){
+  if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+}
+
+
+```
+
 
 ```{r}
 eqtext = 'h_{s,i,w}^{(1)} =
@@ -1686,7 +1698,7 @@ eqtext = 'h_{s,i,w}^{(1)} =
 L_i/2 - \\sum_{k=1}^{w-1} h_{s,i,k}^{(1)}
 \\right)
 \\right)'
-printmath(eqtext)
+printeq(eqtext)
 ```
 
 The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, including the HIC-specific reservation of $A_3=0.5$ billion doses, depends on the scenarios as follows:
@@ -1695,11 +1707,7 @@ The total global manufacturing volume is $M_G=15$ billion doses. The amount that
 eqtext = 'M_{R,s} = \\left\\{\\begin{array}{lr}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
 A_3 + 0.7 & s\\in\\{2, 5, 8\\} \\\\ 
 A_3 + 2 & s\\in\\{3, 6, 9\\} \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printeq(eqtext)
 ```
 
 where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$, and $M_B=M_G-M_C$.
