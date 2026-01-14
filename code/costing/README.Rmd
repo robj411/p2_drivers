@@ -1678,6 +1678,17 @@ for $j\in\lbrace 365, 200, 100\rbrace$. These work out as `r time_to_approval[1]
 
 ## Production
 
+
+```{r}
+eqtext = 'h_{s,i,w}^{(1)} =
+\\max\\left( 0,
+\\min\\left(  K_{s,i,w} - h_{s,i,w}^{(2)} - \\sum_{j=1}^2 \\sum_{k=1}^{w-1} h_{s,i,k}^{(j)},
+L_i/2 - \\sum_{k=1}^{w-1} h_{s,i,k}^{(1)}
+\\right)
+\\right)'
+printmath(eqtext)
+```
+
 The total global manufacturing volume is $M_G=15$ billion doses. The amount that is reserved, in billion doses, including the HIC-specific reservation of $A_3=0.5$ billion doses, depends on the scenarios as follows:
 
 ```{r}
