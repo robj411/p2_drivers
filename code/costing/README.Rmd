@@ -1734,11 +1734,6 @@ if (knitr::is_html_output()) {
 
 where $I_{E,0} = `r rawpar$weeks_init_ex_nb`$ and $I_{E,1} = `r rawpar$weeks_init_ex_bp`$ are the number of weeks to initial manufacturing for existing and unreserved capacity, $C_E = `r rawpar$weeks_scale_ex`$ is the number of weeks to scale up to full capacity.
 
-<!-- Then the total number of doses produced in week $w$ is  -->
-
-<!-- \begin{equation} -->
-<!-- Z_{T,s,w} = Z_{R,s,w}+Z_{E,s,w}+Z_{B,s,w}. -->
-<!-- \end{equation} -->
 
 
 
@@ -1962,7 +1957,7 @@ Available doses are $K_{s,i,w}$,
 
 the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far. 
 
-First doses stop being given once $L_i/2$ is reached.
+First doses stop being given once $L_i$ is reached.
 
 ```{r}
 eqtext = 'h_{s,i,w}^{(1)} = ( 0 )'
