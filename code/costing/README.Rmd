@@ -682,14 +682,14 @@ Targets:
 <span style="color:red;"> (BPSV R&D + SARS-X R&D + BPSV Procurement + SARS-X Procurement + BPSV Delivery + SARS-X Delivery) / (1 + discount rate) ^ (year – 2025) </span>
 
 
-$$D_y^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-resRD)}} + D_s^{\text{(S-RD)}} + D_s^{\text{(BP-proc)}} + D_{s}^{\text{(S-proc)}} + D_s^{\text{(BP-del)}} + D^{\text{(S-del)}}\right)$$
+$$D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s,y}^{\text{(BP-resRD)}} + D_{s,y}^{\text{(S-RD)}} + D_{s,y}^{\text{(BP-proc)}} + D_{s,y}^{\text{(S-proc)}} + D_{s,y}^{\text{(BP-del)}} + D_{s,y}^{\text{(S-del)}}\right)$$
 
-- $D_s^{\text{(BP-resRD)}}$ is the R\&D cost of BPSV after an outbreak; see Equation \@ref(eq:bpsvresrd)
-- $D_s^{\text{(S-RD)}}$ is the R\&D cost for SSV; see Equation \@ref(eq:ssvrd)
-- $D_s^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation \@ref(eq:bpsvproc)
-- $D_{s}^{\text{(S-proc)}}$ is the cost of procuring SSV; see Equation \@ref(eq:ssvproc)
-- $D_s^{\text{(BP-del)}}$ is the cost of delivering BPSV; see Equation \@ref(eq:bspvdel)
-- $D^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation \@ref(eq:ssvdel)
+- $D_{s,y}^{\text{(BP-resRD)}}$ is the R\&D cost of BPSV after an outbreak; see Equation \@ref(eq:bpsvresrd)
+- $D_{s,y}^{\text{(S-RD)}}$ is the R\&D cost for SSV; see Equation \@ref(eq:ssvrd)
+- $D_{s,y}^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation \@ref(eq:bpsvproc)
+- $D_{s,y}^{\text{(S-proc)}}$ is the cost of procuring SSV; see Equation \@ref(eq:ssvproc)
+- $D_{s,y}^{\text{(BP-del)}}$ is the cost of delivering BPSV; see Equation \@ref(eq:bspvdel)
+- $D_{s,y}^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation \@ref(eq:ssvdel)
 
 
 
@@ -988,16 +988,34 @@ Target: 3,628 (3,062 3,568 4,165)
 
 **These values are ballpark correct but too concentrated**
 
+For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, we write 
 
-For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, we have delivery cost:
+$$L_i = 2\cdot \lambda\cdot N_i^{(15)}$$
+
+as the total demand for first-schedule doses for income group $i$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population.
+
+We write the delivery cost for $h_{s,i,w}$ doses given in week $w$ and country type $i$ as follows. There are three cost tiers, the first of which is applied to the first 10\% of $L_i$, the second to the subsequent 20\%, and the third to all doses thereafter. The same costing schedule applies both to the first-schedule plus booster SSV doses and the BPSV rollout. 
 
 ```{r}
-eqtext = 'D^{\\text{(S-del)}} = 
+eqtext = 'H_{s,i,w} = 
 \\left\\{\\begin{array}{lr}
-\\sum_i\\lambda N_i^{(15)}V_{i; 0}  & \\lambda\\leq \\frac{1}{10} \\\\
-\\sum_i\\left(\\frac{1}{10} V_{i; 0} + \\left(\\lambda-\\frac{1}{10} \\right)V_{i; 11} \\right)N_i^{(15)} & \\frac{1}{10} < \\lambda\\leq \\frac{3}{10} \\\\
-\\sum_i\\left(\\frac{1}{10} V_{i; 0} + \\frac{2}{10} V_{i; 11} + \\left(\\lambda-\\frac{3}{10} \\right)V_{i; 31}\\right)N_i^{(15)} & \\lambda> \\frac{3}{10} 
-\\end{array}\\right.
+V_{i; 0}h_{s,i,w}  & \\sum_{j=1}^{w-1}h_{s,i,w}\\leq \\frac{1}{10}L_i \\\\
+V_{i; 10}h_{s,i,w}  & \\frac{1}{10}L_i < \\sum_{j=1}^{w-1}h_{s,i,w}\\leq \\frac{3}{10}L_i  \\\\
+V_{i; 30}h_{s,i,w}  & \\frac{3}{10}L_i < \\sum_{j=1}^{w-1}h_{s,i,w}
+\\end{array}\\right.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
+
+
+Then the delivery cost in year $y$ and scenario $s$ is
+
+```{r}
+eqtext = 'D_{s,y}^{\\text{(S-del)}} = 
+\\sum_{w\\in y} \\sum_i H_{s,i,w}
 (\\#eq:ssvdel)'
 if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
@@ -1007,7 +1025,6 @@ if (knitr::is_html_output()) {
 ```
 
 
-for a final vaccine coverage of $\lambda = `r rawpar$vaccine_coverage`$.
 
 <!-- We set  -->
 
@@ -1694,11 +1711,7 @@ Denote the weekly allocated doses at week $w$ from capacity $x$ to income level 
 
 $$K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.$$ 
 
-We write 
 
-$$L_i = 2\cdot \lambda\cdot N_i^{(15)}$$
-
-as the total demand for first-schedule doses for income group $i$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population.
 
 
 
@@ -1831,6 +1844,17 @@ ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
 ## Delivery
 
 **These values do not look correct**
+
+
+Delivery is written as $h_{s,i,w}^{(j)}$ doses delivered in scenario $s$, income group $i$ and week $w$ for schedule $j$, which is $j=1$ for first-dose SSV, $j=2$ for second-dose SSV, and $j=2+k$ for $k=\lbrace 1,...,N^{(boost)}\rbrace$.
+
+The second dose is prioritised over the first, and follows the first by four weeks, so 
+
+$$h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.$$
+
+Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far. First doses stop being given once $\frac{1}{2}L_i$ is reached.
+
+$$h_{s,i,w}^{(1)} = \max\lbrace 0, \min\lbrace K_{s,i,w} - h_{s,i,w}^{(2)} - \sum_{j=1}^2 \sum_{w'=1}^{w-1}h_{s,i,w'}^{(j)}, \frac{1}{2}L_i - \sum_{w'=1}^{w-1}h_{s,i,w'}^{(1)} \rbrace\rbrace$$
 
 
 ```{r scendelivery,fig.cap='Cumulative vaccine coverage (second SSV dose) by country income level'}
