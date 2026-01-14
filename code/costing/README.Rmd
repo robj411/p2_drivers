@@ -1931,45 +1931,13 @@ printmath(eqtext)
 
 Available doses are $K_{s,i,w}$, 
 
-<!-- the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far.  -->
+the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far.
 
 First doses stop being given once $L_i/2$ is reached.
 
 ```{r}
 eqtext = 'h_{s,i,w}^{(1)} = ( 0 )'
 printmath(eqtext)
-```
-
-```{r,eval=F}
-eqtext <- 'h_{s,i,w}^{(1)} =
-\\max\\left\\lbrace 0
-\\right\\rbrace'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
-```
-
-```{r}
-# eqtext <- r"( h_{s,i,w}^{(1)} =
-# \max\Bigl\lbrace 0,\,
-# \min\Bigl\lbrace
-# K_{s,i,w} - h_{s,i,w}^{(2)} - \sum_{j=1}^2 \sum_{k=1}^{w-1} h_{s,i,k}^{(j)},\,
-# L_i/2 - \sum_{k=1}^{w-1} h_{s,i,k}^{(1)}
-# \Bigr\rbrace
-# \Bigr\rbrace )"
-# cat(paste0("$$\n", eqtext, "\n$$\n"))
-
-
-# eqtext <- 'h_{s,i,w}^{(1)} =
-# \\max\\left\\lbrace 0,
-# \\min\\left\\lbrace  K_{s,i,w} - h_{s,i,w}^{(2)} - \\sum_{j=1}^2 \\sum_{k=1}^{w-1} h_{s,i,k}^{(j)},
-# L_i/2 - \\sum_{k=1}^{w-1} h_{s,i,k}^{(1)}
-# \\right\\rbrace
-# \\right\\rbrace'
-# cat(paste0("$$\n", eqtext, "\n$$\n"))
-
 ```
 
 
@@ -1993,10 +1961,10 @@ ggplot(do.call(rbind,second_dose_delivery)) +
 
 ## Timing
 
-<!-- The duration of the Phase III trial is $W_3^{(B)} = `r rawpar$duration_3_res`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV.  -->
+The duration of the Phase III trial is $W_3^{(B)} = `r rawpar$duration_3_res`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV.
 
 
-<!-- Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+rawpar$weeks_init_res`$ and dose distribution begins in week $1+W_3^{(B)} = `r 1+rawpar$duration_3_res`$. -->
+Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+rawpar$weeks_init_res`$ and dose distribution begins in week $1+W_3^{(B)} = `r 1+rawpar$duration_3_res`$.
 
 ## Production
 
@@ -2004,7 +1972,7 @@ The number of doses, in billions, that are made in week $w$ is:
 
 
 ```{r}
-eqtext = 'Z_{w} = \\left\\{\\begin{array}{lr}0 & w < I_R \\\\ 
+eqtext = 'Z_w = \\left\\{\\begin{array}{lr}0 & w < I_R \\\\ 
 \\frac{1}{52}\\frac{w-I_x+1}{C_x}M_{x,s} & w\\in[I_R, I_R+C_R) \\\\ 
 \\frac{1}{52}M_{x,s}  & w-1\\geq I_R+C_xR
 \\end{array}\\right.'
