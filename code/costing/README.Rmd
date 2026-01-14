@@ -1940,6 +1940,13 @@ printmath(eqtext)
 
 
 
+```{r}
+eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
+printmath(eqtext)
+```
+
+
+
 
 Available doses are $K_{s,i,w}$, 
 
