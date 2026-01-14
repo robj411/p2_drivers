@@ -1873,7 +1873,7 @@ if (knitr::is_html_output()) {
 }
 ```
 
-```{r, results='asis', echo=FALSE,eval=F}
+```{r, results='asis', echo=FALSE}
 eqtext <- 'h_{s,i,w}^{(1)} =
 \\max\\left\\lbrace 0,
 \\min\\left\\lbrace
@@ -1883,7 +1883,7 @@ L_i/2 - \\sum_{k=1}^{w-1} h_{s,i,k}^{(1)}
 \\right\\rbrace'
 
 cat(paste0("$$\n", eqtext, "\n$$\n"))
-
+```
 
 
 ```{r scendelivery,fig.cap='Cumulative vaccine coverage (second SSV dose) by country income level'}
