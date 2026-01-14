@@ -1909,10 +1909,10 @@ The number of doses, in billions, that are made in week $w$ is:
 
 
 ```{r}
-eqtext = 'Z_w = \\left\\{\\begin{array}{lr}0 & w < I_R \\\\ 
+eqtext = 'Z_w = \\begin{cases}0 & w < I_R \\\\ 
 \\frac{1}{52}\\frac{w-I_x+1}{C_x}M_{x,s} & w\\in[I_R, I_R+C_R) \\\\ 
 \\frac{1}{52}M_{x,s}  & w-1\\geq I_R+C_xR
-\\end{array}\\right.'
+\\end{cases}'
 printmath(eqtext)
 ```
 
