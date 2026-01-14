@@ -1954,7 +1954,7 @@ the cumulative doses allocated to income group $i$ by week $w$, minus doses give
 
 First doses stop being given once $L_i/2$ is reached.
 
-```{r}
+```{r,eval=F}
 eqtext = 'h_{s,i,w}^{(1)} =
 \\max\\left( 0,
 \\min\\left(  K_{s,i,w} - h_{s,i,w}^{(2)} - \\sum_{j=1}^2 \\sum_{k=1}^{w-1} h_{s,i,k}^{(j)},
