@@ -1862,7 +1862,7 @@ if (knitr::is_html_output()) {
 Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far. First doses stop being given once $L_i/2$ is reached.
 
 ```{r}
-eqtext = "h_{s,i,w}^{(1)} = \\max\\lbrace 0, \\min\\lbrace K_{s,i,w} - h_{s,i,w}^{(2)} - \\sum_{j=1}^2 \\sum_{w'=1}^{w-1}h_{s,i,w'}^{(j)}, \\frac{1}{2}L_i - \\sum_{w'=1}^{w-1}h_{s,i,w'}^{(1)} \\rbrace\\rbrace"
+eqtext = 'h_{s,i,w}^{(1)} = \\max\\lbrace 0, \\min\\lbrace K_{s,i,w} - h_{s,i,w}^{(2)} - \\sum_{j=1}^2 \\sum_{w=1}^{w-1}h_{s,i,w}^{(j)}, \\frac{1}{2}L_i - \\sum_{w=1}^{w-1}h_{s,i,w}^{(1)} \\rbrace\\rbrace'
 if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
 } else {
