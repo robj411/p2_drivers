@@ -1880,11 +1880,11 @@ if (knitr::is_html_output()) {
 
 ```{r}
 eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+# if (knitr::is_html_output()) {
+#   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+# } else {
+#   cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+# }
 ```
 
 
