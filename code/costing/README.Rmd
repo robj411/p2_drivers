@@ -1902,18 +1902,6 @@ if (knitr::is_html_output()) {
 
 
 
-```{r}
-eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-printmath(eqtext)
-```
-
-
-
-```{r}
-eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-printmath(eqtext)
-```
-
 
 ```{r procurement,fig.cap='Doses procured by country income level'}
 
