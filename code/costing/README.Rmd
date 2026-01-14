@@ -1897,9 +1897,9 @@ First doses stop being given once $L_i/2$ is reached.
 ```{r}
 eqtext = 'h_{s,i,w}^{(1)} = ( 0 )'
 if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+  cat(paste0("```math\n",eqtext,"\n```",collapse=''))
 } else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+  cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
 }
 ```
 
