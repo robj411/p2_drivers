@@ -234,8 +234,8 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 40.15 60.81 68.59 75.75 90.00
-123.04
+Min. 1st Qu. Median Mean 3rd Qu. Max. 41.44 57.06 66.36 66.39 74.79
+93.11
 
 Target: 146 (103 135 177)
 
@@ -291,8 +291,8 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 787.1 1003.5 1081.2 1075.2 1116.1
-1451.3
+Min. 1st Qu. Median Mean 3rd Qu. Max. 864.4 1005.1 1131.4 1105.0 1211.2
+1315.6
 
 Target: 1 (0.9 1 1.1)
 
@@ -329,12 +329,12 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2757 2973 3114 3126 3290 3462
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2907 2943 3295 3206 3414 3480
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6616 7135 7474 7504 7896 8309
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6976 7062 7909 7695 8194 8351
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13784 14865 15571 15632 16451
-17310
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 14534 14713 16476 16032 17072
+17398
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -376,9 +376,9 @@ years with uniformly distributed discount rate.
 
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.21 3.25 3.26 3.31 3.36
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.19 3.20 3.31 3.28 3.35 3.36
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.26 7.83 8.20 8.23 8.66 9.12
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.65 7.75 8.68 8.44 8.99 9.16
 
 Targets:
 
@@ -460,9 +460,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 |  38  |   60    |   64   |  68  |   75    | 100  |
-| 200 |  31  |   47    |   51   |  56  |   64    |  84  |
-| 100 |  16  |   25    |   27   |  30  |   34    |  44  |
+| 365 |  6   |    8    |   9    |  9   |   10    |  13  |
+| 200 |  4   |    6    |   6    |  6   |    6    |  8   |
+| 100 |  3   |    4    |   4    |  4   |    4    |  6   |
 
 Targets:
 
@@ -500,7 +500,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.6 1.5 2.8 4.4 3.9 21.6
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.5 0.9 2.3 7.3 8.0 39.7
 
 Target: 14 (3 5 10)
 
@@ -543,17 +543,17 @@ cost per unreserved dose in USD.
 
 | Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
 |:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
-|   BAU    | 133238 | 167400  | 191614 | 195512 | 224352  | 258442 |
-|   S01    | 136400 | 170720  | 194979 | 198822 | 227689  | 261675 |
-|   S02    | 123382 | 154919  | 177262 | 180849 | 207457  | 238887 |
-|   S03    | 100101 | 125451  | 143386 | 146242 | 167590  | 192755 |
-|   S04    | 138912 | 173314  | 197575 | 201365 | 230212  | 264058 |
-|   S05    | 126291 | 157506  | 179513 | 182946 | 209111  | 239798 |
-|   S06    | 105365 | 131286  | 149548 | 152385 | 174092  | 199526 |
-|   S07    | 139308 | 173500  | 197584 | 201320 | 229945  | 263472 |
-|   S08    | 125692 | 156455  | 178114 | 181467 | 207207  | 237339 |
-|   S09    | 102918 | 127937  | 145535 | 148242 | 169149  | 193588 |
-|   S10    | 131655 | 165399  | 189316 | 193165 | 221651  | 255319 |
+|   BAU    | 156421 | 162255  | 225162 | 210472 | 248701  | 262074 |
+|   S01    | 159707 | 165563  | 228503 | 213764 | 251973  | 265290 |
+|   S02    | 144786 | 150171  | 208205 | 194646 | 229907  | 242234 |
+|   S03    | 117312 | 121639  | 168191 | 157299 | 185569  | 195433 |
+|   S04    | 162290 | 168155  | 231029 | 216270 | 254404  | 267654 |
+|   S05    | 147505 | 152826  | 209852 | 196462 | 231046  | 243058 |
+|   S06    | 122984 | 127402  | 174707 | 163593 | 192274  | 202227 |
+|   S07    | 162551 | 168378  | 230756 | 216097 | 253913  | 267032 |
+|   S08    | 146606 | 151848  | 207937 | 194750 | 228749  | 240537 |
+|   S09    | 119931 | 124193  | 169743 | 159023 | 186623  | 196181 |
+|   S10    | 154554 | 160317  | 222451 | 207940 | 245698  | 258906 |
 
 Costs summed and discounted from year 16 to year 20, million USD
 
@@ -586,7 +586,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2840 3425 3828 3882 4357 4894
+Min. 1st Qu. Median Mean 3rd Qu. Max. 3240 3339 4371 4123 4742 4951
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -640,29 +640,29 @@ D_{s,y}^{\text{(S-del)}} =
 
 </div>
 
-     BAU Min.   : 68231   1st Qu.:111613   Median :120345   Mean   :120683  
-     S01 Min.   : 68587   1st Qu.:111954   Median :120701   Mean   :121008  
-     S02 Min.   : 68309   1st Qu.:111689   Median :120420   Mean   :120755  
-     S03 Min.   : 68403   1st Qu.:111780   Median :120506   Mean   :120839  
-     S04 Min.   : 68945   1st Qu.:112306   Median :121025   Mean   :121326  
-     S05 Min.   : 69232   1st Qu.:112584   Median :121282   Mean   :121576  
-     S06 Min.   : 69421   1st Qu.:112777   Median :121465   Mean   :121752  
-     S07 Min.   : 70789   1st Qu.:114565   Median :123466   Mean   :123455  
-     S08 Min.   : 70127   1st Qu.:113585   Median :122318   Mean   :122518  
-     S09 Min.   : 70349   1st Qu.:113832   Median :122576   Mean   :122749  
-     S10 Min.   : 67415   1st Qu.:110472   Median :119035   Mean   :119602  
+     BAU Min.   : 81294   1st Qu.:108457   Median :117502   Mean   :124369  
+     S01 Min.   : 81650   1st Qu.:108791   Median :117805   Mean   :124673  
+     S02 Min.   : 81375   1st Qu.:108535   Median :117574   Mean   :124438  
+     S03 Min.   : 81472   1st Qu.:108630   Median :117658   Mean   :124519  
+     S04 Min.   : 81930   1st Qu.:109141   Median :118135   Mean   :124966  
+     S05 Min.   : 82182   1st Qu.:109427   Median :118390   Mean   :125201  
+     S06 Min.   : 82345   1st Qu.:109611   Median :118572   Mean   :125363  
+     S07 Min.   : 83628   1st Qu.:111418   Median :120386   Mean   :126890  
+     S08 Min.   : 83050   1st Qu.:110379   Median :119449   Mean   :126099  
+     S09 Min.   : 83267   1st Qu.:110614   Median :119711   Mean   :126321  
+     S10 Min.   : 80549   1st Qu.:107281   Median :116481   Mean   :123458  
                                           
-     BAU 3rd Qu.:137112   Max.   :151888  
-     S01 3rd Qu.:137384   Max.   :152173  
-     S02 3rd Qu.:137173   Max.   :151950  
-     S03 3rd Qu.:137245   Max.   :152019  
-     S04 3rd Qu.:137647   Max.   :152445  
-     S05 3rd Qu.:137857   Max.   :152653  
-     S06 3rd Qu.:137999   Max.   :152804  
-     S07 3rd Qu.:139352   Max.   :154349  
-     S08 3rd Qu.:138625   Max.   :153446  
-     S09 3rd Qu.:138816   Max.   :153637  
-     S10 3rd Qu.:136267   Max.   :150840  
+     BAU 3rd Qu.:145793   Max.   :168857  
+     S01 3rd Qu.:146084   Max.   :169092  
+     S02 3rd Qu.:145858   Max.   :168908  
+     S03 3rd Qu.:145935   Max.   :168969  
+     S04 3rd Qu.:146325   Max.   :169366  
+     S05 3rd Qu.:146539   Max.   :169550  
+     S06 3rd Qu.:146675   Max.   :169688  
+     S07 3rd Qu.:147990   Max.   :171263  
+     S08 3rd Qu.:147359   Max.   :170340  
+     S09 3rd Qu.:147564   Max.   :170542  
+     S10 3rd Qu.:145057   Max.   :167863  
 
 Targets:
 
@@ -730,7 +730,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 8416 9533 10384 11068 12812 14511
+Min. 1st Qu. Median Mean 3rd Qu. Max. 7688 10453 13497 12383 14549 15735
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -991,10 +991,6 @@ $k=\lbrace 1,...,N^{(boost)}\rbrace$.
 
 The second dose is prioritised over the first, and follows the first by
 four weeks, so
-
-$$\begin{equation}
-h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.
-\end{equation}$$
 
 Available doses are $K_{s,i,w}$, the cumulative doses allocated to
 income group $i$ by week $w$, minus doses given so far. First doses stop

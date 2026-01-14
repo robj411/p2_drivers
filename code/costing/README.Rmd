@@ -1851,7 +1851,7 @@ Delivery is written as $h_{s,i,w}^{(j)}$ doses delivered in scenario $s$, income
 The second dose is prioritised over the first, and follows the first by four weeks, so 
 
 
-```{r,eval=T}
+```{r,eval=F}
 eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
 if (knitr::is_html_output()) {
   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
