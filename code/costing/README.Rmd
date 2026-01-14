@@ -1873,7 +1873,7 @@ if (knitr::is_html_output()) {
 }
 ```
 
-```{r, results='asis', echo=FALSE}
+```{r, results='asis', echo=FALSE,eval=F}
 eqtext <- 'h_{s,i,w}^{(1)} =
 \\max\\left\\lbrace 0,
 \\min\\left\\lbrace
