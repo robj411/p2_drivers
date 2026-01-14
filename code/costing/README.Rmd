@@ -1778,9 +1778,15 @@ The logic of this reads as follows:
 
 Total supply of first-schedule doses in each year period is 
 
-\begin{equation}
-A_{x,s,y}^{(1)} = \sum_i\sum_{w\in y}k_{s,x,i,w}.
-\end{equation}
+
+```{r}
+eqtext = 'A_{x,s,y}^{(1)} = \\sum_i\\sum_{w\\in y}k_{s,x,i,w}.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 We assume, for every second dose of SSV, a booster will be given one year later for $N^{\text{(boost)}} = `r rawpar$n_boosters`$ years.
 
@@ -1824,10 +1830,15 @@ for $x\in\lbrace E, B \rbrace$.
 
 Then
 
-\begin{equation}
-A_{x,s,y} = A_{x,s,y}^{(1)} + A_{x,s,y}^{(2)}.
-(\#eq:supply)
-\end{equation}
+```{r}
+eqtext = 'A_{x,s,y} = A_{x,s,y}^{(1)} + A_{x,s,y}^{(2)}.
+(\\#eq:supply)'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 
 
@@ -1851,9 +1862,14 @@ Delivery is written as $h_{s,i,w}^{(j)}$ doses delivered in scenario $s$, income
 The second dose is prioritised over the first, and follows the first by four weeks, so 
 
 
-\begin{equation}
-h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.
-\end{equation}
+```{r}
+eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 
 Available doses are $K_{s,i,w}$, 
@@ -1862,10 +1878,14 @@ the cumulative doses allocated to income group $i$ by week $w$, minus doses give
 
 First doses stop being given once $L_i/2$ is reached.
 
-\begin{equation}
-h_{s,i,w}^{(1)} = ( 0 )
-\end{equation}
-
+```{r}
+eqtext = 'h_{s,i,w}^{(1)} = ( 0 )'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 ```{r,eval=F}
 eqtext <- 'h_{s,i,w}^{(1)} =
