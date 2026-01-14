@@ -1792,11 +1792,7 @@ Denote the weekly allocated doses at week $w$ from capacity $x$ to income level 
 
 ```{r}
 eqtext = 'K_{s,i,w} = \\sum_{x\\in\\lbrace R,E,B\\rbrace}\\sum_{j=0}^w k_{s,x,i,j}.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
 ```
 
 
@@ -1816,11 +1812,7 @@ eqtext = 'k_{s,R,i,w} = \\left\\{ \\begin{array}{lr}
 Z_{R,s,w}             & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; K_{s,\\text{LIC},w} < L_{\\text{LIC}} \\;\\&\\; i=\\text{LIC}\\\\
 0 & K_{s,\\text{LIC},w} \\geq L_{\\text{LIC}} 
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
 ```
 
 
@@ -1847,11 +1839,7 @@ Z_{x,s,w}            & K_{s,\\text{UMIC},w} \\geq L_{\\text{UMIC}} \\;\\&\\; K_{
 Z_{x,s,w}            & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; i=\\text{LIC} \\\\
 0                     & K_{s,\\text{LMIC},w} \\geq L_{\\text{LMIC}} \\;\\&\\; i\\neq\\text{LIC} 
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
 ```
 
 The logic of this reads as follows:
@@ -1868,11 +1856,7 @@ Total supply of first-schedule doses in each year period is
 
 ```{r}
 eqtext = 'A_{x,s,y}^{(1)} = \\sum_i\\sum_{w\\in y}k_{s,x,i,w}.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
 ```
 
 We assume, for every second dose of SSV, a booster will be given one year later for $N^{\text{(boost)}} = `r rawpar$n_boosters`$ years.

@@ -240,8 +240,8 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 38.20 83.61 95.17 93.94 97.69
-152.09
+Min. 1st Qu. Median Mean 3rd Qu. Max. 35.80 59.67 88.57 89.54 108.71
+177.01
 
 Target: 146 (103 135 177)
 
@@ -299,8 +299,8 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 934.3 989.5 1023.7 1057.0 1082.3
-1268.5
+Min. 1st Qu. Median Mean 3rd Qu. Max. 891.6 967.2 1033.2 1055.8 1156.4
+1244.5
 
 Target: 1 (0.9 1 1.1)
 
@@ -337,12 +337,12 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2815 2920 3195 3126 3282 3399
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2738 2874 3073 3052 3223 3358
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6755 7008 7667 7502 7878 8159
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6570 6897 7376 7325 7735 8060
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 14074 14600 15973 15630 16412
-16997
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13688 14369 15367 15261 16114
+16792
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -384,9 +384,9 @@ years with uniformly distributed discount rate.
 
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.15 3.19 3.28 3.26 3.31 3.34
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.17 3.24 3.23 3.29 3.33
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.41 7.69 8.41 8.23 8.64 8.95
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.57 8.09 8.04 8.49 8.84
 
 Targets:
 
@@ -472,9 +472,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 |  40  |   43    |   54   |  57  |   65    |  92  |
-| 200 |  16  |   18    |   22   |  22  |   25    |  34  |
-| 100 |  14  |   15    |   19   |  20  |   23    |  32  |
+| 365 |  21  |   32    |   36   |  35  |   41    |  44  |
+| 200 |  15  |   22    |   25   |  26  |   31    |  34  |
+| 100 |  8   |   11    |   13   |  13  |   16    |  17  |
 
 Targets:
 
@@ -512,7 +512,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.5 1.9 2.8 4.4 5.1 13.8
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.5 1.1 1.3 2.5 3.0 9.1
 
 Target: 14 (3 5 10)
 
@@ -555,17 +555,17 @@ cost per unreserved dose in USD.
 
 | Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
 |:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
-|   BAU    | 141972 | 158577  | 206146 | 195317 | 222669  | 245687 |
-|   S01    | 145188 | 161870  | 209513 | 198630 | 226015  | 248970 |
-|   S02    | 131447 | 146776  | 190668 | 180670 | 205906  | 227129 |
-|   S03    | 106589 | 118911  | 154137 | 146099 | 166350  | 183345 |
-|   S04    | 147733 | 164456  | 212089 | 201178 | 228549  | 251415 |
-|   S05    | 134296 | 149470  | 192677 | 182776 | 207603  | 228336 |
-|   S06    | 112015 | 124615  | 160466 | 152245 | 172843  | 190029 |
-|   S07    | 148082 | 164703  | 211981 | 201135 | 228299  | 250954 |
-|   S08    | 133587 | 148541  | 191059 | 181301 | 205729  | 226090 |
-|   S09    | 109343 | 121505  | 156045 | 148109 | 167951  | 184467 |
-|   S10    | 140282 | 156684  | 203669 | 192972 | 219988  | 242722 |
+|   BAU    | 130416 | 151179  | 184368 | 182324 | 211490  | 237496 |
+|   S01    | 133558 | 154442  | 187728 | 185626 | 214850  | 240806 |
+|   S02    | 120775 | 139947  | 170577 | 168683 | 195596  | 219577 |
+|   S03    | 98003  | 113423  | 138023 | 136482 | 158087  | 177300 |
+|   S04    | 136058 | 157013  | 190331 | 188184 | 217412  | 243287 |
+|   S05    | 123700 | 142716  | 172943 | 170991 | 197504  | 220966 |
+|   S06    | 103213 | 119008  | 144097 | 142467 | 164469  | 183921 |
+|   S07    | 136469 | 157307  | 190396 | 188242 | 217258  | 242902 |
+|   S08    | 123136 | 141888  | 171651 | 169707 | 195803  | 218854 |
+|   S09    | 100838 | 116094  | 140286 | 138693 | 159895  | 178598 |
+|   S10    | 128867 | 149376  | 182159 | 180139 | 208947  | 234632 |
 
 Costs summed and discounted from year 16 to year 20, million USD
 
@@ -598,7 +598,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2992 3277 4065 3879 4331 4695
+Min. 1st Qu. Median Mean 3rd Qu. Max. 2791 3151 3709 3666 4151 4566
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -651,29 +651,29 @@ D_{s,y}^{\text{(S-del)}} =
 
 </div>
 
-     BAU Min.   : 95948   1st Qu.:111970   Median :114183   Mean   :122633  
-     S01 Min.   : 96343   1st Qu.:112290   Median :114544   Mean   :122971  
-     S02 Min.   : 96029   1st Qu.:112047   Median :114266   Mean   :122709  
-     S03 Min.   : 96126   1st Qu.:112141   Median :114361   Mean   :122799  
-     S04 Min.   : 96717   1st Qu.:112622   Median :114900   Mean   :123324  
-     S05 Min.   : 97005   1st Qu.:112890   Median :115187   Mean   :123588  
-     S06 Min.   : 97214   1st Qu.:113069   Median :115387   Mean   :123778  
-     S07 Min.   : 99358   1st Qu.:114441   Median :117246   Mean   :125501  
-     S08 Min.   : 98249   1st Qu.:113770   Median :116219   Mean   :124571  
-     S09 Min.   : 98562   1st Qu.:113981   Median :116467   Mean   :124811  
-     S10 Min.   : 94717   1st Qu.:111155   Median :112983   Mean   :121565  
+     BAU Min.   : 76022   1st Qu.: 97743   Median :102904   Mean   :108716  
+     S01 Min.   : 76393   1st Qu.: 98087   Median :103228   Mean   :109048  
+     S02 Min.   : 76107   1st Qu.: 97823   Median :102981   Mean   :108793  
+     S03 Min.   : 76207   1st Qu.: 97918   Median :103075   Mean   :108885  
+     S04 Min.   : 76735   1st Qu.: 98488   Median :103558   Mean   :109387  
+     S05 Min.   : 77024   1st Qu.: 98775   Median :103831   Mean   :109660  
+     S06 Min.   : 77215   1st Qu.: 98989   Median :104011   Mean   :109844  
+     S07 Min.   : 78425   1st Qu.:101093   Median :105619   Mean   :111525  
+     S08 Min.   : 77891   1st Qu.: 99900   Median :104877   Mean   :110660  
+     S09 Min.   : 78092   1st Qu.:100173   Median :105139   Mean   :110904  
+     S10 Min.   : 75291   1st Qu.: 96454   Median :102077   Mean   :107735  
                                           
-     BAU 3rd Qu.:124310   Max.   :172367  
-     S01 3rd Qu.:124621   Max.   :172670  
-     S02 3rd Qu.:124378   Max.   :172432  
-     S03 3rd Qu.:124458   Max.   :172507  
-     S04 3rd Qu.:124946   Max.   :173012  
-     S05 3rd Qu.:125192   Max.   :173232  
-     S06 3rd Qu.:125366   Max.   :173405  
-     S07 3rd Qu.:126608   Max.   :175006  
-     S08 3rd Qu.:125992   Max.   :174078  
-     S09 3rd Qu.:126183   Max.   :174288  
-     S10 3rd Qu.:123523   Max.   :171311  
+     BAU 3rd Qu.:125938   Max.   :149863  
+     S01 3rd Qu.:126255   Max.   :150126  
+     S02 3rd Qu.:126010   Max.   :149927  
+     S03 3rd Qu.:126096   Max.   :150003  
+     S04 3rd Qu.:126605   Max.   :150414  
+     S05 3rd Qu.:126867   Max.   :150642  
+     S06 3rd Qu.:127050   Max.   :150801  
+     S07 3rd Qu.:128484   Max.   :152353  
+     S08 3rd Qu.:127755   Max.   :151503  
+     S09 3rd Qu.:127967   Max.   :151707  
+     S10 3rd Qu.:125074   Max.   :148900  
 
 Targets:
 
@@ -741,7 +741,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 9480 10293 12242 12635 14822 17199
+Min. 1st Qu. Median Mean 3rd Qu. Max. 7125 10010 11916 11553 12920 15684
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -892,25 +892,25 @@ Denote the weekly allocated doses at week $w$ from capacity $x$ to
 income level $i$ $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$,
 such that
 
-$$\begin{equation}
+``` math
 K_{s,i,w} = \sum_{x\in\lbrace R,E,B\rbrace}\sum_{j=0}^w k_{s,x,i,j}.
-\end{equation}$$
+```
 
 <!-- assuming vaccine wastage of $\delta = 0.31$. -->
 
-$$\begin{equation}
-k_{s,R,i,w} = \left\\{ \begin{array}{lr}
-\frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\text{HIC},w} <  L_{\text{HIC}}\\;\\&\\; i=\text{HIC} \\\\
-\frac{M_{R,s}-A_3}{M_{R,s}}\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w}                    & K_{s,\text{HIC},w} < L_{\text{HIC}}  \\\\
-0 & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \\;\\&\\; i=\text{HIC}\\\\
-\frac{N_{i}}{N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \\;\\&\\;  K_{s,\text{UMIC},w} < L_{\text{UMIC}} \\;\\&\\; i\neq\text{HIC}\\\\
-0 & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \\;\\&\\; i=\text{UMIC}\\\\
-\frac{N_{i}}{N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \\;\\&\\;  K_{s,\text{LMIC},w} < L_{\text{LMIC}} \\;\\&\\; i\notin  \lbrace\text{HIC},\text{UMIC}\rbrace\\\\
-0 & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \\;\\&\\; i=\text{LMIC}\\\\
-Z_{R,s,w}             & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \\;\\&\\; K_{s,\text{LIC},w} < L_{\text{LIC}} \\;\\&\\; i=\text{LIC}\\\\
+``` math
+k_{s,R,i,w} = \left\{ \begin{array}{lr}
+\frac{A_3}{M_{R,s}}Z_{R,s,w}             & K_{s,\text{HIC},w} <  L_{\text{HIC}}\;\&\; i=\text{HIC} \\
+\frac{M_{R,s}-A_3}{M_{R,s}}\frac{N_{i}}{N_{HIC}+N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w}                    & K_{s,\text{HIC},w} < L_{\text{HIC}}  \\
+0 & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \;\&\; i=\text{HIC}\\
+\frac{N_{i}}{N_{UMIC}+N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \;\&\;  K_{s,\text{UMIC},w} < L_{\text{UMIC}} \;\&\; i\neq\text{HIC}\\
+0 & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \;\&\; i=\text{UMIC}\\
+\frac{N_{i}}{N_{LMIC}+N_{LIC}}Z_{R,s,w} & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \;\&\;  K_{s,\text{LMIC},w} < L_{\text{LMIC}} \;\&\; i\notin  \lbrace\text{HIC},\text{UMIC}\rbrace\\
+0 & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \;\&\; i=\text{LMIC}\\
+Z_{R,s,w}             & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \;\&\; K_{s,\text{LIC},w} < L_{\text{LIC}} \;\&\; i=\text{LIC}\\
 0 & K_{s,\text{LIC},w} \geq L_{\text{LIC}} 
 \end{array}\right.
-\end{equation}$$
+```
 
 The logic of this reads as follows:
 
@@ -924,18 +924,18 @@ The logic of this reads as follows:
 
 For $x\in\lbrace E,B\rbrace$,
 
-$$\begin{equation}
-k_{s,x,i,w} = \left\\{ \begin{array}{lr}
-Z_{x,s,w}            & K_{s,\text{HIC},w} < L_{\text{HIC}} \\;\\&\\; i=\text{HIC} \\\\
-0                     & K_{s,\text{HIC},w} < L_{\text{HIC}} \\;\\&\\; i\neq\text{HIC} \\\\
-Z_{x,s,w}            & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < L_{\text{UMIC}} \\;\\&\\; i=\text{UMIC} \\\\
-0                     & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \\;\\&\\; K_{s,\text{UMIC},w} < L_{\text{UMIC}} \\;\\&\\; i\neq\text{UMIC} \\\\
-Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \\;\\&\\; K_{s,\text{LMIC},w} < L_{\text{LMIC}} \\;\\&\\; i=\text{LMIC} \\\\
-0                     & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \\;\\&\\; K_{s,\text{LMIC},w} < L_{\text{LMIC}} \\;\\&\\; i\neq\text{LMIC} \\\\
-Z_{x,s,w}            & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \\;\\&\\; i=\text{LIC} \\\\
-0                     & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \\;\\&\\; i\neq\text{LIC} 
+``` math
+k_{s,x,i,w} = \left\{ \begin{array}{lr}
+Z_{x,s,w}            & K_{s,\text{HIC},w} < L_{\text{HIC}} \;\&\; i=\text{HIC} \\
+0                     & K_{s,\text{HIC},w} < L_{\text{HIC}} \;\&\; i\neq\text{HIC} \\
+Z_{x,s,w}            & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \;\&\; K_{s,\text{UMIC},w} < L_{\text{UMIC}} \;\&\; i=\text{UMIC} \\
+0                     & K_{s,\text{HIC},w} \geq L_{\text{HIC}} \;\&\; K_{s,\text{UMIC},w} < L_{\text{UMIC}} \;\&\; i\neq\text{UMIC} \\
+Z_{x,s,w}            & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \;\&\; K_{s,\text{LMIC},w} < L_{\text{LMIC}} \;\&\; i=\text{LMIC} \\
+0                     & K_{s,\text{UMIC},w} \geq L_{\text{UMIC}} \;\&\; K_{s,\text{LMIC},w} < L_{\text{LMIC}} \;\&\; i\neq\text{LMIC} \\
+Z_{x,s,w}            & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \;\&\; i=\text{LIC} \\
+0                     & K_{s,\text{LMIC},w} \geq L_{\text{LMIC}} \;\&\; i\neq\text{LIC} 
 \end{array}\right.
-\end{equation}$$
+```
 
 The logic of this reads as follows:
 
@@ -952,9 +952,9 @@ The logic of this reads as follows:
 
 Total supply of first-schedule doses in each year period is
 
-$$\begin{equation}
+``` math
 A_{x,s,y}^{(1)} = \sum_i\sum_{w\in y}k_{s,x,i,w}.
-\end{equation}$$
+```
 
 We assume, for every second dose of SSV, a booster will be given one
 year later for $N^{\text{(boost)}} = 2$ years.
