@@ -1905,11 +1905,7 @@ for $x=R$ and
 
 ```{r}
 eqtext = 'A_{x,s,y}^{(2)} = \\max(A_{s,y}^{(2)} - A_{R,s,y}^{(2)}, 0)'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
 ```
 
 for $x\in\lbrace E, B \rbrace$.
