@@ -1936,7 +1936,7 @@ the cumulative doses allocated to income group $i$ by week $w$, minus doses give
 First doses stop being given once $L_i/2$ is reached.
 
 ```{r}
-eqtext = 'h_{s,i,w}^{(1)} = ( 0 )'
+eqtext = 'h_{s,i,w}^{(1)} = \\max( 0 )'
 printmath(eqtext)
 ```
 
