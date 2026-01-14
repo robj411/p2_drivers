@@ -1895,14 +1895,14 @@ and
 
 ```{r}
 eqtext = 'A_{x,s,y}^{(2)} = \\min(A_{s,y}^{(2)}, M_R - A_{R,s,y}^{(1)})'
-printmath(eqtext)
+printeq(eqtext)
 ```
 
 for $x=R$ and
 
 ```{r}
 eqtext = 'A_{x,s,y}^{(2)} = \\max(A_{s,y}^{(2)} - A_{R,s,y}^{(2)}, 0)'
-printmath(eqtext)
+printeq(eqtext)
 ```
 
 for $x\in\lbrace E, B \rbrace$.
