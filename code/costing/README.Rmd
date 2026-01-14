@@ -1854,29 +1854,29 @@ The second dose is prioritised over the first, and follows the first by four wee
 
 
 ```{r,eval=T}
-eqtext <- r"(h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.)"
-cat(paste0("$$\n", eqtext, "\n$$\n"))
+# eqtext <- r"(h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.)"
+# cat(paste0("$$\n", eqtext, "\n$$\n"))
 
-# eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-# if (knitr::is_html_output()) {
-#   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-# } else {
-  # cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-# }
+eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
 ```
 
 and
 
 ```{r,eval=T}
-eqtext2 <- r"(h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.)"
-cat(paste0("$$\n", eqtext2, "\n$$\n"))
+# eqtext2 <- r"(h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.)"
+# cat(paste0("$$\n", eqtext2, "\n$$\n"))
 
-# eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-# if (knitr::is_html_output()) {
-#   cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-# } else {
-  # cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-# }
+eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
 ```
 
 
