@@ -1913,11 +1913,7 @@ eqtext = 'Z_w = \\left\\{\\begin{array}{lr}0 & w < I_R \\\\
 \\frac{1}{52}\\frac{w-I_x+1}{C_x}M_{x,s} & w\\in[I_R, I_R+C_R) \\\\ 
 \\frac{1}{52}M_{x,s}  & w-1\\geq I_R+C_xR
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
 ```
 
 
