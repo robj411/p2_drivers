@@ -1772,6 +1772,20 @@ In Figure \@ref(fig:supply), the following scenarios have identical supply (beca
 
 ## Allocation
 
+```{r}
+eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
+printmath(eqtext)
+```
+
+
+
+```{r}
+eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
+printmath(eqtext)
+```
+
+
+
 Denote the weekly allocated doses at week $w$ from capacity $x$ to income level $i$ $k_{s,x,i,w}$, and the cumulative number $K_{s,i,w}$, such that 
 
 
