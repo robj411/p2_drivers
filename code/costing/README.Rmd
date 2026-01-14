@@ -1868,8 +1868,11 @@ Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group 
 
 ```{r, results='asis', echo=FALSE}
 eqtext <- ' h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}. '
-cat(paste0("$$\n", eqtext, "\n$$\n"))
-
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
 
 # eqtext <- r"( h_{s,i,w}^{(1)} =
 # \max\Bigl\lbrace 0,\,
