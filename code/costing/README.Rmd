@@ -126,11 +126,9 @@ caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
 lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1. Inverse Gaussian distributions have as a mean Parameter 1, and as a shape Parameter 2. Log normal distributions have as a mean Parameter 1, and as a standard deviation Parameter 2. PearsonV distributions have shape Parameter 1, scale Parameter 2, and location 0. PearsonVI distributions have shape Parameters 1 and 2, scale Parameter 3, and location 0. Where given, distributions are truncated at bounds.'
 capscopy = caps
 if (knitr::is_html_output()) {
-  # cat(paste0("```math\n",eqtext,"\n```",collapse=''))
   capscopy$Source <- gsub('}','',capscopy$Source)
   capscopy$Source <- gsub('\\\\citet\\{','@',capscopy$Source)
 } else {
-  # cat(paste0("$$\n",eqtext,"\n$$",collapse=''))
   capscopy$Code <- NULL
 }
 cat(pander(capscopy,caption=lg, missing = ""))
@@ -389,7 +387,7 @@ rates[nscen,3:4] = 0.04
 
 <span style="color:red;"> (BPSV R&D + BPSV Stockpile + SARS-X Reserved capacity + Enabling activities) / (1 + discount rate) ^ (year – 2025) </span>
 
-$$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^{\text{(BP-man)}} + D_{s,y}^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + D_{s,y}^{\\text{(en)}}\right)$$
+<!-- $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^{\text{(BP-man)}} + D_{s,y}^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + D_{s,y}^{\\text{(en)}}\right)$$ -->
 
 - $D_s^{\text{(BP-adRD)}}$ is the R\&D cost of BPSV prior to an outbreak; see Equation \@ref(eq:bpsvrd)
 - $D_{s,y}^{\text{(BP-man)}}$ is the upfront cost of maintaining an investigational reserve of 100,000 BPSV doses; see Equation \@ref(eq:bpsvadman)
@@ -453,7 +451,7 @@ for $i \in \{1,2,3,4\}$.
 
 The cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers (with $\omega = `r rawpar$inex_weight`$):
 
-$$T_{i} = (1+I)(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}).$$ 
+<!-- $$T_{i} = (1+I)(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}).$$  -->
 
 where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025. Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}}$ candidates is
 
@@ -504,7 +502,7 @@ bpsv_upfront = pardf$bpsv_res_upfront*pfixed$bpsv_inv_res/1e6 # millions
 
 The time taken to complete development of the BPSV up to the end of phase II, from which point it is manufactured to be held in an investigational reserve, is:
 
-$$Y^{(B)} = Y_0^{(B)} + Y_1^{(B)} + Y_2^{(B)}.$$
+<!-- $$Y^{(B)} = Y_0^{(B)} + Y_1^{(B)} + Y_2^{(B)}.$$ -->
 
 The upfront cost of securing the investigational reserve is
 
@@ -682,7 +680,7 @@ Targets:
 <span style="color:red;"> (BPSV R&D + SARS-X R&D + BPSV Procurement + SARS-X Procurement + BPSV Delivery + SARS-X Delivery) / (1 + discount rate) ^ (year – 2025) </span>
 
 
-$$D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s,y}^{\text{(BP-resRD)}} + D_{s,y}^{\text{(S-RD)}} + D_{s,y}^{\text{(BP-proc)}} + D_{s,y}^{\text{(S-proc)}} + D_{s,y}^{\text{(BP-del)}} + D_{s,y}^{\text{(S-del)}}\right)$$
+<!-- $$D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s,y}^{\text{(BP-resRD)}} + D_{s,y}^{\text{(S-RD)}} + D_{s,y}^{\text{(BP-proc)}} + D_{s,y}^{\text{(S-proc)}} + D_{s,y}^{\text{(BP-del)}} + D_{s,y}^{\text{(S-del)}}\right)$$ -->
 
 - $D_{s,y}^{\text{(BP-resRD)}}$ is the R\&D cost of BPSV after an outbreak; see Equation \@ref(eq:bpsvresrd)
 - $D_{s,y}^{\text{(S-RD)}}$ is the R\&D cost for SSV; see Equation \@ref(eq:ssvrd)
@@ -704,7 +702,7 @@ $$D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s,y}^{\text{(BP-resRD)}} + 
 
 Trial costs are adjusted for the duration of the trial, which depend on the R\&D investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$: 
 
-$$T_{\zeta,i}^{(e)} = (1+I)\frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}.$$ 
+<!-- $$T_{\zeta,i}^{(e)} = (1+I)\frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}.$$  -->
 
 where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025. 
 
@@ -990,7 +988,7 @@ Target: 3,628 (3,062 3,568 4,165)
 
 For populations aged 15 and above $N_i^{(15)}$ in income group $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, we write 
 
-$$L_i = 2\cdot \lambda\cdot N_i^{(15)}$$
+<!-- $$L_i = 2\cdot \lambda\cdot N_i^{(15)}$$ -->
 
 as the total demand for first-schedule doses for income group $i$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population.
 
@@ -1603,7 +1601,7 @@ Table: Vaccine Production Timeline when there is no BPSV. When BPSV is also mode
 
 Facility transition occurs $I_0=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to SSVs available in 100 days, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
 
-$$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$
+<!-- $$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$ -->
 
 
 for $j\in\lbrace 365, 200, 100\rbrace$. These work out as `r time_to_approval[1]`, `r time_to_approval[2]`, and `r time_to_approval[3]` weeks, respectively. Thus "week 0" for manufacturing occurs `r time_to_approval[1]-7`, `r time_to_approval[2]-7`, and `r time_to_approval[3]-7` weeks, respectively, after the new pathogen has been sequenced. We denote this variable $w_s^{(0)}$.

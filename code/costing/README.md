@@ -154,7 +154,7 @@ bounds.
 capacity + Enabling activities) / (1 + discount rate) ^ (year –
 2025)</span>
 
-$$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^{\text{(BP-man)}} + D_{s,y}^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + D_{s,y}^{\\text{(en)}}\right)$$
+<!-- $$D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^{\text{(BP-man)}} + D_{s,y}^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + D_{s,y}^{\\text{(en)}}\right)$$ -->
 
 - $D_s^{\text{(BP-adRD)}}$ is the R&D cost of BPSV prior to an outbreak;
   see Equation (2.1)
@@ -211,7 +211,7 @@ for $i \in \{1,2,3,4\}$.
 The cost of each phase is $T_i$, a weighted average of experienced and
 inexperienced manufacturers (with $\omega = 0.875$):
 
-$$T_{i} = (1+I)(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}).$$
+<!-- $$T_{i} = (1+I)(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}).$$  -->
 
 where $I = 0.28$ is inflation from 2018 to 2025. Then the total weighted
 cost for phases 0 through 2 for $N^{\text{(BPSV)}}$ candidates is
@@ -234,8 +234,8 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 47.00 59.57 69.14 79.10 79.22
-183.26
+Min. 1st Qu. Median Mean 3rd Qu. Max. 52.05 56.20 76.36 79.61 91.06
+130.20
 
 Target: 146 (103 135 177)
 
@@ -248,7 +248,7 @@ The time taken to complete development of the BPSV up to the end of
 phase II, from which point it is manufactured to be held in an
 investigational reserve, is:
 
-$$Y^{(B)} = Y_0^{(B)} + Y_1^{(B)} + Y_2^{(B)}.$$
+<!-- $$Y^{(B)} = Y_0^{(B)} + Y_1^{(B)} + Y_2^{(B)}.$$ -->
 
 The upfront cost of securing the investigational reserve is
 
@@ -291,8 +291,8 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 996.8 1039.6 1113.4 1137.8 1238.5
-1315.2
+Min. 1st Qu. Median Mean 3rd Qu. Max. 929.4 966.8 1069.3 1064.7 1156.6
+1236.3
 
 Target: 1 (0.9 1 1.1)
 
@@ -329,12 +329,12 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2739 2824 3023 3060 3234 3478
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2806 2873 2942 3072 3306 3472
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6573 6778 7255 7345 7763 8347
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6734 6895 7060 7372 7933 8332
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13694 14121 15114 15302 16172
-17390
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 14030 14365 14709 15358 16528
+17358
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -376,9 +376,9 @@ years with uniformly distributed discount rate.
 
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.13 3.16 3.22 3.23 3.29 3.36
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.15 3.17 3.20 3.24 3.31 3.36
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.21 7.44 7.96 8.06 8.52 9.16
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.39 7.57 7.75 8.09 8.70 9.14
 
 Targets:
 
@@ -392,7 +392,7 @@ Targets:
 SARS-X Procurement + BPSV Delivery + SARS-X Delivery) / (1 + discount
 rate) ^ (year – 2025)</span>
 
-$$D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s,y}^{\text{(BP-resRD)}} + D_{s,y}^{\text{(S-RD)}} + D_{s,y}^{\text{(BP-proc)}} + D_{s,y}^{\text{(S-proc)}} + D_{s,y}^{\text{(BP-del)}} + D_{s,y}^{\text{(S-del)}}\right)$$
+<!-- $$D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s,y}^{\text{(BP-resRD)}} + D_{s,y}^{\text{(S-RD)}} + D_{s,y}^{\text{(BP-proc)}} + D_{s,y}^{\text{(S-proc)}} + D_{s,y}^{\text{(BP-del)}} + D_{s,y}^{\text{(S-del)}}\right)$$ -->
 
 - $D_{s,y}^{\text{(BP-resRD)}}$ is the R&D cost of BPSV after an
   outbreak; see Equation (3.2)
@@ -415,7 +415,7 @@ $$D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s,y}^{\text{(BP-resRD)}} + 
 Trial costs are adjusted for the duration of the trial, which depend on
 the R&D investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$:
 
-$$T_{\zeta,i}^{(e)} = (1+I)\frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}.$$
+<!-- $$T_{\zeta,i}^{(e)} = (1+I)\frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}.$$  -->
 
 where $I = 0.28$ is inflation from 2018 to 2025.
 
@@ -460,9 +460,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 |  15  |   17    |   22   |  22  |   23    |  38  |
-| 200 |  6   |    8    |   9    |  10  |   11    |  16  |
-| 100 |  5   |    6    |   7    |  8   |    8    |  13  |
+| 365 |  14  |   17    |   19   |  19  |   21    |  22  |
+| 200 |  6   |    8    |   9    |  8   |    9    |  10  |
+| 100 |  4   |    5    |   5    |  5   |    5    |  6   |
 
 Targets:
 
@@ -500,7 +500,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.6 0.9 2.8 8.6 5.0 60.2
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.2 0.6 2.8 15.8 7.1 86.2
 
 Target: 14 (3 5 10)
 
@@ -543,17 +543,17 @@ cost per unreserved dose in USD.
 
 | Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
 |:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
-|   BAU    | 130594 | 143560  | 175672 | 184661 | 213587  | 261755 |
-|   S01    | 133737 | 146780  | 179016 | 187935 | 216947  | 264973 |
-|   S02    | 120939 | 132912  | 162554 | 170834 | 197530  | 241941 |
-|   S03    | 98135  | 107765  | 131583 | 138197 | 159638  | 195198 |
-|   S04    | 136238 | 149326  | 181620 | 190465 | 219506  | 267339 |
-|   S05    | 123863 | 135741  | 165041 | 173057 | 199403  | 242772 |
-|   S06    | 103349 | 113214  | 137540 | 144176 | 166044  | 201990 |
-|   S07    | 136648 | 149663  | 181749 | 190493 | 219335  | 266720 |
-|   S08    | 123297 | 135010  | 163874 | 171727 | 197671  | 240257 |
-|   S09    | 100969 | 110499  | 133967 | 140325 | 161412  | 195953 |
-|   S10    | 129042 | 141851  | 173570 | 182447 | 211018  | 258591 |
+|   BAU    | 140626 | 151045  | 162109 | 186707 | 227319  | 260422 |
+|   S01    | 143834 | 154308  | 165416 | 189978 | 230649  | 263645 |
+|   S02    | 130203 | 139823  | 150036 | 172721 | 210193  | 240711 |
+|   S03    | 105589 | 113324  | 121531 | 139709 | 169782  | 194215 |
+|   S04    | 146375 | 156879  | 168008 | 192503 | 233163  | 266018 |
+|   S05    | 133063 | 142595  | 152692 | 174904 | 211786  | 241575 |
+|   S06    | 110991 | 118908  | 127291 | 145708 | 176310  | 200998 |
+|   S07    | 146731 | 157174  | 168232 | 192513 | 232869  | 265413 |
+|   S08    | 132371 | 141768  | 151716 | 173543 | 209835  | 239082 |
+|   S09    | 108354 | 115997  | 124086 | 141799 | 171281  | 195001 |
+|   S10    | 138952 | 149245  | 160173 | 184468 | 224581  | 257274 |
 
 Costs summed and discounted from year 16 to year 20, million USD
 
@@ -586,7 +586,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2794 3019 3565 3699 4185 4946
+Min. 1st Qu. Median Mean 3rd Qu. Max. 2969 3149 3337 3732 4404 4925
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -599,7 +599,7 @@ Target: 3,628 (3,062 3,568 4,165)
 For populations aged 15 and above $N_i^{(15)}$ in income group
 $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, we write
 
-$$L_i = 2\cdot \lambda\cdot N_i^{(15)}$$
+<!-- $$L_i = 2\cdot \lambda\cdot N_i^{(15)}$$ -->
 
 as the total demand for first-schedule doses for income group $i$,
 representing two doses each for $\lambda = 80$% of the population.
@@ -640,29 +640,29 @@ D_{s,y}^{\text{(S-del)}} =
 
 </div>
 
-     BAU Min.   : 83462   1st Qu.: 91558   Median :105821   Mean   :114272  
-     S01 Min.   : 83867   1st Qu.: 91940   Median :106183   Mean   :114614  
-     S02 Min.   : 83550   1st Qu.: 91639   Median :105903   Mean   :114349  
-     S03 Min.   : 83657   1st Qu.: 91734   Median :105998   Mean   :114440  
-     S04 Min.   : 84275   1st Qu.: 92304   Median :106580   Mean   :114966  
-     S05 Min.   : 84585   1st Qu.: 92589   Median :106867   Mean   :115240  
-     S06 Min.   : 84797   1st Qu.: 92795   Median :107082   Mean   :115431  
-     S07 Min.   : 86662   1st Qu.: 94583   Median :108999   Mean   :117117  
-     S08 Min.   : 85704   1st Qu.: 93642   Median :107967   Mean   :116224  
-     S09 Min.   : 85991   1st Qu.: 93900   Median :108232   Mean   :116465  
-     S10 Min.   : 82375   1st Qu.: 90432   Median :104657   Mean   :113237  
+     BAU Min.   : 77354   1st Qu.: 84037   Median :103887   Mean   :111343  
+     S01 Min.   : 77725   1st Qu.: 84383   Median :104265   Mean   :111669  
+     S02 Min.   : 77434   1st Qu.: 84115   Median :103973   Mean   :111415  
+     S03 Min.   : 77528   1st Qu.: 84206   Median :104075   Mean   :111499  
+     S04 Min.   : 78085   1st Qu.: 84743   Median :104640   Mean   :111987  
+     S05 Min.   : 78370   1st Qu.: 85025   Median :104959   Mean   :112244  
+     S06 Min.   : 78571   1st Qu.: 85218   Median :105166   Mean   :112419  
+     S07 Min.   : 80121   1st Qu.: 86872   Median :107058   Mean   :114020  
+     S08 Min.   : 79417   1st Qu.: 86019   Median :106065   Mean   :113193  
+     S09 Min.   : 79677   1st Qu.: 86268   Median :106332   Mean   :113427  
+     S10 Min.   : 76495   1st Qu.: 83053   Median :102742   Mean   :110385  
                                           
-     BAU 3rd Qu.:136242   Max.   :162714  
-     S01 3rd Qu.:136591   Max.   :162978  
-     S02 3rd Qu.:136318   Max.   :162775  
-     S03 3rd Qu.:136406   Max.   :162844  
-     S04 3rd Qu.:136903   Max.   :163310  
-     S05 3rd Qu.:137167   Max.   :163536  
-     S06 3rd Qu.:137338   Max.   :163715  
-     S07 3rd Qu.:138996   Max.   :165248  
-     S08 3rd Qu.:138090   Max.   :164369  
-     S09 3rd Qu.:138317   Max.   :164563  
-     S10 3rd Qu.:135179   Max.   :161689  
+     BAU 3rd Qu.:126431   Max.   :184768  
+     S01 3rd Qu.:126714   Max.   :184996  
+     S02 3rd Qu.:126495   Max.   :184818  
+     S03 3rd Qu.:126573   Max.   :184874  
+     S04 3rd Qu.:126993   Max.   :185247  
+     S05 3rd Qu.:127217   Max.   :185419  
+     S06 3rd Qu.:127363   Max.   :185556  
+     S07 3rd Qu.:128730   Max.   :187224  
+     S08 3rd Qu.:128013   Max.   :186249  
+     S09 3rd Qu.:128214   Max.   :186456  
+     S10 3rd Qu.:125611   Max.   :183714  
 
 Targets:
 
@@ -730,7 +730,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 8507 9778 11792 11917 12964 17845
+Min. 1st Qu. Median Mean 3rd Qu. Max. 7989 9306 10701 11257 13149 15520
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -794,7 +794,7 @@ scenarios, corresponding to SSVs available in 100 days, 200 days, and
 365 days. The total weeks taken for vaccine approval can be written as
 follows:
 
-$$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$
+<!-- $$W_{j}^{(S)} = \sum_{i=0}^3 W_{i;j}^{(S)}$$ -->
 
 for $j\in\lbrace 365, 200, 100\rbrace$. These work out as 52, 29, and 14
 weeks, respectively. Thus “week 0” for manufacturing occurs 45, 22, and
