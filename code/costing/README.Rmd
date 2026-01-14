@@ -1498,7 +1498,7 @@ ggsave(unitcosts + labs(title=''), filename='unit.png',height=5,width=10)
 ```
 
 
-```{r}
+```{r,eval=F}
 
 setDT(unitplot)
 
@@ -1894,11 +1894,7 @@ and
 
 ```{r}
 eqtext = 'A_{x,s,y}^{(2)} = \\min(A_{s,y}^{(2)}, M_R - A_{R,s,y}^{(1)})'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
 ```
 
 for $x=R$ and
