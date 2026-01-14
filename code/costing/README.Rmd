@@ -1884,25 +1884,21 @@ eqtext = 'A_{s,y}^{(2)} = \\left\\{ \\begin{array}{lr}
 \\frac{1}{2}\\sum_{x}A_{x,s,y-1}^{(1)}            & y=2 \\\\
 \\frac{1}{2}\\sum_{x}\\left(A_{x,s,y-1}^{(1)} + A_{x,s,y-2}^{(1)}\\right)            & y>2 
 \\end{array}\\right.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
+printmath(eqtext)
 ```
 
 and
 
 ```{r}
 eqtext = 'A_{x,s,y}^{(2)} = \\min(A_{s,y}^{(2)}, M_R - A_{R,s,y}^{(1)})'
-printeq(eqtext)
+printmath(eqtext)
 ```
 
 for $x=R$ and
 
 ```{r}
 eqtext = 'A_{x,s,y}^{(2)} = \\max(A_{s,y}^{(2)} - A_{R,s,y}^{(2)}, 0)'
-printeq(eqtext)
+printmath(eqtext)
 ```
 
 for $x\in\lbrace E, B \rbrace$.
