@@ -1850,11 +1850,26 @@ Delivery is written as $h_{s,i,w}^{(j)}$ doses delivered in scenario $s$, income
 
 The second dose is prioritised over the first, and follows the first by four weeks, so 
 
-$$h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.$$
+```{r}
+eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
 
 Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far. First doses stop being given once $\frac{1}{2}L_i$ is reached.
 
-$$h_{s,i,w}^{(1)} = \max\lbrace 0, \min\lbrace K_{s,i,w} - h_{s,i,w}^{(2)} - \sum_{j=1}^2 \sum_{w'=1}^{w-1}h_{s,i,w'}^{(j)}, \frac{1}{2}L_i - \sum_{w'=1}^{w-1}h_{s,i,w'}^{(1)} \rbrace\rbrace$$
+```{r}
+eqtext = "h_{s,i,w}^{(1)} = \\max\\lbrace 0, \\min\\lbrace K_{s,i,w} - h_{s,i,w}^{(2)} - \\sum_{j=1}^2 \\sum_{w'=1}^{w-1}h_{s,i,w'}^{(j)}, \\frac{1}{2}L_i - \\sum_{w'=1}^{w-1}h_{s,i,w'}^{(1)} \\rbrace\\rbrace"
+if (knitr::is_html_output()) {
+  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
+} else {
+  cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
+}
+```
+
 
 
 ```{r scendelivery,fig.cap='Cumulative vaccine coverage (second SSV dose) by country income level'}
