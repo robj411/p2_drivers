@@ -1851,34 +1851,15 @@ Delivery is written as $h_{s,i,w}^{(j)}$ doses delivered in scenario $s$, income
 The second dose is prioritised over the first, and follows the first by four weeks, so 
 
 
-
-
-```{r,eval=T}
-# eqtext <- r"(h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.)"
-# cat(paste0("$$\n", eqtext, "\n$$\n"))
-
-eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
-```
+\begin{equation}
+h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.
+\end{equation}
 
 and
 
-```{r,eval=T}
-# eqtext2 <- r"(h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.)"
-# cat(paste0("$$\n", eqtext2, "\n$$\n"))
-
-eqtext = 'h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.'
-if (knitr::is_html_output()) {
-  cat(paste0("\\begin{equation}\n",gsub("\\\\(?!([a-z]|#))", "\\\\\\\\", eqtext, perl = TRUE),"\n\\end{equation}\n",collapse=''))
-} else {
-cat(paste0("\\begin{equation}\n",eqtext,"\\end{equation}\n",collapse=''))
-}
-```
-
+\begin{equation}
+h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.
+\end{equation}
 
 
 Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far. First doses stop being given once $L_i/2$ is reached.
