@@ -1855,19 +1855,15 @@ The second dose is prioritised over the first, and follows the first by four wee
 h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.
 \end{equation}
 
-and
-
-\begin{equation}
-h_{s,i,w}^{(2)} = h_{s,i,w-4}^{(1)}.
-\end{equation}
-
 
 Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group $i$ by week $w$, minus doses given so far. First doses stop being given once $L_i/2$ is reached.
 
+\begin{equation}
+h_{s,i,w}^{(1)} = \max\Bigl\lbrace 0, \min\Bigl\lbrace K_{s,i,w} - h_{s,i,w}^{(2)} - \sum_{j=1}^2 \sum_{k=1}^{w-1} h_{s,i,k}^{(j)},  L_i/2 - \sum_{k=1}^{w-1} h_{s,i,k}^{(1)} \Bigr\rbrace \Bigr\rbrace
+\end{equation}
 
 
-
-```{r}
+```{r,eval=F}
 eqtext <- 'h_{s,i,w}^{(1)} =
 \\max\\left\\lbrace 0
 \\right\\rbrace'
