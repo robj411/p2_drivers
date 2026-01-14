@@ -240,8 +240,8 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 39.13 52.36 65.17 66.49 79.64
-100.70
+Min. 1st Qu. Median Mean 3rd Qu. Max. 41.37 45.19 63.13 69.68 93.27
+107.08
 
 Target: 146 (103 135 177)
 
@@ -299,8 +299,8 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 926.4 954.4 1007.6 1080.1 1166.2
-1397.3
+Min. 1st Qu. Median Mean 3rd Qu. Max. 841.3 871.9 905.2 932.5 959.0
+1128.3
 
 Target: 1 (0.9 1 1.1)
 
@@ -337,12 +337,12 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2800 2895 3116 3069 3193 3375
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2791 2864 2892 2920 2936 3158
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6721 6949 7479 7365 7664 8099
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6698 6873 6942 7008 7047 7579
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 14002 14476 15581 15343 15967
-16874
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 13955 14318 14462 14600 14681
+15790
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -384,9 +384,9 @@ years with uniformly distributed discount rate.
 
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.15 3.18 3.25 3.24 3.28 3.33
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.14 3.17 3.18 3.19 3.20 3.27
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.37 7.62 8.21 8.08 8.41 8.89
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.35 7.54 7.62 7.69 7.73 8.32
 
 Targets:
 
@@ -472,9 +472,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 |  9   |   13    |   18   |  17  |   19    |  30  |
-| 200 |  5   |    7    |   9    |  9   |   10    |  16  |
-| 100 |  3   |    5    |   7    |  6   |    7    |  11  |
+| 365 |  31  |   34    |   38   |  39  |   40    |  58  |
+| 200 |  16  |   19    |   20   |  22  |   25    |  31  |
+| 100 |  11  |   13    |   14   |  15  |   15    |  22  |
 
 Targets:
 
@@ -512,7 +512,7 @@ D_s^{\text{(BP-resRD)}} = \left\\{\begin{array}{lr}N^{\text{(BPSV)}}\hat{P}_3\le
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 1.0 1.6 2.3 3.2 3.2 8.3
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.7 1.1 2.3 3.8 6.7 10.8
 
 Target: 14 (3 5 10)
 
@@ -555,17 +555,17 @@ cost per unreserved dose in USD.
 
 | Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
 |:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
-|   BAU    | 139794 | 154603  | 192013 | 184950 | 205923  | 240734 |
-|   S01    | 142997 | 157881  | 195376 | 188263 | 209290  | 244034 |
-|   S02    | 129435 | 143107  | 177630 | 171107 | 190462  | 222562 |
-|   S03    | 104971 | 115963  | 143681 | 138431 | 153972  | 179689 |
-|   S04    | 145535 | 160459  | 197971 | 190826 | 211866  | 246501 |
-|   S05    | 132301 | 145843  | 179873 | 173387 | 192475  | 223880 |
-|   S06    | 110358 | 121604  | 149845 | 144457 | 160299  | 186336 |
-|   S07    | 145896 | 160731  | 197977 | 190867 | 211760  | 246086 |
-|   S08    | 131620 | 144969  | 178467 | 172069 | 190861  | 221715 |
-|   S09    | 107742 | 118600  | 145821 | 140612 | 155885  | 180919 |
-|   S10    | 138130 | 152759  | 189710 | 182733 | 203448  | 237830 |
+|   BAU    | 138347 | 149559  | 154127 | 158986 | 161172  | 199443 |
+|   S01    | 141542 | 152815  | 157403 | 162268 | 164476  | 202812 |
+|   S02    | 128100 | 138451  | 142668 | 147151 | 149172  | 184485 |
+|   S03    | 103897 | 112221  | 115610 | 119208 | 120836  | 149180 |
+|   S04    | 144075 | 155382  | 159980 | 164843 | 167067  | 205400 |
+|   S05    | 130976 | 141237  | 145409 | 149819 | 151839  | 186611 |
+|   S06    | 109257 | 117780  | 121244 | 124903 | 126583  | 155435 |
+|   S07    | 144443 | 155686  | 160255 | 165081 | 167298  | 205348 |
+|   S08    | 130313 | 140430  | 144540 | 148880 | 150876  | 185096 |
+|   S09    | 106679 | 114909  | 118252 | 121777 | 123403  | 151204 |
+|   S10    | 136702 | 147776  | 152288 | 157088 | 159247  | 197049 |
 
 Costs summed and discounted from year 16 to year 20, million USD
 
@@ -598,7 +598,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 2955 3209 3834 3710 4062 4617
+Min. 1st Qu. Median Mean 3rd Qu. Max. 2929 3123 3201 3281 3321 3956
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -651,29 +651,29 @@ D_{s,y}^{\text{(S-del)}} =
 
 </div>
 
-     BAU Min.   : 80221   1st Qu.:101745   Median :123671   Mean   :124180  
-     S01 Min.   : 80564   1st Qu.:102098   Median :124014   Mean   :124509  
-     S02 Min.   : 80303   1st Qu.:101828   Median :123753   Mean   :124257  
-     S03 Min.   : 80401   1st Qu.:101922   Median :123851   Mean   :124347  
-     S04 Min.   : 80933   1st Qu.:102453   Median :124412   Mean   :124874  
-     S05 Min.   : 81235   1st Qu.:102737   Median :124699   Mean   :125150  
-     S06 Min.   : 81440   1st Qu.:102935   Median :124907   Mean   :125346  
-     S07 Min.   : 83110   1st Qu.:104822   Median :127210   Mean   :127276  
-     S08 Min.   : 82275   1st Qu.:103820   Median :125890   Mean   :126186  
-     S09 Min.   : 82522   1st Qu.:104081   Median :126188   Mean   :126437  
-     S10 Min.   : 79245   1st Qu.:100626   Median :122280   Mean   :122966  
+     BAU Min.   : 82269   1st Qu.: 90902   Median :100162   Mean   : 99632  
+     S01 Min.   : 82609   1st Qu.: 91268   Median :100542   Mean   : 99994  
+     S02 Min.   : 82351   1st Qu.: 90983   Median :100248   Mean   : 99715  
+     S03 Min.   : 82449   1st Qu.: 91080   Median :100348   Mean   : 99812  
+     S04 Min.   : 83016   1st Qu.: 91613   Median :100869   Mean   :100372  
+     S05 Min.   : 83322   1st Qu.: 91904   Median :101153   Mean   :100670  
+     S06 Min.   : 83537   1st Qu.: 92096   Median :101340   Mean   :100877  
+     S07 Min.   : 85246   1st Qu.: 93755   Median :103047   Mean   :102754  
+     S08 Min.   : 84304   1st Qu.: 93014   Median :102147   Mean   :101757  
+     S09 Min.   : 84533   1st Qu.: 93289   Median :102386   Mean   :102020  
+     S10 Min.   : 81181   1st Qu.: 90046   Median : 99083   Mean   : 98494  
                                           
-     BAU 3rd Qu.:146529   Max.   :176287  
-     S01 3rd Qu.:146850   Max.   :176587  
-     S02 3rd Qu.:146599   Max.   :176356  
-     S03 3rd Qu.:146679   Max.   :176436  
-     S04 3rd Qu.:147190   Max.   :176925  
-     S05 3rd Qu.:147436   Max.   :177182  
-     S06 3rd Qu.:147619   Max.   :177366  
-     S07 3rd Qu.:149575   Max.   :179086  
-     S08 3rd Qu.:148389   Max.   :178060  
-     S09 3rd Qu.:148625   Max.   :178261  
-     S10 3rd Qu.:145187   Max.   :175087  
+     BAU 3rd Qu.:109548   Max.   :116709  
+     S01 3rd Qu.:109906   Max.   :117098  
+     S02 3rd Qu.:109630   Max.   :116799  
+     S03 3rd Qu.:109725   Max.   :116903  
+     S04 3rd Qu.:110310   Max.   :117509  
+     S05 3rd Qu.:110620   Max.   :117830  
+     S06 3rd Qu.:110843   Max.   :118057  
+     S07 3rd Qu.:113023   Max.   :120535  
+     S08 3rd Qu.:111780   Max.   :119073  
+     S09 3rd Qu.:112056   Max.   :119377  
+     S10 3rd Qu.:108165   Max.   :115101  
 
 Targets:
 
@@ -741,7 +741,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 9478 10348 11137 11626 11811 15756
+Min. 1st Qu. Median Mean 3rd Qu. Max. 8764 9429 10664 10465 11296 12370
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -1030,13 +1030,8 @@ coverage (second SSV dose) by country income level
 
 ## 5.1 Timing
 
-The duration of the Phase III trial is $W_3^{(B)} = 18$ weeks. The time
-to manufacturing transition is $I_R = 12$ weeks, and the time to
-manufacturing scale-up $C_R = 10$ weeks; these are the same as the
-reserved-capacity times for SSV.
-
-Facility transition occurs in week 1. Thus manufacturing begins in week
-$1+I_R = 13$ and dose distribution begins in week $1+W_3^{(B)} = 19$.
+<!-- The duration of the Phase III trial is $W_3^{(B)} = 18$ weeks. The time to manufacturing transition is $I_R = 12$ weeks, and the time to manufacturing scale-up $C_R = 10$ weeks; these are the same as the reserved-capacity times for SSV.  -->
+<!-- Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = 13$ and dose distribution begins in week $1+W_3^{(B)} = 19$. -->
 
 ## 5.2 Production
 

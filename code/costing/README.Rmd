@@ -1993,10 +1993,10 @@ ggplot(do.call(rbind,second_dose_delivery)) +
 
 ## Timing
 
-The duration of the Phase III trial is $W_3^{(B)} = `r rawpar$duration_3_res`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV. 
+<!-- The duration of the Phase III trial is $W_3^{(B)} = `r rawpar$duration_3_res`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV.  -->
 
 
-Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+rawpar$weeks_init_res`$ and dose distribution begins in week $1+W_3^{(B)} = `r 1+rawpar$duration_3_res`$.
+<!-- Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+rawpar$weeks_init_res`$ and dose distribution begins in week $1+W_3^{(B)} = `r 1+rawpar$duration_3_res`$. -->
 
 ## Production
 
