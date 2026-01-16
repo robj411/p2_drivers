@@ -71,8 +71,8 @@ scenario_df = data.frame(Scenario=scennames, Proportional=pop_proportional, DM=d
 function_list = list(res=allocate_res_doses, ex=allocate_exbui_doses, bui=allocate_exbui_doses)
 rep_res = list(res=allocate_res_doses, ex=allocate_res_doses, bui=allocate_res_doses)
 
-# dm=365; bpsvflag=F; cr=0; propflag=1; rates=c(.07, .07, .02)
-# dm=365; bpsvflag=T; cr=2; propflag=1; rates=c(.07, .07, .02)
+# dm=365; bpsvflag=F; cr=0; propflag=1; rates=c(.07, .07, .02, .02)
+# dm=365; bpsvflag=T; cr=2; propflag=1; rates=c(.07, .07, .02, .02)
 get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, .02, .02)){
 
   # timings of the phases
@@ -322,7 +322,8 @@ for(s in 1:nscen){ #c(1,10)){#
     bauallupfront = allupfront
     bauallannual = allannual
     bauallresp = allresp
-    baucosts = list(allupfront, allannual, allresp)
+    bauallrespdis = allrespdis
+    baucosts = list(allupfront, allannual, bauallrespdis)
     
     # print(summary(with(thisscen$costs$response, ssv_rd + ssv_proc_undiscounted + ssv_delivery_undiscounted + 
                          # bpsv_response_rd + bpsv_proc + bpsv_delivery)))
@@ -347,6 +348,19 @@ for(s in 1:nscen){ #c(1,10)){#
   
 }
 
+if(NSAMPLES>=10000){
+  bounds = lapply(1:3,function(x) cbind(BAU=baucosts[[x]], do.call(cbind, tosave[[x]])))
+  saveRDS(bounds,file = '../results/cost_samples.Rds')
+  
+  saveRDS(scenario_results,file = '../results/all_cost_samples.Rds')
+  
+}
+      
+
+
+## cumulative coverage ################################
+
+
 poptarget = POPS15/POPS0
 reachday = matrix(0,nrow=nscen,ncol=4)
 for(s in 1:nscen){
@@ -361,14 +375,9 @@ sapply(1:nscen,function(x) cat(paste(paste0(c(scennames[x], reachday[x,]), colla
 cat(paste0('\\renewcommand*{\\MinNumber}{',min(reachday),'} \n\\renewcommand*{\\MaxNumber}{',max(reachday),'}'))
 
 
-if(NSAMPLES>=10000){
-  bounds = lapply(1:3,function(x) cbind(BAU=baucosts[[x]], do.call(cbind, tosave[[x]])))
-  saveRDS(bounds,file = '../results/cost_samples.Rds')
-  
-  saveRDS(scenario_results,file = '../results/all_cost_samples.Rds')
-  
-}
-      
+## convert to daily ########################################
+
+
 
 scenario_results[[s]]$delivery$ssv -> deliveries
 
@@ -399,7 +408,7 @@ diurnise_deliveries = function(deliveries){
   daily_doses
 }
 
-diurnise_deliveries(deliveries)[(69*6):(70*7),]
+# diurnise_deliveries(deliveries)[(69*6):(70*7),]
 
 
       

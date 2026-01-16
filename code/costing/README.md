@@ -46,7 +46,6 @@ application.
 | $P_0^{\text{(BPSV)}}$ | pos_0 | Probability of success; preclinical | Multinomial | 0.40, 0.41, 0.41, 0.42, 0.48, 0.57 | Gouglas et al. (2018) |
 | $P_1^{\text{(BPSV)}}$ | pos_1 | Probability of success; Phase I | Multinomial | 0.33, 0.40, 0.50, 0.68, 0.70, 0.72, 0.74, 0.77, 0.81, 0.90 | Gouglas et al. (2018) |
 | $P_2^{\text{(BPSV)}}$ | pos_2 | Probability of success; Phase II | Multinomial | 0.22, 0.31, 0.33, 0.43, 0.46, 0.54, 0.58, 0.58, 0.74, 0.79 | Gouglas et al. (2018) |
-| $P_3^{\text{(BPSV)}}$ | pos_3 | Probability of success; Phase III | Uniform | 0.4, 0.8 | Wong, Siah, and Lo (2019) |
 | $Q^{\text{(SSV)}}$ | q_ssv_successes | Probability of N or more SSV successes | Constant | 0.9 | Model choice |
 | $n^{\text{(SSV)}}$ | n_ssv_successes | Number of SSV successes | Constant | 5 | Model choice |
 | $X_0$ | covid_ssv_0 | COVID-19 candidates failed at preclinical | Constant | 33 | Linksbridge SPC (2025) |
@@ -81,7 +80,6 @@ application.
 | $T_2^{(e)}$ | cost_2_ex | Cost, Phase II, experienced manufacturer; USD | Log normal | 28297339, 24061641 | Gouglas et al. (2018) |
 | $T_2^{(n)}$ | cost_2_inex | Cost, Phase II, inexperienced manufacturer; USD | Inverse Gaussian | 17124622, 35918793 | Gouglas et al. (2018) |
 | $T_3^{(e)}$ | cost_3_ex | Cost, Phase III, experienced manufacturer; USD | PearsonV | 1.3147, 51397313 | Gouglas et al. (2018) |
-| $T_3^{(n)}$ | cost_3_inex | Cost, Phase III, inexperienced manufacturer; USD | PearsonVI | 4.8928, 1.6933, 11400026 | Gouglas et al. (2018) |
 | $T_4$ | cost_lic | Licensure cost, 2018; USD | Constant | 287750 | Gouglas et al. (2018) |
 | $I$ | inflation | Inflation (2018 t0 2025) | Constant | 0.28 | U.S. BLS (2025) |
 | $\omega$ | inex_weight | Share of manufacturers that are inexperienced | Constant | 0.875 | See Table <a href="#tab:inex">2.1</a> |
@@ -240,8 +238,8 @@ BPSV candidates
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 48.19 57.84 62.99 73.13 77.27
-132.76
+Min. 1st Qu. Median Mean 3rd Qu. Max. 40.48 65.31 83.17 94.08 126.01
+159.90
 
 Target: 146 (103 135 177)
 
@@ -299,8 +297,7 @@ uniformly distributed discount rate.
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 818.4 1000.6 1184.2 1122.7 1251.5
-1294.1
+Min. 1st Qu. Median Mean 3rd Qu. Max. 905 1018 1229 1153 1250 1302
 
 Target: 1 (0.9 1 1.1)
 
@@ -337,12 +334,12 @@ accumulated over 15 years with uniformly distributed discount rate.
 
 </div>
 
-0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2818 3089 3190 3189 3326 3443
+0 Min. 1st Qu. Median Mean 3rd Qu. Max. 2906 3019 3171 3173 3335 3430
 
-0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6763 7413 7656 7652 7981 8263
+0.7 Min. 1st Qu. Median Mean 3rd Qu. Max. 6975 7245 7610 7616 8004 8232
 
-2 Min. 1st Qu. Median Mean 3rd Qu. Max. 14090 15444 15951 15943 16628
-17216
+2 Min. 1st Qu. Median Mean 3rd Qu. Max. 14530 15094 15855 15867 16674
+17150
 
 Targets: 3,086 (2,897 3,074 3,269)
 
@@ -384,9 +381,9 @@ years with uniformly distributed discount rate.
 
 365 Min. 1st Qu. Median Mean 3rd Qu. Max. 0 0 0 0 0 0
 
-200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.15 3.25 3.28 3.28 3.32 3.35
+200 Min. 1st Qu. Median Mean 3rd Qu. Max. 3.19 3.22 3.27 3.27 3.32 3.35
 
-100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.42 8.13 8.40 8.40 8.76 9.07
+100 Min. 1st Qu. Median Mean 3rd Qu. Max. 7.65 7.95 8.35 8.36 8.78 9.03
 
 Targets:
 
@@ -472,9 +469,9 @@ SSV candidates
 
 | DM  | Min. | 1st Qu. | Median | Mean | 3rd Qu. | Max. |
 |:---:|:----:|:-------:|:------:|:----:|:-------:|:----:|
-| 365 |  40  |   64    |   70   |  80  |   99    | 115  |
-| 200 |  17  |   28    |   30   |  33  |   40    |  46  |
-| 100 |  10  |   16    |   19   |  22  |   28    |  33  |
+| 365 |  71  |   101   |  120   | 119  |   136   | 173  |
+| 200 |  31  |   43    |   51   |  51  |   59    |  74  |
+| 100 |  24  |   33    |   41   |  41  |   47    |  60  |
 
 Targets:
 
@@ -488,16 +485,12 @@ Targets:
 
 **This is a little higher than the spreadsheet results**
 
-**I have basically assumed the same as SSV except for the numbers given
-(8 candidates and 18 weeks)**
-
-The BPSV has $N^{\text{(BPSV)}}$ candidates. Those that have passed
-through Phases 0 to 2 prior to the outbreak go through Phase 3 during
-the response. The duration is $W_3^{(B)}=18$ weeks. Thus we write the
-BPSV R&D response cost
+One BPSV candidate that has passed through Phases 0 to 2 prior to the
+outbreak goes through Phase 3 during the response. The duration is
+$W_3^{(B)}=18$ weeks. Thus we write the BPSV R&D response cost
 
 $$\begin{equation}
-D_s^{\text{(BP-resRD)}} = \begin{cases}N^{\text{(BPSV)}}\hat{P}_3\left( (1+I)\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\right) \\; & \\; s=1 \\\\
+D_s^{\text{(BP-resRD)}} = \begin{cases}\left( (1+I)\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\right) \\; & \\; s=1 \\\\
 0  \\; & \\; s\neq 1
 \end{cases}
 \qquad(3.2)
@@ -512,7 +505,7 @@ D_s^{\text{(BP-resRD)}} = \begin{cases}N^{\text{(BPSV)}}\hat{P}_3\left( (1+I)\fr
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 0.3 1.0 1.9 7.0 3.7 50.1
+Min. 1st Qu. Median Mean 3rd Qu. Max. 0.5 1.4 2.1 2.3 3.2 4.5
 
 Target: 14 (3 5 10)
 
@@ -555,17 +548,17 @@ cost per unreserved dose in USD.
 
 | Scenario |  Min.  | 1st Qu. | Median |  Mean  | 3rd Qu. |  Max.  |
 |:--------:|:------:|:-------:|:------:|:------:|:-------:|:------:|
-|   BAU    | 142461 | 187083  | 205384 | 206312 | 231067  | 254552 |
-|   S01    | 145680 | 190446  | 208749 | 209636 | 234394  | 257801 |
-|   S02    | 131898 | 173083  | 189964 | 190814 | 213650  | 235301 |
-|   S03    | 106952 | 140033  | 153573 | 154238 | 172552  | 189886 |
-|   S04    | 148227 | 193047  | 211325 | 212175 | 236898  | 260204 |
-|   S05    | 134744 | 175406  | 191984 | 192751 | 215174  | 236304 |
-|   S06    | 112387 | 146141  | 159892 | 160521 | 179119  | 196631 |
-|   S07    | 148573 | 193091  | 211223 | 212049 | 236573  | 259657 |
-|   S08    | 134029 | 174075  | 190378 | 191115 | 213165  | 233910 |
-|   S09    | 109702 | 142254  | 155492 | 156080 | 173984  | 190808 |
-|   S10    | 140766 | 184841  | 202916 | 203832 | 228283  | 251477 |
+|   BAU    | 156303 | 175120  | 201916 | 203630 | 232843  | 251855 |
+|   S01    | 159589 | 178459  | 205281 | 206951 | 236166  | 255115 |
+|   S02    | 144677 | 162043  | 186765 | 188340 | 215287  | 232815 |
+|   S03    | 117225 | 131172  | 151007 | 152253 | 173864  | 187896 |
+|   S04    | 162171 | 181058  | 207862 | 209493 | 238665  | 257532 |
+|   S05    | 147397 | 164531  | 188844 | 190318 | 216776  | 233882 |
+|   S06    | 122895 | 137116  | 157287 | 158502 | 180447  | 194624 |
+|   S07    | 162433 | 181190  | 207788 | 209387 | 238323  | 257011 |
+|   S08    | 146500 | 163371  | 187290 | 188721 | 214738  | 231533 |
+|   S09    | 119845 | 133557  | 152984 | 154136 | 175260  | 188880 |
+|   S10    | 154438 | 173024  | 199491 | 201183 | 230037  | 248814 |
 
 Costs summed and discounted from year 16 to year 20, million USD
 
@@ -598,7 +591,7 @@ BPSV is 6.68 billion USD.
 Although 1.0625 billion doses are manufactured, as manufacturing stops
 once one billion doses have been made.
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 3001 3754 4053 4060 4464 4834
+Min. 1st Qu. Median Mean 3rd Qu. Max. 3238 3555 3996 4016 4493 4792
 
 Target: 3,628 (3,062 3,568 4,165)
 
@@ -651,29 +644,29 @@ D_{s,y}^{\text{(S-del)}} =
 
 </div>
 
-     BAU Min.   : 88763   1st Qu.:107246   Median :123428   Mean   :128123  
-     S01 Min.   : 89120   1st Qu.:107569   Median :123693   Mean   :128425  
-     S02 Min.   : 88838   1st Qu.:107321   Median :123486   Mean   :128191  
-     S03 Min.   : 88930   1st Qu.:107409   Median :123558   Mean   :128273  
-     S04 Min.   : 89425   1st Qu.:107904   Median :123959   Mean   :128741  
-     S05 Min.   : 89673   1st Qu.:108158   Median :124164   Mean   :128983  
-     S06 Min.   : 89838   1st Qu.:108338   Median :124310   Mean   :129155  
-     S07 Min.   : 91107   1st Qu.:109965   Median :125560   Mean   :130856  
-     S08 Min.   : 90492   1st Qu.:109137   Median :124951   Mean   :129929  
-     S09 Min.   : 90696   1st Qu.:109375   Median :125146   Mean   :130160  
-     S10 Min.   : 87976   1st Qu.:106314   Median :122703   Mean   :127082  
+     BAU Min.   : 82791   1st Qu.: 98511   Median :108912   Mean   :115414  
+     S01 Min.   : 83122   1st Qu.: 98851   Median :109242   Mean   :115721  
+     S02 Min.   : 82864   1st Qu.: 98586   Median :108988   Mean   :115484  
+     S03 Min.   : 82950   1st Qu.: 98676   Median :109081   Mean   :115567  
+     S04 Min.   : 83444   1st Qu.: 99233   Median :109546   Mean   :116035  
+     S05 Min.   : 83686   1st Qu.: 99510   Median :109811   Mean   :116279  
+     S06 Min.   : 83862   1st Qu.: 99710   Median :109975   Mean   :116448  
+     S07 Min.   : 85395   1st Qu.:101392   Median :111560   Mean   :117919  
+     S08 Min.   : 84617   1st Qu.:100571   Median :110718   Mean   :117168  
+     S09 Min.   : 84848   1st Qu.:100834   Median :110945   Mean   :117388  
+     S10 Min.   : 81884   1st Qu.: 97495   Median :108133   Mean   :114545  
                                           
-     BAU 3rd Qu.:140092   Max.   :182260  
-     S01 3rd Qu.:140385   Max.   :182555  
-     S02 3rd Qu.:140161   Max.   :182331  
-     S03 3rd Qu.:140244   Max.   :182414  
-     S04 3rd Qu.:140721   Max.   :182919  
-     S05 3rd Qu.:140976   Max.   :183187  
-     S06 3rd Qu.:141157   Max.   :183381  
-     S07 3rd Qu.:143139   Max.   :185384  
-     S08 3rd Qu.:141972   Max.   :184186  
-     S09 3rd Qu.:142216   Max.   :184418  
-     S10 3rd Qu.:138814   Max.   :180934  
+     BAU 3rd Qu.:132061   Max.   :164256  
+     S01 3rd Qu.:132340   Max.   :164518  
+     S02 3rd Qu.:132122   Max.   :164311  
+     S03 3rd Qu.:132197   Max.   :164378  
+     S04 3rd Qu.:132598   Max.   :164777  
+     S05 3rd Qu.:132808   Max.   :164977  
+     S06 3rd Qu.:132942   Max.   :165113  
+     S07 3rd Qu.:134199   Max.   :166661  
+     S08 3rd Qu.:133522   Max.   :165837  
+     S09 3rd Qu.:133706   Max.   :166059  
+     S10 3rd Qu.:131263   Max.   :163359  
 
 Targets:
 
@@ -741,7 +734,7 @@ The logic of this is as follows:
 
 </div>
 
-Min. 1st Qu. Median Mean 3rd Qu. Max. 9206 10492 12138 12157 13514 15750
+Min. 1st Qu. Median Mean 3rd Qu. Max. 9248 10863 12235 12314 12986 16588
 
 Target: 11,206 (9,037 10,865 13,054)
 
@@ -1106,7 +1099,7 @@ by country income level
 
 # 6 Parameter samples
 
-![](README_files/figure-gfm/parsamples-1.png)<!-- -->![](README_files/figure-gfm/parsamples-2.png)<!-- -->![](README_files/figure-gfm/parsamples-3.png)<!-- -->![](README_files/figure-gfm/parsamples-4.png)<!-- -->![](README_files/figure-gfm/parsamples-5.png)<!-- -->![](README_files/figure-gfm/parsamples-6.png)<!-- -->![](README_files/figure-gfm/parsamples-7.png)<!-- -->![](README_files/figure-gfm/parsamples-8.png)<!-- -->![](README_files/figure-gfm/parsamples-9.png)<!-- -->![](README_files/figure-gfm/parsamples-10.png)<!-- -->![](README_files/figure-gfm/parsamples-11.png)<!-- -->![](README_files/figure-gfm/parsamples-12.png)<!-- -->![](README_files/figure-gfm/parsamples-13.png)<!-- -->![](README_files/figure-gfm/parsamples-14.png)<!-- -->![](README_files/figure-gfm/parsamples-15.png)<!-- -->![](README_files/figure-gfm/parsamples-16.png)<!-- -->![](README_files/figure-gfm/parsamples-17.png)<!-- -->![](README_files/figure-gfm/parsamples-18.png)<!-- -->![](README_files/figure-gfm/parsamples-19.png)<!-- -->![](README_files/figure-gfm/parsamples-20.png)<!-- -->![](README_files/figure-gfm/parsamples-21.png)<!-- -->![](README_files/figure-gfm/parsamples-22.png)<!-- -->![](README_files/figure-gfm/parsamples-23.png)<!-- -->![](README_files/figure-gfm/parsamples-24.png)<!-- -->![](README_files/figure-gfm/parsamples-25.png)<!-- -->![](README_files/figure-gfm/parsamples-26.png)<!-- -->![](README_files/figure-gfm/parsamples-27.png)<!-- -->![](README_files/figure-gfm/parsamples-28.png)<!-- -->
+![](README_files/figure-gfm/parsamples-1.png)<!-- -->![](README_files/figure-gfm/parsamples-2.png)<!-- -->![](README_files/figure-gfm/parsamples-3.png)<!-- -->![](README_files/figure-gfm/parsamples-4.png)<!-- -->![](README_files/figure-gfm/parsamples-5.png)<!-- -->![](README_files/figure-gfm/parsamples-6.png)<!-- -->![](README_files/figure-gfm/parsamples-7.png)<!-- -->![](README_files/figure-gfm/parsamples-8.png)<!-- -->![](README_files/figure-gfm/parsamples-9.png)<!-- -->![](README_files/figure-gfm/parsamples-10.png)<!-- -->![](README_files/figure-gfm/parsamples-11.png)<!-- -->![](README_files/figure-gfm/parsamples-12.png)<!-- -->![](README_files/figure-gfm/parsamples-13.png)<!-- -->![](README_files/figure-gfm/parsamples-14.png)<!-- -->![](README_files/figure-gfm/parsamples-15.png)<!-- -->![](README_files/figure-gfm/parsamples-16.png)<!-- -->![](README_files/figure-gfm/parsamples-17.png)<!-- -->![](README_files/figure-gfm/parsamples-18.png)<!-- -->![](README_files/figure-gfm/parsamples-19.png)<!-- -->![](README_files/figure-gfm/parsamples-20.png)<!-- -->![](README_files/figure-gfm/parsamples-21.png)<!-- -->![](README_files/figure-gfm/parsamples-22.png)<!-- -->![](README_files/figure-gfm/parsamples-23.png)<!-- -->![](README_files/figure-gfm/parsamples-24.png)<!-- -->![](README_files/figure-gfm/parsamples-25.png)<!-- -->![](README_files/figure-gfm/parsamples-26.png)<!-- -->
 
 # 7 Contributors
 
@@ -1329,14 +1322,6 @@ Cost of Delivering COVID-19 Vaccines in
 <span class="nocase">C<span class="nocase">ô</span>te</span> d’Ivoire.”
 ThinkWell & Genesis Analytics.
 <https://thinkwell.global/wp-content/uploads/2023/09/Cote-dIvoire-final-report_FINAL.pdf>.
-
-</div>
-
-<div id="ref-Wong2019" class="csl-entry">
-
-Wong, Chi Heem, Kien Wei Siah, and Andrew W Lo. 2019. “Estimation of
-Clinical Trial Success Rates and Related Parameters.” *Biostatistics* 20
-(2): 273–86. <https://doi.org/10.1093/biostatistics/kxx069>.
 
 </div>
 

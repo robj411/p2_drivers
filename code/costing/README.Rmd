@@ -808,14 +808,13 @@ Targets:
 **This is a little higher than the spreadsheet results**
 
 
-**I have basically assumed the same as SSV except for the numbers given (8 candidates and 18 weeks)**
 
 
-The BPSV has $N^{\text{(BPSV)}}$ candidates. Those that have passed through Phases 0 to 2 prior to the outbreak go through Phase 3 during the response. The duration is $W_3^{(B)}=18$ weeks. Thus we write the BPSV R\&D response cost
+One BPSV candidate that has passed through Phases 0 to 2 prior to the outbreak goes through Phase 3 during the response. The duration is $W_3^{(B)}=18$ weeks. Thus we write the BPSV R\&D response cost
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-resRD)}} = \\begin{cases}N^{\\text{(BPSV)}}\\hat{P}_3\\left( (1+I)\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\\right) \\; & \\; s=1 \\\\
+eqtext = 'D_s^{\\text{(BP-resRD)}} = \\begin{cases}\\left( (1+I)\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\\right) \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
 \\end{cases}
 (\\#eq:bpsvresrd)'
