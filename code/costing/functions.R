@@ -123,8 +123,8 @@ get_parameters = function(nsamples = 100){
   DEL_COST_THRESHOLDS <<- sapply(c(1,3)/10,function(x) x*POPS15*2) 
   
   
-  # trial durations in normal times (change from years to weeks)
-  OLD_DURATIONS <<- do.call(cbind,lapply(paste0('duration_',0:3),function(x)52*pardf[[x]]))
+  # trial durations in normal times (years)
+  OLD_DURATIONS <<- do.call(cbind,lapply(paste0('duration_',0:3),function(x)pardf[[x]]))
   
   
   # probability of success per phase for bpsv
@@ -152,8 +152,10 @@ get_parameters = function(nsamples = 100){
   
   
   # costs of experienced and inexperienced manufacturers per phase
-  EX <<- matrix(sapply(paste0('cost_',0:3,'_ex'),function(x) pardf[[x]]*pardf$inflation),ncol=4,byrow=F)
-  INEX <<- matrix(sapply(paste0('cost_',0:2,'_inex'),function(x) pardf[[x]]*pardf$inflation),ncol=3,byrow=F)
+  # correct for inflation
+  # divide by duration so each value is per year
+  EX <<- matrix(sapply(paste0('cost_',0:3,'_ex'),function(x) pardf[[x]]*(1+pardf$inflation)),ncol=4,byrow=F) / (OLD_DURATIONS)
+  INEX <<- matrix(sapply(paste0('cost_',0:2,'_inex'),function(x) pardf[[x]]*(1+pardf$inflation)),ncol=3,byrow=F) / (OLD_DURATIONS[,1:3])
   
   
   
@@ -440,11 +442,11 @@ allocate_and_deliver_doses = function(allocation_functions, supplies, del_rates,
       allocation_res = allocation_functions[[x]](cum_received = current_count, 
                                                  new_doses=new_doses, 
                                                  hic_only = ifelse(x=='res',hic_only,0))
-      # week_count = week_count + allocation_res
-      current_count = current_count + allocation_res
+      week_count = week_count + allocation_res
+      # current_count = current_count + allocation_res
     }
-    # cumulative_doses[w,] = current_count + week_count
-    cumulative_doses[w,] = current_count
+    cumulative_doses[w,] = current_count + week_count
+    # cumulative_doses[w,] = current_count
   }
   alloc = as.data.frame(cumulative_doses)
   alloc$Week = 1:NWEEKS
@@ -650,12 +652,14 @@ get_bpsv_costs = function(total_bpsv, pos, pto, exi, inexi,
   # cost per phase is a weighted sum
   inex_costs = inex_weight * inexi + (1-inex_weight) * exi[1:3]
   
-  rep_year = function(cost,pto,dur) rep(cost*pto/dur,dur)
+  rep_year = function(cost,pto,dur) rep(cost*pto,dur)
   
   dc = 1/(1+discount)
   inex_costs_per_year = c(rep_year(inex_costs[1],pto[1], y_durations[1]), rep_year(inex_costs[2],pto[2], y_durations[2]), rep_year(inex_costs[3],pto[3], y_durations[3]))
   d_inex_costs_per_year = inex_costs_per_year * dc^(0:(length(inex_costs_per_year)-1))
-  inex_costs_per_year_from1 = c(rep_year(exi[2],1, y_durations[2]), rep_year(exi[3],pos[2], y_durations[3]))
+  inex_costs_per_year_from1_nonzero = c(rep_year(exi[2],1, y_durations[2]), rep_year(exi[3],pos[2], y_durations[3]))
+  inex_costs_per_year_from1 = rep(0,length(inex_costs_per_year))
+  inex_costs_per_year_from1[1:length(inex_costs_per_year_from1_nonzero)] = inex_costs_per_year_from1_nonzero
   d_inex_costs_per_year_from1 = inex_costs_per_year_from1 * dc^(0:(length(inex_costs_per_year_from1)-1))
   
   bpsv_rd_costsamples_dyd_py = ((n_bpsv_candidates - n_bpsv_p1)*d_inex_costs_per_year + 
@@ -667,7 +671,8 @@ get_bpsv_costs = function(total_bpsv, pos, pto, exi, inexi,
   
   ## bpsv reactive r&d costs
   # bpsvresrd = n_bpsv_candidates * pto[4] * (pfixed$duration_3_resp/old_duration * exi[4] + pos[4]*cost_lic)/1e6
-  bpsvresrd = (pfixed$duration_3_resp/old_duration * exi[4] + cost_lic)/1e6
+  # exi is cost of experienced per year
+  bpsvresrd = (pfixed$duration_3_resp/52 * exi[4] + cost_lic)/1e6
   
   ## investigational reserve costs
   

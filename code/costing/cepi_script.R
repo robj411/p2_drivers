@@ -72,7 +72,7 @@ function_list = list(res=allocate_res_doses, ex=allocate_exbui_doses, bui=alloca
 rep_res = list(res=allocate_res_doses, ex=allocate_res_doses, bui=allocate_res_doses)
 
 # dm=365; bpsvflag=F; cr=0; propflag=1; rates=c(.07, .07, .02, .02)
-# dm=365; bpsvflag=T; cr=2; propflag=1; rates=c(.07, .07, .02, .02)
+# dm=365; bpsvflag=T; cr=0; propflag=1; rates=c(.07, .07, .02, .02)
 get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, .02, .02)){
 
   # timings of the phases
@@ -130,7 +130,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
     
     # scaling for phase costs
     durations = OLD_DURATIONS[i,]
-    timescale = phase_duration/durations #get_duration_scalar(phase_duration,OLD_DURATIONS[i,])
+    # costs are per year; scale to fraction of a year
+    timescale = phase_duration/52 #get_duration_scalar(phase_duration,OLD_DURATIONS[i,])
     
     # parameters for functions
     pos = POS_SSV[i,]
@@ -168,7 +169,7 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
     ssv_procurement_costs = get_ssv_procurement_costs(ssv_py_inc_booster = ssv_py_inc_booster, 
                                                       cost_res = cost_res, 
                                                       cost_un = cost_un)
-    ssv_proccost_discounted = sum(ssv_procurement_costs/(1+pardf$discount[i])^c(1:NYEARS))
+    ssv_proccost_discounted = sum(ssv_procurement_costs/(1+pardf$discount[i])^c(0:(NYEARS-1)))
     ssv_proccost_undiscounted = sum(ssv_procurement_costs)
   
     # apply costs per dose to quantiles
@@ -204,8 +205,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
                                  n_bpsv_candidates = n_bpsv_candidates,
                                  n_bpsv_p1 = n_bpsv_p1,
                                  bpsv_res_upfront = bpsv_res_upfront,
-                                 y_durations = durations[1:3]/52,
-                                 old_duration = durations[4], # years
+                                 y_durations = durations[1:3], # years
+                                 old_duration = durations[4]/52, # weeks
                                  discount = discount,
                                  cost_lic = cost_lic,
                                  bpsv_replenishment = bpsv_replenishment,
@@ -291,8 +292,9 @@ for(i in 1:3) tosave[[i]] <- list()
 
 
 sheet2 = read.csv('../../cepi_results/Delta_LIR_IQR_pc_GDP_BAU.csv',check.names = F)
+fifteen_yr_discount_weight = sapply(1:NSAMPLES, function(x) accumulate(discount = pardf$discount[x], from = 1, to = pardf$years_100[x]))
 
-
+s=11
 for(s in 1:nscen){ #c(1,10)){# 
   
   dm = scenario_df$DM[s]
@@ -318,6 +320,31 @@ for(s in 1:nscen){ #c(1,10)){#
   scenario_results[[s]]$costs$response$totaldiscounted = allrespdis
   scenario_results[[s]]$costs$response$totalundiscounted = allresp
   
+  # bpsv resp looks fine
+  # summary(round(thisscen$costs$response$bpsv_response_rd*dc))
+  # summary(round(thisscen$costs$response$bpsv_proc*dc))
+  # summary(round(thisscen$costs$response$bpsv_delivery*dc))
+  # annual
+  summary(round(thisscen$costs$annual$capres*fifteen_yr_discount_weight))
+  # upfront
+  summary(round(thisscen$costs$upfront$enabling))
+  # response
+  dc = 1/(1+pardf$discount)^15
+  # issue with inflation; this value should be lower than that in the spreadsheet
+  summary(round(thisscen$costs$response$ssv_rd*dc))
+  # issue with inflation; this value should be higher than that in the spreadsheet
+  summary(round(thisscen$costs$response$ssv_rd*dc*(1.28)))
+  # look okayish
+  summary(round(thisscen$costs$response$ssv_proc_discounted*dc))
+  summary(round(thisscen$costs$response$ssv_delivery_discounted*dc))
+  
+  cat(paste(scennames[s], ' & ', paste0(format_to_print2(quantile(allupfront, c(1,3)/4)),collapse='--{}')
+            , ' & ', paste0(format_to_print2(quantile(allannual*fifteen_yr_discount_weight, c(1,3)/4)),collapse='--{}')
+            , ' & ', paste0(format_to_print2(quantile(allrespdis*dc, c(1,3)/4)),collapse='--{}')
+            , ' & ', paste0(delta_lir,collapse='--{}')
+            , '\\\\ \n'
+  ))
+  
   if(s==1){
     bauallupfront = allupfront
     bauallannual = allannual
@@ -334,12 +361,12 @@ for(s in 1:nscen){ #c(1,10)){#
     
     delta_lir = sheet2[match(scennames[s],sheet2$to), 3:4]
     
-    cat(paste(scennames[s], ' & ', paste0(format_to_print2(quantile(diffallupfront, c(1,3)/4)),collapse='--{}')
-                , ' & ', paste0(format_to_print2(quantile(diffallannual, c(1,3)/4)),collapse='--{}')
-              , ' & ', paste0(format_to_print2(quantile(diffallresp, c(1,3)/4)),collapse='--{}')
-              , ' & ', paste0(delta_lir,collapse='--{}')
-              , '\\\\ \n'
-    ))
+    # cat(paste(scennames[s], ' & ', paste0(format_to_print2(quantile(diffallupfront, c(1,3)/4)),collapse='--{}')
+    #           , ' & ', paste0(format_to_print2(quantile(diffallannual, c(1,3)/4)),collapse='--{}')
+    #           , ' & ', paste0(format_to_print2(quantile(diffallresp, c(1,3)/4)),collapse='--{}')
+    #           , ' & ', paste0(delta_lir,collapse='--{}')
+    #           , '\\\\ \n'
+    # ))
     
     tosave[[1]][[scennames[s]]] <- allupfront
     tosave[[2]][[scennames[s]]] <- allannual

@@ -102,9 +102,9 @@ col14 = which(grepl('14',colnames(ildata)))
 col64 = which(grepl('64',colnames(ildata)))
 for(i in 1:nrow(ildata)){
   print(ildata$Entity[i])
-  print(sum(as.numeric(ildata[i,popcols])))
-  print(sum(as.numeric(ildata[i,popcols[popcols>col14]])))
-  print(sum(as.numeric(ildata[i,popcols[popcols>col64]])))
+  # print(sum(as.numeric(ildata[i,popcols])))
+  print(round(c(sum(as.numeric(ildata[i,popcols[popcols>col14]]))/1e6,
+          sum(as.numeric(ildata[i,popcols[popcols>col64]]))/1e6)))
 }
 
 ```
@@ -235,14 +235,14 @@ for(j in 1:length(dms)){
 }
 
 # trial durations in normal times
-old_durations = do.call(cbind,lapply(paste0('duration_',0:3),function(x)52*rawpar[[x]]))
+old_durations = do.call(cbind,lapply(paste0('duration_',0:3),function(x)rawpar[[x]]))
 
 
 timescale = list()
 for(j in 1:length(dms)){
   timescale[[j]] = matrix(0,NSAMPLES,4)
   for(i in 1:NSAMPLES) {
-    timescale[[j]][i,] = get_duration_scalar(phase_duration[j,],old_durations[i,])
+    timescale[[j]][i,] = get_duration_scalar(phase_duration[j,],52)
   }
 }
 
@@ -281,8 +281,8 @@ for(i in 1:NSAMPLES){
                                 exi = exi,
                                 inexi = inexi,
                                 inex_weight = pardf$inex_weight[i],
-                                y_durations = old_durations[i,1:3]/52, # years
-                                old_duration = old_durations[i,4], # weeks
+                                y_durations = old_durations[i,1:3], # years
+                                old_duration = old_durations[i,4]/52, # weeks
                                 discount = pardf$discount[i],
                                 n_bpsv_p1 = pardf$n_bpsv_p1[i],
                                 bpsv_res_upfront = pardf$bpsv_res_upfront[i],
