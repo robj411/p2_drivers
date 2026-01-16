@@ -128,10 +128,11 @@ get_parameters = function(nsamples = 100){
   
   
   # probability of success per phase for bpsv
-  POS_BPSV <<- matrix(sapply(paste0('pos_',0:3), function(x) pardf[[x]]), ncol=4, byrow=F)
+  # there is no POS for phase III; we assume success
+  POS_BPSV <<- matrix(sapply(paste0('pos_',0:2), function(x) pardf[[x]]), ncol=3, byrow=F)
   # probability to occur is the product of prior phases
   PTO_BPSV = POS_BPSV
-  for(i in 2:4) PTO_BPSV[,i] = apply(POS_BPSV[,1:i, drop = FALSE],1,prod)
+  for(i in 2:3) PTO_BPSV[,i] = apply(POS_BPSV[,1:i, drop = FALSE],1,prod)
   PTO_BPSV <<- PTO_BPSV
   
   # probability of success per phase for ssv
@@ -152,7 +153,7 @@ get_parameters = function(nsamples = 100){
   
   # costs of experienced and inexperienced manufacturers per phase
   EX <<- matrix(sapply(paste0('cost_',0:3,'_ex'),function(x) pardf[[x]]*pardf$inflation),ncol=4,byrow=F)
-  INEX <<- matrix(sapply(paste0('cost_',0:3,'_inex'),function(x) pardf[[x]]*pardf$inflation),ncol=4,byrow=F)
+  INEX <<- matrix(sapply(paste0('cost_',0:2,'_inex'),function(x) pardf[[x]]*pardf$inflation),ncol=3,byrow=F)
   
   
   
@@ -621,7 +622,7 @@ get_ssv_delivery_costs = function(all_ssv_delivered, cost_per_dose, discount){
 
 ## bpsv costs ########################
 
-get_bpsv_costs = function(total_bpsv, pos, pto, ex, exi, inexi, 
+get_bpsv_costs = function(total_bpsv, pos, pto, exi, inexi, 
                           inex_weight = 0.875,
                           n_bpsv_candidates = 8,
                           n_bpsv_p1 = 0,
@@ -647,7 +648,7 @@ get_bpsv_costs = function(total_bpsv, pos, pto, ex, exi, inexi,
   pto = c(1, pto)
   
   # cost per phase is a weighted sum
-  inex_costs = inex_weight * inexi + (1-inex_weight) * exi
+  inex_costs = inex_weight * inexi + (1-inex_weight) * exi[1:3]
   
   rep_year = function(cost,pto,dur) rep(cost*pto/dur,dur)
   
@@ -665,8 +666,8 @@ get_bpsv_costs = function(total_bpsv, pos, pto, ex, exi, inexi,
   bpsv_rd_costsamples_no_d = sum(bpsv_rd_costsamples_no_d_py)
   
   ## bpsv reactive r&d costs
-  bpsvresrd = n_bpsv_candidates * pto[4] * (pfixed$duration_3_resp/old_duration * exi[4] + pos[4]*cost_lic)/1e6
-  # bpsvresrd = (pfixed$duration_3_resp/old_duration * ex[4] + cost_lic)/1e6
+  # bpsvresrd = n_bpsv_candidates * pto[4] * (pfixed$duration_3_resp/old_duration * exi[4] + pos[4]*cost_lic)/1e6
+  bpsvresrd = (pfixed$duration_3_resp/old_duration * exi[4] + cost_lic)/1e6
   
   ## investigational reserve costs
   
