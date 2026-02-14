@@ -1459,12 +1459,6 @@ unitplot = rbind(prepdata,subset(datares,category!=''))
   theme(legend.position = 'right')
 
 
-  
-
-ggsave(unitcosts + labs(title=''), filename='../../cepi_results/unit.png',height=5,width=10)
-
-
-
 slot_map <- unitplot %>%
   distinct(timing, category) %>%
   group_by(timing) %>%
@@ -1493,28 +1487,28 @@ df <- unitplot %>%
     bar_w = group_width / K
   )
 
-ggplot(df) +
+unitcosts = ggplot(df) +
   theme_bw(base_size = 15) +
   geom_hline(yintercept = 0, colour = "grey") +
-  # geom_vline(xintercept = 0, colour = "grey") +
-  facet_wrap(~timing, scales = "free") +
+  facet_wrap(~timing, scales = "free", space = "free_x") +
   geom_col(aes(x = x, y = `50%`, fill = category),
            width = df$bar_w, show.legend = TRUE) +
   geom_errorbar(aes(x = x, ymin = `25%`, ymax = `75%`),
                 width = .7*df$bar_w, show.legend = FALSE) +
   scale_x_continuous(
-    breaks = sort(unique(df$type_id)),
-    labels = levels(factor(df$type))
+    breaks = sort((df$type_id)),
+    labels = df$type[match(sort((df$type_id)),df$type_id)]
   ) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 1),
         legend.position = "right") +
   labs(x = "", y = "Billion USD", fill = "") +
   scale_y_continuous(n.breaks = 9)
 
+ggsave(unitcosts + labs(title=''), filename='../../cepi_results/unit.png',height=5,width=10)
 
-df$x = df$x  + 10*sapply(df$timing,function(x)which(c('Upfront','Per year','Per pandemic')==x))
-df$type_id = df$type_id + 10*sapply(df$timing,function(x)which(c('Upfront','Per year','Per pandemic')==x))
-
+# df$x = df$x  + 10*sapply(df$timing,function(x)which(c('Upfront','Per year','Per pandemic')==x))
+# df$type_id = df$type_id + 10*sapply(df$timing,function(x)which(c('Upfront','Per year','Per pandemic')==x))
+# df$type_id[match(sort(unique(df$type_id)),df$type_id)]
 
 ```
 
