@@ -1044,7 +1044,7 @@ printmath(eqtext)
 
 as the total demand for first-schedule doses for income group $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population.
 
-We write the delivery cost for $h_{s,i,w}$ doses given in week $w$ and country type $i$ as follows. There are three cost tiers, the first of which, $V_{i; 0}$, is applied to the first 10\% of $L_i$, the second ($V_{i; 10}$) to the subsequent 20\%, and the third ($V_{i; 30}$) to all doses thereafter. The same costing schedule applies both to the first-schedule plus booster SSV doses and the BPSV rollout. 
+We write the delivery cost, $H_{s,i,w}$, for $h_{s,i,w}$ doses given in week $w$ and income level $i$ as follows. There are three cost tiers, the first of which, $V_{i; 0}$, is applied to the first 10\% of $L_i$, the second ($V_{i; 10}$) to the subsequent 20\%, and the third ($V_{i; 30}$) to all doses thereafter. The same costing schedule applies both to the first-schedule plus booster SSV doses and the BPSV rollout. 
 
 ```{r}
 eqtext = 'H_{s,i,w} = 
@@ -1750,7 +1750,7 @@ I_{E,0}  \\; & \\; s\\neq 1
 printmath(eqtext)
 ```
 
-where $I_{E,0} = `r rawpar$weeks_init_ex_nb`$ and $I_{E,1} = `r rawpar$weeks_init_ex_bp`$ are the number of weeks to initial manufacturing for existing and unreserved capacity, and $C_E = `r rawpar$weeks_scale_ex`$ is its number of weeks to scale up to full capacity.
+where $I_{E,0} = `r rawpar$weeks_init_ex_nb`$ and $I_{E,1} = `r rawpar$weeks_init_ex_bp`$ are the number of weeks to initial manufacturing for existing and unreserved capacity (i.e. manufacturing conversion for SSVs is faster in the presence of BPSVs as we assume that they are manufactured using the same platform), and $C_E = `r rawpar$weeks_scale_ex`$ is its number of weeks to scale up to full capacity.
 
 
 
