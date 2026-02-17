@@ -609,7 +609,7 @@ investigational reserve, for which fill/finish, transport and profit
 margin costs are due.
 
 $$\begin{equation}
-D_{s,y}^{\text{(BP-proc)}} = \begin{cases}
+D_{s}^{\text{(BP-proc)}} = \begin{cases}
 A_{BPSV,s}\cdot S_R +  A_4(M_f+M_t)(1+M_p)G\\; & \\; s=1 \\\\
 0  \\; & \\; s\neq 1
 \end{cases}
@@ -632,7 +632,7 @@ stops once one billion doses have been made.
 
 <!-- **These values are ballpark correct but too concentrated** -->
 
-For populations aged 15 and above, (N_i^{(15)}) for income group $i$, we
+For populations aged 15 and above, $N_i^{(15)}$ for income group $i$, we
 write
 
 ``` math
@@ -645,10 +645,11 @@ each for $\lambda = 80$% of the population.
 
 We write the delivery cost, $H_{s,i,w}$, for $h_{s,i,w}$ doses given in
 week $w$ and income level $i$ as follows. There are three cost tiers,
-the first of which, $V_{i; 0}$, is applied to the first 10% of $L_i$,
-the second ($V_{i; 11}$) to the subsequent 20%, and the third
-($V_{i; 31}$) to all doses thereafter. The same costing schedule applies
-both to the first-schedule plus booster SSV doses and the BPSV rollout.
+the first of which, $V_{i; 0}$, is applied to the first 10% of $L_i$
+(the “start up” cost); the second ($V_{i; 11}$) to the subsequent 20%
+(the “ramp up” cost); and the third ($V_{i; 31}$) to all doses
+thereafter (the “at scale” cost). The same costing schedule applies both
+to the first-schedule plus booster SSV doses and the BPSV rollout.
 
 ``` math
 H_{s,i,w} = 
@@ -844,10 +845,10 @@ w_s^{(0)} = W_{\zeta(s)}^{(S)} - 7 = \begin{cases}45 & s\in\lbrace 0, 1, 2, 3, 1
 
 ## 4.2 Production
 
-The total global manufacturing volume is $M_G=15$ billion doses. The
-amount that is reserved, in billion doses, including the HIC-specific
-reservation of $A_3=0.5$ billion doses, depends on the scenarios as
-follows:
+The maximum total global manufacturing volume per year is $M_G=15$
+billion doses. The volume that is reserved, in billion doses, including
+the HIC-specific reservation of $A_3=0.5$ billion doses, depends on the
+scenarios as follows:
 
 ``` math
 M_{R,s} = \begin{cases}A_3 & s\in\{0, 1, 4, 7, 10\} \\ 
