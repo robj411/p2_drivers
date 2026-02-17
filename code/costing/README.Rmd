@@ -867,7 +867,7 @@ This cost is used both for SSV doses manufactured using reserved capacity, and a
 
 <!-- **These values are close, but not identical, to the spreadsheet results if I adjust for the total demand** -->
 
-We denote $A_{x,s,y}$ to be the number of doses (in billions) produced from channel $x$ in year $y$ and scenario $s$, where $x\in\lbrace R,E,B \rbrace$, corresponding to reserved, existing (and unreserved), and reactively built capacity, respectively.  \(A_{x,s,y}\) comes from Equation \@ref(eq:supply). Then the total cost, in billion USD, is:
+We denote $A_{x,s,y}$ to be the number of doses (in billions) produced from channel $x$ in year $y$ and scenario $s$, where $x\in\lbrace R,E,B \rbrace$, corresponding to reserved, existing (and unreserved), and reactively built capacity, respectively.  $A_{x,s,y}$ comes from Equation \@ref(eq:supply). Then the total cost, in billion USD, is:
 
 
 ```{r}

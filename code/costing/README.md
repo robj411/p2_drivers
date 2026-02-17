@@ -554,7 +554,7 @@ capacity, and all newly manufactured BPSV doses.
 We denote $A_{x,s,y}$ to be the number of doses (in billions) produced
 from channel $x$ in year $y$ and scenario $s$, where
 $x\in\lbrace R,E,B \rbrace$, corresponding to reserved, existing (and
-unreserved), and reactively built capacity, respectively. (A\_{x,s,y})
+unreserved), and reactively built capacity, respectively. $A_{x,s,y}$
 comes from Equation (4.1). Then the total cost, in billion USD, is:
 
 $$\begin{equation}
