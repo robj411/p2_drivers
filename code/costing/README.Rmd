@@ -429,11 +429,11 @@ where:
 **These values match the spreadsheet results**
 
 
-Advanced R\&D for BPSVs consists of Phase 0 (which we use to denote preclinical R\&D), Phase I and Phase II, for which we add up costs that depend on (a) the number of candidates, (b) the cost per phase for experienced (those with licensure experience) and inexperienced developers (those without), and (c) the probability of success in each phase. The final cost therefore reflects the number of candidates that progressed through the developmental pipeline.
+Advanced R\&D for BPSVs consists of Phase 0 (which we use to denote preclinical R\&D), Phase 1 and Phase 2, for which we add up costs that depend on (a) the number of candidates, (b) the cost per phase for experienced (those with licensure experience) and inexperienced developers (those without), and (c) the probability of success in each phase. The final cost therefore reflects the number of candidates that progressed through the developmental pipeline.
 
 In order to achieve one successful BPSV candidate in the event of an outbreak, we estimate that 14 are required to enter into preclinical R\&D. At present, there are six (Table \@ref(tab:inex)). We assume that the remaining eight will come from developers without prior licensure experience.
 
-Probabilities of success for Phase 0 and Phase I are $P_0^{\text{(BPSV)}}$ and $P_1^{\text{(BPSV)}}$. The probability of phase occurrence for Phase $i$ is:
+Probabilities of success for Phase 0 and Phase 1 are $P_0^{\text{(BPSV)}}$ and $P_1^{\text{(BPSV)}}$. The probability of phase occurrence for Phase $i$ is:
 
 ```{r}
 eqtext = '\\hat{P}_i^{(0)} = \\begin{cases}1 & i=0 \\\\ 
@@ -457,15 +457,15 @@ printmath(eqtext)
 
 The cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers. Assuming that $N^{\text{(BPSV)}}-N^{\text{(BPSV-1)}}=`r rawpar$n_bpsv - rawpar$n_bpsv_p1`$ candidates start in the preclinical phase, and only one so far has experience with licensure (Table \@ref(tab:inex)), we take $\omega = `r round(rawpar$inex_weight,2)`$;
 
-<!-- $$T_{i} = (1+I)(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}).$$  -->
+<!-- $$T_{i} = (1+\pi)(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}).$$  -->
 
 ```{r}
-eqtext = 'T_{i} = (1+I)\\left(\\omega T_i^{(n)} + (1-\\omega)T_i^{(e)}\\right)'
+eqtext = 'T_{i} = (1+\\pi)\\left(\\omega T_i^{(n)} + (1-\\omega)T_i^{(e)}\\right)'
 printmath(eqtext)
 ```
 
 
-where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025. Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}}$ candidates is
+where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025. Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}}$ candidates is
 
 
 
@@ -525,7 +525,7 @@ bpsv_upfront = pardf$bpsv_res_upfront*pfixed$bpsv_inv_res/1e6 # millions
 **The annual cost annual is correct, at around 162 thousand, but the total cost is slightly too high**
 
 
-Denoting the duration of each Phase $i$ as $Y_i^{(B)}$, the time taken to complete development of the BPSV up to the end of phase II, from which point it is manufactured to be held in an investigational reserve, is:
+Denoting the duration of each Phase $i$ as $Y_i^{(B)}$, the time taken to complete development of the BPSV up to the end of Phase 2, from which point it is manufactured to be held in an investigational reserve, is:
 
 
 ```{r}
@@ -548,7 +548,9 @@ printeq(eqtext)
 
 where $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ is the size of the reserve and $A_5 =`r format_to_print2(rawpar$bpsv_res_upfront,3)`$ is the cost per dose in USD.
 
-The cost of goods supplied is $G = `r rawpar$cost_cogs`$. Then the cost of drug substance, accounting for the fill/finish cost $M_f = `r round(rawpar$cost_ff,2)`$ and the profit margin $M_p = `r round(rawpar$profit,2)`$, is $G(1-M_f)(1+M_p) = `r round(rawpar$cost_cogs*(1-rawpar$cost_ff)*(1+rawpar$profit),2)`$ USD per dose. The reserve is replenished every $Y_{rep} = `r rawpar$bpsv_replenishment`$ years. Then the annual cost to maintain the reserve of $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ doses is
+The cost of goods supplied is $G = `r rawpar$cost_cogs`$ USD per dose. Then the cost of drug substance, accounting for the fill/finish cost $M_f = `r round(rawpar$cost_ff,2)`$ and the profit margin $M_p = `r round(rawpar$profit,2)`$, is $G(1-M_f)(1+M_p) = `r round(rawpar$cost_cogs*(1-rawpar$cost_ff)*(1+rawpar$profit),2)`$ USD per dose. The reserve is replenished every $Y_{rep} = `r rawpar$bpsv_replenishment`$ years. 
+
+Then the annual cost to maintain the reserve of $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ doses is
 
 ```{r}
 eqtext = 'D_{s,y}^{\\text{(BP-inv)}} = \\begin{cases}
@@ -563,7 +565,7 @@ printeq(eqtext)
 
 where $A_1 = `r round(rawpar$cost_bpsv_res,2)`$ USD is the annual reservation cost per dose.
 
-```{r bpsvinv,fig.cap='BPSV investigational reserve costs accumulated from the completion of Phase II to year 15 with uniformly distributed discount rate.'}
+```{r bpsvinv,fig.cap='BPSV investigational reserve costs accumulated from the completion of Phase 2 to year 15 with uniformly distributed discount rate.'}
 
 
 ggplot() +
@@ -641,7 +643,7 @@ Targets:
 **This matches the spreadsheet results**
 
 
-Denote the target "days to SSV" by $\zeta$, so that $\zeta\in\lbrace 365, 200, 100 \rbrace$, which are the three variations we consider enabling activities might achieve. We assume that $Y^{(200)}=`r rawpar$years_200`$ years are required to achieve 200 days to SSV, and $Y^{(100)}=`r rawpar$years_100`$ years are required to achieve 200 days to SSV. Then annual costs, $E=700$ million, accumulate depending on the year and the mission:
+Denote the target "days to SSV" by $\zeta$, so that $\zeta\in\lbrace 365, 200, 100 \rbrace$, which are the three variations we consider enabling activities might achieve. We assume that $Y^{(200)}=`r rawpar$years_200`$ years are required to achieve 200 days to SSV, and $Y^{(100)}=`r rawpar$years_100`$ years are required to achieve 100 days to SSV. Then annual costs, $E=700$ million USD, accumulate depending on the year and the mission:
 
 ```{r}
 eqtext = 'D_{s,y}^{\\text{(en)}} = \\begin{cases}E & \\zeta(s)=200 \\;\\&\\; y\\leq Y^{(200)} \\; |\\; \\zeta(s)=100\\; \\& \\;y\\leq Y^{(100)} \\\\ 
@@ -651,7 +653,7 @@ printeq(eqtext)
 
 ```
 
-For our scenarios, we have 
+We use $\zeta(s)$ to denote the mapping from our scenario definitions to their respective $\zeta$ values as follows:
 
 
 ```{r}
@@ -728,12 +730,12 @@ Trial costs are adjusted for the duration of the trial, which depend on the R\&D
 
 
 ```{r}
-eqtext = 'T_{\\zeta,i}^{(e)} = (1+I)\\frac{W_{i;\\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}'
+eqtext = 'T_{\\zeta,i}^{(e)} = (1+\\pi)\\frac{W_{i;\\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}'
 printmath(eqtext)
 ```
 
 
-where $I = `r rawpar$inflation`$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the cost per Phase $i$ of experienced developers, $Y_{i}^{(B)}$ is the expected phase duration in years, and $W_{i;\zeta}^{(S)}$ is its expected duration in weeks given enabling investments made prior to the outbreak. 
+where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the cost per Phase $i$ of experienced developers (i.e. we assume only experienced manufacturers undertake reactive R\&D), $Y_{i}^{(B)}$ is the expected phase duration in years, and $W_{i;\zeta}^{(S)}$ is its expected duration in weeks given enabling investments made prior to the outbreak. 
 
 The probability of success of each phase comes from COVID-19 data.
 
@@ -827,11 +829,11 @@ Targets:
 
 
 
-One BPSV candidate that has passed through phases 0 to 2 prior to the outbreak goes through Phase III during the response. The duration is $W_3^{(B)}=`r rawpar$duration_3_resp`$ weeks. Thus we write the BPSV R\&D response cost
+One BPSV candidate that has passed through phases 0 to 2 prior to the outbreak goes through Phase 3 during the response. The duration is $W_3^{(B)}=`r rawpar$duration_3_resp`$ weeks. Thus we write the BPSV R\&D response cost
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-resRD)}} = \\begin{cases}\\left( (1+I)\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\\right) \\; & \\; s=1 \\\\
+eqtext = 'D_s^{\\text{(BP-resRD)}} = \\begin{cases}\\left( (1+\\pi)\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\\right) \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
 \\end{cases}
 (\\#eq:bpsvresrd)'
@@ -856,9 +858,9 @@ Target: 14 (3 5 10)
 
 ## Procurement cost calculation
 
-The cost per dose comes from the cost of goods supplied ($G = `r rawpar$cost_cogs`$) adjusted for profits ($M_p = `r rawpar$profit`$) and the transportation cost ($M_t = `r rawpar$cost_travel`$).
+The cost per dose comes from the cost of goods supplied, ($G = `r rawpar$cost_cogs`$) USD, adjusted for profits ($M_p = `r rawpar$profit`$) and the transportation cost ($M_t = `r rawpar$cost_travel`$).
 
-$S_R = G(1+M_p)(1+M_t)$ evaluates to `r round(cost_res,2)`.
+$S_R = G(1+M_p)(1+M_t)$ evaluates to `r round(cost_res,2)` USD.
 
 This cost is used both for SSV doses manufactured using reserved capacity, and all newly manufactured BPSV doses.
 
@@ -866,8 +868,7 @@ This cost is used both for SSV doses manufactured using reserved capacity, and a
 
 **These values are close, but not identical, to the spreadsheet results if I adjust for the total demand**
 
-
-We write billion doses procured from channel $x\in\lbrace R,E,B \rbrace$ in year $y$ and scenario $s$ as $A_{x,s,y}$ (see Equation \@ref(eq:supply)). Then the total cost, in billion USD, is:
+We denote $A_{x,s,y}$ to be the number of doses (in billions) produced from channel $x$ in year $y$ and scenario $s$, where \(x\in\lbrace R,E,B \rbrace\), corresponding to reserved, existing (and unreserved), and reactively built capacity, respectively.  \(A_{x,s,y}\) comes from Equation \@ref(eq:supply). Then the total cost, in billion USD, is:
 
 
 ```{r}
@@ -1000,7 +1001,7 @@ The cost of BPSV doses is the sum of new doses supplied, $A_{BPSV,s}$, at the re
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-proc)}} = \\begin{cases}
+eqtext = 'D_{s,y}^{\\text{(BP-proc)}} = \\begin{cases}
 A_{BPSV,s}\\cdot S_R +  A_4(M_f+M_t)(1+M_p)G\\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
 \\end{cases}
@@ -1034,7 +1035,7 @@ Target: 3,628 (3,062 3,568 4,165)
 
 **These values are ballpark correct but too concentrated**
 
-For populations aged 15 and above $N_i^{(15)}$, we write 
+For populations aged 15 and above, \(N_i^{(15)}\) for income group $i$, we write 
 
 
 ```{r}
@@ -1044,7 +1045,7 @@ printmath(eqtext)
 
 as the total demand for first-schedule doses for income group $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population.
 
-We write the delivery cost, $H_{s,i,w}$, for $h_{s,i,w}$ doses given in week $w$ and income level $i$ as follows. There are three cost tiers, the first of which, $V_{i; 0}$, is applied to the first 10\% of $L_i$, the second ($V_{i; 10}$) to the subsequent 20\%, and the third ($V_{i; 30}$) to all doses thereafter. The same costing schedule applies both to the first-schedule plus booster SSV doses and the BPSV rollout. 
+We write the delivery cost, $H_{s,i,w}$, for $h_{s,i,w}$ doses given in week $w$ and income level $i$ as follows. There are three cost tiers, the first of which, $V_{i; 0}$, is applied to the first 10\% of $L_i$, the second ($V_{i; 11}$) to the subsequent 20\%, and the third ($V_{i; 31}$) to all doses thereafter. The same costing schedule applies both to the first-schedule plus booster SSV doses and the BPSV rollout. 
 
 ```{r}
 eqtext = 'H_{s,i,w} = 
@@ -1318,16 +1319,16 @@ x=1
 d100d = t(sapply(years,function(x) quantile(d100[x]/(1+pardf$discount)^(x-1),c(1,3)/4)))
 d200d = t(sapply(years,function(x) quantile(d200[x]/(1+pardf$discount)^(x-1),c(1,3)/4)))
 
-df = (rbind(data.frame(years, m=cumsum(d100), apply(d100d,2,cumsum), d='100 days'), 
-      data.frame(years, m=cumsum(d200), apply(d200d,2,cumsum), d='200 days'),
-      data.frame(years, m=0, X25. = 0, X75. = 0, d='BAU')))
+df = (rbind(data.frame(years, m=cumsum(d100), apply(d100d,2,cumsum), d='100'), 
+      data.frame(years, m=cumsum(d200), apply(d200d,2,cumsum), d='200'),
+      data.frame(years, m=0, X25. = 0, X75. = 0, d='365')))
 
 rdplot = ggplot(df)  +
   geom_ribbon(aes(x=years-1,ymin=(X25.),ymax=(X75.), fill=d, group=d),alpha=0.5, colour=NA,show.legend = F) + 
   geom_line(aes(x=years-1,y=(m),colour=d)) + 
   scale_x_continuous(n.breaks = 8)+# = seq(0,to=max(years),by=3)) +
   theme_bw(base_size = 16) + 
-  labs(x='Year',y='Billion USD',colour='Target') +
+  labs(x='Year',y='Billion USD',colour='Days to SSV') +
   theme(legend.position = 'top')
 ggsave(rdplot, filename='../../cepi_results/rdplot.png')
 
@@ -1344,7 +1345,7 @@ capresplot = ggplot(df)  +
   geom_line(aes(x=years-1,y=(m),colour=d,group=d)) +
   scale_x_continuous(n.breaks = 8)+# = seq(0,to=max(years),by=3)) +
   theme_bw(base_size = 16) + 
-  labs(x='Year',y='Billion USD',colour='Capacity reservation, billion doses') +
+  labs(x='Year',y='Billion USD',colour='Total reserved capacity, billion doses') +
   theme(legend.position = 'top')
 ggsave(capresplot, filename='../../cepi_results/capresplot.png')
 
@@ -1685,7 +1686,7 @@ Table: Vaccine Production Timeline when there is no BPSV. When BPSV is also mode
 
 ## Timing
 
-Facility transition occurs $I_0=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to SSVs available in 100 days, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
+Facility transition (the reorganising of manufacturing facilities in preparation for SSV dose production) begins $I_0=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to SSVs available in 100 days, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
 
 
 ```{r}
@@ -1970,12 +1971,14 @@ ggplot(do.call(rbind,second_dose_delivery)) +
 ```
 
 
+The input to the impact model is $h_{s,i,w}^{(2)}$, i.e. doses delivered per week, per scenario, per income level. The weekly value is transformed to a daily value by dividing by 7, i.e. every day in a given week sees the same number of doses distributed. The impact model combines LIC and LMIC into a single category, LLMIC. For this, a population-weighted average is taken of $h_{s,\text{LIC},w}^{(2)}$ and $h_{s,\text{LMIC},w}^{(2)}$. The same applies to BPSV delivery.
+
 
 # BPSV delivery
 
 ## Timing
 
-The duration of the Phase III trial is $W_3^{(B)} = `r rawpar$duration_3_res`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV.
+The duration of the Phase 3 trial is $W_3^{(B)} = `r rawpar$duration_3_res`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV.
 
 
 Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+rawpar$weeks_init_res`$ and dose distribution begins in week $1+W_3^{(B)} = `r 1+rawpar$duration_3_res`$.
