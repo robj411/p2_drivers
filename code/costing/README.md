@@ -409,22 +409,27 @@ years with uniformly distributed discount rate.
 We write total response costs as
 
 ``` math
-D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s,y}^{\text{(BP-resRD)}} + D_{s,y}^{\text{(S-RD)}} + D_{s,y}^{\text{(BP-proc)}} + D_{s,y}^{\text{(S-proc)}} + D_{s,y}^{\text{(BP-del)}} + D_{s,y}^{\text{(S-del)}}\right)
+D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s}^{\text{(BP-resRD)}} + D_{s}^{\text{(S-RD)}} + D_{s}^{\text{(BP-proc)}} + D_{s,y}^{\text{(S-proc)}} + D_{s,y}^{\text{(BP-del)}} + D_{s,y}^{\text{(S-del)}}\right)
 ```
 
 where
 
-- $D_{s,y}^{\text{(BP-resRD)}}$ is the R&D cost of BPSV after an
-  outbreak; see Equation (3.2)
-- $D_{s,y}^{\text{(S-RD)}}$ is the R&D cost for SSV; see Equation (3.1)
-- $D_{s,y}^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see
-  Equation (3.4)
+- $D_{s}^{\text{(BP-resRD)}}$ is the R&D cost of BPSV after an outbreak;
+  see Equation (3.2)
+- $D_{s}^{\text{(S-RD)}}$ is the R&D cost for SSV; see Equation (3.1)
+- $D_{s}^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation
+  (3.4)
 - $D_{s,y}^{\text{(S-proc)}}$ is the cost of procuring SSV; see Equation
   (3.3)
 - $D_{s,y}^{\text{(BP-del)}}$ is the cost of delivering BPSV; see
   Equation (3.6)
 - $D_{s,y}^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation
   (3.5)
+
+We present computation for this cost with reference to the beginning of
+the outbreak. Therefore, indices $y$ in this section do not correspond
+to the same index in the previous section, where $y$ indexed years of
+investment pre-pandemic.
 
 ## 3.1 Risk-adjusted R&D cost per candidate calculation
 
@@ -442,9 +447,9 @@ T_{\zeta,i}^{(e)} = (1+\pi)\frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}
 where $\pi = 0.28$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the
 cost per Phase $i$ of experienced developers (i.e. we assume only
 experienced manufacturers undertake reactive R&D), $Y_{i}^{(B)}$ is the
-expected phase duration in years, and $W_{i;\zeta}^{(S)}$ is its
-expected duration in weeks given enabling investments made prior to the
-outbreak.
+usual phase duration in normal times in years, and $W_{i;\zeta}^{(S)}$
+is its expected duration in weeks given enabling investments made prior
+to the outbreak.
 
 The probability of success of each phase comes from COVID-19 data.
 
@@ -533,8 +538,8 @@ D_s^{\text{(BP-resRD)}} = \begin{cases}\left( (1+\pi)\frac{W_3^{(B)}}{52Y_3^{(B)
 
 ## 3.2 Procurement cost calculation
 
-The cost per dose comes from the cost of goods supplied, ($G = 4.68$)
-USD, adjusted for profits ($M_p = 0.2$) and the transportation cost
+The cost per dose comes from the cost of goods supplied, $G = 4.68$ USD,
+adjusted for profits ($M_p = 0.2$) and the transportation cost
 ($M_t = 0.12$).
 
 $S_R = G(1+M_p)(1+M_t)$ evaluates to 6.29 USD.
@@ -547,10 +552,10 @@ capacity, and all newly manufactured BPSV doses.
 <!-- **These values are close, but not identical, to the spreadsheet results if I adjust for the total demand** -->
 
 We denote $A_{x,s,y}$ to be the number of doses (in billions) produced
-from channel $x$ in year $y$ and scenario $s$, where (xR,E,B ),
-corresponding to reserved, existing (and unreserved), and reactively
-built capacity, respectively. (A\_{x,s,y}) comes from Equation (4.1).
-Then the total cost, in billion USD, is:
+from channel $x$ in year $y$ and scenario $s$, where
+$x\in\lbrace R,E,B \rbrace$, corresponding to reserved, existing (and
+unreserved), and reactively built capacity, respectively. (A\_{x,s,y})
+comes from Equation (4.1). Then the total cost, in billion USD, is:
 
 $$\begin{equation}
 D_{s,y}^{\text{(S-proc)}} = A_{R,s,y} S_R  + \sum_{x\in\lbrace E,B \rbrace}  A_{x,s,y} S_U

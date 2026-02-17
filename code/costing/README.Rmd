@@ -705,20 +705,20 @@ We write total response costs as
 
 
 ```{r}
-eqtext = 'D_{s,y}^{\\text{(res)}} = \\frac{1}{(1+r)^y}\\left(D_{s,y}^{\\text{(BP-resRD)}} + D_{s,y}^{\\text{(S-RD)}} + D_{s,y}^{\\text{(BP-proc)}} + D_{s,y}^{\\text{(S-proc)}} + D_{s,y}^{\\text{(BP-del)}} + D_{s,y}^{\\text{(S-del)}}\\right)'
+eqtext = 'D_{s,y}^{\\text{(res)}} = \\frac{1}{(1+r)^y}\\left(D_{s}^{\\text{(BP-resRD)}} + D_{s}^{\\text{(S-RD)}} + D_{s}^{\\text{(BP-proc)}} + D_{s,y}^{\\text{(S-proc)}} + D_{s,y}^{\\text{(BP-del)}} + D_{s,y}^{\\text{(S-del)}}\\right)'
 printmath(eqtext)
 ```
 
 where
 
-- $D_{s,y}^{\text{(BP-resRD)}}$ is the R\&D cost of BPSV after an outbreak; see Equation \@ref(eq:bpsvresrd)
-- $D_{s,y}^{\text{(S-RD)}}$ is the R\&D cost for SSV; see Equation \@ref(eq:ssvrd)
-- $D_{s,y}^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation \@ref(eq:bpsvproc)
+- $D_{s}^{\text{(BP-resRD)}}$ is the R\&D cost of BPSV after an outbreak; see Equation \@ref(eq:bpsvresrd)
+- $D_{s}^{\text{(S-RD)}}$ is the R\&D cost for SSV; see Equation \@ref(eq:ssvrd)
+- $D_{s}^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation \@ref(eq:bpsvproc)
 - $D_{s,y}^{\text{(S-proc)}}$ is the cost of procuring SSV; see Equation \@ref(eq:ssvproc)
 - $D_{s,y}^{\text{(BP-del)}}$ is the cost of delivering BPSV; see Equation \@ref(eq:bspvdel)
 - $D_{s,y}^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation \@ref(eq:ssvdel)
 
-
+We present computation for this cost with reference to the beginning of the outbreak. Therefore, indices $y$ in this section do not correspond to the same index in the previous section, where $y$ indexed years of investment pre-pandemic.
 
 
 
@@ -739,7 +739,7 @@ printmath(eqtext)
 ```
 
 
-where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the cost per Phase $i$ of experienced developers (i.e. we assume only experienced manufacturers undertake reactive R\&D), $Y_{i}^{(B)}$ is the expected phase duration in years, and $W_{i;\zeta}^{(S)}$ is its expected duration in weeks given enabling investments made prior to the outbreak. 
+where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the cost per Phase $i$ of experienced developers (i.e. we assume only experienced manufacturers undertake reactive R\&D), $Y_{i}^{(B)}$ is the usual phase duration in normal times in years, and $W_{i;\zeta}^{(S)}$ is its expected duration in weeks given enabling investments made prior to the outbreak. 
 
 The probability of success of each phase comes from COVID-19 data.
 
@@ -857,7 +857,7 @@ ggplot() + geom_histogram(aes(bpsvresrd)) +
 
 ## Procurement cost calculation
 
-The cost per dose comes from the cost of goods supplied, ($G = `r rawpar$cost_cogs`$) USD, adjusted for profits ($M_p = `r rawpar$profit`$) and the transportation cost ($M_t = `r rawpar$cost_travel`$).
+The cost per dose comes from the cost of goods supplied, $G = `r rawpar$cost_cogs`$ USD, adjusted for profits ($M_p = `r rawpar$profit`$) and the transportation cost ($M_t = `r rawpar$cost_travel`$).
 
 $S_R = G(1+M_p)(1+M_t)$ evaluates to `r round(cost_res,2)` USD.
 
@@ -867,7 +867,7 @@ This cost is used both for SSV doses manufactured using reserved capacity, and a
 
 <!-- **These values are close, but not identical, to the spreadsheet results if I adjust for the total demand** -->
 
-We denote $A_{x,s,y}$ to be the number of doses (in billions) produced from channel $x$ in year $y$ and scenario $s$, where \(x\in\lbrace R,E,B \rbrace\), corresponding to reserved, existing (and unreserved), and reactively built capacity, respectively.  \(A_{x,s,y}\) comes from Equation \@ref(eq:supply). Then the total cost, in billion USD, is:
+We denote $A_{x,s,y}$ to be the number of doses (in billions) produced from channel $x$ in year $y$ and scenario $s$, where $x\in\lbrace R,E,B \rbrace$, corresponding to reserved, existing (and unreserved), and reactively built capacity, respectively.  \(A_{x,s,y}\) comes from Equation \@ref(eq:supply). Then the total cost, in billion USD, is:
 
 
 ```{r}
