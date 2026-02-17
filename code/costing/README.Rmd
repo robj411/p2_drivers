@@ -140,7 +140,7 @@ cat(pander(capscopy,caption=lg, missing = ""))
 
 ## parameter samples  ######################################################
 
-plist <- get_parameters(nsamples=1000)
+plist <- get_parameters(nsamples=10000)
 
 params <- plist[[2]]
 rawpar <- plist[[1]]
@@ -323,21 +323,21 @@ for(x in 1:length(dms)){
   # ssv_phase_pto[[x]] = matrix(0,NSAMPLES,5)
   ssv_rd_costsamples[[x]] = rep(0,NSAMPLES)
   for(i in 1:NSAMPLES){
-    ex = EX[i,]
+    exi = EX[i,]
     cost_lic = pardf$cost_lic[i]
     n_ssv_successes = pardf$n_ssv_successes[i]
     q_ssv_successes = pardf$q_ssv_successes[i]
     randd_costs = get_ssv_randd_costs(timescale = timescale[[x]][i,],
                                       pos = POS_SSV[i,],
+                                      pto = PTO_SSV[i,],
                                       exi = exi,
                                       n_ssv_successes = n_ssv_successes,
                                       q_ssv_successes = q_ssv_successes,
                                       cost_lic = cost_lic)
-    # ssv_phase_pto[[x]][i,] = randd_costs[['ssv_phase_pto']]
-    ssv_rd_costsamples[[x]][i] = randd_costs #[['ssv_rd_costsamples']]
+    ssv_rd_costsamples[[x]][i] = randd_costs
   }
 }
-
+# summary(ssv_rd_costsamples[[1]])
 
 ```
 
@@ -426,7 +426,7 @@ where:
 
 ## BPSV advanced R\&D
 
-**These values match the spreadsheet results**
+<!-- **These values match the spreadsheet results** -->
 
 
 Advanced R\&D for BPSVs consists of Phase 0 (which we use to denote preclinical R\&D), Phase 1 and Phase 2, for which we add up costs that depend on (a) the number of candidates, (b) the cost per phase for experienced (those with licensure experience) and inexperienced developers (those without), and (c) the probability of success in each phase. The final cost therefore reflects the number of candidates that progressed through the developmental pipeline.
@@ -497,7 +497,7 @@ Table: (\#tab:inex) Manufacturers working on BPSV and whether or not they have l
  
  
  
-```{r posbpsv,fig.cap='Risk-adjusted R&D cost for 8 BPSV candidates'}
+```{r posbpsv,fig.cap='Risk-adjusted R&D cost for 14 BPSV candidates'}
 
 
 ggplot() + geom_histogram(aes(bpsv_rd_costsamples_dyd)) +
@@ -505,11 +505,11 @@ ggplot() + geom_histogram(aes(bpsv_rd_costsamples_dyd)) +
   labs(x='Billion USD',y='',title='')
 
 
-print(round(summary(bpsv_rd_costsamples_dyd),2))
+# print(round(summary(bpsv_rd_costsamples_dyd),2))
 
 ```
 
-Target: 146 (103 135 177)
+<!-- Target: 146 (103 135 177) -->
 
 
 
@@ -522,7 +522,7 @@ bpsv_upfront = pardf$bpsv_res_upfront*pfixed$bpsv_inv_res/1e6 # millions
 
 ```
 
-**The annual cost annual is correct, at around 162 thousand, but the total cost is slightly too high**
+<!-- **The annual cost annual is correct, at around 162 thousand, but the total cost is slightly too high** -->
 
 
 Denoting the duration of each Phase $i$ as $Y_i^{(B)}$, the time taken to complete development of the BPSV up to the end of Phase 2, from which point it is manufactured to be held in an investigational reserve, is:
@@ -574,15 +574,15 @@ ggplot() +
   labs(x='Cost up to year 15, million USD',y='')
 
 
-print(round(summary(inv_cost*1e3),2))
+# print(round(summary(inv_cost*1e3),2))
 
 ```
 
-Target: 1 (0.9 1 1.1)
+<!-- Target: 1 (0.9 1 1.1) -->
 
 ## SSV capacity reservation
 
-**This matches the spreadsheet results.**
+<!-- **This matches the spreadsheet results.** -->
 
 
 The cost per dose reservation per year is $A_2 = `r round(rawpar$cost_capres,2)`$ USD. Reservation sizes, in billions, depend on scenarios, including the $A_3 = `r rawpar$hic_cap_res`$ billion doses reserved for HIC, as follows:
@@ -618,29 +618,29 @@ ggplot(capres_costs) +
   labs(x='Capacity reservation, billion doses',y='Cost, billion USD')
 
 
-for(i in unique(capres_costs$V2)){
-  subs = subset(capres_costs,i==V2)
-  cat(i)
-  cat('\n')
-  print(round(summary(subs$V1),2))
-  cat('\n')
-}
+# for(i in unique(capres_costs$V2)){
+#   subs = subset(capres_costs,i==V2)
+#   cat(i)
+#   cat('\n')
+#   print(round(summary(subs$V1),2))
+#   cat('\n')
+# }
 
 ```
 
-Targets: 
-3,086	(2,897 3,074 3,269)
+<!-- Targets:  -->
+<!-- 3,086	(2,897 3,074 3,269) -->
 
-7,407	(6,954 7,378 7,845)	
+<!-- 7,407	(6,954 7,378 7,845)	 -->
 
-15,431	(14,487	15,370	16,344)
+<!-- 15,431	(14,487	15,370	16,344) -->
 		
 
 
 
 ## Enabling activities
 
-**This matches the spreadsheet results**
+<!-- **This matches the spreadsheet results** -->
 
 
 Denote the target "days to SSV" by $\zeta$, so that $\zeta\in\lbrace 365, 200, 100 \rbrace$, which are the three variations we consider enabling activities might achieve. We assume that $Y^{(200)}=`r rawpar$years_200`$ years are required to achieve 200 days to SSV, and $Y^{(100)}=`r rawpar$years_100`$ years are required to achieve 100 days to SSV. Then annual costs, $E=700$ million USD, accumulate depending on the year and the mission:
@@ -675,22 +675,22 @@ ggplot(enabling_costs) +
   theme_bw(base_size = 15) +
   labs(x='Days Mission',y='Cost, billion USD')
 
-for(i in unique(enabling_costs$V1)){
-  subs = subset(enabling_costs,i==V1)
-  cat(i)
-  cat('\n')
-  print(round(summary(subs$V2/1e3),2))
-  cat('\n')
-}
+# for(i in unique(enabling_costs$V1)){
+#   subs = subset(enabling_costs,i==V1)
+#   cat(i)
+#   cat('\n')
+#   print(round(summary(subs$V2/1e3),2))
+#   cat('\n')
+# }
 
 
 ```
 
-Targets:
+<!-- Targets: -->
 
-3,242	(3,182 3,241 3,302)
+<!-- 3,242	(3,182 3,241 3,302) -->
 
-8,126 (7,629 8,094 8,607)
+<!-- 8,126 (7,629 8,094 8,607) -->
 
 
 # Response cost equation 
@@ -723,7 +723,7 @@ where
 
 ### SSV
 
-**These don't match the spreadsheet results. Values too low.**
+<!-- **These don't match the spreadsheet results. Values too low.** -->
 
 Trial costs are adjusted for the duration of the trial, which depend on the R\&D investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$: 
 
@@ -783,15 +783,10 @@ printmath(eqtext)
 
 is chosen to secure at least $n^{\text{(SSV)}} = `r rawpar$n_ssv_successes`$ successful candidates with probability $Q^{\text{(SSV)}} = `r 100*rawpar$q_ssv_successes`$%. Here, $F^{-1}_{NegBin}\left(q; n,  p \right)$ is the cumulative density of a negative binomial distribution with parameters $n$ and $p$ evaluated at quantile $q$.
 
-```{r posssv,fig.cap='Risk-adjusted R&D cost for 18 SSV candidates'}
+```{r posssv,fig.cap='Risk-adjusted R&D cost to secure at least five successful SSV candidates'}
 
 # prep for plot
 ssv_rd_costsamples_lab = lapply( 1:length(ssv_rd_costsamples), function(x) cbind( ssv_rd_costsamples[[x]], paste0(dms[x], ' Days Mission')) )
-
-n_ssv_successes = pardf$n_ssv_successes
-q_ssv_successes = pardf$q_ssv_successes
-
-n_ssv_candidates = n_ssv_successes + qnbinom(q_ssv_successes,size = n_ssv_successes, prob = PTO_SSV[,4])
 
 ssv_rd_plot <- as.data.frame(do.call(rbind,ssv_rd_costsamples_lab))
 colnames(ssv_rd_plot) = c('Cost','Investment')
@@ -802,29 +797,29 @@ ggplot(ssv_rd_plot) + geom_histogram(aes(Cost/1e3)) +
   labs(x='Billion USD',y='',title='')
 
 
-pander(as.data.frame(cbind(DM=dms,do.call(rbind,lapply(unique(ssv_rd_plot$Investment), function(i){
-  subs = subset(ssv_rd_plot, Investment==i)
-  round(summary(subs$Cost*at_yr_15))
-}
-)))))
+# pander(as.data.frame(cbind(DM=dms,do.call(rbind,lapply(unique(ssv_rd_plot$Investment), function(i){
+#   subs = subset(ssv_rd_plot, Investment==i)
+#   round(summary(subs$Cost))
+# }
+# )))))
 
 ```
 
 
-Targets:
+<!-- Targets: -->
 
-284 (105 170 283)
+<!-- 284 (105 170 283) -->
 
-195 (61 97 164)
+<!-- 195 (61 97 164) -->
 
-118 (35 61 108)
+<!-- 118 (35 61 108) -->
 
 
 
 
 ### BPSV
 
-**This is a little higher than the spreadsheet results**
+<!-- **This is a little higher than the spreadsheet results** -->
 
 
 
@@ -848,11 +843,11 @@ ggplot() + geom_histogram(aes(bpsvresrd)) +
   theme_bw(base_size=15) +
   labs(x='Cost, million USD',y='',title='')
 
-print(round(summary(bpsvresrd*at_yr_15),1))
+# print(round(summary(bpsvresrd*at_yr_15),1))
 
 ```
 
-Target: 14 (3 5 10)
+<!-- Target: 14 (3 5 10) -->
 
 
 
@@ -866,7 +861,7 @@ This cost is used both for SSV doses manufactured using reserved capacity, and a
 
 ### SSV
 
-**These values are close, but not identical, to the spreadsheet results if I adjust for the total demand**
+<!-- **These values are close, but not identical, to the spreadsheet results if I adjust for the total demand** -->
 
 We denote $A_{x,s,y}$ to be the number of doses (in billions) produced from channel $x$ in year $y$ and scenario $s$, where \(x\in\lbrace R,E,B \rbrace\), corresponding to reserved, existing (and unreserved), and reactively built capacity, respectively.  \(A_{x,s,y}\) comes from Equation \@ref(eq:supply). Then the total cost, in billion USD, is:
 
@@ -968,7 +963,7 @@ ggplot(cpymelt) +
   labs(x='Year',y='Procurement cost, billion USD')
 
 
-pander(as.data.frame(cbind(Scenario=scennames,do.call(rbind,lapply(cost_per_year, function(x)round(summary(20.884/2/(sum(DEMAND15)/1e9)*rowSums(sapply(1:NYEARS,function(y) as.numeric(x[y])/(1+rawpar$discount)^c(15+y))))))))),caption = 'Costs summed and discounted from year 16 to year 20, million USD')
+# pander(as.data.frame(cbind(Scenario=scennames,do.call(rbind,lapply(cost_per_year, function(x)round(summary(20.884/2/(sum(DEMAND15)/1e9)*rowSums(sapply(1:NYEARS,function(y) as.numeric(x[y])/(1+rawpar$discount)^c(15+y))))))))),caption = 'Costs summed and discounted from year 16 to year 20, million USD')
 
 
 
@@ -977,25 +972,25 @@ pander(as.data.frame(cbind(Scenario=scennames,do.call(rbind,lapply(cost_per_year
 
 
 
-Targets:
+<!-- Targets: -->
 
-184,127	(	151,271	180,171	214,966	)
-187,255	(	154,376	183,358	218,147	)
-167,519	(	137,713	163,938	195,495	)
-135,910	(	111,925	133,050	158,444	)
-189,820	(	157,000	185,976	220,684	)
-169,549	(	140,293	166,133	197,067	)
-141,440	(	117,134	138,613	164,309	)
-189,878	(	157,295	186,091	220,526	)
-168,378	(	139,564	165,035	195,494	)
-137,984	(	114,513	135,278	160,078	)
-178,766	(	146,883	174,927	208,686	)
+<!-- 184,127	(	151,271	180,171	214,966	) -->
+<!-- 187,255	(	154,376	183,358	218,147	) -->
+<!-- 167,519	(	137,713	163,938	195,495	) -->
+<!-- 135,910	(	111,925	133,050	158,444	) -->
+<!-- 189,820	(	157,000	185,976	220,684	) -->
+<!-- 169,549	(	140,293	166,133	197,067	) -->
+<!-- 141,440	(	117,134	138,613	164,309	) -->
+<!-- 189,878	(	157,295	186,091	220,526	) -->
+<!-- 168,378	(	139,564	165,035	195,494	) -->
+<!-- 137,984	(	114,513	135,278	160,078	) -->
+<!-- 178,766	(	146,883	174,927	208,686	) -->
 
 
 
 ### BPSV
 
-**This is pretty close**
+<!-- **This is pretty close** -->
 
 The cost of BPSV doses is the sum of new doses supplied, $A_{BPSV,s}$, at the reserved-capacity cost per dose, and the doses held in the investigational reserve, for which fill/finish, transport and profit margin costs are due.
 
@@ -1019,13 +1014,13 @@ In our model, 1.0625 billion doses are manufactured, as manufacturing stops once
 
 ```{r}
 
-print(round(summary(bpsvproc*at_yr_15),2))
+# print(round(summary(bpsvproc*at_yr_15),2))
 
 
 ```
 
 
-Target: 3,628 (3,062 3,568 4,165)
+<!-- Target: 3,628 (3,062 3,568 4,165) -->
 
 
 ## Delivery Cost Equation
@@ -1033,7 +1028,7 @@ Target: 3,628 (3,062 3,568 4,165)
 
 ### SSV
 
-**These values are ballpark correct but too concentrated**
+<!-- **These values are ballpark correct but too concentrated** -->
 
 For populations aged 15 and above, \(N_i^{(15)}\) for income group $i$, we write 
 
@@ -1124,25 +1119,25 @@ ggplot(reshape2::melt(ssv_delivery_costs)) +
   theme_bw(base_size=15) +
   labs(x='',y='SSV delivery cost, billion USD')
 
-print(t(summary(ssv_delivery_costs*at_yr_15)))
+# print(t(summary(ssv_delivery_costs*at_yr_15)))
 
 ```
 
-Targets:
+<!-- Targets: -->
 
-114,526	(	90,654	110,005	134,444	)
-114,771	(	91,321	111,130	134,341	)
-114,769	(	91,620	110,604	133,752	)
-114,811	(	91,647	110,815	133,856	)
-114,527	(	91,170	110,664	133,720	)
-114,615	(	91,074	110,653	133,836	)
-115,095	(	91,858	111,205	134,355	)
-115,634	(	92,514	111,639	134,375	)
-116,385	(	93,116	112,183	135,664	)
-117,196	(	93,427	113,114	136,861	)
-116,913	(	93,536	112,957	136,414	)
-118,141	(	94,682	114,649	137,100	)
-113,540	(	89,745	109,012	132,595	)
+<!-- 114,526	(	90,654	110,005	134,444	) -->
+<!-- 114,771	(	91,321	111,130	134,341	) -->
+<!-- 114,769	(	91,620	110,604	133,752	) -->
+<!-- 114,811	(	91,647	110,815	133,856	) -->
+<!-- 114,527	(	91,170	110,664	133,720	) -->
+<!-- 114,615	(	91,074	110,653	133,836	) -->
+<!-- 115,095	(	91,858	111,205	134,355	) -->
+<!-- 115,634	(	92,514	111,639	134,375	) -->
+<!-- 116,385	(	93,116	112,183	135,664	) -->
+<!-- 117,196	(	93,427	113,114	136,861	) -->
+<!-- 116,913	(	93,536	112,957	136,414	) -->
+<!-- 118,141	(	94,682	114,649	137,100	) -->
+<!-- 113,540	(	89,745	109,012	132,595	) -->
 
 
 
@@ -1151,7 +1146,7 @@ Targets:
 
 ### BPSV
 
-**These values match the spreadsheet results. (NB: more doses are purchased and delivered than there are eligible people in the population)**
+<!-- **These values match the spreadsheet results. (NB: more doses are purchased and delivered than there are eligible people in the population)** -->
 
 
 For the BPSV, which goes only to people aged 65 or older, with populations $N_i^{(65)}$, coverage is reached earlier in the process, so the cost is weighted more heavily towards start up and ramp up:
@@ -1185,7 +1180,7 @@ The logic of this is as follows:
 - The increments in cost correspond to numbers of eligible people in the whole population, namely those aged 15 and above.
 - If the number of people eligible for the BPSV is less than 10\% of the population aged 15 and over, then all doses cost the "start up" amount.
 - If the number of people eligible for the BPSV is more than 10\% and less than 30\% of the 15+ population, then cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. All remaining doses cost the "ramp up" amount.
-- If the number of people eligible for the BPSV is more than 30\% of the 15+ population, then the cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. The cost of the second tranche of doses, a number equal to 20\% of the 15+ population, is the "ramp up" amount. All remaining doses cost the "getting to scale" amount.
+- If the number of people eligible for the BPSV is more than 30\% of the 15+ population, then the cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. The cost of the second tranche of doses, a number equal to 20\% of the 15+ population, is the "ramp up" amount. All remaining doses cost the "at scale" amount.
 
 
 ```{r bpsvdeliverycost,fig.cap="BPSV delivery cost"}
@@ -1204,12 +1199,12 @@ ggplot() + geom_histogram(aes(x=bpsv_del_cost/1e3)) +
   theme_bw(base_size = 15) +
   labs(x='BPSV delivery cost, billion USD',y='')
 
-print(round(summary(bpsv_del_cost*at_yr_15),2))
+# print(round(summary(bpsv_del_cost*at_yr_15),2))
   
 ```
 
 
-Target: 11,206 (9,037 10,865 13,054)
+<!-- Target: 11,206 (9,037 10,865 13,054) -->
 
 
 
@@ -1447,7 +1442,7 @@ datares$type = factor(datares$type,levels=types,labels=types)
 datares$category = factor(datares$category,levels=c('R&D','Manufacturing','Delivery'))
 unitplot = rbind(prepdata,subset(datares,category!=''))
 
-# unitcosts = 
+unitcosts =
   ggplot(unitplot) + theme_bw(base_size = 15) +
   geom_hline(yintercept=0,colour='grey') +
   geom_vline(xintercept=0,colour='grey') +
@@ -1914,7 +1909,7 @@ ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
 
 ## Delivery
 
-**These values do not look correct**
+<!-- **These values do not look correct** -->
 
 
 Delivery is written as $h_{s,i,w}^{(j)}$ doses delivered in scenario $s$, income group $i$ and week $w$ for schedule $j$, which is $j=1$ for first-dose SSV, $j=2$ for second-dose SSV, and $j=2+k$ for $k=\lbrace 1,...,N^{(boost)}\rbrace$.
@@ -1999,7 +1994,7 @@ printmath(eqtext)
 
 
 
-```{r bpsvsupply, fig.cap='BPSV doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen.'}
+```{r bpsvsupply, fig.cap='BPSV doses made available from manufacturing. Weeks are in reference to the sequencing of the pathogen.'}
 
 ggplot(b_supply) + 
   geom_line(aes(x=as.numeric(week),y=as.numeric(doses))) +
@@ -2027,7 +2022,7 @@ ggplot(reshape2::melt(b_alloc,id.vars=c('Week'))) +
 
 ## Delivery
 
-**These values do not look correct**
+<!-- **These values do not look correct** -->
 
 
 ```{r bpsvdeliveryplot,fig.cap='BPSV vaccine coverage by country income level'}
