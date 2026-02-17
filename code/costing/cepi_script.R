@@ -97,6 +97,16 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
   alloc = alloc_and_del[['alloc']]
   second_dose_delivery = alloc_and_del[['second_dose_delivery']]
   all_dose_delivery <<- alloc_and_del[['all_dose_delivery']]
+  
+  # alloc is cumulative. all dose delivery is cumulative.
+  maxhoard = c()
+  for(i in 1:length(INCOMELEVELS)){
+    dosesin = alloc[,i]
+    dosesout = all_dose_delivery[,i]
+    stopweek = which(dosesout == max(dosesout))[1]
+    maxhoard[i] = max(dosesin[1:stopweek] - dosesout[1:stopweek])
+  }
+  
   second_dose_delivery$il = factor(second_dose_delivery$il, levels=INCOMELEVELS)
   second_dose_delivery = reshape2::dcast(second_dose_delivery,formula=Week~il,value.var='doses')
   
@@ -234,7 +244,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
                    capres_costs_per_year, inv_cost_per_year,
                    ssv_rd_costsamples,ssv_proccost_discounted,ssv_proccost_undiscounted,
                    dis_ssv_delivery_costs,ssv_delivery_costs,
-                   bpsvresrd,bpsvproc,bpsv_del_cost)
+                   bpsvresrd,bpsvproc,bpsv_del_cost,
+                   maxhoard)
     outvec
   } -> x
   xmat = matrix(x, nrow=NSAMPLES, byrow=F)
@@ -245,7 +256,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
                       'capres_costs_per_year', 'inv_cost_per_year',
                       'ssv_rd_costsamples','ssv_proccost_discounted','ssv_proccost_undiscounted',
                       'dis_ssv_delivery_costs','ssv_delivery_costs',
-                      'bpsvresrd','bpsvproc','bpsv_del_cost')
+                      'bpsvresrd','bpsvproc','bpsv_del_cost',
+                      'maxhoard')
   for(i in names(outcosts)) assign(i, outcosts[[i]])
   
   ## return
@@ -266,7 +278,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
                                       bpsv_delivery=bpsv_del_cost)),
               delivery=list(bpsv=combine_llmic(POPS0[4], POPS0[3], bpsv_dose_delivery),
                             ssv=combine_llmic(POPS0[4], POPS0[3], second_dose_delivery),
-                            ssv4=second_dose_delivery)))
+                            ssv4=second_dose_delivery,
+                            maxhoard=maxhoard)))
 }
   
 decimalplaces <- function(x) {
@@ -294,7 +307,6 @@ for(i in 1:3) tosave[[i]] <- list()
 sheet2 = read.csv('../../cepi_results/Delta_LIR_IQR_pc_GDP_BAU.csv',check.names = F)
 fifteen_yr_discount_weight = sapply(1:NSAMPLES, function(x) accumulate(discount = pardf$discount[x], from = 1, to = pardf$years_100[x]))
 
-s=11
 for(s in 1:nscen){ #c(1,10)){# 
   
   dm = scenario_df$DM[s]
@@ -338,12 +350,14 @@ for(s in 1:nscen){ #c(1,10)){#
   summary(round(thisscen$costs$response$ssv_proc_discounted*dc))
   summary(round(thisscen$costs$response$ssv_delivery_discounted*dc))
   
-  cat(paste(scennames[s], ' & ', paste0(format_to_print2(quantile(allupfront, c(1,3)/4)),collapse='--{}')
-            , ' & ', paste0(format_to_print2(quantile(allannual*fifteen_yr_discount_weight, c(1,3)/4)),collapse='--{}')
-            , ' & ', paste0(format_to_print2(quantile(allrespdis*dc, c(1,3)/4)),collapse='--{}')
-            , ' & ', paste0(delta_lir,collapse='--{}')
-            , '\\\\ \n'
-  ))
+  # cat(paste(scennames[s], ' & ', paste0(format_to_print2(quantile(allupfront, c(1,3)/4)),collapse='--{}')
+  #           , ' & ', paste0(format_to_print2(quantile(allannual*fifteen_yr_discount_weight, c(1,3)/4)),collapse='--{}')
+  #           , ' & ', paste0(format_to_print2(quantile(allrespdis*dc, c(1,3)/4)),collapse='--{}')
+  #           , ' & ', paste0(delta_lir,collapse='--{}')
+  #           , '\\\\ \n'
+  # ))
+  
+  cat(paste(scennames[s], ' & ', round(thisscen$delivery$maxhoard[1]*1e3), '\\\\ \n'))
   
   if(s==1){
     bauallupfront = allupfront
