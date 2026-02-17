@@ -152,7 +152,7 @@ We can write the total preparedness cost for scenario $s$ in year $y$,
 with discount rate $r$, as
 
 ``` math
-D_y^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^{\text{(BP-sec)}} + D_{s,y}^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + D_{s,y}^{\text{(en)}}\right)
+D_{s,y}^{\text{(prep)}} = \frac{1}{(1+r)^y}\left(D_s^{\text{(BP-adRD)}} + D_{s,y}^{\text{(BP-sec)}} + D_{s,y}^{\text{(BP-inv)}} + D_s^{\text{(S-cap)}} + D_{s,y}^{\text{(en)}}\right)
 ```
 
 where:
@@ -167,6 +167,9 @@ where:
   Equation (2.4)
 - $D_{s,y}^{\\text{(en)}}$ is the annual cost of enabling activities;
   see Equation (2.5).
+
+We use $s=0$ to denote the business as usual (BAU) scenario, and $s=1$
+for scenario S01, $s=2$ for scenario S02, and so on.
 
 ## 2.1 BPSV advanced R&D
 
@@ -229,16 +232,17 @@ D_s^{\text{(BP-adRD)}} = \begin{cases}
 \qquad(2.1)
 \end{equation}$$
 
-| Developer | Licensure Experience |
-|:----------|:---------------------|
-| CalTech   | No                   |
-| SK Bio    | Yes                  |
-| Codiak    | No                   |
-| Panacea   | No                   |
-| NEC Onco  | No                   |
-| Intravacc | No                   |
-| VIDO      | No                   |
-| IVI       | No                   |
+| Developer | Licensure Experience | Current phase |
+|:----------|:---------------------|:--------------|
+| CalTech   | No                   | Preclinical   |
+| SK Bio    | Yes                  | Preclinical   |
+| Codiak    | No                   | Preclinical   |
+| Panacea   | No                   | Preclinical   |
+| NEC Onco  | No                   | Preclinical   |
+| Intravacc | No                   | Preclinical   |
+| VIDO      | No                   | Preclinical   |
+| IVI       | No                   | Preclinical   |
+| VBI       | Yes                  | Phase 1       |
 
 <span id="tab:inex"></span>Table 2.1: Manufacturers working on BPSV and
 whether or not they have licensure experience

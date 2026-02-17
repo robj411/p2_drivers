@@ -411,7 +411,7 @@ We can write the total preparedness cost for scenario $s$ in year $y$, with disc
 
 
 ```{r}
-eqtext = 'D_y^{\\text{(prep)}} = \\frac{1}{(1+r)^y}\\left(D_s^{\\text{(BP-adRD)}} + D_{s,y}^{\\text{(BP-sec)}} + D_{s,y}^{\\text{(BP-inv)}} + D_s^{\\text{(S-cap)}} + D_{s,y}^{\\text{(en)}}\\right)'
+eqtext = 'D_{s,y}^{\\text{(prep)}} = \\frac{1}{(1+r)^y}\\left(D_s^{\\text{(BP-adRD)}} + D_{s,y}^{\\text{(BP-sec)}} + D_{s,y}^{\\text{(BP-inv)}} + D_s^{\\text{(S-cap)}} + D_{s,y}^{\\text{(en)}}\\right)'
 printmath(eqtext)
 ```
 
@@ -422,6 +422,8 @@ where:
 - $D_{s,y}^{\text{(BP-inv)}}$ is the annual cost of maintaining an investigational reserve of 100,000 BPSV doses; see Equation \@ref(eq:bpsvinv)
 - $D_s^{\text{(S-cap)}}$ is the cost of reserved capacity for SSV; see Equation \@ref(eq:ssvcap)
 - $D_{s,y}^{\\text{(en)}}$ is the annual cost of enabling activities; see Equation \@ref(eq:enable).
+
+We use $s=0$ to denote the business as usual (BAU) scenario, and $s=1$ for scenario S01,  $s=2$ for scenario S02, and so on.
 
 
 ## BPSV advanced R\&D
@@ -481,16 +483,17 @@ printeq(eqtext)
 
 
 
-| Developer | Licensure Experience | 
-|---|---| 
-| CalTech | No | 
-| SK Bio | Yes | 
-| Codiak | No | 
-| Panacea | No | 
-| NEC Onco| No | 
-| Intravacc | No | 
-| VIDO | No | 
-| IVI | No | 
+| Developer | Licensure Experience | Current phase |
+|---|---|---|
+| CalTech | No | Preclinical |
+| SK Bio | Yes | Preclinical | 
+| Codiak | No |  Preclinical |
+| Panacea | No |  Preclinical |
+| NEC Onco| No |  Preclinical |
+| Intravacc | No |  Preclinical |
+| VIDO | No |  Preclinical |
+| IVI | No |  Preclinical |
+| VBI | Yes | Phase 1 |
 
 Table: (\#tab:inex) Manufacturers working on BPSV and whether or not they have licensure experience 
 
@@ -613,8 +616,9 @@ The annual costs in billion USD are `r round(0.5*rawpar$cost_capres,2)`, `r roun
 capres_costs = as.data.frame(do.call(rbind,lapply(1:length(crs),function(x) cbind( capres_costs_per_year[[x]]*fifteen_yr_discount_weight, crs[x]))))
 
 ggplot(capres_costs) +
-  geom_boxplot(aes(x=factor(V2,levels=crs),y=V1)) +
+  geom_boxplot(aes(x=factor(V2,levels=crs, labels=crs+.5),y=V1)) +
   theme_bw(base_size = 15) +
+  scale_y_continuous(limits=c(0,NA)) +
   labs(x='Capacity reservation, billion doses',y='Cost, billion USD')
 
 
