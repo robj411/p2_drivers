@@ -47,11 +47,12 @@ function data = p2RandCountry(data,CD,income_level,country_parameter_distributio
     % uncosted transmission reduction parameters taken from table of saved samples
     utr_tab_ncol = size(utr_coefs,1);
     randrow = randi([1 utr_tab_ncol],1,1);
-    utr_probability = unifrnd(0,1); %1 - betarnd(2, 5);
+    utr_probability = 1;%unifrnd(0,1); %1 - betarnd(2, 5);
     utr_baseline = max(utr_coefs.baseline(randrow), 0.1); % utr_coefs.baseline(randrow); %
     data.utr_baseline = 1 - (1-utr_baseline).*utr_probability;
     data.utr_death_coef = (utr_coefs.deathcoef(randrow));
     data.utr_mandate_coef = (utr_coefs.mandatecoef(randrow));
+    data.utr_decay_rate = unifrnd(0, 0.01);
 
     % contacts.pt = pt;
     contacts.school1_frac = school1_frac;

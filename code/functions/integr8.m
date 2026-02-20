@@ -41,7 +41,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     rundata.utr_baseline = data.utr_baseline;
     rundata.utr_death_coef = data.utr_death_coef;
     rundata.utr_mandate_coef = data.utr_mandate_coef;
-%     rundata.utr_decay_rate = data.utr_decay_rate;
+    rundata.utr_decay_rate = data.utr_decay_rate;
 %     rundata.never_close = data.never_close;
     
     NN0 = data.NNs; 

@@ -14,7 +14,8 @@ function utr = betamod_wrapped(deaths_per_mill, data, mandate, rel_stringency, t
     if mandate==1   % means no mandate
         utr = ones(size(deaths_per_mill));
     else
-        baseline = data.utr_baseline; %1 - (1-data.utr_baseline).*(data.utr_decay_rate);
+        % baseline = data.utr_baseline; %1 - (1-data.utr_baseline).*(data.utr_decay_rate);
+        baseline = 1 - (1-data.utr_baseline) ./ (1 + data.utr_decay_rate).^t;
         death_coef = data.utr_death_coef;
         mandate_coef = data.utr_mandate_coef;
         
