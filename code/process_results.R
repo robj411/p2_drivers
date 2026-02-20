@@ -2,7 +2,7 @@
 args <- commandArgs(TRUE)
 # print(args)
 if(length(args)==0){
-  lb_file = '../data/20251015 updated scenario delivery and costing.xlsx'
+  lb_file = '../data/20251104 updated scenario delivery and costing.xlsx'
 }else{
   lb_file = args[1]
 }
@@ -36,14 +36,24 @@ registerDoParallel(cl)
 
 scenario_tab <- readxl::read_xlsx(lb_file, sheet = 'Delivery')
 lbsheets = readxl::excel_sheets(lb_file)
-onecost = readxl::read_xlsx(lb_file,sheet = "Lump Sum")
-acosts = readxl::read_xlsx(lb_file,sheet = "Annual Cost")
-rcosts = readxl::read_xlsx(lb_file,sheet = "Response Cost")
+# onecost = readxl::read_xlsx(lb_file,sheet = "Lump Sum")
+# acosts = readxl::read_xlsx(lb_file,sheet = "Annual Cost")
+# rcosts = readxl::read_xlsx(lb_file,sheet = "Response Cost")
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','UMIC','HIC')
-scenario_names <- colnames(scenario_tab)[!grepl('^\\.',colnames(scenario_tab))]
-scenario_names[1] = 'BAU'
-# scenario_names <- c(scenario_names)
+
+result_cols <- c('Cost','YLL','School','GDP_loss')
+
+
+cost_samples = readRDS('results/cost_samples.Rds')
+cost_diffs = list()
+for (i in 1:3){
+  cost_diffs[[i]] = cost_samples[[i]][,-1]
+  for(j in 1:ncol(cost_diffs[[i]]))
+    cost_diffs[[i]][,j] = cost_diffs[[i]][,j] - cost_samples[[i]][,1]
+}
+
+scenario_names <- colnames(cost_samples[[1]])
 nScen = length(scenario_names)
 scenario_levels <- 1:nScen
 bau_scens = which(grepl('BAU',scenario_names))
@@ -54,14 +64,11 @@ just_scen_names = scenario_names[scen_scens]
 nbscens = length(bau_names)
 ncscens = length(scen_scens)
 
-result_cols <- c('Cost','YLL','School','GDP_loss')
-
-
 
 ## plot scenarios ##################################
 
 
-scen_to_keep <- 1:14
+scen_to_keep <- 1:nScen
 scenario_tab[1,c(is.na(scenario_tab[1,]))] = ''
 
 df_list <- list()
