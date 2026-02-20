@@ -705,18 +705,18 @@ We write total response costs as
 
 
 ```{r}
-eqtext = 'D_{s,y}^{\\text{(res)}} = \\frac{1}{(1+r)^y}\\left(D_{s}^{\\text{(BP-resRD)}} + D_{s}^{\\text{(S-RD)}} + D_{s}^{\\text{(BP-proc)}} + D_{s,y}^{\\text{(S-proc)}} + D_{s,y}^{\\text{(BP-del)}} + D_{s,y}^{\\text{(S-del)}}\\right)'
+eqtext = 'D_{s,y}^{\\text{(res)}} = \\frac{1}{(1+r)^y}\\left(D_{s}^{\\text{(S-RD)}} + D_{s}^{\\text{(BP-resRD)}} + D_{s,y}^{\\text{(S-proc)}} + D_{s}^{\\text{(BP-proc)}} + D_{s,y}^{\\text{(S-del)}} + D_{s,y}^{\\text{(BP-del)}}\\right)'
 printmath(eqtext)
 ```
 
 where
 
-- $D_{s}^{\text{(BP-resRD)}}$ is the R\&D cost of BPSV after an outbreak; see Equation \@ref(eq:bpsvresrd)
 - $D_{s}^{\text{(S-RD)}}$ is the R\&D cost for SSV; see Equation \@ref(eq:ssvrd)
-- $D_{s}^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation \@ref(eq:bpsvproc)
+- $D_{s}^{\text{(BP-resRD)}}$ is the R\&D cost of BPSV after an outbreak; see Equation \@ref(eq:bpsvresrd)
 - $D_{s,y}^{\text{(S-proc)}}$ is the cost of procuring SSV; see Equation \@ref(eq:ssvproc)
-- $D_{s,y}^{\text{(BP-del)}}$ is the cost of delivering BPSV; see Equation \@ref(eq:bspvdel)
+- $D_{s}^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation \@ref(eq:bpsvproc)
 - $D_{s,y}^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation \@ref(eq:ssvdel)
+- $D_{s,y}^{\text{(BP-del)}}$ is the cost of delivering BPSV; see Equation \@ref(eq:bspvdel)
 
 We present computation for this cost with reference to the beginning of the outbreak. Therefore, indices $y$ in this section do not correspond to the same index in the previous section, where $y$ indexed years of investment pre-pandemic.
 

@@ -409,22 +409,22 @@ years with uniformly distributed discount rate.
 We write total response costs as
 
 ``` math
-D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s}^{\text{(BP-resRD)}} + D_{s}^{\text{(S-RD)}} + D_{s}^{\text{(BP-proc)}} + D_{s,y}^{\text{(S-proc)}} + D_{s,y}^{\text{(BP-del)}} + D_{s,y}^{\text{(S-del)}}\right)
+D_{s,y}^{\text{(res)}} = \frac{1}{(1+r)^y}\left(D_{s}^{\text{(S-RD)}} + D_{s}^{\text{(BP-resRD)}} + D_{s,y}^{\text{(S-proc)}} + D_{s}^{\text{(BP-proc)}} + D_{s,y}^{\text{(S-del)}} + D_{s,y}^{\text{(BP-del)}}\right)
 ```
 
 where
 
+- $D_{s}^{\text{(S-RD)}}$ is the R&D cost for SSV; see Equation (3.1)
 - $D_{s}^{\text{(BP-resRD)}}$ is the R&D cost of BPSV after an outbreak;
   see Equation (3.2)
-- $D_{s}^{\text{(S-RD)}}$ is the R&D cost for SSV; see Equation (3.1)
-- $D_{s}^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation
-  (3.4)
 - $D_{s,y}^{\text{(S-proc)}}$ is the cost of procuring SSV; see Equation
   (3.3)
-- $D_{s,y}^{\text{(BP-del)}}$ is the cost of delivering BPSV; see
-  Equation (3.6)
+- $D_{s}^{\text{(BP-proc)}}$ is the cost of procuring BPSV; see Equation
+  (3.4)
 - $D_{s,y}^{\text{(S-del)}}$ is the cost of delivering SSV; see Equation
   (3.5)
+- $D_{s,y}^{\text{(BP-del)}}$ is the cost of delivering BPSV; see
+  Equation (3.6)
 
 We present computation for this cost with reference to the beginning of
 the outbreak. Therefore, indices $y$ in this section do not correspond
