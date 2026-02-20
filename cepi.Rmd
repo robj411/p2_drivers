@@ -28,7 +28,7 @@ output:
     pandoc_args: --webtex
 always_allow_html: yes 
 params:
-  lbfile: './data/20250922 updated scenario delivery and costing.xlsx'
+  lbfile: './data/20251209 Vx manufacturing and delivery.xlsm'
 ---
 
 \fancypagestyle{plain}{%
@@ -84,7 +84,7 @@ format_to_print2 <- function(x,z=2){
 
 ```{r scentab,echo=F,warning=F,message=F}
 
-tab <- readxl::read_xlsx(params$lbfile, sheet = 'Delivery')
+tab <- readxl::read_xlsx(params$lbfile, sheet = 'Vx timeline')
 colnames(tab)[colnames(tab)=='BAU1'] = 'BAU'
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 newpolicies <- c('NC','RC1','RC2','RC3')
@@ -100,6 +100,97 @@ bau_names = scenario_names[bau_scens]
 
 # nbscens = length(bau_names)
 ncscens = length(scen_scens)
+
+```
+
+
+```{r costall,echo=F,warning=F,message=F}
+
+get_to_print = function(qu){
+  if(abs(qu[1]-qu[2])<0.01*abs(qu[1])){
+    format_to_print2(qu[1])
+  }else{
+    paste0(format_to_print2(qu), collapse='--\\hspace{0pt}')
+  }
+}
+quants = c(1,3)/4
+scenario_results = readRDS(file = 'code/results/all_cost_samples.Rds')
+iqrs = list()
+for(s in 1:nScen){
+  costtab =   as.data.frame(do.call(cbind,lapply(scenario_results[[s]]$costs,function(x) do.call(cbind,x))))
+  costtab$upfront_bpsv <- costtab$bpsv_rd_undiscounted <- NULL
+  iqrs[[s]] = apply(costtab,2,function(x) get_to_print(quantile(x,quants)))
+
+}
+printtab = do.call(cbind,iqrs)
+colnames(printtab) = scenario_names
+newrownames = c(enabling='Enabling activities',
+                dis_upfront_bpsv='BPSV upfront procurement',
+                bpsv_rd_discounted='BPSV upfront R\\&D',
+                totalupfront='Total upfront',
+                capres='Reserved capacity cost',
+                investigational_reserve='BPSV investigational reserve',
+                totalannual='Total annual',
+                ssv_rd='SSV R\\&D',
+                ssv_proc_undiscounted='SSV procurement',
+                ssv_delivery_undiscounted='SSV delivery',
+                ssv_proc_discounted='SSV procurement',
+                ssv_delivery_discounted='SSV delivery',
+                bpsv_response_rd='BPSV response R\\&D',
+                bpsv_proc='BPSV response procurement',
+                bpsv_delivery='BPSV delivery',
+                totaldiscounted='Total response',
+                totalundiscounted='Total response')
+printtab = cbind(newrownames[rownames(printtab)],printtab)
+rownames(printtab) = NULL
+  
+lg = 'Costs.'
+if (!knitr::is_html_output(excludes = "markdown")) {
+  cat(pander(printtab,caption=lg))
+}else{
+  x <- knitr::kable(printtab,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
+
+```
+
+```{r expval}
+expvals1 <- readRDS('code/results/expvals_BAU.Rds')
+resulttab = data.frame(Scenario=expvals1$Scenario, Upfront=NA, Annual=NA, Response=NA, LIR=expvals1$BAU)
+
+for(s in 1:nScen){ #c(1,10)){# 
+  
+  thisscen = scenario_results[[s]]
+  allupfront = with(thisscen$costs$upfront, enabling + dis_upfront_bpsv + bpsv_rd_discounted)
+  allannual = with(thisscen$costs$annual, capres + investigational_reserve)
+  allresp = with(thisscen$costs$response, ssv_rd + ssv_proc_undiscounted + ssv_delivery_undiscounted + 
+                   bpsv_response_rd + bpsv_proc + bpsv_delivery)
+  
+  if(s==1){
+    bauallupfront = allupfront
+    bauallannual = allannual
+    bauallresp = allresp
+    
+  }else{
+    diffallupfront = allupfront - bauallupfront
+    diffallannual = allannual - bauallannual
+    diffallresp = allresp - bauallresp
+    
+    resulttab$Upfront[s-1] = get_to_print(quantile(diffallupfront,quants))
+    resulttab$Annual[s-1] = get_to_print(quantile(diffallannual,quants))
+    resulttab$Response[s-1] = get_to_print(quantile(diffallresp,quants))
+    
+  }
+  
+}
+
+lg = 'All scenario results compared to BAU.'
+if (!knitr::is_html_output(excludes = "markdown")) {
+  cat(pander(resulttab,caption=lg))
+}else{
+  x <- knitr::kable(resulttab,escape=F, "html",caption=lg)
+  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+}
 
 ```
 
@@ -127,19 +218,36 @@ for(scen in 1:nScen){
 }
 
 plotscens <- do.call(rbind,df_list)
+plotscens$Week = plotscens$Day/7
 # plotscens$Percent[plotscens$Percent>80] <- 80
 # plotscens$Percent[plotscens$Percent>25&plotscens$Vaccine=='BPSV'] <- 25
-ggplot(subset(plotscens,!Scenario%in%c('BAU2'))) + 
-  geom_line(aes(x=Day,y=Percent,colour=Scenario),linewidth=.6,alpha=.75) +
+pl1 = ggplot(subset(plotscens,!Scenario%in%c('BAU2'))) + 
+  geom_line(aes(x=Week,y=Percent,colour=factor(Scenario,levels=scenario_names[c(2:11,1)])),linewidth=1,alpha=1) +
   facet_grid(~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
   theme_bw(base_size=15) + labs(colour='') +
   theme(legend.position = 'top') + 
   guides(colour=guide_legend(nrow=2,byrow=F))
+
+pl2 = pl1 +
+  scale_colour_manual(values = with(subset(plotscens, Scenario != "BAU2"), {
+    lev <- levels(factor(Scenario))
+    setNames(c("black", colorspace::qualitative_hcl(length(lev) - 1, c = 100, l = 65)),
+             c("BAU", setdiff(lev, "BAU")))
+  }))
+
+pl1
+pl2
+# ggplot(subset(plotscens,Income=='HIC'&Scenario%in%c('S12'))) + 
+#   geom_line(aes(x=Day,y=c(0,diff(Percent)),colour=Scenario),linewidth=1,alpha=.75) +
+#   theme_bw(base_size=15) + labs(colour='') +
+#   theme(legend.position = 'top') + 
+#   guides(colour=guide_legend(nrow=2,byrow=F))
 ```
 
 
 ```{r costresultsbau1,echo=F,warning=F,message=F, results='asis'}
-costresults <- readxl::read_xlsx(params$lbfile,sheet = 3)
+lbfileold = './data/20251104 updated scenario delivery and costing.xlsx'
+costresults <- readxl::read_xlsx(lbfileold,sheet = 3)
 costresults$`Cost Category`[which(costresults$`Cost Category`=='Difference to BAU')+0:4] <- 'Difference to BAU'
 costresults <- costresults[!is.na(costresults$`Cost Category`),]
 costresults <- costresults[costresults$`Cost Category`!='Cost Category',]
@@ -160,18 +268,18 @@ for(i in 3:ncol(costresults)) {
   costresults[[i]] <- paste0('$',costresults[[i]],'$')
 }
 lg = 'Full results from costing model for BAU. Values given are the arithmetic mean, and centiles 5, 25, 50, 75 and 95. Units are million USD. Results are reported to two signficant figures.'
-if (!knitr::is_html_output(excludes = "markdown")) {
-  cat(pander(costresults,caption=lg))
-}else{
-  x <- knitr::kable(costresults,escape=F, "html",caption=lg)
-  (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
-}
+# if (!knitr::is_html_output(excludes = "markdown")) {
+#   cat(pander(costresults,caption=lg))
+# }else{
+#   x <- knitr::kable(costresults,escape=F, "html",caption=lg)
+#   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
+# }
 
 ```
 
 
-```{r costresultsbau2,echo=F,warning=F,message=F}
-costresults <- readxl::read_xlsx(params$lbfile,sheet = 4)
+```{r costresultsbau2,echo=F,warning=F,message=F,eval=F}
+costresults <- readxl::read_xlsx(lbfileold,sheet = 4)
 costresults$`Cost Category`[which(costresults$`Cost Category`=='Difference to BAU')+0:4] <- 'Difference to BAU'
 costresults <- costresults[!is.na(costresults$`Cost Category`),]
 costresults <- costresults[costresults$`Cost Category`!='Cost Category',]
@@ -389,7 +497,7 @@ lg <- paste0('Results for all policies, scenarios and country types. Mean values
 
 ```{r tabresall,echo=F,warning=F,message=F,results='asis'}
 
-for(i in 4:7) tabresall[[i]] <- gsub('\\.','·',tabresall[[i]])
+# for(i in 4:7) tabresall[[i]] <- gsub('\\.','·',tabresall[[i]])
 
 lmtabresall <- subset(tabresall,Policy!='Loss minimising'&Scenario!='BAU2')
 if (!knitr::is_html_output(excludes = "markdown")) { 
@@ -618,7 +726,7 @@ colnames(tabres)[1:2] <- c('Scenario','Income group')
 # subtabres <- subset(tabres,`From scenario`%in%bau_names)[,!colnames(tabres)%in%scenario_names[-c(scen_to_keep)],with=F]
 
 lg <- 'Value of vaccines as a percent of GDP: differences between BAU and scenarios. 75% uncertainty intervals. \\label{tab:tabresdiff}'
-for(i in 3) tabres[[i]] <- gsub('\\.','·',tabres[[i]])
+# for(i in 3) tabres[[i]] <- gsub('\\.','·',tabres[[i]])
 
 if (!knitr::is_html_output(excludes = "markdown")) { 
   pander(tabres,caption=lg)
@@ -641,7 +749,7 @@ valuetab <- do.call(rbind,valuetablist[[1]])
 valuetab2 <- valuetablist[[2]]
 
 colnames(valuetab)[2] = 'Scenario'
-countercol = c(rep(rownames(valuetab2)[1:16],each=ncscens))
+countercol = c(rep(rownames(valuetab2)[1:8],each=ncscens))
 
 valuetabcounter <- setDT(subset(valuetab,counter=='counter'))
 valuetabcounter$Counterfactual = countercol
@@ -683,7 +791,7 @@ lg <- paste0('Best-case scenarios: scenarios that have the highest $\\Delta$LIR 
 valuetabbau1 <- valuetab2[!grepl('BAU2',rownames(valuetab2)),]
 rownames(valuetabbau1) <- gsub(', BAU','',rownames(valuetabbau1))
 
-for(i in 1:2) valuetabbau1[[i]] <- gsub('\\.','·',valuetabbau1[[i]])
+# for(i in 1:2) valuetabbau1[[i]] <- gsub('\\.','·',valuetabbau1[[i]])
 
 lg <- paste0('Absolute losses and numbers of deaths of one-in-X-years events under the BAU scenario. \\label{tab:absvals}')
 if (!knitr::is_html_output(excludes = "markdown")) { 
@@ -712,7 +820,7 @@ valuetabgdp$`From scenario` <- NULL
 # subvaluetab <- valuetabgdp[,!colnames(valuetabgdp)%in%scenario_names[-c(scen_to_keep)]]
 lg <- paste0('Value of vaccine investments in the event of a one-in-X-years pandemic (percent of global GDP). \\label{tab:ex100gdp}')
 
-for(i in 2) valuetabgdp[[i]] <- gsub('\\.','·',valuetabgdp[[i]])
+# for(i in 2) valuetabgdp[[i]] <- gsub('\\.','·',valuetabgdp[[i]])
 
 # if (!knitr::is_html_output(excludes = "markdown")) { 
 #   cat(pander(valuetabgdp,caption=lg))
@@ -739,7 +847,7 @@ valuetabcounter[,uq:=NULL]
 valuetabcounter[,ml:=NULL]
 valuetabcounter[,mu:=NULL]
 
-for(i in 2) valuetabcounter[[i]] <- gsub('\\.','·',valuetabcounter[[i]])
+# for(i in 2) valuetabcounter[[i]] <- gsub('\\.','·',valuetabcounter[[i]])
 
 valuetabcom = cbind(Return=valuetabcounter$Counterfactual,
                     Scenario=valuetabcounter$Scenario,
@@ -773,31 +881,48 @@ print(plotlist)
 # Expected values
 
 
-```{r expvalue,tab.cap='Expected value of investments',echo=F,warning=F,message=F,results='asis'}
+```{r examples,tab.cap='Expected value of investments for different temporal assumptions',echo=F,warning=F,message=F,results='asis'}
 
-expvals1 <- readRDS('code/results/expvals_BAU.Rds')
-expvals2 <- readRDS('code/results/expvals_BAU2.Rds')
-expvals <- expvals1[expvals2,,on='Scenario']
-  #rbind(readRDS('code/results/expvals_BAU1.Rds'),readRDS('code/results/expvals_BAU2.Rds'))
-subexp <- expvals1#[,!colnames(expvals)%in%scenario_names[-c(scen_to_keep)],with=F]
-colnames(subexp)[2] = 'Expected impact'
+examples <- readRDS('code/results/expvals_BAU.Rds')
+splitfun = function(str,i)
+  as.numeric(strsplit(str,'--\u200B')[[1]][i])
+examples[,lq:=splitfun(BAU,1),by=Scenario]
+examples[,uq:=splitfun(BAU,2),by=Scenario]
 
-for(i in 2) subexp[[i]] <- gsub('\\.','·',subexp[[i]])
+accumulate = function(lq, uq, start_year=2050, end_year=2099, start_gdp=113.8, start_gdp_year=2025, discount=0, growth=0, pv_year=2025){
+  years_to_start = start_year - start_gdp_year
+  years_to_accumulate = end_year - start_year + 1
+  starting_gdp = start_gdp*(1+growth)^years_to_start
+  discounted_accumulator = ifelse(discount==growth, years_to_accumulate, (1-(1+discount-growth)^-years_to_accumulate)/(discount-growth))
+  discounted_accumulated_gdp = starting_gdp * discounted_accumulator
+  pv = discounted_accumulated_gdp/(1+discount)^(start_year-pv_year)
+  lqv = lq*pv
+  uqv = uq*pv
+  ret = paste0(signif(c(lqv, uqv),2),collapse='--\u200B')
+  ret
+}
 
-lg <- paste0('Value of investments. \\label{tab:expval}')
+examples[,`Example 1`:=accumulate(lq,uq,growth=0.023,discount=0.023),by=Scenario]
+examples[,`Example 2`:=accumulate(lq,uq,growth=0.03,discount=0.04),by=Scenario]
+examples[,`Example 3`:=accumulate(lq,uq,start_year=2040,growth=0.023,discount=0.023),by=Scenario]
+examples[,`Example 4`:=accumulate(lq,uq,start_year=2040,end_year=2089,growth=0.03,discount=0.04),by=Scenario]
+
+examples$BAU <- examples$lq <- examples$uq <- NULL
+
+lg <- paste0('Expected value of investments for different temporal assumptions. \\label{tab:examples}')
 if (!knitr::is_html_output(excludes = "markdown")) { 
-  cat(pander(subexp,caption=lg))
+  cat(pander(examples,caption=lg))
 }else{
-  # (knitr::kable(subexp,escape=F, "html",caption=lg))
-  x <- knitr::kable(subexp,escape=F, "html",caption=lg)
+  # (knitr::kable(examples,escape=F, "html",caption=lg))
+  x <- knitr::kable(examples,escape=F, "html",caption=lg)
   (kableExtra::kable_styling(x,full_width = F,latex_options = "HOLD_position"))
 }
 ```
 
-```{r}
+```{r,eval=F}
 subexp <- expvals2#[,!colnames(expvals)%in%scenario_names[-c(scen_to_keep)],with=F]
 colnames(subexp)[2] = 'Expected impact'
-for(i in 2) subexp[[i]] <- gsub('\\.','·',subexp[[i]])
+# for(i in 2) subexp[[i]] <- gsub('\\.','·',subexp[[i]])
 
 
 lg <- paste0('Value of investments. \\label{tab:expval2}')
