@@ -86,7 +86,7 @@ application.
 | $A_4$ | bpsv_inv_res | Size of BPSV investigational reserve, doses | Constant | 100000 | Model choice |
 | $A_1$ | cost_bpsv_res | Annual BPSV reservation cost, USD per dose | Constant | 0.00996360623461854 | Griffiths, Adjagba, Attaran, Hutubessy, Van de Maele, et al. (2021) |
 | $A_5$ | bpsv_res_upfront | BPSV reserve upfront cost, USD per dose | Constant | 0.113154621821165 | Griffiths, Adjagba, Attaran, Hutubessy, Van de Maele, et al. (2021) |
-| $Y_{rep}$ | bpsv_replenishment | Years after which BPSV doses are to be replaced | Constant | 3 | (**WorldHealthOrganization2019a?**) |
+| $Y_{rep}$ | bpsv_replenishment | Years after which BPSV doses are to be replaced | Constant | 3 | World Health Organization (2019) |
 | $A_2$ | cost_capres | Advanced capacity reservation fee; USD per dose per year | Constant | 0.531692307692308 | Pfizer (2023) |
 | $A_3$ | hic_cap_res | Reserved capacity for HIC, billions | Constant | 0.5 | See Section <a href="#ssv-capacity-reservation">2.3</a> |
 | $S_U$ | cost_un | SSV procurement price, reactive capacity; USD per dose | Constant | 18.9392 | Linksbridge SPC (2025) |
@@ -291,8 +291,8 @@ The cost of goods supplied is $G = 4.68$ USD per dose. Then the cost of
 drug substance, accounting for the fill/finish cost $M_f = 0.14$ and the
 profit margin $M_p = 0.2$, is $G(1-M_f)(1+M_p) = 4.83$ USD per dose. We
 assume that the reserve is replenished every $Y_{rep} = 3$ years based
-on the storage characteristics for Ervebo
-(**WorldHealthOrganization2019a?**).
+on the storage characteristics for Ervebo (World Health Organization
+2019).
 
 Then the annual cost to maintain the reserve of $A_4 =100,000$ doses is
 
@@ -1364,6 +1364,16 @@ Cost of Delivering COVID-19 Vaccines in
 <span class="nocase">C<span class="nocase">ô</span>te</span> d’Ivoire.”
 ThinkWell & Genesis Analytics.
 <https://thinkwell.global/wp-content/uploads/2023/09/Cote-dIvoire-final-report_FINAL.pdf>.
+
+</div>
+
+<div id="ref-WorldHealthOrganization2019a" class="csl-entry">
+
+World Health Organization. 2019. “Public Assessment Summary Report:
+ErveboTM, Ebola Zaire Vaccine
+(<span class="nocase">rVSV$\Delta$G-ZEBOV-GP</span>, Live), Merck & Co.,
+Inc. USA.” World Health Organization.
+<https://extranet.who.int/prequal/sites/default/files/vwa_vaccine/VPSAR_MerckErvebo_16Dec2019.pdf>.
 
 </div>
 
