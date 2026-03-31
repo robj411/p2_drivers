@@ -49,6 +49,13 @@ deathvecs <- lapply(1:nbscens,function(bs)
     best$Deaths
   }))
 
+gdpvecs <- lapply(1:nbscens,function(bs) 
+  lapply(income_levels,function(x){
+    best <- subset(bauresults[[bs]],igroup==x&mincost==1)
+    setorder(best,Costpc)
+    best$gdplossusd
+  }))
+
 # vectors of costs (pc gdp)
 # costvecs <- lapply(income_levels,function(x){
 #   best <- subset(bauresults,igroup==x&mincost==1)
@@ -102,9 +109,9 @@ for(j in 1:ncscens){
 }
 
 # resample for scenarios
-deathsamples <- costsamples <- sampleorders <- list()
+deathsamples <- costsamples <- gdpsamples <- sampleorders <- list()
 for(refsl in 1:nbscens)
-  deathsamples[[refsl]] <- costsamples[[refsl]] <- sampleorders[[refsl]] <- matrix(0,nrow=sample_size,ncol=ncountries)
+  deathsamples[[refsl]] <- costsamples[[refsl]] <- gdpsamples[[refsl]] <- sampleorders[[refsl]] <- matrix(0,nrow=sample_size,ncol=ncountries)
 for(i in 1:ncountries){
   whichig <- rep(1:3,times=samplefracs)[i]
   z <- mvrnorm(sample_size,mu=rep(0, 2),Sigma=sigma,empirical=T)
@@ -113,6 +120,7 @@ for(i in 1:ncountries){
   rank2 <- rank(z[rank1,2])
   newsample <- order(z[rank1,2])
   for(refsl in 1:nbscens){
+    gdpsamples[[refsl]][,i] <- gdpvecs[[refsl]][[whichig]][newsample]
     costsamples[[refsl]][,i] <- costslvecs[[refsl]][[whichig]][newsample]
     deathsamples[[refsl]][,i] <- deathvecs[[refsl]][[whichig]][newsample]
     sampleorders[[refsl]][,i] <- newsample
@@ -802,6 +810,33 @@ cyl_labels <- c("weightedyllpc" = "LIR", "pcyll" = "Delta*'LIR'")
   theme_bw(base_size=18) +
   labs(x='Deaths per thousand',y='YLL percent',colour='% No Closures'))
 # ggsave(pcyllplot,filename='results/pcYLL.png',width=10,height=6)
+
+
+scatter <- data.frame(deaths=rowSums(deathsamples[[1]])/(50*1e6*ncountries)*1e3,
+econ = rowSums(gdpsamples[[1]])*1e6/(113.8e12)*100
+)
+
+glendata <- data.frame(x=c(17.1,0.00016,0.0016,0.00014,2.7),y=c(6,.1,.06,.05,14.4),
+                       years = c(3,2,4,3,3), label=c('Flu','SARS','Ebola','Zika','COVID'))
+
+
+
+gp1 = ggplot(scatter) +
+  # scale_y_continuous(transform='log') +
+  # scale_x_continuous(transform='log',breaks=c(.1,1,10)) +
+  geom_point(aes(x=deaths,y=econ),colour='midnightblue',alpha=.7) +
+  scale_x_log10() + scale_y_log10() + 
+  theme_bw(base_size=15) + 
+  labs(x='Deaths per 1,000 people',y='GDP loss, % of pre-pandemic value') + 
+  theme(legend.position = 'top')
+ggsave(gp1,filename='../cepi_results/deathsgdpscatter.png',width=5,height=4)
+
+ggsave(gp1 + 
+  geom_label(data=glendata,aes(x=x,y=y,label=label)),
+  filename='../cepi_results/deathsgdpglen.png',width=5,height=4)
+
+
+
 
 
 
