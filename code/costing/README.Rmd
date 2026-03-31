@@ -1487,6 +1487,11 @@ df <- unitplot %>%
     bar_w = group_width / K
   )
 
+df$x = df$x  + 10*sapply(df$timing,function(x)which(c('Upfront','Per year','Per pandemic')==x))
+df$type_id = df$type_id + 10*sapply(df$timing,function(x)which(c('Upfront','Per year','Per pandemic')==x))
+# df$type_id[match(sort(unique(df$type_id)),df$type_id)]
+
+
 unitcosts = ggplot(df) +
   theme_bw(base_size = 15) +
   geom_hline(yintercept = 0, colour = "grey") +
@@ -1506,9 +1511,6 @@ unitcosts = ggplot(df) +
 
 ggsave(unitcosts + labs(title=''), filename='../../cepi_results/unit.png',height=5,width=10)
 
-# df$x = df$x  + 10*sapply(df$timing,function(x)which(c('Upfront','Per year','Per pandemic')==x))
-# df$type_id = df$type_id + 10*sapply(df$timing,function(x)which(c('Upfront','Per year','Per pandemic')==x))
-# df$type_id[match(sort(unique(df$type_id)),df$type_id)]
 
 ```
 
