@@ -2,12 +2,6 @@
 title: "The Costing Model"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::pdf_document2: 
     #   --filter=pandoc-xnos
     toc: false
@@ -20,6 +14,12 @@ output:
     fig_caption: yes
     # includes:
     #   in_header: "preamble.tex"
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -46,12 +46,13 @@ library(stringi)
 library(gplots)
 library(RColorBrewer)
 library(data.table)
+library(readODS)
 library(splines)
 library(bookdown)
 library(pander)
 library(haven)
 library(viridis)
-library(hrbrthemes)
+# library(hrbrthemes)
 library(MASS)
 library(kableExtra)
 library(wbstats)
@@ -92,20 +93,22 @@ format_to_print2 <- function(x,z=2){
 
 ```{r ages, eval=FALSE}
 
-# age data from owid
-allpop = read.csv('population-by-five-year-age-group.csv')
-ils = unique(allpop$Entity)[grepl('-income',unique(allpop$Entity))]
-maxyear = max(allpop$Year)
-ildata = subset(allpop,Entity%in%ils&Year==maxyear)
-popcols = which(grepl('Population',colnames(ildata)))
-col14 = which(grepl('14',colnames(ildata)))
-col64 = which(grepl('64',colnames(ildata)))
-for(i in 1:nrow(ildata)){
-  print(ildata$Entity[i])
-  # print(sum(as.numeric(ildata[i,popcols])))
-  print(round(c(sum(as.numeric(ildata[i,popcols[popcols>col14]]))/1e6,
-          sum(as.numeric(ildata[i,popcols[popcols>col64]]))/1e6)))
-}
+library(wpp2024)
+income_levels = c("Lower-middle-income countries","Low-income countries","Upper-middle-income countries","High-income countries")
+data(popMprojMed,package = 'wpp2024')
+data(popFprojMed,package = 'wpp2024')
+subset(popMprojMed, name%in%income_levels)[,c(2,3,4)] -> xm
+subset(popFprojMed, name%in%income_levels)[,c(2,3,4)] -> xf
+xm$m = 'M'
+xf$m = 'F'
+setDT(rbind(xm,xf)) -> alldata
+colnames(alldata) <- paste0('x',colnames(alldata))
+
+summeddata = alldata[,sum(x2025),by=.(xname,xage)]
+summeddata[,lowerage:=as.numeric(strsplit(xage,'[[:punct:]]')[[1]][1]),by=xage]
+summeddata[,over64:=ifelse(lowerage>64,V1,0)]
+summeddata[,over14:=ifelse(lowerage>14,V1,0)]
+summeddata[,lapply(.SD, sum),by=xname,.SDcols=c('V1','over14','over64')]
 
 ```
 
@@ -121,7 +124,7 @@ This document describes the costing model that is used in the CEPI application.
 
 ```{r paramtable, echo=F,warning=F,message=F}
 
-caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
+caps <- readODS::read_ods('cost_parameters.ods')
 caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
 lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1. Inverse Gaussian distributions have as a mean Parameter 1, and as a shape Parameter 2. Log normal distributions have as a mean Parameter 1, and as a standard deviation Parameter 2. PearsonV distributions have shape Parameter 1, scale Parameter 2, and location 0. PearsonVI distributions have shape Parameters 1 and 2, scale Parameter 3, and location 0. Where given, distributions are truncated at bounds.'
 capscopy = caps
@@ -176,6 +179,7 @@ crs= c(0, 0.7, 2)
 # pops365 = pops65[1:3]
 # pops365[3] = sum(pops65[3:4])
 # 
+# 1 - rawpar$final_vaccine_coverage*sum(pops65)/1e9
 # demand65 = rawpar$final_vaccine_coverage*pops365 / (1-rawpar$vaccine_wastage) # total bpsv doses per income level
 # popfracs65 = pops365/sum(pops365)
 # total_bpsv_demand = 1 # billion. not: sum(demand65/1e9)
@@ -426,12 +430,12 @@ where:
 We use $s=0$ to denote the business as usual (BAU) scenario, and $s=1$ for scenario S01,  $s=2$ for scenario S02, and so on.
 
 
-## BPSV advanced R\&D
+## BPSV advance R\&D
 
 <!-- **These values match the spreadsheet results** -->
 
 
-Advanced R\&D for BPSVs consists of Phase 0 (which we use to denote preclinical R\&D), Phase 1 and Phase 2, for which we add up costs that depend on (a) the number of candidates, (b) the cost per phase for experienced (those with licensure experience) and inexperienced developers (those without), and (c) the probability of success in each phase. The final cost therefore reflects the number of candidates that progressed through the developmental pipeline.
+Advance R\&D for BPSVs consists of Phase 0 (which we use to denote preclinical R\&D), Phase 1 and Phase 2, for which we add up costs that depend on (a) the number of candidates, (b) the cost per phase for experienced (those with licensure experience) and inexperienced developers (those without), and (c) the probability of success in each phase. The final cost therefore reflects the number of candidates that progressed through the developmental pipeline.
 
 In order to achieve one successful BPSV candidate in the event of an outbreak, we estimate that 14 are required to enter into preclinical R\&D. At present, there are six (Table \@ref(tab:inex)). We assume that the remaining eight will come from developers without prior licensure experience.
 
@@ -507,6 +511,9 @@ ggplot() + geom_histogram(aes(bpsv_rd_costsamples_dyd)) +
   theme_bw(base_size=15) +
   labs(x='Billion USD',y='',title='')
 
+# sum(rbinom(nrow(PTO_BPSV),14,PTO_BPSV[,3])>=1)/nrow(PTO_BPSV)*100
+# summary(1-pbinom(0,size=14,prob=PTO_BPSV[,3]))
+# pbinom(0,size=14,prob=PTO_BPSV[349,3])
 
 # print(round(summary(bpsv_rd_costsamples_dyd),2))
 
@@ -549,9 +556,9 @@ printeq(eqtext)
 
 ```
 
-where $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ is the size of the reserve and $A_5 =`r format_to_print2(rawpar$bpsv_res_upfront,3)`$ is the cost per dose in USD.
+where $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ is the size of the reserve and $A_5 =`r format_to_print2(rawpar$bpsv_res_upfront,3)`$ is the cost per dose in USD, coming from the upfront cold-chain cost estimate of 138 million USD for 1.2 billion doses [@Griffiths2021a].
 
-The cost of goods supplied is $G = `r rawpar$cost_cogs`$ USD per dose. Then the cost of drug substance, accounting for the fill/finish cost $M_f = `r round(rawpar$cost_ff,2)`$ and the profit margin $M_p = `r round(rawpar$profit,2)`$, is $G(1-M_f)(1+M_p) = `r round(rawpar$cost_cogs*(1-rawpar$cost_ff)*(1+rawpar$profit),2)`$ USD per dose. The reserve is replenished every $Y_{rep} = `r rawpar$bpsv_replenishment`$ years. 
+The cost of goods supplied is $G = `r rawpar$cost_cogs`$ USD per dose. Then the cost of drug substance, accounting for the fill/finish cost $M_f = `r round(rawpar$cost_ff,2)`$ and the profit margin $M_p = `r round(rawpar$profit,2)`$, is $G(1-M_f)(1+M_p) = `r round(rawpar$cost_cogs*(1-rawpar$cost_ff)*(1+rawpar$profit),2)`$ USD per dose. We assume that the reserve is replenished every $Y_{rep} = `r rawpar$bpsv_replenishment`$ years based on the storage characteristics for Ervebo [@WorldHealthOrganization2019a]. 
 
 Then the annual cost to maintain the reserve of $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ doses is
 
@@ -566,7 +573,7 @@ printeq(eqtext)
 
 ```
 
-where $A_1 = `r round(rawpar$cost_bpsv_res,2)`$ USD is the annual reservation cost per dose.
+where $A_1 = `r round(rawpar$cost_bpsv_res,2)`$ USD is the annual reservation cost per dose, coming from the recurring cold-chain cost estimate of 12 million USD for 1.2 billion doses [@Griffiths2021a].
 
 ```{r bpsvinv,fig.cap='BPSV investigational reserve costs accumulated from the completion of Phase 2 to year 15 with uniformly distributed discount rate.'}
 
@@ -587,8 +594,8 @@ ggplot() +
 
 <!-- **This matches the spreadsheet results.** -->
 
-
-The cost per dose reservation per year is $A_2 = `r round(rawpar$cost_capres,2)`$ USD. Reservation sizes, in billions, depend on scenarios, including the $A_3 = `r rawpar$hic_cap_res`$ billion doses reserved for HIC, as follows:
+Reservation sizes, in billions, depend on scenarios. It includes the $A_3 = `r rawpar$hic_cap_res`$ billion doses reserved for HIC (325 million for the EU [@Pfizer2023], and 150 million for the USA [@PRNewswire2022], rounded up to 0.5 billion for simplicity of presentation). The cost of the EU reservation is 160 million EUR per year [@Martuscelli2023]; assuming an exchange rate of 1.08, the cost per dose per year is $A_2 = `r round(rawpar$cost_capres,2)`$ USD.
+We define the scenario-dependent total reservation size as:
 
 ```{r}
 eqtext = 'M_{R,s} = \\begin{cases}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
@@ -597,6 +604,8 @@ A_3+2 & s\\in\\{3, 6, 9\\} \\end{cases}'
 printmath(eqtext)
 
 ```
+
+
 
 Then the total cost per year is
 
@@ -1687,7 +1696,7 @@ Table: Vaccine Production Timeline when there is no BPSV. When BPSV is also mode
 
 ## Timing
 
-Facility transition (the reorganising of manufacturing facilities in preparation for SSV dose production) begins $I_0=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to SSVs available in 100 days, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
+We assume that manufacturers will begin producing at risk once they have confidence in vaccine approval. Thus, facility transition (the reorganising of manufacturing facilities in preparation for SSV dose production) begins $I_0=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to SSVs available in 100 days, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
 
 
 ```{r}
