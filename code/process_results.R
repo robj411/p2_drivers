@@ -122,6 +122,7 @@ for(sl in scenario_levels){
       results$samplei <- 1:nrow(results)
       results$Costsl <- results$Cost/(inputtab$vsl * inputtab$gdp)
       results$Costpc <- 100 * results$Cost/inputtab$gdp
+      results$gdplossusd <- (results$School + results$GDP_loss)
       results$gdp <- inputtab$gdp
       results$vsl <- inputtab$vsl
       # results <- cbind(results,inputtab)
