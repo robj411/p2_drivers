@@ -2,12 +2,6 @@
 title: "The Costing Model"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::pdf_document2: 
     #   --filter=pandoc-xnos
     toc: false
@@ -20,6 +14,12 @@ output:
     fig_caption: yes
     # includes:
     #   in_header: "preamble.tex"
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -46,12 +46,13 @@ library(stringi)
 library(gplots)
 library(RColorBrewer)
 library(data.table)
+library(readODS)
 library(splines)
 library(bookdown)
 library(pander)
 library(haven)
 library(viridis)
-library(hrbrthemes)
+# library(hrbrthemes)
 library(MASS)
 library(kableExtra)
 library(wbstats)
@@ -123,7 +124,7 @@ This document describes the costing model that is used in the CEPI application.
 
 ```{r paramtable, echo=F,warning=F,message=F}
 
-caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
+caps <- readODS::read_ods('cost_parameters.ods')
 caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
 lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1. Inverse Gaussian distributions have as a mean Parameter 1, and as a shape Parameter 2. Log normal distributions have as a mean Parameter 1, and as a standard deviation Parameter 2. PearsonV distributions have shape Parameter 1, scale Parameter 2, and location 0. PearsonVI distributions have shape Parameters 1 and 2, scale Parameter 3, and location 0. Where given, distributions are truncated at bounds.'
 capscopy = caps
@@ -178,6 +179,7 @@ crs= c(0, 0.7, 2)
 # pops365 = pops65[1:3]
 # pops365[3] = sum(pops65[3:4])
 # 
+# 1 - rawpar$final_vaccine_coverage*sum(pops65)/1e9
 # demand65 = rawpar$final_vaccine_coverage*pops365 / (1-rawpar$vaccine_wastage) # total bpsv doses per income level
 # popfracs65 = pops365/sum(pops365)
 # total_bpsv_demand = 1 # billion. not: sum(demand65/1e9)
@@ -428,12 +430,12 @@ where:
 We use $s=0$ to denote the business as usual (BAU) scenario, and $s=1$ for scenario S01,  $s=2$ for scenario S02, and so on.
 
 
-## BPSV advanced R\&D
+## BPSV advance R\&D
 
 <!-- **These values match the spreadsheet results** -->
 
 
-Advanced R\&D for BPSVs consists of Phase 0 (which we use to denote preclinical R\&D), Phase 1 and Phase 2, for which we add up costs that depend on (a) the number of candidates, (b) the cost per phase for experienced (those with licensure experience) and inexperienced developers (those without), and (c) the probability of success in each phase. The final cost therefore reflects the number of candidates that progressed through the developmental pipeline.
+Advance R\&D for BPSVs consists of Phase 0 (which we use to denote preclinical R\&D), Phase 1 and Phase 2, for which we add up costs that depend on (a) the number of candidates, (b) the cost per phase for experienced (those with licensure experience) and inexperienced developers (those without), and (c) the probability of success in each phase. The final cost therefore reflects the number of candidates that progressed through the developmental pipeline.
 
 In order to achieve one successful BPSV candidate in the event of an outbreak, we estimate that 14 are required to enter into preclinical R\&D. At present, there are six (Table \@ref(tab:inex)). We assume that the remaining eight will come from developers without prior licensure experience.
 
@@ -509,6 +511,9 @@ ggplot() + geom_histogram(aes(bpsv_rd_costsamples_dyd)) +
   theme_bw(base_size=15) +
   labs(x='Billion USD',y='',title='')
 
+# sum(rbinom(nrow(PTO_BPSV),14,PTO_BPSV[,3])>=1)/nrow(PTO_BPSV)*100
+# summary(1-pbinom(0,size=14,prob=PTO_BPSV[,3]))
+# pbinom(0,size=14,prob=PTO_BPSV[349,3])
 
 # print(round(summary(bpsv_rd_costsamples_dyd),2))
 

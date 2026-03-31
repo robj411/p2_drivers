@@ -3,7 +3,7 @@ The Costing Model
 
 - [1 Parameters](#1-parameters)
 - [2 Preparedness cost equation](#2-preparedness-cost-equation)
-  - [2.1 BPSV advanced R&D](#21-bpsv-advanced-rd)
+  - [2.1 BPSV advance R&D](#21-bpsv-advance-rd)
   - [2.2 BPSV investigational reserve](#22-bpsv-investigational-reserve)
   - [2.3 SSV capacity reservation](#23-ssv-capacity-reservation)
   - [2.4 Enabling activities](#24-enabling-activities)
@@ -70,7 +70,7 @@ application.
 | $W_{2; 365}^{(S)}$ | weeks_P2_365 | SSV Phase II duration (365); weeks | Constant | 19 | CEPI (2022) |
 | $W_{2; 200}^{(S)}$ | weeks_P2_200 | SSV Phase II duration (200 days); weeks | Constant | 7 | CEPI (2022) |
 | $W_{2; 100}^{(S)}$ | weeks_P2_100 | SSV Phase II duration (100 days); weeks | Constant | 0 | CEPI (2022) |
-| $W_{3; 365}^{(S)}$ | weeks_P3_365 | SSV Phase III duration (365); weeks | Constant | 19 | CEPI (2022) |
+| $W_{3; 365}^{(S)}$ | weeks_P3_365 | SSV Phase III duration (365); weeks | Constant | 18 | CEPI (2022) |
 | $W_{3; 200}^{(S)}$ | weeks_P3_200 | SSV Phase III duration (200 days); weeks | Constant | 15 | CEPI (2022) |
 | $W_{3; 100}^{(S)}$ | weeks_P3_100 | SSV Phase 3 duration (100 days); weeks | Constant | 8 | CEPI (2022) |
 | $T_0^{(e)}$ | cost_0_ex | Cost, preclinical, experienced manufacturer; USD | Exponential | 24213683 | Gouglas et al. (2018) |
@@ -120,18 +120,18 @@ application.
 | $V_{H; 11}$ | cost_hic_11 | Cost of vaccine delivery during ramp up (11–30%) in HIC; USD per dose | Triangular | 30, 40, 75 | See Table <a href="#tab:delcosts">3.1</a> |
 | $V_{H; 31}$ | cost_hic_31 | Cost of vaccine delivery getting to scale (31% and over) in HIC; USD per dose | Triangular | 30, 40, 75 | See Table <a href="#tab:delcosts">3.1</a> |
 | $r$ | discount | Discount rate | Uniform | 0.02, 0.06 | Glennerster, Snyder, and Tan (2023) |
-| $N_{HIC}^{(0)}$ | pop_hic_0 | Population, HIC | Constant | 1260028362 |  |
-| $N_{UMIC}^{(0)}$ | pop_umic_0 | Population, UMIC | Constant | 2854556263.5 |  |
-| $N_{LMIC}^{(0)}$ | pop_lmic_0 | Population, LMIC | Constant | 3314048516 |  |
-| $N_{LIC}^{(0)}$ | pop_lic_0 | Population, LIC | Constant | 762656294\.5 |  |
-| $N_{HIC}^{(15)}$ | pop_hic_15 | Population aged 15 and older, HIC | Constant | 1064531991.5 |  |
-| $N_{UMIC}^{(15)}$ | pop_umic_15 | Population aged 15 and older, UMIC | Constant | 2308984518 |  |
-| $N_{LMIC}^{(15)}$ | pop_lmic_15 | Population aged 15 and older, LMIC | Constant | 2363976954.5 |  |
-| $N_{LIC}^{(15)}$ | pop_lic_15 | Population aged 15 and older, LIC | Constant | 450976596\.5 |  |
-| $N_{HIC}^{(65)}$ | pop_hic_65 | Population aged 65 and older, HIC | Constant | 256715334 |  |
-| $N_{UMIC}^{(65)}$ | pop_umic_65 | Population aged 65 and older, UMIC | Constant | 359824402\.5 |  |
-| $N_{LMIC}^{(65)}$ | pop_lmic_65 | Population aged 65 and older, LMIC | Constant | 215830985\.5 |  |
-| $N_{LIC}^{(65)}$ | pop_lic_65 | Population aged 65 and older, LIC | Constant | 24812768 |  |
+| $N_{HIC}^{(0)}$ | pop_hic_0 | Population, HIC (2025) | Constant | 1267864200 | OWID (2024) |
+| $N_{UMIC}^{(0)}$ | pop_umic_0 | Population, UMIC (2025) | Constant | 2820990900 | OWID (2024) |
+| $N_{LMIC}^{(0)}$ | pop_lmic_0 | Population, LMIC (2025) | Constant | 3335966100 | OWID (2024) |
+| $N_{LIC}^{(0)}$ | pop_lic_0 | Population, LIC (2025) | Constant | 777211800 | OWID (2024) |
+| $N_{HIC}^{(15)}$ | pop_hic_15 | Population aged 15 and older, HIC (2025) | Constant | 1073972000 | OWID (2024) |
+| $N_{UMIC}^{(15)}$ | pop_umic_15 | Population aged 15 and older, UMIC (2025) | Constant | 2291421800 | OWID (2024) |
+| $N_{LMIC}^{(15)}$ | pop_lmic_15 | Population aged 15 and older, LMIC (2025) | Constant | 2376159400 | OWID (2024) |
+| $N_{LIC}^{(15)}$ | pop_lic_15 | Population aged 15 and older, LIC (2025) | Constant | 459486400 | OWID (2024) |
+| $N_{HIC}^{(65)}$ | pop_hic_65 | Population aged 65 and older, HIC (2025) | Constant | 257098750 | OWID (2024) |
+| $N_{UMIC}^{(65)}$ | pop_umic_65 | Population aged 65 and older, UMIC (2025) | Constant | 358101650 | OWID (2024) |
+| $N_{LMIC}^{(65)}$ | pop_lmic_65 | Population aged 65 and older, LMIC (2025) | Constant | 212911560 | OWID (2024) |
+| $N_{LIC}^{(65)}$ | pop_lic_65 | Population aged 65 and older, LIC (2025) | Constant | 25764820 | OWID (2024) |
 
 Notation and parametric assumptions for inputs to the costing model.
 Parameters are used as follows: uniform distributions go from Parameter
@@ -171,11 +171,11 @@ where:
 We use $s=0$ to denote the business as usual (BAU) scenario, and $s=1$
 for scenario S01, $s=2$ for scenario S02, and so on.
 
-## 2.1 BPSV advanced R&D
+## 2.1 BPSV advance R&D
 
 <!-- **These values match the spreadsheet results** -->
 
-Advanced R&D for BPSVs consists of Phase 0 (which we use to denote
+Advance R&D for BPSVs consists of Phase 0 (which we use to denote
 preclinical R&D), Phase 1 and Phase 2, for which we add up costs that
 depend on (a) the number of candidates, (b) the cost per phase for
 experienced (those with licensure experience) and inexperienced
@@ -601,7 +601,7 @@ A_{BPSV,s}\cdot S_R +  A_4(M_f+M_t)(1+M_p)G\\; & \\; s=1 \\\\
 \qquad(3.4)
 \end{equation}$$
 
-For a world population aged 65 and over of 0.86 billion, an uptake of
+For a world population aged 65 and over of 0.85 billion, an uptake of
 80% (accounting for wastage of 31%), and a cost per dose of $S_R = 6.29$
 USD (the same as for SSV via reserved capacity), the procurement cost
 for BPSV is 6.68 billion USD.
@@ -1282,6 +1282,15 @@ Orangi, Stacey, Angela Kairu, Anthony Ngatia, John Ojal, and Edwine
 Barasa. 2022. “Examining the Unit Costs of COVID-19 Vaccine Delivery in
 Kenya.” *BMC Health Services Research* 22 (1): 439.
 <https://doi.org/10.1186/s12913-022-07864-z>.
+
+</div>
+
+<div id="ref-OWID2024" class="csl-entry">
+
+OWID. 2024. “UN, World Population Prospects (2024) – Processed by Our
+World in Data. ‘Population, in Five-Year Age Groups – UN WPP’
+\[Dataset\]. United Nations, ‘World Population Prospects’ \[Original
+Data\].” <https://ourworldindata.org/grapher/population-by-age-group>.
 
 </div>
 
