@@ -1,4 +1,5 @@
-DAEDALUS for CEPI’s 100-day mission: code and model description
+Costs and impacts of vaccine preparedness investments for SARS-X
+pandemics: DAEDALUS code and model description
 ================
 
 - [1 Simulation rules](#1-simulation-rules)
@@ -352,7 +353,7 @@ population is stratified by age (into four age groups: pre-school
 children, school-age children, working-age adults, and retirement-age
 adults). The working-age adults are further stratified into 46 groups:
 45 economic sectors, plus one non-working group. Population count data
-were assembled in Doohan et al. (2025).
+were assembled in Doohan et al. (2026).
 
 ## 3.1 Ordinary differential equations
 
@@ -394,7 +395,7 @@ of time $t$, vaccination status $v$, and group identity $j$ (where the
 groups are the 45 sectors and the four age groups). Nominal natural
 history parameters (i.e. those not modified by circumstance) for seven
 historic respiratory pathogens with pandemic potential were assembled in
-Doohan et al. (2025).
+Doohan et al. (2026).
 
 The rate of infection of susceptible individuals, $`k^{1}_{j,v}(t)`$, is
 defined as
@@ -587,7 +588,7 @@ groups for different reasons:
 - Customer absence due to sector closure: impact on workers
 - Customer absence due to sector closure: impact on customers
 
-We approach this differently from Doohan et al. (2025). Instead of
+We approach this differently from Doohan et al. (2026). Instead of
 contact matrices from Prem et al. (2021), we use those from Walker et
 al. (2020). Instead of work contacts from Béraud et al. (2015), we use
 those from Jarvis et al. (2024). Haw et al. (2022) modelled closures
@@ -2364,7 +2365,7 @@ services-producing activities of households for own use
 
 We sample pathogen profiles by defining distributions over the pathogen
 parameters. The distributions are made using data sourced by Doohan et
-al. (2025) (shown in Table <a href="#tab:pathogenprofile">6.1</a>), and
+al. (2026) (shown in Table <a href="#tab:pathogenprofile">6.1</a>), and
 are described in Table <a href="#tab:pathogenparameters">6.2</a>. Age
 profiles for severity ratios are shown in Figure
 <a href="#fig:ratesbyage">6.1</a>. We sample parameter values from
@@ -3592,12 +3593,12 @@ sampled. Fixed values are described elsewhere in the documentation.
 The following quantities are sampled from the set of values belonging to
 countries from one income level and/or uniform distributions:
 
-- Population distribution by age (Doohan et al. 2025)
-- Life expectancy (Doohan et al. 2025)
-- Number of workers per sector (Doohan et al. 2025)
-- GVA per worker per sector (Doohan et al. 2025)
+- Population distribution by age (Doohan et al. 2026)
+- Life expectancy (Doohan et al. 2026)
+- Number of workers per sector (Doohan et al. 2026)
+- GVA per worker per sector (Doohan et al. 2026)
 - Community contact matrix (Walker et al. 2020)
-- Testing rate (Doohan et al. 2025)
+- Testing rate (Doohan et al. 2026)
 - Scaling factors for all workplace-related contacts
 - The extent to which there is uncosted transmission reduction
 - Type of VSL calculation
@@ -3763,7 +3764,7 @@ fractions of hospitality contacts made with age groups 20–64 and 65 and
 over, for the four age groups in order. Workforce in place is the
 fraction of 20 to 64 year olds counted among sector workers. (Workforce
 in place + unemployed = Workforce.) Hospital capacity is beds per
-100,000 population (Doohan et al. 2025).
+100,000 population (Doohan et al. 2026).
 </caption>
 <thead>
 <tr>
@@ -4655,9 +4656,9 @@ and the \$16 Trillion Virus.” *JAMA* 324 (15).
 
 Doohan, Patrick, Rob Johnson, Alessandra Løchen, Christian Morgenstern,
 David Haw, Alice Sabino, Edith Patouillard, Giovanni Forchini, and
-Katharina Hauck. 2025. “Mitigating Future Respiratory Pandemics in Low-,
+Katharina Hauck. 2026. “Mitigating Future Respiratory Pandemics in Low-,
 Middle- and High-Income Countries: A Modelling Study of Health, Economic
-and Educational Losses.” <https://doi.org/10.2139/ssrn.5711172>.
+and Educational Losses.” <https://doi.org/10.21203/rs.3.rs-9418446/v>.
 
 </div>
 
@@ -4771,6 +4772,7 @@ with Empirical Data for the COVID-19 Era.” *PLoS Computational Biology*
 Psacharopoulos, George, Victoria Collis, Harry Anthony Patrinos, and
 Emiliana Vegas. 2021. “The COVID-19 Cost of School Closures in Earnings
 and Income Across the World.” *Comparative Education Review* 65 (2).
+<https://doi.org/10.1086/713540>.
 
 </div>
 
@@ -4794,7 +4796,9 @@ Surveys.” *The BMJ* 372. <https://doi.org/10.1136/bmj.n608>.
 
 <div id="ref-TheGlobalFund2022" class="csl-entry">
 
-The Global Fund. 2022. “Fight for What Counts Investment Case,” 1–4.
+The Global Fund. 2022. “Fight for What Counts Investment Case.”
+<https://plataformalac.org/en/2022/02/fight-for-whats-count-investment-case-seventh-replenishment-2022/>.
+<https://plataformalac.org/en/2022/02/fight-for-whats-count-investment-case-seventh-replenishment-2022/>.
 
 </div>
 

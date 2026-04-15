@@ -1,5 +1,5 @@
 ---
-title: "DAEDALUS for CEPI's 100-day mission: code and model description"
+title: "Costs and impacts of vaccine preparedness investments for SARS-X pandemics: DAEDALUS code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   bookdown::github_document2:
@@ -47,7 +47,7 @@ library(bookdown)
 library(pander)
 library(haven)
 library(viridis)
-library(hrbrthemes)
+# library(hrbrthemes)
 library(MASS)
 library(kableExtra)
 library(wbstats)
