@@ -79,7 +79,7 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
   phase_duration <<- sapply(0:3,function(x) pfixed[[paste0('weeks_P',x,'_',dm)]])
   
   ##!! should be sum of phases
-  time_to_approval = round(dm/7)
+  time_to_approval = floor(dm/7)
 
   ## delivery ###################################################################
   # delivery variables are not sampled in this implementation because each rollout realisation 
@@ -419,13 +419,10 @@ cat(paste0('\\renewcommand*{\\MinNumber}{',min(reachday),'} \n\\renewcommand*{\\
 ## convert to daily ########################################
 
 
-
-scenario_results[[s]]$delivery$ssv -> deliveries
-
-
 diurnise_deliveries = function(deliveries){
   # dimension of daily rollout
   maxdays = max(deliveries$Week)*7
+  if(maxdays<365) maxdays = maxdays + 14 # for BPSVs, where a buffer is needed
   # matrix for results
   daily_doses = matrix(0,ncol=ncol(deliveries),nrow=maxdays)
   # one income level at a time
@@ -441,7 +438,7 @@ diurnise_deliveries = function(deliveries){
       daily_doses[(i-1)*7+1:7,j] = rep(doses_per_week[i],7)/7*100
     }
     # extend indefinitely - allows for different population sizes
-    daily_doses[last_week:maxdays, j] = penultimate_week_doses/7
+    daily_doses[(7*last_week):maxdays, j] = penultimate_week_doses/7*100
   }
   daily_doses[,1] = 1:maxdays
   colnames(daily_doses) = colnames(deliveries)
@@ -449,7 +446,37 @@ diurnise_deliveries = function(deliveries){
   daily_doses
 }
 
-# diurnise_deliveries(deliveries)[(69*6):(70*7),]
+nweeks = max(sapply(scenario_results,function(x)nrow(x$delivery$ssv)))
+del_mat = matrix(0, nrow=3+nweeks*7, ncol=2+nScen*3*2)
+del_mat[3,1] = 'Day'
+del_mat[3,2] = 'Week'
+del_mat[4:nrow(del_mat),1] = 4:nrow(del_mat) - 3
+del_mat[4:nrow(del_mat),2] = rep(1:nweeks,each=7)
+del_mat[1, seq(3,ncol(del_mat),by=6)] = scenario_names
+del_mat[2, seq(3,ncol(del_mat),by=3)] = rep(c('BPSV','SSV dose 2'),nscen)
+del_mat[3, 3:ncol(del_mat)] = rep(rev(income_levels),2*nscen)
 
+for(s in 1:nscen){
+  if(bpsv_scen[s]==T){
+    bpsv_deliveries = scenario_results[[s]]$delivery$bpsv
+    dailybpsv = diurnise_deliveries(bpsv_deliveries)[,-1]
+    del_mat[3+1:nrow(dailybpsv), 2+ (s-1)*2*3 + 1:3] = dailybpsv
+  }
+  deliveries <- scenario_results[[s]]$delivery$ssv
+  del_mat[4:nrow(del_mat), 2+ (s-1)*2*3 +3 + 1:3] = diurnise_deliveries(deliveries)[,-1]
+}
 
-      
+xlsx::write.xlsx(del_mat,file = '../../data/vaccine_delivery.xlsx',sheetName='Vx timeline', append=F,row.names = F, col.names=F)
+
+# for(s in 2:11){
+#   for(il in 3:4){
+#     perweekvec = c(0,diff(scenario_results[[s]]$delivery$ssv4[[INCOMELEVELS[il]]]*POPS0[il]))
+#     nonzero = which(perweekvec>0)
+#     lasti = length(nonzero)
+#     midi = round(lasti/2)
+#     cat(paste0(INCOMELEVELS[il],'; ',scenario_names[s],'\n'))
+#     cat(paste0(nonzero[1],': ',perweekvec[nonzero[1]],'\n'))
+#     cat(paste0(nonzero[midi],': ',perweekvec[nonzero[midi]],'\n'))
+#     cat(paste0(nonzero[lasti-1],': ',perweekvec[nonzero[lasti-1]],'\n'))
+#   }
+# }    
