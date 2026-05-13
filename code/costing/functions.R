@@ -65,6 +65,24 @@ get_parameters = function(nsamples = 100){
     }
   }
   
+  ordervec = rank(rawpar$cost_hic_31)
+  rawpar$cost_hic_0 <- sort(rawpar$cost_hic_0)[ordervec]
+  rawpar$cost_hic_11 <- sort(rawpar$cost_hic_11)[ordervec]
+  rawpar$cost_umic_0 <- sort(rawpar$cost_umic_0)[ordervec]
+  rawpar$cost_umic_11 <- sort(rawpar$cost_umic_11)[ordervec]
+  rawpar$cost_umic_31 <- sort(rawpar$cost_umic_31)[ordervec]
+  rawpar$cost_lmic_0 <- sort(rawpar$cost_lmic_0)[ordervec]
+  rawpar$cost_lmic_11 <- sort(rawpar$cost_lmic_11)[ordervec]
+  rawpar$cost_lmic_31 <- sort(rawpar$cost_lmic_31)[ordervec]
+  rawpar$cost_lic_0 <- sort(rawpar$cost_lic_0)[ordervec]
+  rawpar$cost_lic_11 <- sort(rawpar$cost_lic_11)[ordervec]
+  rawpar$cost_lic_31 <- sort(rawpar$cost_lic_31)[ordervec]
+  
+  
+  # cor(sort(rawpar$cost_umic_0)[rank(rawpar$cost_hic_31)],rawpar$cost_hic_31)
+  
+  
+  
   ics = c('hic','umic','lmic','lic')
   
   # some variables need to be fixed atm as they feed into delivery trajectories
@@ -108,16 +126,15 @@ get_parameters = function(nsamples = 100){
   # pops365[3] = sum(pops65[3:4])
   POPS65 <<- pops65
   
-  DEMAND65 <<- pfixed$final_vaccine_coverage*POPS65 / (1-pfixed$vaccine_wastage) # total bpsv doses per income level
+  DEMAND65 <<- pfixed$final_vaccine_coverage*POPS65 # total bpsv doses per income level
   POPFRACS65 <<- POPS65/sum(POPS65)
   TOTAL_BPSV_DEMAND <<- sum(DEMAND65/1e9) # 1 # billion. not: 
-  # vaccine wastage applied to BPSV only
-  # vaccine_wastage = 1 - pfixed$final_vaccine_coverage *sum(POPS65)/1e9
   
   DEMAND15 <<- pfixed$final_vaccine_coverage*POPS15*2 #/ (1-pfixed$vaccine_wastage)
   POPFRACS15 <<- POPS15/sum(POPS15)
   # two doses plus two boosters
   MAX_DEMAND <<- sum(DEMAND15)*2
+  VACCINE_WASTAGE <<- pfixed$vaccine_wastage
   
   # points at which costs shift per income level (ignoring the 80% mark)
   DEL_COST_THRESHOLDS <<- sapply(c(1,3)/10,function(x) x*POPS15*2) 
@@ -256,7 +273,7 @@ get_ssv_supply = function(dm=365, capres=0, bpsv=F, weeks_init, weeks_scale){
     weeks_init[['ex']] = pfixed$weeks_init_ex_nb
   }
   
-  time_to_approval = round(dm/7)
+  time_to_approval = floor(dm/7)
   w0 = time_to_approval - pfixed$week_trans_start
   man_cap_res = pfixed$hic_cap_res + capres
   
@@ -345,7 +362,7 @@ get_bpsv_supply = function(){
   man_cap_bpsv = pfixed$man_curr - pfixed$hic_cap_res
   bpsv_supplies <- c()
   w = 0
-  while(sum(bpsv_supplies)<TOTAL_BPSV_DEMAND){ 
+  while(sum(bpsv_supplies)<TOTAL_BPSV_DEMAND/(1-VACCINE_WASTAGE)){ 
     w = w+1
     bpsv_supplies[w] = dose_supply(week=w, w0=0, weeks_init=WEEKS_INIT[['res']], weeks_scale=WEEKS_SCALE[['res']], man_cap=man_cap_bpsv)
   }
@@ -377,9 +394,10 @@ get_bpsv_supply = function(){
     for(w in 1:bpsv_weeks){
       # doses this week = stock plus flow
       doses_left = doses_left + doses_per_week[w]
-      if(w>pfixed$duration_3_resp)
-        # doses given are the minimum of: the delivery rate; the doses left (per population); the fraction of the population still unvaccinated
-        doses[w] =  min(max_doses_each_wk, doses_left, max(0,DEMAND65[il] - sum(doses)) )
+      if(w>pfixed$duration_3_resp & sum(doses) < DEMAND65[il]/1e9){
+        # doses given are the minimum of: the delivery rate; the doses left (per population)
+        doses[w] =  min(max_doses_each_wk, doses_left )
+      }
       # subtract doses given to update the stock
       doses_left = doses_left - doses[w]
     }
@@ -397,7 +415,7 @@ get_bpsv_supply = function(){
 
 ## ssv allocation: reserved doses
 allocate_res_doses = function(cum_received, new_doses, hic_only=1){
-  demand15_bn = DEMAND15/1e9
+  demand15_bn = DEMAND15/1e9/(1-VACCINE_WASTAGE)
   allocation = rep(0,NLEVELS)
   
   first_recipient = which(cum_received < demand15_bn)[1]
@@ -419,7 +437,7 @@ allocate_res_doses = function(cum_received, new_doses, hic_only=1){
 }
 
 allocate_exbui_doses = function(cum_received, new_doses, hic_only=0){
-  demand15_bn = DEMAND15/1e9
+  demand15_bn = DEMAND15/1e9/(1-VACCINE_WASTAGE)
   allocation = rep(0,NLEVELS)
   
   sole_recipient = which(cum_received < demand15_bn)[1]
@@ -478,8 +496,8 @@ allocate_and_deliver_doses = function(allocation_functions, supplies, del_rates,
         }
         # first doses given if
         # they are the minimum of: the (remaining) delivery rate; the doses left (per population); the fraction of the population still unvaccinated
-        if(sum(first_doses) < DEMAND15[il]/1e9/2){
-          first_doses[w] =  min(max_doses_this_week, doses_left, max(0, DEMAND15[il]/1e9/2-sum(first_doses))) 
+        if(sum(second_doses) < DEMAND15[il]/1e9/2){
+          first_doses[w] =  min(max_doses_this_week, doses_left)#, max(0, DEMAND15[il]/1e9/2-sum(first_doses))) 
         }else{
           first_doses[w] = 0
         }
