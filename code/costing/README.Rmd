@@ -485,7 +485,6 @@ printeq(eqtext)
 | Developer | Licensure Experience | 
 |---|---|
 | Bharat/U Syd/ExcellGene | Yes |
-<!-- | Codiak | No |  -->
 | CPI/CalTech | No | 
 | Intravacc | No |
 | IVI | No | 

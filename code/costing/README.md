@@ -43,7 +43,7 @@ country income level.
 
 | Math notation | Code | Description | Distribution | Parameters | Source |
 |:--:|:--:|:--:|:--:|:--:|:--:|
-| $N^{\text{(BPSV)}}$ | n_bpsv_candidates | Total number of BPSV candidates in pipeline  | Constant | 14 | See Section <a href="#bpsv-advanced-rd"><strong>??</strong></a> |
+| $N^{\text{(BPSV)}}$ | n_bpsv_candidates | Total number of BPSV candidates in pipeline  | Constant | 14 | See Section <a href="#bpsv-advance-rd">2.1</a> |
 | $P_0^{\text{(BPSV)}}$ | pos_0 | Probability of success; preclinical | Multinomial | 0.40, 0.41, 0.41, 0.42, 0.48, 0.57 | Gouglas et al. (2018) |
 | $P_1^{\text{(BPSV)}}$ | pos_1 | Probability of success; Phase 1 | Multinomial | 0.33, 0.40, 0.50, 0.68, 0.70, 0.72, 0.74, 0.77, 0.81, 0.90 | Gouglas et al. (2018) |
 | $P_2^{\text{(BPSV)}}$ | pos_2 | Probability of success; Phase 2 | Multinomial | 0.22, 0.31, 0.33, 0.43, 0.46, 0.54, 0.58, 0.58, 0.74, 0.79 | Gouglas et al. (2018) |
@@ -235,19 +235,16 @@ D_s^{\text{(BP-adRD)}} = \begin{cases}
 | Developer               | Licensure Experience |
 |:------------------------|:---------------------|
 | Bharat/U Syd/ExcellGene | Yes                  |
+| CPI/CalTech             | No                   |
+| Intravacc               | No                   |
+| IVI                     | No                   |
+| Panacea/THSTI           | No                   |
+| SK Bio                  | Yes                  |
+| VIDO                    | No                   |
 
-<!-- | Codiak | No |  -->
-
-CPI/CalTech \| No \|  
-Intravacc \| No \|  
-IVI \| No \|  
-Panacea/THSTI \| No \|  
-SK Bio \| Yes \|  
-VIDO \| No \|
-
-Table: <span id="tab:inex"></span>Table 2.1: Manufacturers working on
-BPSV and whether or not they have licensure experience as of February
-2026 (CEPI 2026).
+<span id="tab:inex"></span>Table 2.1: Manufacturers working on BPSV and
+whether or not they have licensure experience as of February 2026 (CEPI
+2026).
 
 <div class="figure">
 
