@@ -144,8 +144,7 @@ mean Parameter 1, and as a shape Parameter 2. Log normal distributions
 have as a mean Parameter 1, and as a standard deviation Parameter 2.
 PearsonV distributions have shape Parameter 1, scale Parameter 2, and
 location 0. PearsonVI distributions have shape Parameters 1 and 2, scale
-Parameter 3, and location 0. Where given, distributions are truncated at
-bounds.
+Parameter 3, and location 0.
 
 # 2 Preparedness costs
 
