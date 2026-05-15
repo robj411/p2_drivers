@@ -106,9 +106,9 @@ country income level.
 | $I_{E,0}$ | weeks_init_ex_nb | Weeks to initial manufacturing when there’s no BPSV for existing and unreserved infrastructure | Constant | 30 | Kis and Rizvi (2021) |
 | $I_{E,1}$ | weeks_init_ex_bp | Weeks to initial manufacturing when there’s BPSV for existing and unreserved infrastructure | Constant | 12 | Kis and Rizvi (2021) |
 | $I_B$ | weeks_init_bui | Weeks to initial manufacturing for newly built infrastructure | Constant | 48 | Kis and Rizvi (2021),Feddema2023 |
-| $C_R$ | weeks_scale_res | Weeks to scale up to full capacity for reserved infrastructure | Constant | 10 | Vaccines Europe (2023) |
-| $C_E$ | weeks_scale_ex | Weeks to scale up to full capacity for unreserved existing infrastructure | Constant | 16 | Vaccines Europe (2023) |
-| $C_B$ | weeks_scale_bui | Weeks to scale up to full capacity for newly built infrastructure | Constant | 16 | Vaccines Europe (2023) |
+| $C_R$ | weeks_scale_res | Weeks to scale up to full capacity for reserved infrastructure | Constant | 10 | Vaccines Europe (2024) |
+| $C_E$ | weeks_scale_ex | Weeks to scale up to full capacity for unreserved existing infrastructure | Constant | 16 | Vaccines Europe (2024) |
+| $C_B$ | weeks_scale_bui | Weeks to scale up to full capacity for newly built infrastructure | Constant | 16 | Vaccines Europe (2024) |
 | $V_{L; 0}$ | cost_lic_0 | Cost of vaccine delivery at start up (0–10%) in LIC; USD per dose | Triangular | 1, 1.5, 2 | See Table <a href="#tab:delcosts">3.1</a> |
 | $V_{L; 11}$ | cost_lic_11 | Cost of vaccine delivery during ramp up (11–30%) in LIC; USD per dose | Triangular | 0.75, 1, 1.5 | See Table <a href="#tab:delcosts">3.1</a> |
 | $V_{L; 31}$ | cost_lic_31 | Cost of vaccine delivery at scale (31% and over) in LIC; USD per dose | Triangular | 1, 2, 4 | See Table <a href="#tab:delcosts">3.1</a> |
@@ -286,12 +286,16 @@ cost per dose in USD, coming from the upfront cold-chain equipment cost
 estimate of 138 million USD for 1.2 billion doses (Griffiths et al.
 2021).
 
-The cost of goods sold is $G = 4.68$ USD per dose. Then the cost of drug
-substance, accounting for the fill/finish margin $M_f = 0.07$ and the
-profit margin $M_p = 0.2$, is $G(1-M_f)(1+M_p) = 5.21$ USD per dose. The
-reserve is replenished every $Y_{rep} = 3$ years based on the storage
-characteristics for Ervebo (World Health Organization 2019). Then the
-annual cost to maintain the reserve of $A_4 =100,000$ doses is
+The cost of goods sold (COGS) is $G = 4.68$ USD per dose. Fill/finish
+costs from Kis (2021) of 0.29 and 0.39 USD per dose respectively for
+Moderna and Pfizer doses translate to 7.2% of COGS on average. Then the
+cost of drug substance, accounting for the fill/finish margin
+$M_f = 0.07$ and the profit margin $M_p = 0.2$, is
+$G(1-M_f)(1+M_p) = 5.21$ USD per dose.
+
+The reserve is replenished every $Y_{rep} = 3$ years based on the
+storage characteristics for Ervebo (World Health Organization 2019).
+Then the annual cost to maintain the reserve of $A_4 =100,000$ doses is
 
 $$\begin{equation}
 D_{s,y}^{\text{(BP-inv)}} = \begin{cases}
@@ -537,7 +541,12 @@ D_s^{\text{(BP-resRD)}} = \begin{cases}\left( (1+\pi)\frac{W_3^{(365)}}{52Y_3^{(
 
 The cost per dose comes from the cost of goods sold (COGS), $G = 4.68$
 USD, adjusted for a profit margin ($M_p = 0.2$) and transportation
-margin ($M_t = 0.1$).
+margin ($M_t = 0.1$). The 20% profit margin is at the top of range in
+U.S. Government Accountability Office (2017), and thus acts as a
+conservative estimate on profit margins sought by pharmaceutical
+companies. The 10% estimate for transportation from manufacturer to
+country isolates the transportation cost from the process of vaccination
+(Gotham, Barber, and Hill 2019).
 
 $S_R = G(1+M_p)(1+M_t)$ evaluates to 6.18 USD.
 
@@ -767,19 +776,6 @@ Manufacturing response timeline assumptions
 <!-- | Private Capacity (Existing; %)  || | | Scaling from 0-100 | 100 | 100 | 100 |  -->
 <!-- | Private Capacity (Response; %)  | | | |  | | Scaling from 0-100 | 100 | -->
 
-| Weeks from transition start | Reserved Capacity (%) | Existing Private Capacity (%) | Response Private Capacity (%) |
-|:---|:---|:---|:---|
-| 0–11 |  |  |  |
-| 12–21 | Scales from 0 to 100 |  |  |
-| 22–29 | 100 |  |  |
-| 30–45 | 100 | Scales from 0 to 100 |  |
-| 46–47 | 100 | 100 |  |
-| 48–63 | 100 | 100 | Scales from 0 to 100 |
-| 64+ | 100 | 100 | 100 |
-
-Vaccine Production Timeline when there is no BPSV. When BPSV is also
-modelled, Existing Private Capacity scales from 0 to 100 in weeks 12–21.
-
 ## 4.1 Timing
 
 We assume that manufacturers will begin producing at risk once they have
@@ -840,11 +836,20 @@ Z_{x,s,w} = \begin{cases}0 & w-w_s^{(0)} \leq I_x \\
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\  -->
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\  -->
 
-where $I_R = 12$ is the number of weeks to initial manufacturing for
-reserved capacity, and $C_R = 10$ is its number of weeks to scale up to
-full capacity; $I_B = 48$ is the number of weeks to initial
-manufacturing for newly built capacity, and $C_B = 16$ is its number of
-weeks to scale up to full capacity; and
+Here, $I_R = 12$ is the number of weeks to initial manufacturing for
+reserved capacity, assuming streamlined technology transfer and process
+set up (around 2 months) and facility process validation (around 1
+month) (Kis and Rizvi 2021). $C_R = 10$ is its number of weeks to scale
+up to full capacity, taking the lower end of the mRNA range assumed
+readiness from reserved capacity in Vaccines Europe (2024). $I_B = 48$
+is the number of weeks to initial manufacturing for newly built
+capacity. This assumes early planning phase (around 2 months), longer
+facility improvement to build new infrastructure (around 5 months), tech
+transfer (around 2 months), and facility/process setup (around 2 months)
+(Kis and Rizvi 2021). This also aligns with realistic estimate from
+manufacturing stakeholder interviews (Feddema et al. 2023). $C_B = 16$
+is its number of weeks to scale up to full capacity, taking the middle
+of the range from Vaccines Europe (2024).
 
 ``` math
 I_E = \begin{cases}
@@ -856,8 +861,28 @@ I_{E,0}  \; & \; s\neq 1
 where $I_{E,0} = 30$ and $I_{E,1} = 12$ are the number of weeks to
 initial manufacturing for existing and unreserved capacity
 (i.e. manufacturing conversion for SSVs is faster in the presence of
-BPSVs as we assume that they are manufactured using the same platform),
-and $C_E = 16$ is its number of weeks to scale up to full capacity.
+BPSVs as we assume that they are manufactured using the same platform).
+In the absence of BPSV, we assume early planning phase (around 2
+months), streamlined facility improvement because using existing
+infrastructure (around 1 month), tech transfer (around 2 months), and
+facility/process set up (around 2 months) (Kis and Rizvi 2021).
+$C_E = 16$ is its number of weeks to scale up to full capacity, assumed
+to be the same as $C_B$. These timelines are shown in Table
+<a href="#tab:mantimeline">4.1</a>.
+
+| Weeks from transition start | Reserved Capacity (%) | Existing Private Capacity (%) | Response Private Capacity (%) |
+|:---|:---|:---|:---|
+| 0–11 |  |  |  |
+| 12–21 | Scales from 0 to 100 |  |  |
+| 22–29 | 100 |  |  |
+| 30–45 | 100 | Scales from 0 to 100 |  |
+| 46–47 | 100 | 100 |  |
+| 48–63 | 100 | 100 | Scales from 0 to 100 |
+| 64+ | 100 | 100 | 100 |
+
+<span id="tab:mantimeline"></span>Table 4.1: Vaccine Production Timeline
+when there is no BPSV. When BPSV is also modelled, Existing Private
+Capacity scales from 0 to 100 in weeks 12–21.
 
 <div class="figure">
 
@@ -1175,6 +1200,15 @@ Africa, 2021/2022.” *BMC Health Services Research* 24 (1): 857.
 
 </div>
 
+<div id="ref-Feddema2023" class="csl-entry">
+
+Feddema, Jelle J., Kenneth D. S. Fernald, Hans G. C. P. Schikan, and
+Linda H. M. Van De Burgwal. 2023. “Upscaling Vaccine Manufacturing
+Capacity - Key Bottlenecks and Lessons Learned.” *Vaccine* 41 (30):
+4359–68. <https://doi.org/10.1016/j.vaccine.2023.05.027>.
+
+</div>
+
 <div id="ref-Glennerster2023" class="csl-entry">
 
 Glennerster, Rachel, Christopher M. Snyder, and Brandon Joel Tan. 2023.
@@ -1400,11 +1434,11 @@ Research and Development Spending, and Merger and Acquitisition Deals.”
 
 </div>
 
-<div id="ref-VaccinesEurope2023" class="csl-entry">
+<div id="ref-VaccinesEurope2024" class="csl-entry">
 
-Vaccines Europe. 2023. “Vaccines Europe Analysis of Vaccine Production
+Vaccines Europe. 2024. “Vaccines Europe Analysis of Vaccine Production
 Lead Times.”
-<https://www.cgdev.org/sites/default/files/incentivizing-covid-19-vaccine-developers-expand-manufacturing-capacity.pdf>.
+<https://www.vaccineseurope.eu/media-hub/position-papers/vaccines-europe-analysis-of-vaccine-production-lead-times-2024/>.
 
 </div>
 
