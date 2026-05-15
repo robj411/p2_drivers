@@ -731,12 +731,12 @@ Trial costs are adjusted for the duration of the trial, which depend on the R\&D
 
 
 ```{r}
-eqtext = 'T_{\\zeta,i}^{(e)} = (1+\\pi)\\frac{W_{i;\\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}'
+eqtext = 'T_{\\zeta,i}^{(e)} = (1+\\pi)\\frac{W_i^{(\\zeta)}}{52Y_{i}^{(B)}}T_i^{(e)}'
 printmath(eqtext)
 ```
 
 
-where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the cost per Phase $i$ of experienced developers (i.e. we assume only experienced manufacturers undertake reactive R\&D), $Y_{i}^{(B)}$ is the usual phase duration in normal times in years, and $W_{i;\zeta}^{(S)}$ is its expected duration in weeks given enabling investments made prior to the outbreak. 
+where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the cost per Phase $i$ of experienced developers (i.e. we assume only experienced manufacturers undertake reactive R\&D), $Y_{i}^{(B)}$ is the usual phase duration in normal times in years, and $W_i^{(\zeta)}$ is its expected duration in weeks given enabling investments made prior to the outbreak. 
 
 The probability of success of each phase comes from COVID-19 data [@LinksbridgeSPC2025]:
 
@@ -825,11 +825,11 @@ ggplot(ssv_rd_plot) + geom_histogram(aes(Cost/1e3)) +
 
 
 
-One BPSV candidate that has passed through phases 0 to 2 prior to the outbreak goes through Phase 3 during the response. The duration is $W_{3; 365}^{(S)}=`r rawpar$weeks_P3_365`$ weeks. Thus we write the BPSV R\&D response cost
+One BPSV candidate that has passed through phases 0 to 2 prior to the outbreak goes through Phase 3 during the response. The duration is $W_3^{(365)}=`r rawpar$weeks_P3_365`$ weeks. Thus we write the BPSV R\&D response cost
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-resRD)}} = \\begin{cases}\\left( (1+\\pi)\\frac{W_{3; 365}^{(S)}}{52Y_3^{(B)}}T_3^{(e)} + T_4\\right) \\; & \\; s=1 \\\\
+eqtext = 'D_s^{\\text{(BP-resRD)}} = \\begin{cases}\\left( (1+\\pi)\\frac{W_3^{(365)}}{52Y_3^{(B)}}T_3^{(e)} + T_4\\right) \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
 \\end{cases}
 (\\#eq:bpsvresrd)'
@@ -1704,7 +1704,7 @@ We assume that manufacturers will begin producing at risk once they have confide
 
 
 ```{r}
-eqtext = 'W_{\\zeta}^{(S)} = \\sum_{i=0}^3 W_{i;\\zeta}^{(S)}'
+eqtext = 'W^{(\\zeta)} = \\sum_{i=0}^3 W_i^{(\\zeta)}'
 printmath(eqtext)
 ```
 
@@ -1712,7 +1712,7 @@ for $\zeta\in\lbrace 365, 200, 100\rbrace$. These work out as `r time_to_approva
 
 
 ```{r}
-eqtext = 'w_s^{(0)} = W_{\\zeta(s)}^{(S)} - I_0 = \\begin{cases}45 & s\\in\\lbrace 0, 1, 2, 3, 10\\rbrace \\\\ 
+eqtext = 'w_s^{(0)} = W^{(\\zeta(s))} - I_0 = \\begin{cases}45 & s\\in\\lbrace 0, 1, 2, 3, 10\\rbrace \\\\ 
 22 & s\\in\\lbrace 4, 5, 6\\rbrace \\\\ 
 7 & s\\in\\lbrace 7, 8, 9\\rbrace \\end{cases}'
 printmath(eqtext)
@@ -1992,10 +1992,10 @@ The input to the impact model is $h_{s,i,w}^{(2)}$, i.e. doses delivered per wee
 
 ## Timing
 
-The duration of the Phase 3 trial is $W_{3; 365}^{(S)} = `r rawpar$weeks_P3_365`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV.
+The duration of the Phase 3 trial is $W_3^{(365)} = `r rawpar$weeks_P3_365`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV.
 
 
-Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+rawpar$weeks_init_res`$ and dose distribution begins in week $1+W_{3; 365}^{(S)} = `r 1+rawpar$weeks_P3_365`$.
+Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+rawpar$weeks_init_res`$ and dose distribution begins in week $1+W_3^{(365)} = `r 1+rawpar$weeks_P3_365`$.
 
 ## Production
 

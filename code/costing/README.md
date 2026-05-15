@@ -62,18 +62,18 @@ country income level.
 | $Y^{(200)}$ | years_200 | Years of R&D to 200-day readiness | Constant | 5 | Model choice |
 | $Y^{(100)}$ | years_100 | Years of R&D to 100-day readiness | Constant | 15 | Model choice |
 | $E$ | cost_enab | Enabling activities; million USD per year | Constant | 700 | CEPI (2021) |
-| $W_{0; 365}^{(S)}$ | weeks_P0_365 | Reactive preclinical duration (365); weeks | Constant | 14 | CEPI (2022) |
-| $W_{0; 200}^{(S)}$ | weeks_P0_200 | Reactive preclinical duration (200 days); weeks | Constant | 5 | CEPI (2022) |
-| $W_{0; 100}^{(S)}$ | weeks_P0_100 | Reactive preclinical duration (100 days); weeks | Constant | 5 | CEPI (2022) |
-| $W_{1; 365}^{(S)}$ | weeks_P1_365 | Reactive Phase 1 duration (365); weeks | Constant | 0 | CEPI (2022) |
-| $W_{1; 200}^{(S)}$ | weeks_P1_200 | Reactive Phase 1 duration (200 days); weeks | Constant | 0 | CEPI (2022) |
-| $W_{1; 100}^{(S)}$ | weeks_P1_100 | Reactive Phase 1 duration (100 days); weeks | Constant | 0 | CEPI (2022) |
-| $W_{2; 365}^{(S)}$ | weeks_P2_365 | Reactive Phase 2 duration (365); weeks | Constant | 19 | CEPI (2022) |
-| $W_{2; 200}^{(S)}$ | weeks_P2_200 | Reactive Phase 2 duration (200 days); weeks | Constant | 7 | CEPI (2022) |
-| $W_{2; 100}^{(S)}$ | weeks_P2_100 | Reactive Phase 2 duration (100 days); weeks | Constant | 0 | CEPI (2022) |
-| $W_{3; 365}^{(S)}$ | weeks_P3_365 | Reactive Phase 3 duration (365); weeks | Constant | 18 | CEPI (2022) |
-| $W_{3; 200}^{(S)}$ | weeks_P3_200 | Reactive Phase 3 duration (200 days); weeks | Constant | 15 | CEPI (2022) |
-| $W_{3; 100}^{(S)}$ | weeks_P3_100 | Reactive Phase 3 duration (100 days); weeks | Constant | 8 | CEPI (2022) |
+| $W_{0}^{365}$ | weeks_P0_365 | Reactive preclinical duration (365); weeks | Constant | 14 | CEPI (2022) |
+| $W_{0}^{200}$ | weeks_P0_200 | Reactive preclinical duration (200 days); weeks | Constant | 5 | CEPI (2022) |
+| $W_{0}^{100}$ | weeks_P0_100 | Reactive preclinical duration (100 days); weeks | Constant | 5 | CEPI (2022) |
+| $W_{1}^{365}$ | weeks_P1_365 | Reactive Phase 1 duration (365); weeks | Constant | 0 | CEPI (2022) |
+| $W_{1}^{200}$ | weeks_P1_200 | Reactive Phase 1 duration (200 days); weeks | Constant | 0 | CEPI (2022) |
+| $W_{1}^{100}$ | weeks_P1_100 | Reactive Phase 1 duration (100 days); weeks | Constant | 0 | CEPI (2022) |
+| $W_{2}^{365}$ | weeks_P2_365 | Reactive Phase 2 duration (365); weeks | Constant | 19 | CEPI (2022) |
+| $W_{2}^{200}$ | weeks_P2_200 | Reactive Phase 2 duration (200 days); weeks | Constant | 7 | CEPI (2022) |
+| $W_{2}^{100}$ | weeks_P2_100 | Reactive Phase 2 duration (100 days); weeks | Constant | 0 | CEPI (2022) |
+| $W_{3}^{365}$ | weeks_P3_365 | Reactive Phase 3 duration (365); weeks | Constant | 18 | CEPI (2022) |
+| $W_{3}^{200}$ | weeks_P3_200 | Reactive Phase 3 duration (200 days); weeks | Constant | 15 | CEPI (2022) |
+| $W_{3}^{100}$ | weeks_P3_100 | Reactive Phase 3 duration (100 days); weeks | Constant | 8 | CEPI (2022) |
 | $T_0^{(e)}$ | cost_0_ex | R&D cost, preclinical, experienced manufacturer; USD | Exponential | 24213683 | Gouglas et al. (2018) |
 | $T_0^{(n)}$ | cost_0_inex | R&D cost, preclinical, inexperienced manufacturer; USD | Inverse Gaussian | 7882792, 13455907 | Gouglas et al. (2018) |
 | $T_1^{(e)}$ | cost_1_ex | R&D cost, Phase 1, experienced manufacturer; USD | Inverse Gaussian | 15339198, 8076755 | Gouglas et al. (2018) |
@@ -442,15 +442,15 @@ the R&D enabling investment, denoted
 $\zeta\in\lbrace 365, 200, 100\rbrace$:
 
 ``` math
-T_{\zeta,i}^{(e)} = (1+\pi)\frac{W_{i;\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}
+T_{\zeta,i}^{(e)} = (1+\pi)\frac{W_i^{(\zeta)}}{52Y_{i}^{(B)}}T_i^{(e)}
 ```
 
 where $\pi = 0.28$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the
 cost per Phase $i$ of experienced developers (i.e. we assume only
 experienced manufacturers undertake reactive R&D), $Y_{i}^{(B)}$ is the
-usual phase duration in normal times in years, and $W_{i;\zeta}^{(S)}$
-is its expected duration in weeks given enabling investments made prior
-to the outbreak.
+usual phase duration in normal times in years, and $W_i^{(\zeta)}$ is
+its expected duration in weeks given enabling investments made prior to
+the outbreak.
 
 The probability of success of each phase comes from COVID-19 data
 (Linksbridge SPC 2025):
@@ -513,10 +513,10 @@ secure at least five successful SSV candidates
 
 One BPSV candidate that has passed through phases 0 to 2 prior to the
 outbreak goes through Phase 3 during the response. The duration is
-$W_{3; 365}^{(S)}=18$ weeks. Thus we write the BPSV R&D response cost
+$W_3^{(365)}=18$ weeks. Thus we write the BPSV R&D response cost
 
 $$\begin{equation}
-D_s^{\text{(BP-resRD)}} = \begin{cases}\left( (1+\pi)\frac{W_{3; 365}^{(S)}}{52Y_3^{(B)}}T_3^{(e)} + T_4\right) \\; & \\; s=1 \\\\
+D_s^{\text{(BP-resRD)}} = \begin{cases}\left( (1+\pi)\frac{W_3^{(365)}}{52Y_3^{(B)}}T_3^{(e)} + T_4\right) \\; & \\; s=1 \\\\
 0  \\; & \\; s\neq 1
 \end{cases}
 \qquad(3.2)
@@ -791,7 +791,7 @@ corresponding to SSVs available in 100 days, 200 days, and 365 days. The
 total weeks taken for vaccine approval can be written as follows:
 
 ``` math
-W_{\zeta}^{(S)} = \sum_{i=0}^3 W_{i;\zeta}^{(S)}
+W^{(\zeta)} = \sum_{i=0}^3 W_i^{(\zeta)}
 ```
 
 for $\zeta\in\lbrace 365, 200, 100\rbrace$. These work out as 52, 28,
@@ -800,7 +800,7 @@ and 14 weeks, respectively. Thus “week 0” for manufacturing occurs 45,
 sequenced. We denote this variable $w_s^{(0)}$:
 
 ``` math
-w_s^{(0)} = W_{\zeta(s)}^{(S)} - I_0 = \begin{cases}45 & s\in\lbrace 0, 1, 2, 3, 10\rbrace \\ 
+w_s^{(0)} = W^{(\zeta(s))} - I_0 = \begin{cases}45 & s\in\lbrace 0, 1, 2, 3, 10\rbrace \\ 
 22 & s\in\lbrace 4, 5, 6\rbrace \\ 
 7 & s\in\lbrace 7, 8, 9\rbrace \end{cases}
 ```
@@ -1051,14 +1051,13 @@ $h_{s,\text{LMIC},w}^{(2)}$. The same applies to BPSV delivery.
 
 ## 5.1 Timing
 
-The duration of the Phase 3 trial is $W_{3; 365}^{(S)} = 18$ weeks. The
-time to manufacturing transition is $I_R = 12$ weeks, and the time to
+The duration of the Phase 3 trial is $W_3^{(365)} = 18$ weeks. The time
+to manufacturing transition is $I_R = 12$ weeks, and the time to
 manufacturing scale-up $C_R = 10$ weeks; these are the same as the
 reserved-capacity times for SSV.
 
 Facility transition occurs in week 1. Thus manufacturing begins in week
-$1+I_R = 13$ and dose distribution begins in week
-$1+W_{3; 365}^{(S)} = 19$.
+$1+I_R = 13$ and dose distribution begins in week $1+W_3^{(365)} = 19$.
 
 ## 5.2 Production
 
