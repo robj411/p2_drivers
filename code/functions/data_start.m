@@ -58,11 +58,11 @@ function data = data_start(lbfile)
     data.compindex = compindex;
     
     %% vaccine rollout
-    fulltable = readtable(lbfile,'FileType','spreadsheet','Sheet','Vx timeline');
+    fulltable = readtable(lbfile,'FileType','spreadsheet','Sheet','Vx timeline', 'Range', 'A3');
     % fulltable = readtable('../data/20250328 pandemic delivery scenarios - for ICL.xlsx','FileType','spreadsheet','Sheet',1);
     % fulltable = readtable('../data/20240611 LB Daily Vaccine Delivery.xlsx','FileType','spreadsheet','Sheet',1);
     colnames = regexprep(fulltable.Properties.VariableNames(2+[1:3]),'s','');
-    vaxtab = table2array(fulltable);
+    vaxtab = str2double(table2array(fulltable));
     nScen = (length(fulltable.Properties.VariableNames)-2)/6;
     scenarios = cell(1,nScen);
     for i = 1:nScen

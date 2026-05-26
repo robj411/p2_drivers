@@ -59,11 +59,11 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
     vaccine_uptake  = data.vaccine_uptake;                    %Vaccine Uptake
     uptake  = vaccine_uptake*[0 over14frac 1 1]; 
     doses4 = Npop4 .* uptake;
-    doses = sum(doses4);
+    doses = sum(doses4); % total doses required
 
     bpsv_sched = scentab(:,1);
     sarsx_sched = scentab(:,2);
-    cumdoses = cumsum(sarsx_sched*50000000);
+    cumdoses = cumsum(sarsx_sched*50000000); % cumulated doses delivered (by day)
     endrollout = find(cumdoses > doses,1);
     first_bpsv_nonzero = find(bpsv_sched>0,1);
 
@@ -73,7 +73,7 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
     if bpsv == 1
         cum_bpsv = cumsum(bpsv_sched*50000000);
         keep_indices = find(diff([0; cum_bpsv])>0);
-        interptime = interp1([0; cum_bpsv(keep_indices)],[0; keep_indices],doses4(4));
+        interptime = interp1([0; cum_bpsv(keep_indices)],[keep_indices(1)-1; keep_indices],doses4(4));
         % find(cum_bpsv>doses4(4),1)
         t_bpsv = min(interptime, find(bpsv_sched~=0,1,'last')) - first_bpsv_nonzero + 1;
         t_vax = p2.Tres + first_bpsv_nonzero;
@@ -90,6 +90,7 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
 
     t_ages = [];
     t_ages(4) = interptime(doses4(4)) - vaccine_day;
+    %disp(sarsx_sched(vaccine_day:round(vaccine_day+17))')
     if max(cumdoses) <= doses
         if max(cumdoses) <= sum(doses4(3:4))
             t_ages(3) = length(cumdoses) - sum(t_ages(4)) - vaccine_day;
@@ -102,17 +103,10 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
         t_ages(3) = interptime(sum(doses4(3:4))) - t_ages(4) - vaccine_day;
         t_ages(2) = interptime(sum(doses4(2:4))) - sum(t_ages(3:4)) - vaccine_day;
     end
-
-    % vaccination_rate = vaccination_rate_pc*sum(Npop);
-    % vaccination_rate_pc    = data.vaccination_rate_pc;  %Vaccine Administration Rate
-
-
-    %Vaccine Administration Rate
-    % t_ages     = min((uptake.*Npop4)/vaccination_rate,Inf);%vaccination_rate may be 0
-
+    %disp(t_ages)
     if bpsv==1
-        % if primer starts before booster, there are t_bspv days of primer.
-        % these people must then be boosted.
+        % if bpsv starts before ssv, there are t_bspv days of bpsv.
+        % these people must then be vaccinated with ssv.
         if start_gap < t_bpsv
             t_ages = [start_gap, t_ages(4), t_ages(3), t_ages(2)];
             p2.group_order = [4,4,3,2];
@@ -121,15 +115,18 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
             p2.group_order = [4,0,4,3,2];
         end
     else
-        % if booster starts before primer, just work down the ages
+        % if ssv starts before bpsv, just work down the ages
         t_ages     = [t_ages(4),t_ages(3),t_ages(2)];
         p2.group_order = [4,3,2];
     end    
     tpoints    = cumsum([min(t_vax, p2.t_vax2), t_ages]);
+    %disp(tpoints)
     p2.tpoints = tpoints;
     p2.sarsx_per_day = sarsx_sched(vaccine_day:end)*sum(Npop);
     p2.bpsv_per_day = bpsv_sched(first_bpsv_nonzero:end)*sum(Npop);
-
+    if any(diff(p2.tpoints)<0)
+        disp(p2.tpoints)
+    end
     
 
     %Vaccination Rollout by Sector
