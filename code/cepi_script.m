@@ -207,21 +207,5 @@ for sl = 1:nScen
     end
 end
 
-%% finishing up - process results with R script and write with Rmarkdown
-% !\Progra~1\R\R-4.4.1\bin\x64\Rscript cepi_voi.R
-exe_path = '"C:\Program Files\R\R-4.5.0\bin\x64\Rscript.exe"';
-system([exe_path,' exceedance_probabilities.R'])
-
-cd('..')
-
-firstbit = ' -e "rmarkdown::render(';
-markdownname = strcat('''', 'cepi','.Rmd''');
-doctype = strcat('''', 'bookdown::pdf_document2''');
-param = strcat('params=list(lbfile = ', '''', lbfile0,'''','), clean=F)"'); 
-cmd = [exe_path,firstbit, markdownname, ', ', doctype,', ', param];
-% cmd = [exe_path,firstbit, markdownname, ', ', param];
-system(cmd)
-
-cd('code')
 
 
