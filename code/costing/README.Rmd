@@ -51,7 +51,7 @@ library(bookdown)
 library(pander)
 library(haven)
 library(viridis)
-library(hrbrthemes)
+# library(hrbrthemes)
 library(MASS)
 library(kableExtra)
 library(wbstats)
@@ -113,7 +113,7 @@ for(i in 1:nrow(ildata)){
 
 
 
-This document describes the costing model that is used in the CEPI application. 
+This document describes the costing model that is used in the CEPI application. It computes the costs of vaccine technology in preparedness and outbreak response, as well as delivery profiles of vaccines by country income level.
 
 
 
@@ -123,16 +123,26 @@ This document describes the costing model that is used in the CEPI application.
 
 caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
 caps$`Math notation` <- paste0('$',caps$`Math notation`,'$')
-lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1. Inverse Gaussian distributions have as a mean Parameter 1, and as a shape Parameter 2. Log normal distributions have as a mean Parameter 1, and as a standard deviation Parameter 2. PearsonV distributions have shape Parameter 1, scale Parameter 2, and location 0. PearsonVI distributions have shape Parameters 1 and 2, scale Parameter 3, and location 0. Where given, distributions are truncated at bounds.'
+lg <- 'Notation and parametric assumptions for inputs to the costing model. Parameters are used as follows: uniform distributions go from Parameter 1 to Parameter 2. Triangular distributions go from Parameter 1 to Parameter 3 with a peak at Parameter 2. Multinomial distributions have equally probable values listed individually. Exponential distributions have as a mean Parameter 1. Inverse Gaussian distributions have as a mean Parameter 1, and as a shape Parameter 2. Log normal distributions have as a mean Parameter 1, and as a standard deviation Parameter 2. PearsonV distributions have shape Parameter 1, scale Parameter 2, and location 0. PearsonVI distributions have shape Parameters 1 and 2, scale Parameter 3, and location 0.'
 capscopy = caps
 if (knitr::is_html_output()) {
   capscopy$Source <- gsub('}','',capscopy$Source)
   capscopy$Source <- gsub('\\\\citet\\{','@',capscopy$Source)
 } else {
   capscopy$Code <- NULL
+  parameter_names = list(Exponential=c('Mean: '),
+                         `Inverse Gaussian`=c('Mean: ','Shape: '),
+                         `Log normal`= c('Mean: ','Standard deviation: '),
+                         PearsonV = c('Shape: ', 'Scale: '),
+                         PearsonVI = c('Shape 1: ','Shape 2: ', 'Scale: '))
+  for(i in 1:nrow(capscopy)){
+    if(capscopy$Distribution[i] %in% names(parameter_names)){
+      capscopy$Parameters[i] = paste0(paste0(parameter_names[[capscopy$Distribution[i]]], format_to_print2(as.numeric(strsplit(capscopy$Parameters[i],', ')[[1]]),8)),collapse=', ')
+    }
+  }
 }
 cat(pander(capscopy,caption=lg, missing = ""))
-
+i=37
 ```
 
 
@@ -402,7 +412,7 @@ printmath = function(eqtext){
 
 
 
-# Preparedness cost equation 
+# Preparedness costs 
 
 
 We can write the total preparedness cost for scenario $s$ in year $y$, with discount rate $r$, as
@@ -417,22 +427,22 @@ printmath(eqtext)
 where:
 
 - $D_s^{\text{(BP-adRD)}}$ is the R\&D cost of BPSV prior to an outbreak; see Equation \@ref(eq:bpsvrd)
-- $D_{s,y}^{\text{(BP-sec)}}$ is the upfront cost of securing an investigational reserve of 100,000 BPSV doses; see Equation \@ref(eq:bpsvadman)
-- $D_{s,y}^{\text{(BP-inv)}}$ is the annual cost of maintaining an investigational reserve of 100,000 BPSV doses; see Equation \@ref(eq:bpsvinv)
+- $D_{s,y}^{\text{(BP-sec)}}$ is the upfront cost of securing an investigational reserve of `r format_to_print2(rawpar$bpsv_inv_res)` BPSV doses; see Equation \@ref(eq:bpsvadman)
+- $D_{s,y}^{\text{(BP-inv)}}$ is the annual cost of maintaining an investigational reserve of `r format_to_print2(rawpar$bpsv_inv_res)` BPSV doses; see Equation \@ref(eq:bpsvinv)
 - $D_s^{\text{(S-cap)}}$ is the cost of reserved capacity for SSV; see Equation \@ref(eq:ssvcap)
-- $D_{s,y}^{\\text{(en)}}$ is the annual cost of enabling activities; see Equation \@ref(eq:enable).
+- $D_{s,y}^{\text{(en)}}$ is the annual cost of enabling activities; see Equation \@ref(eq:enable).
 
 We use $s=0$ to denote the business as usual (BAU) scenario, and $s=1$ for scenario S01,  $s=2$ for scenario S02, and so on.
 
 
-## BPSV advanced R\&D
+## BPSV advance R\&D
 
 <!-- **These values match the spreadsheet results** -->
 
 
-Advanced R\&D for BPSVs consists of Phase 0 (which we use to denote preclinical R\&D), Phase 1 and Phase 2, for which we add up costs that depend on (a) the number of candidates, (b) the cost per phase for experienced (those with licensure experience) and inexperienced developers (those without), and (c) the probability of success in each phase. The final cost therefore reflects the number of candidates that progressed through the developmental pipeline.
+Advance R\&D for BPSVs consists of Phase 0 (which we use to denote preclinical R\&D), Phase 1 and Phase 2, for which we add up costs that depend on (a) the number of candidates, (b) the cost per phase for experienced (those with licensure experience) and inexperienced developers (those without), and (c) the probability of success in each phase. The final cost, therefore, reflects the number of candidates that progressed through the developmental pipeline.
 
-In order to achieve one successful BPSV candidate in the event of an outbreak, we estimate that 14 are required to enter into preclinical R\&D. At present, there are six (Table \@ref(tab:inex)). We assume that the remaining eight will come from developers without prior licensure experience.
+In order to achieve one successful BPSV candidate in the event of an outbreak, we assume that 14 are required to enter into preclinical R\&D [@CEPI2026a]. At present, there are seven (Table \@ref(tab:inex)). We assume that the remaining seven will come from developers without prior licensure experience.
 
 Probabilities of success for Phase 0 and Phase 1 are $P_0^{\text{(BPSV)}}$ and $P_1^{\text{(BPSV)}}$. The probability of phase occurrence for Phase $i$ is:
 
@@ -456,7 +466,7 @@ printmath(eqtext)
 <!-- ``` -->
 
 
-The cost of each phase is $T_i$, a weighted average of experienced and inexperienced manufacturers. Assuming that $N^{\text{(BPSV)}}=`r rawpar$n_bpsv`$ candidates start in the preclinical phase, and two so far has experience with licensure (Table \@ref(tab:inex)), we take $\omega = `r round(rawpar$inex_weight,2)`$;
+The cost of each phase is $T_i$, a weighted average of costs of experienced ($T_i^{(e)}$) and inexperienced ($T_i^{(n)}$) manufacturers. Assuming that $N^{\text{(BPSV)}}=`r rawpar$n_bpsv`$ candidates start in the preclinical phase [@CEPI2026a], and two have prior experience with licensure (Table \@ref(tab:inex)), we take $\omega = `r round(rawpar$inex_weight,2)`$;
 
 <!-- $$T_{i} = (1+\pi)(\omega T_i^{(n)} + (1-\omega)T_i^{(e)}).$$  -->
 
@@ -466,7 +476,7 @@ printmath(eqtext)
 ```
 
 
-where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025. Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}}$ candidates is
+where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025 [@U.S.BLS2025]. Then the total weighted cost for phases 0 through 2 for $N^{\text{(BPSV)}}$ candidates is
 
 
 
@@ -485,15 +495,14 @@ printeq(eqtext)
 | Developer | Licensure Experience | 
 |---|---|
 | Bharat/U Syd/ExcellGene | Yes |
-| CalTech | No | 
-| Codiak | No | 
+| CPI/CalTech | No | 
 | Intravacc | No |
 | IVI | No | 
 | Panacea/THSTI | No | 
 | SK Bio | Yes | 
 | VIDO | No | 
 
-Table: (\#tab:inex) Manufacturers working on BPSV and whether or not they have licensure experience 
+Table: (\#tab:inex) Manufacturers working on BPSV and whether or not they have licensure experience as of February 2026 [@CEPI2026a].
 
  
  
@@ -506,11 +515,11 @@ ggplot() + geom_histogram(aes(bpsv_rd_costsamples_dyd/1000)) +
   labs(x='Billion USD',y='',title='')
 
 
-print(round(summary(bpsv_rd_costsamples_dyd),2))
+# print(round(summary(bpsv_rd_costsamples_dyd),2))
 
 ```
 
-Target: 333 (232 304 401)
+<!-- Target: 333 (232 304 401) -->
 
 
 
@@ -526,7 +535,7 @@ bpsv_upfront = pardf$bpsv_res_upfront*pfixed$bpsv_inv_res/1e6 # millions
 <!-- **The annual cost annual is correct, at around 162 thousand, but the total cost is slightly too high** -->
 
 
-Denoting the duration of each Phase $i$ as $Y_i^{(B)}$, the time taken to complete development of the BPSV up to the end of Phase 2, from which point it is manufactured to be held in an investigational reserve, is:
+Denoting the duration of Phase $i$ as $Y_i^{(B)}$, the time taken to complete development of the BPSV up to the end of Phase 2, from which point it is manufactured to be held in an investigational reserve, is:
 
 
 ```{r}
@@ -547,15 +556,15 @@ printeq(eqtext)
 
 ```
 
-where $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ is the size of the reserve and $A_5 =`r format_to_print2(rawpar$bpsv_res_upfront,3)`$ is the cost per dose in USD.
+where $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ is the size of the reserve and $A_5 =`r format_to_print2(rawpar$bpsv_res_upfront,3)`$ is the cost per dose in USD, coming from the upfront cold-chain equipment cost estimate of 138 million USD for 1.2 billion doses [@Griffiths2021a].
 
-The cost of goods supplied is $G = `r rawpar$cost_cogs`$ USD per dose. Then the cost of drug substance, accounting for the fill/finish cost $M_f = `r round(rawpar$cost_ff,2)`$ and the profit margin $M_p = `r round(rawpar$profit,2)`$, is $G(1-M_f)(1+M_p) = `r round(rawpar$cost_cogs*(1-rawpar$cost_ff)*(1+rawpar$profit),2)`$ USD per dose. The reserve is replenished every $Y_{rep} = `r rawpar$bpsv_replenishment`$ years. 
+The cost of goods sold (COGS) is $G = `r rawpar$cost_cogs`$ USD per dose. Fill/finish costs from @Kis2021 of 0.29 and 0.39 USD per dose respectively for Moderna and Pfizer doses translate to 7.2% of COGS on average. Then the cost of drug substance, accounting for the fill/finish margin $M_f = `r round(rawpar$cost_ff,2)`$ and the profit margin $M_p = `r round(rawpar$profit,2)`$, is $G(1-M_f)(1+M_p) = `r round(rawpar$cost_cogs*(1-rawpar$cost_ff)*(1+rawpar$profit),2)`$ USD per dose. 
 
-Then the annual cost to maintain the reserve of $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ doses is
+The reserve is replenished every $Y_{rep} = `r rawpar$bpsv_replenishment`$ years based on the storage characteristics for Ervebo [@WorldHealthOrganization2019a]. Then the annual cost to maintain the reserve of $A_4 =`r format_to_print(rawpar$bpsv_inv_res)`$ doses is
 
 ```{r}
 eqtext = 'D_{s,y}^{\\text{(BP-inv)}} = \\begin{cases}
- \\frac{A_4}{Y_{rep}}G  (1-M_f)(1+M_p) + A_1
+ \\frac{A_4}{Y_{rep}}G  (1-M_f)(1+M_p) + A_1A_4
 \\; & \\; s=1 \\;\\&\\;y>Y^{(B)}\\\\
 0  \\; & \\; s\\neq 1\\;\\|\\;y\\leq Y^{(B)}
 \\end{cases}
@@ -564,7 +573,7 @@ printeq(eqtext)
 
 ```
 
-where $A_1 = `r round(rawpar$cost_bpsv_res,2)`$ USD is the annual reservation cost per dose.
+where $A_1 = `r round(rawpar$cost_bpsv_res,2)`$ USD is the annual reservation cost per dose, coming from the recurring cold-chain cost estimate of 12 million USD for 1.2 billion doses [@Griffiths2021a].
 
 ```{r bpsvinv,fig.cap='BPSV investigational reserve costs accumulated from the completion of Phase 2 to year 15 with uniformly distributed discount rate.'}
 
@@ -586,7 +595,9 @@ ggplot() +
 <!-- **This matches the spreadsheet results.** -->
 
 
-The cost per dose reservation per year is $A_2 = `r round(rawpar$cost_capres,2)`$ USD. Reservation sizes, in billions, depend on scenarios, including the $A_3 = `r rawpar$hic_cap_res`$ billion doses reserved for HIC, as follows:
+Reservation sizes, in billions, depend on scenarios. It includes the $A_3 = `r rawpar$hic_cap_res`$ billion doses reserved for HIC (325 million for the EU [@Pfizer2023], and 150 million for the USA [@PRNewswire2022], rounded up to 0.5 billion for simplicity of presentation).  The cost of the EU reservation is 160 million EUR per year [@Martuscelli2023]; assuming an exchange rate of 1.08, the cost per dose per year is $A_2 = `r round(rawpar$cost_capres,2)`$ USD. We define the scenario-dependent total reservation size as:
+
+<!-- The cost per dose reservation per year is $A_2 = `r round(rawpar$cost_capres,2)`$ USD. Reservation sizes, in billions, depend on scenarios, including the $A_3 = `r rawpar$hic_cap_res`$ billion doses reserved for HIC, as follows: -->
 
 ```{r}
 eqtext = 'M_{R,s} = \\begin{cases}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
@@ -645,7 +656,7 @@ ggplot(capres_costs) +
 <!-- **This matches the spreadsheet results** -->
 
 
-Denote the target "days to SSV" by $\zeta$, so that $\zeta\in\lbrace 365, 200, 100 \rbrace$, which are the three variations we consider enabling activities might achieve. We assume that $Y^{(200)}=`r rawpar$years_200`$ years are required to achieve 200 days to SSV, and $Y^{(100)}=`r rawpar$years_100`$ years are required to achieve 100 days to SSV. Then annual costs, $E=700$ million USD, accumulate depending on the year and the mission:
+Denote the target "days to SSV" by $\zeta$, so that $\zeta\in\lbrace 365, 200, 100 \rbrace$, which are the three variations we consider enabling activities might achieve. We assume that $Y^{(200)}=`r rawpar$years_200`$ years are required to achieve 200 days to SSV, and $Y^{(100)}=`r rawpar$years_100`$ years are required to achieve 100 days to SSV. Then annual costs, $E=700$ million USD, accumulate depending on the year and the target:
 
 ```{r}
 eqtext = 'D_{s,y}^{\\text{(en)}} = \\begin{cases}E & \\zeta(s)=200 \\;\\&\\; y\\leq Y^{(200)} \\; |\\; \\zeta(s)=100\\; \\& \\;y\\leq Y^{(100)} \\\\ 
@@ -727,19 +738,19 @@ We present computation for this cost with reference to the beginning of the outb
 
 <!-- **These don't match the spreadsheet results. Values too low.** -->
 
-Trial costs are adjusted for the duration of the trial, which depend on the R\&D investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$: 
+Trial costs are adjusted for the duration of the trial, which depend on the R\&D enabling investment, denoted $\zeta\in\lbrace 365, 200, 100\rbrace$: 
 
 
 
 ```{r}
-eqtext = 'T_{\\zeta,i}^{(e)} = (1+\\pi)\\frac{W_{i;\\zeta}^{(S)}}{52Y_{i}^{(B)}}T_i^{(e)}'
+eqtext = 'T_{\\zeta,i}^{(e)} = (1+\\pi)\\frac{W_i^{(\\zeta)}}{52Y_{i}^{(B)}}T_i^{(e)}'
 printmath(eqtext)
 ```
 
 
-where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the cost per Phase $i$ of experienced developers (i.e. we assume only experienced manufacturers undertake reactive R\&D), $Y_{i}^{(B)}$ is the usual phase duration in normal times in years, and $W_{i;\zeta}^{(S)}$ is its expected duration in weeks given enabling investments made prior to the outbreak. 
+where $\pi = `r rawpar$inflation`$ is inflation from 2018 to 2025, $T_i^{(e)}$ is the cost per Phase $i$ of experienced developers (i.e. we assume only experienced manufacturers undertake reactive R\&D), $Y_{i}^{(B)}$ is the usual phase duration in normal times in years, and $W_i^{(\zeta)}$ is its expected duration in weeks given enabling investments made prior to the outbreak. 
 
-The probability of success of each phase comes from COVID-19 data.
+The probability of success of each phase comes from COVID-19 data [@LinksbridgeSPC2025]:
 
 
 ```{r}
@@ -826,11 +837,11 @@ ggplot(ssv_rd_plot) + geom_histogram(aes(Cost/1e3)) +
 
 
 
-One BPSV candidate that has passed through phases 0 to 2 prior to the outbreak goes through Phase 3 during the response. The duration is $W_3^{(B)}=`r rawpar$duration_3_resp`$ weeks. Thus we write the BPSV R\&D response cost
+One BPSV candidate that has passed through phases 0 to 2 prior to the outbreak goes through Phase 3 during the response. The duration is $W_3^{(365)}=`r rawpar$weeks_P3_365`$ weeks. Thus we write the BPSV R\&D response cost
 
 
 ```{r}
-eqtext = 'D_s^{\\text{(BP-resRD)}} = \\begin{cases}\\left( (1+\\pi)\\frac{W_3^{(B)}}{52Y_3^{(B)}}T_3^{(e)} + P_3 T_4\\right) \\; & \\; s=1 \\\\
+eqtext = 'D_s^{\\text{(BP-resRD)}} = \\begin{cases}\\left( (1+\\pi)\\frac{W_3^{(365)}}{52Y_3^{(B)}}T_3^{(e)} + T_4\\right) \\; & \\; s=1 \\\\
 0  \\; & \\; s\\neq 1
 \\end{cases}
 (\\#eq:bpsvresrd)'
@@ -855,11 +866,11 @@ ggplot() + geom_histogram(aes(bpsvresrd)) +
 
 ## Procurement cost calculation
 
-The cost per dose comes from the cost of goods supplied, $G = `r rawpar$cost_cogs`$ USD, adjusted for profits ($M_p = `r rawpar$profit`$) and the transportation cost ($M_t = `r rawpar$cost_travel`$).
+The cost per dose comes from the cost of goods sold (COGS), $G = `r rawpar$cost_cogs`$ USD, adjusted for a profit margin ($M_p = `r rawpar$profit`$) and transportation margin ($M_t = `r rawpar$cost_travel`$). The 20% profit margin is at the top of range in @U.S.GovernmentAccountabilityOffice2017, and thus acts as a conservative estimate on profit margins sought by pharmaceutical companies. The 10% estimate for transportation from manufacturer to country isolates the transportation cost from the process of vaccination [@Gotham2019].
 
 $S_R = G(1+M_p)(1+M_t)$ evaluates to `r round(cost_res,2)` USD.
 
-This cost is used both for SSV doses manufactured using reserved capacity, and all newly manufactured BPSV doses.
+This cost is used both for SSV doses procured via reserved capacity, and all newly manufactured BPSV doses.
 
 ### SSV
 
@@ -1026,10 +1037,7 @@ printeq(eqtext)
 ```
 
 
-For a world population aged 65 and over of `r round(sum(POPS65)/1e9,2)` billion, an uptake of `r 100*rawpar$final_vaccine_coverage`\% (accounting for wastage of `r round(100*rawpar$vaccine_wastage)`\%), and a cost per dose of $S_R = `r round(cost_res,2)`$ USD (the same as for SSV via reserved capacity), the procurement cost for BPSV is `r round(bpsvproc[1]/1e3,2)` billion USD.
-
-In our model, 1.0625 billion doses are manufactured, as manufacturing stops once one billion doses have been made.
-
+For a world population aged 65 and over of `r round(sum(POPS65)/1e9,2)` billion, a coverage of `r 100*rawpar$final_vaccine_coverage`\% (accounting for wastage of `r round(100*rawpar$vaccine_wastage)`\%), and a cost per dose of $S_R = `r round(cost_res,2)`$ USD (the same as for SSV via reserved capacity), the procurement cost for BPSV is `r round(bpsvproc[1]/1e3,2)` billion USD.
 
 
 ```{r}
@@ -1050,13 +1058,13 @@ For populations aged 15 and above, $N_i^{(15)}$ for income group $i$, we write
 
 
 ```{r}
-eqtext = 'L_i = 2\\cdot \\lambda\\cdot N_i^{(15)}'
+eqtext = 'L_i = 2\\cdot \\lambda\\cdot N_i^{(15)} / (1-\\delta)'
 printmath(eqtext)
 ```
 
-as the total demand for first-schedule doses for income group $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population.
+as the total demand for first-schedule doses for income group $i\in\lbrace\text{LIC, LMIC, UMIC, HIC}\rbrace$, representing two doses each for $\lambda = `r rawpar$final_vaccine_coverage*100`$\% of the population and $\delta = `r round(rawpar$vaccine_wastage*100)`$\% wastage.
 
-We write the delivery cost, $H_{s,i,w}$, for $h_{s,i,w}$ doses given in week $w$ and income level $i$ as follows. There are three cost tiers, the first of which, $V_{i; 0}$, is applied to the first 10\% of $L_i$ (the "start up" cost); the second ($V_{i; 11}$) to the subsequent 20\% (the "ramp up" cost); and the third ($V_{i; 31}$) to all doses thereafter (the "at scale" cost). The same costing schedule applies both to the first-schedule plus booster SSV doses and the BPSV rollout. 
+We write the delivery cost $H_{s,i,w}$ for $h_{s,i,w}$ doses given in week $w$ and income group $i$ as follows. There are three cost tiers, the first of which, $V_{i; 0}$, is applied to the first 10\% of $L_i$ (the "start up" cost); the second ($V_{i; 11}$) to the subsequent 20\% (the "ramp up" cost); and the third ($V_{i; 31}$) to all doses thereafter (the "at scale" cost). The same costing schedule applies both to the first-schedule plus booster SSV doses and the BPSV rollout. 
 
 ```{r}
 eqtext = 'H_{s,i,w} = 
@@ -1200,7 +1208,7 @@ The logic of this is as follows:
 
 - The increments in cost correspond to numbers of eligible people in the whole population, namely those aged 15 and above.
 - If the number of people eligible for the BPSV is less than 10\% of the population aged 15 and over, then all doses cost the "start up" amount.
-- If the number of people eligible for the BPSV is more than 10\% and less than 30\% of the 15+ population, then cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. All remaining doses cost the "ramp up" amount.
+- If the number of people eligible for the BPSV is more than 10\% and less than 30\% of the 15+ population, then the cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. All remaining doses cost the "ramp up" amount.
 - If the number of people eligible for the BPSV is more than 30\% of the 15+ population, then the cost of the first doses, a number equal to 10\% of the 15+ population, is the "start up" amount. The cost of the second tranche of doses, a number equal to 20\% of the 15+ population, is the "ramp up" amount. All remaining doses cost the "at scale" amount.
 
 
@@ -1229,9 +1237,9 @@ ggplot() + geom_histogram(aes(x=bpsv_del_cost/1e3)) +
 
 
 
-| Country | Country status | Study type | Financial Cost per dose (USD) | Source |
+| Country | Country status | Study type | Financial cost per dose (USD) | Source |
 |---|---|---|---|---|
-| WHO, Gavi, and UNICEF AMC Estimate | AMC | Top down | 1.66 | @Griffiths2021 |
+| WHO, Gavi, and UNICEF AMC Estimate | AMC | Top down | 1.66 | @Griffiths2021a |
 | UNICEF Global Estimate |  All | Model | 0.73 | @Oyatoye2023 |
 | DRC | LIC | Bottom up | 1.91 | @Moi2024 |
 | Malawi | LIC | Bottom up | 4.55 | @Ruisch2025 |
@@ -1687,28 +1695,15 @@ Table: Manufacturing response timeline assumptions
 <!-- | Private Capacity (Existing; %)  || | | Scaling from 0-100 | 100 | 100 | 100 |  -->
 <!-- | Private Capacity (Response; %)  | | | |  | | Scaling from 0-100 | 100 | -->
 
- 
-
-| Weeks from transition start |	Reserved Capacity (%)	 | Existing Private Capacity (%)	| Response Private Capacity (%) |
-|---|---|---|---|
-| 0--11 |  |  |  |			
-| 12--21 |	Scales from 0 to 100	 |  |  |				
-| 22--29 |	100		|   |  |			
-| 30--45 |	100 |	Scales from 0 to 100	  |  |
-| 46--47 |	100 |	100	  |  |
-| 48--63	 |100 |	100 |	Scales from 0 to 100 |
-| 64+|	100 |	100 |	100 |
-
-Table: Vaccine Production Timeline when there is no BPSV. When BPSV is also modelled, Existing Private Capacity scales from 0 to 100 in weeks 12--21.
 
 
 ## Timing
 
-Facility transition (the reorganising of manufacturing facilities in preparation for SSV dose production) begins $I_0=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to SSVs available in 100 days, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
+We assume that manufacturers will begin producing at risk once they have confidence in vaccine approval. Thus, facility transition (the reorganising of manufacturing facilities in preparation for SSV dose production) begins $I_0=7$ weeks before vaccine approval, which in turn depends on R\&D investments. We have three levels in our scenarios, corresponding to SSVs available in 100 days, 200 days, and 365 days. The total weeks taken for vaccine approval can be written as follows:
 
 
 ```{r}
-eqtext = 'W_{\\zeta}^{(S)} = \\sum_{i=0}^3 W_{i;\\zeta}^{(S)}'
+eqtext = 'W^{(\\zeta)} = \\sum_{i=0}^3 W_i^{(\\zeta)}'
 printmath(eqtext)
 ```
 
@@ -1716,9 +1711,9 @@ for $\zeta\in\lbrace 365, 200, 100\rbrace$. These work out as `r time_to_approva
 
 
 ```{r}
-eqtext = 'w_s^{(0)} = W_{\\zeta(s)}^{(S)} - 7 = \\begin{cases}45 & s\\in\\lbrace 0, 1, 2, 3, 10\\rbrace \\\\ 
-22 & s\\in\\lbrace4, 5, 6\\rbrace \\\\ 
-7 & s\\in\\lbrace7, 8, 9\\rbrace \\end{cases}'
+eqtext = 'w_s^{(0)} = W^{(\\zeta(s))} - I_0 = \\begin{cases}45 & s\\in\\lbrace 0, 1, 2, 3, 10\\rbrace \\\\ 
+22 & s\\in\\lbrace 4, 5, 6\\rbrace \\\\ 
+7 & s\\in\\lbrace 7, 8, 9\\rbrace \\end{cases}'
 printmath(eqtext)
 ```
 
@@ -1726,16 +1721,16 @@ printmath(eqtext)
 
 
 
-The maximum total global manufacturing volume per year is $M_G=15$ billion doses. The volume that is reserved, in billion doses, including the HIC-specific reservation of $A_3=0.5$ billion doses, depends on the scenarios as follows:
+We estimate total global manufacturing potential to be $M_G=`r rawpar$man_glo`$ billion doses per year, and the amount currently in operation to be $M_C=`r rawpar$man_curr`$. The volume that is reserved, in billion doses, including the HIC-specific reservation of $A_3=`r rawpar$hic_cap_res`$ billion doses, depends on the scenarios as follows:
 
 ```{r}
-eqtext = 'M_{R,s} = \\begin{cases}A_3 & s\\in\\{0, 1, 4, 7, 10\\} \\\\ 
-A_3 + 0.7 & s\\in\\{2, 5, 8\\} \\\\ 
-A_3 + 2 & s\\in\\{3, 6, 9\\} \\end{cases}'
+eqtext = 'M_{R,s} = \\begin{cases}A_3 & s\\in\\lbrace 0, 1, 4, 7, 10\\rbrace \\\\ 
+A_3 + 0.7 & s\\in\\lbrace 2, 5, 8\\rbrace \\\\ 
+A_3 + 2 & s\\in\\lbrace 3, 6, 9\\rbrace \\end{cases}'
 printmath(eqtext)
 ```
 
-where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$ (existing unreserved capacity equals the total currently existing minus reserved capacity), and $M_B=M_G-M_C$ (newly built manufacturing equals the global total minus the existing capacity).
+where $s=0$ denotes the BAU scenario. By definition, $M_{E,s} = M_C - M_{R,s}$ (existing unreserved capacity ("E") equals the total currently existing ("C") minus reserved capacity ("R")), and $M_B=M_G-M_C$ (newly built manufacturing ("B") equals the global total ("G") minus the existing capacity).
 
 Then the number of doses, in billions, that are made from capacity $x\in \lbrace R, E, B\rbrace$ in week $w$ of scenario $s$ is:
 
@@ -1753,7 +1748,10 @@ printmath(eqtext)
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\  -->
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\  -->
 
-where $I_R = `r rawpar$weeks_init_res`$ is the number of weeks to initial manufacturing for reserved capacity, and $C_R = `r rawpar$weeks_scale_res`$ is its number of weeks to scale up to full capacity; $I_B = `r rawpar$weeks_init_bui`$ is the number of weeks to initial manufacturing for newly built (and, therefore, unreserved) capacity, and $C_B = `r rawpar$weeks_scale_bui`$ is its number of weeks to scale up to full capacity; and
+Here, $I_R = `r rawpar$weeks_init_res`$ is the number of weeks to initial manufacturing for reserved capacity, assuming streamlined technology transfer and process set up (around 2 months) and facility process validation (around 1 month) [@Kis2021a]. 
+$C_R = `r rawpar$weeks_scale_res`$ is its number of weeks to scale up to full capacity, taking the lower end of the mRNA range assumed readiness from reserved capacity in @VaccinesEurope2024. 
+$I_B = `r rawpar$weeks_init_bui`$ is the number of weeks to initial manufacturing for newly built capacity. This assumes early planning phase (around 2 months), longer facility improvement to build new infrastructure (around 5 months), tech transfer (around 2 months), and facility/process setup (around 2 months) [@Kis2021a]. This also aligns with realistic estimate from manufacturing stakeholder interviews [@Feddema2023].
+$C_B = `r rawpar$weeks_scale_bui`$ is its number of weeks to scale up to full capacity, taking the middle of the range from @VaccinesEurope2024.
 
 ```{r}
 eqtext = 'I_E = \\begin{cases}
@@ -1763,8 +1761,21 @@ I_{E,0}  \\; & \\; s\\neq 1
 printmath(eqtext)
 ```
 
-where $I_{E,0} = `r rawpar$weeks_init_ex_nb`$ and $I_{E,1} = `r rawpar$weeks_init_ex_bp`$ are the number of weeks to initial manufacturing for existing and unreserved capacity (i.e. manufacturing conversion for SSVs is faster in the presence of BPSVs as we assume that they are manufactured using the same platform), and $C_E = `r rawpar$weeks_scale_ex`$ is its number of weeks to scale up to full capacity.
+where $I_{E,0} = `r rawpar$weeks_init_ex_nb`$ and $I_{E,1} = `r rawpar$weeks_init_ex_bp`$ are the number of weeks to initial manufacturing for existing and unreserved capacity (i.e. manufacturing conversion for SSVs is faster in the presence of BPSVs as we assume that they are manufactured using the same platform). In the absence of BPSV, we assume early planning phase (around 2 months), streamlined facility improvement because using existing infrastructure (around 1 month), tech transfer (around 2 months), and facility/process set up (around 2 months) [@Kis2021a].
+$C_E = `r rawpar$weeks_scale_ex`$ is its number of weeks to scale up to full capacity, assumed to be the same as $C_B$. These timelines are shown in Table \@ref(tab:mantimeline).
 
+
+| Weeks from transition start |	Reserved Capacity (%)	 | Existing Private Capacity (%)	| Response Private Capacity (%) |
+|---|---|---|---|
+| 0--11 |  |  |  |			
+| 12--21 |	Scales from 0 to 100	 |  |  |				
+| 22--29 |	100		|   |  |			
+| 30--45 |	100 |	Scales from 0 to 100	  |  |
+| 46--47 |	100 |	100	  |  |
+| 48--63	 |100 |	100 |	Scales from 0 to 100 |
+| 64+|	100 |	100 |	100 |
+
+Table: (\#tab:mantimeline) Vaccine Production Timeline when there is no BPSV. When BPSV is also modelled, Existing Private Capacity scales from 0 to 100 in weeks 12--21.
 
 
 
@@ -1836,7 +1847,7 @@ where $N_T = \sum_{i\in\lbrace\text{HIC,UMIC,LMIC,LIC}\rbrace}N_i$.
 
 The logic of this reads as follows:
 
-- $A_3=0.5$ billion doses per year from reserved capacity go exclusively to HIC, which is expressed as a fraction of the total reservation, $M_{R,s}$
+- $A_3=`r rawpar$hic_cap_res`$ billion doses per year from reserved capacity go exclusively to HIC, which is expressed as a fraction of the total reservation, $M_{R,s}$
 - Any remaining reserved capacity doses are allocated according to population
 - Once HIC reach their total demand, doses from reserved capacity are split proportional to population between UMIC, LMIC and LIC, and so on
 
@@ -1862,10 +1873,10 @@ printmath(eqtext)
 
 The logic of this reads as follows:
 
-- Until HIC demand is reached, all doses from unreserved capacity go to HIC. None go to UMIC, LMIC and LIC.
-- Once HIC demand has been met and until UMIC demand is reached, all doses from unreserved capacity go to UMIC. None go to HIC, LMIC and LIC.
-- Once HIC and UMIC demand have been met and until LMIC demand is reached, all doses from unreserved capacity go to LMIC. None go to HIC, UMIC and LIC.
-- Once HIC, UMIC and LMIC demand have been met, all remaining doses from unreserved capacity go to LIC. None go to LMIC, UMIC and HIC.
+- Until HIC demand is reached, all doses from unreserved capacity go to HIC. None go to UMIC, LMIC or LIC.
+- Once HIC demand has been met and until UMIC demand is reached, all doses from unreserved capacity go to UMIC. None go to HIC, LMIC or LIC.
+- Once HIC and UMIC demand have been met and until LMIC demand is reached, all doses from unreserved capacity go to LMIC. None go to HIC, UMIC or LIC.
+- Once HIC, UMIC and LMIC demand have been met, all remaining doses from unreserved capacity go to LIC. None go to LMIC, UMIC or HIC.
 
 
 
@@ -1996,10 +2007,10 @@ The input to the impact model is $h_{s,i,w}^{(2)}$, i.e. doses delivered per wee
 
 ## Timing
 
-The duration of the Phase 3 trial is $W_3^{(B)} = `r rawpar$duration_3_res`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV.
+The duration of the Phase 3 trial is $W_3^{(365)} = `r rawpar$weeks_P3_365`$ weeks. The time to manufacturing transition is $I_R = `r rawpar$weeks_init_res`$ weeks, and the time to manufacturing scale-up $C_R = `r rawpar$weeks_scale_res`$ weeks; these are the same as the reserved-capacity times for SSV.
 
 
-Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+rawpar$weeks_init_res`$ and dose distribution begins in week $1+W_3^{(B)} = `r 1+rawpar$duration_3_res`$.
+Facility transition occurs in week 1. Thus manufacturing begins in week $1+I_R = `r 1+rawpar$weeks_init_res`$ and dose distribution begins in week $1+W_3^{(365)} = `r 1+rawpar$weeks_P3_365`$.
 
 ## Production
 
@@ -2029,8 +2040,7 @@ ggplot(b_supply) +
 
 ## Allocation
 
-Doses are all allocated in proportion to the eligible population.
-
+Doses are all allocated in proportion to eligible populations.
 
 
 

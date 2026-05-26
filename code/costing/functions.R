@@ -97,7 +97,7 @@ get_parameters = function(nsamples = 100){
   weeks_init_ex_pars = paste0('weeks_init_ex_',c('nb','bp'))
   weeks_scale_pars = paste0('weeks_scale_',MAN_TYPES)
   fixedpars = c(pop0pars, pop15pars, pop65pars,'final_vaccine_coverage','vaccine_wastage', # volumes made
-                phase_dur_par,'duration_3_resp', # phase durations
+                phase_dur_par,#'duration_3_resp', # phase durations
                 weeks_init_pars,weeks_init_ex_pars,weeks_scale_pars,'week_trans_start', # weeks to manufacturing
                 'man_curr','man_glo', # manufacturing capacities
                 'bpsv_inv_res','hic_cap_res', # reserve amounts
@@ -394,7 +394,7 @@ get_bpsv_supply = function(){
     for(w in 1:bpsv_weeks){
       # doses this week = stock plus flow
       doses_left = doses_left + doses_per_week[w]
-      if(w>pfixed$duration_3_resp & sum(doses) < DEMAND65[il]/1e9){
+      if(w>pfixed$weeks_P3_365 & sum(doses) < DEMAND65[il]/1e9){
         # doses given are the minimum of: the delivery rate; the doses left (per population)
         doses[w] =  min(max_doses_each_wk, doses_left )
       }
@@ -688,9 +688,9 @@ get_bpsv_costs = function(total_bpsv, pos, pto, exi, inexi,
   bpsv_rd_costsamples_no_d = sum(bpsv_rd_costsamples_no_d_py)
   
   ## bpsv reactive r&d costs
-  # bpsvresrd = n_bpsv_candidates * pto[4] * (pfixed$duration_3_resp/old_duration * exi[4] + pos[4]*cost_lic)/1e6
+  # bpsvresrd = n_bpsv_candidates * pto[4] * (pfixed$weeks_P3_365/old_duration * exi[4] + pos[4]*cost_lic)/1e6
   # exi is cost of experienced per year
-  bpsvresrd = (pfixed$duration_3_resp/52 * exi[4] + cost_lic)/1e6
+  bpsvresrd = (pfixed$weeks_P3_365/52 * exi[4] + cost_lic)/1e6
   
   ## investigational reserve costs
   
@@ -711,7 +711,7 @@ get_bpsv_costs = function(total_bpsv, pos, pto, exi, inexi,
   # fill and finish
   bpsv_ff_trans = (cost_ff+cost_travel)*cost_cogs*(1+profit)
   # procurement cost
-  bpsvproc = cost_res*total_bpsv*1e3 + bpsv_inv_res*bpsv_ff_trans/1e6
+  bpsvproc = (cost_res*sum(DEMAND65)/1e6)/(1-VACCINE_WASTAGE) + bpsv_inv_res*bpsv_ff_trans/1e6
   
   # return
   list(bpsv_rd_costsamples_dyd=bpsv_rd_costsamples_dyd,
