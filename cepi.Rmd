@@ -7,15 +7,15 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
-  bookdown::html_document2: 
-    toc: true
-    toc_float: true
-    keep_md: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -28,7 +28,7 @@ output:
     pandoc_args: --webtex
 always_allow_html: yes 
 params:
-  lbfile: './data/20251209 Vx manufacturing and delivery.xlsm'
+  lbfile: './data/vaccine_delivery.xlsx'
 ---
 
 \fancypagestyle{plain}{%
@@ -91,7 +91,7 @@ newpolicies <- c('NC','RC1','RC2','RC3')
 income_levels <- c('LLMIC','UMIC','HIC')
 nScen = (ncol(tab)-2)/6
 scenario_levels <- 1:nScen
-scenario_names <- colnames(tab)[!grepl('^\\.',colnames(tab))]
+scenario_names <- colnames(tab)[!grepl('\\.',colnames(tab))]
 scen_to_keep <- 1+c(0,1,4,5,8,9,12)
 bau_scens = which(grepl('BAU',scenario_names))
 scen_scens = which(!grepl('BAU',scenario_names))
@@ -103,14 +103,32 @@ ncscens = length(scen_scens)
 
 ```
 
+```{r popdata}
+# coverages apply to whole population
+caps <- readODS::read_ods('code/costing/cost_parameters.ods',sheet = 1)
+populationhic0 = as.numeric(subset(caps,Code=='pop_hic_0')$Parameters)
+populationumic0 = as.numeric(subset(caps,Code=='pop_umic_0')$Parameters)
+populationllmic0 = sum(as.numeric(subset(caps,Code%in%c('pop_lmic_0','pop_lic_0'))$Parameters))
+pops0 = c(populationllmic0, populationumic0, populationhic0)
+populationhic15 = as.numeric(subset(caps,Code=='pop_hic_15')$Parameters)
+populationumic15 = as.numeric(subset(caps,Code=='pop_umic_15')$Parameters)
+populationllmic15 = sum(as.numeric(subset(caps,Code%in%c('pop_lmic_15','pop_lic_15'))$Parameters))
+pops15 = c(populationllmic15, populationumic15, populationhic15)
+pops0/sum(pops0)
+pops15/sum(pops15)
+```
 
 ```{r costall,echo=F,warning=F,message=F}
 
-get_to_print = function(qu){
-  if(abs(qu[1]-qu[2])<0.01*abs(qu[1])){
-    format_to_print2(qu[1])
+get_to_print = function(qu, flag=0){
+  if(flag==1)
+    if(qu[2]<1&qu[1]>0)
+      return('<1')
+  pq = format_to_print2(qu)
+  if(pq[1]==pq[2]){
+    pq[1]
   }else{
-    paste0(format_to_print2(qu), collapse='--\\hspace{0pt}')
+    paste0(pq, collapse='--\\hspace{0pt}')
   }
 }
 quants = c(1,3)/4
@@ -120,7 +138,12 @@ for(s in 1:nScen){
   costtab =   as.data.frame(do.call(cbind,lapply(scenario_results[[s]]$costs,function(x) do.call(cbind,x))))
   costtab$upfront_bpsv <- costtab$bpsv_rd_undiscounted <- NULL
   iqrs[[s]] = apply(costtab,2,function(x) get_to_print(quantile(x,quants)))
-
+  iqrs[[s]]$bpsvrdpc = (with(costtab, get_to_print(quantile(100*bpsv_response_rd/totalundiscounted,quants),flag=1)))
+  iqrs[[s]]$bpsvprocpc = (with(costtab, get_to_print(quantile(100*bpsv_proc/totalundiscounted,quants),flag=1)))
+  iqrs[[s]]$bpsvdelpc = (with(costtab, get_to_print(quantile(100*bpsv_delivery/totalundiscounted,quants),flag=1)))
+  iqrs[[s]]$ssvrdpc = (with(costtab, get_to_print(quantile(100*ssv_rd/totalundiscounted,quants),flag=1)))
+  iqrs[[s]]$deliverypc = (with(costtab, get_to_print(quantile(100*ssv_delivery_undiscounted/totalundiscounted,quants),flag=1)))
+  iqrs[[s]]$procpc = (with(costtab, get_to_print(quantile(100*ssv_proc_undiscounted/totalundiscounted,quants),flag=1)))
 }
 printtab = do.call(cbind,iqrs)
 colnames(printtab) = scenario_names
@@ -140,7 +163,13 @@ newrownames = c(enabling='Enabling activities',
                 bpsv_proc='BPSV response procurement',
                 bpsv_delivery='BPSV delivery',
                 totaldiscounted='Total response',
-                totalundiscounted='Total response')
+                totalundiscounted='Total response',
+                bpsvrdpc='BPSV response R\\&D',
+                bpsvprocpc='BPSV response procurement',
+                bpsvdelpc='BPSV delivery',
+                ssvrdpc='SSV R\\&D',
+                deliverypc='SSV delivery',
+                procpc='SSV procurement')
 printtab = cbind(newrownames[rownames(printtab)],printtab)
 rownames(printtab) = NULL
   
@@ -194,6 +223,71 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ```
 
+```{r gini,message=F,echo=F,warning=F,fig.cap='Gini coefficient over time for SSV distribution.',fig.height=4}
+
+tab[1,c(is.na(tab[1,]))] = ''
+
+df_list <- list()
+for(scen in 1:nScen){
+  for(il in 1:3){
+    start_index <- (scen-1)*6 + 1 + 2
+    # print(any(tab[-c(1,2),start_index]>0 & tab[-c(1,2),start_index + 3]>0))
+    get_index <- start_index - 1 + il
+    ilevel <- gsub('s','',tab[2,get_index])
+    scenario <- colnames(tab)[start_index]
+    vals <- 0
+    for(i in c(3)){
+      vaccine <- tab[1,start_index+i][[1]]
+      vindex <- get_index + i
+      vals <- vals +  as.numeric(tab[-c(1:2),vindex][[1]])
+    }
+    df_list[[length(df_list)+1]] <- data.frame(Day=1:length(vals), Percent=cumsum(as.numeric(vals))*100, #Vaccine=vaccine,
+                                               Scenario=scenario, Income=ilevel)
+  }
+}
+
+plotgini <- do.call(rbind,df_list)
+plotgini$Week = plotgini$Day/7
+setDT(plotgini)
+
+ginifunction = function(percents){
+  x = cumsum(pops15/sum(pops15))
+  ye = x
+  yl = cumsum(percents/100*pops0) / sum(percents/100*pops0)
+  # area under lorenz curve
+  B = x[1]*yl[1]/2 + (yl[1]+yl[2])/2 * (x[2]-x[1]) + (yl[2]+yl[3])/2 * (x[3]-x[2])
+  # area under equality curve
+  C = x[1]*ye[1]/2 + (ye[1]+ye[2])/2 * (x[2]-x[1]) + (ye[2]+ye[3])/2 * (x[3]-x[2])
+  # area between line of equality and lorenz curve
+  A = C - B
+  G = A / (A+B)
+  max(G,0)
+}
+plotgini[,Income:=factor(plotgini$Income,levels=c('LLMIC','UMIC','HIC'))]
+setorder(plotgini, Income)
+plotgini[,Gini:=ginifunction(Percent),by=.(Day,Scenario)]
+
+percents = subset(plotgini, Day==896&Scenario=='S10')$Percent
+max(subset(plotgini,!is.na(Gini))$Gini)
+subset(plotgini,!is.na(Gini)&Gini<0.045&Day==896)
+
+pl1 = ggplot(subset(plotgini,!Scenario%in%c('BAU2')&Week<200)) + 
+  geom_line(aes(x=Week,y=Gini,colour=factor(Scenario,levels=scenario_names[c(1:11)])),linewidth=1,alpha=1) +
+  theme_bw(base_size=15) + labs(colour='') +
+  theme(legend.position = 'top') + 
+  guides(colour=guide_legend(nrow=2,byrow=F)) +
+  scale_y_continuous(limits = c(0,1)) +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_colour_manual(values = with(subset(plotgini, Scenario != "BAU2"), {
+    lev <- levels(factor(Scenario))
+    setNames(c("black", colorspace::qualitative_hcl(length(lev) - 1, c = 100, l = 65)),
+             c("BAU", setdiff(lev, "BAU")))
+  }))
+
+pl1
+```
+
+
 ```{r scenarios,message=F,echo=F,warning=F,fig.cap='Vaccine coverage over time by income level.',fig.height=4}
 
 tab[1,c(is.na(tab[1,]))] = ''
@@ -212,7 +306,10 @@ for(scen in 1:nScen){
       vindex <- get_index + i
       vals <- vals +  as.numeric(tab[-c(1:2),vindex][[1]])
     }
-    df_list[[length(df_list)+1]] <- data.frame(Day=1:length(vals), Percent=cumsum(as.numeric(vals))*100, #Vaccine=vaccine,
+    pcval = cumsum(as.numeric(vals))*100
+    max80 = which(pcval>80)[1]
+    # pcval[(max80+1):length(pcval)] = pcval[max80+1]
+    df_list[[length(df_list)+1]] <- data.frame(Day=1:length(vals), Percent=pcval, #Vaccine=vaccine,
                                                Scenario=scenario, Income=ilevel)
   }
 }
@@ -221,7 +318,9 @@ plotscens <- do.call(rbind,df_list)
 plotscens$Week = plotscens$Day/7
 # plotscens$Percent[plotscens$Percent>80] <- 80
 # plotscens$Percent[plotscens$Percent>25&plotscens$Vaccine=='BPSV'] <- 25
-pl1 = ggplot(subset(plotscens,!Scenario%in%c('BAU2'))) + 
+
+
+pl1 = ggplot(subset(plotscens,!Scenario%in%c('BAU2')&Week<200)) + 
   geom_line(aes(x=Week,y=Percent,colour=factor(Scenario,levels=scenario_names[c(2:11,1)])),linewidth=1,alpha=1) +
   facet_grid(~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
   theme_bw(base_size=15) + labs(colour='') +
@@ -235,13 +334,32 @@ pl2 = pl1 +
              c("BAU", setdiff(lev, "BAU")))
   }))
 
-pl1
+# pl1
 pl2
 # ggplot(subset(plotscens,Income=='HIC'&Scenario%in%c('S12'))) + 
 #   geom_line(aes(x=Day,y=c(0,diff(Percent)),colour=Scenario),linewidth=1,alpha=.75) +
 #   theme_bw(base_size=15) + labs(colour='') +
 #   theme(legend.position = 'top') + 
 #   guides(colour=guide_legend(nrow=2,byrow=F))
+```
+
+```{r}
+plot2 = setDT(subset(plotscens,Scenario%in%c('BAU','S10')))
+plot2[,maxic:=max(Percent),by=.(Income,Scenario)]
+plot2[,minmaxic:=min(maxic),by=.(Income)]
+plot2[,Percent:=min(Percent,minmaxic),by=.(Day,Income,Scenario)]
+ggplot(plot2) + 
+  geom_line(aes(x=Week,y=Percent,colour=factor(Scenario,levels=scenario_names[c(1,11)],labels=c('Business as usual','Equality + Delivery'))),linewidth=1,alpha=1) +
+  facet_grid(~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
+  theme_bw(base_size=15) + labs(colour='',y='Vaccine coverage, %') +
+  theme(legend.position = 'top') + 
+  guides(colour=guide_legend(nrow=1,byrow=F))
+ggplot(subset(plot2,Scenario=='BAU')) + 
+  geom_line(aes(x=Week,y=Percent,colour=Income),linewidth=1,alpha=1) +
+  theme_bw(base_size=15) + labs(colour='',y='Vaccine coverage, %') +
+  theme(legend.position = 'top') + 
+  guides(colour=guide_legend(nrow=1,byrow=F))
+
 ```
 
 
@@ -896,8 +1014,8 @@ accumulate = function(lq, uq, start_year=2050, end_year=2099, start_gdp=113.8, s
   discounted_accumulator = ifelse(discount==growth, years_to_accumulate, (1-(1+discount-growth)^-years_to_accumulate)/(discount-growth))
   discounted_accumulated_gdp = starting_gdp * discounted_accumulator
   pv = discounted_accumulated_gdp/(1+discount)^(start_year-pv_year)
-  lqv = lq*pv
-  uqv = uq*pv
+  lqv = lq*pv/100 # quartiles are percentages
+  uqv = uq*pv/100
   ret = paste0(signif(c(lqv, uqv),2),collapse='--\u200B')
   ret
 }
