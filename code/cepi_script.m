@@ -3,6 +3,7 @@ addpath('functions');
 
 %% global variables
 lbfile0 = 'data/20251209 Vx manufacturing and delivery.xlsm';
+lbfile0 = 'data/vaccine_delivery.xlsx';
 lbfile = ['../',lbfile0];
 income_levels = {'LLMIC','UMIC','HIC'};
 strategies = {'No Closures','School Closures','Economic Closures','Elimination'};
