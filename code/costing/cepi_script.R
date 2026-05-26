@@ -100,11 +100,18 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
   
   # alloc is cumulative. all dose delivery is cumulative.
   maxhoard = c()
-  for(i in 1:length(INCOMELEVELS)){
+  zeroweeks = c()
+  for(i in length(INCOMELEVELS):1){
     dosesin = alloc[,i]
     dosesout = all_dose_delivery[,i]
-    stopweek = which(dosesout == max(dosesout))[1]
-    maxhoard[i] = max(dosesin[1:stopweek] - dosesout[1:stopweek])
+    stopweek = which(dosesout == max(dosesout))[1]-4
+    startweek = which(dosesout>0)[1]
+    newdosesout = diff(c(0,dosesout[1:stopweek]))
+    zeroweeks = unique(c(zeroweeks, which(newdosesout==0)))
+    # print(zeroweeks)
+    maxhoard[i] = max(dosesin[zeroweeks] - dosesout[zeroweeks])
+    # maxhoard[i] = max(dosesin[1:stopweek] - dosesout[1:stopweek])
+    # if(i>1) print(c(which(dosesin[1:stopweek] - dosesout[1:stopweek]==0)))
   }
   
   second_dose_delivery$il = factor(second_dose_delivery$il, levels=INCOMELEVELS)
@@ -213,7 +220,6 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
                                  inexi = inexi, 
                                  inex_weight = inex_weight,
                                  n_bpsv_candidates = n_bpsv_candidates,
-                                 n_bpsv_p1 = n_bpsv_p1,
                                  bpsv_res_upfront = bpsv_res_upfront,
                                  y_durations = durations[1:3], # years
                                  old_duration = durations[4]/52, # weeks
@@ -350,13 +356,6 @@ for(s in 1:nscen){ #c(1,10)){#
   summary(round(thisscen$costs$response$ssv_proc_discounted*dc))
   summary(round(thisscen$costs$response$ssv_delivery_discounted*dc))
   
-  # cat(paste(scennames[s], ' & ', paste0(format_to_print2(quantile(allupfront, c(1,3)/4)),collapse='--{}')
-  #           , ' & ', paste0(format_to_print2(quantile(allannual*fifteen_yr_discount_weight, c(1,3)/4)),collapse='--{}')
-  #           , ' & ', paste0(format_to_print2(quantile(allrespdis*dc, c(1,3)/4)),collapse='--{}')
-  #           , ' & ', paste0(delta_lir,collapse='--{}')
-  #           , '\\\\ \n'
-  # ))
-  
   cat(paste(scennames[s], ' & ', round(thisscen$delivery$maxhoard[1]*1e3), '\\\\ \n'))
   
   if(s==1){
@@ -366,21 +365,12 @@ for(s in 1:nscen){ #c(1,10)){#
     bauallrespdis = allrespdis
     baucosts = list(allupfront, allannual, bauallrespdis)
     
-    # print(summary(with(thisscen$costs$response, ssv_rd + ssv_proc_undiscounted + ssv_delivery_undiscounted + 
-                         # bpsv_response_rd + bpsv_proc + bpsv_delivery)))
   }else{
     diffallupfront = allupfront - bauallupfront
     diffallannual = allannual - bauallannual
     diffallresp = allresp - bauallresp
     
     delta_lir = sheet2[match(scennames[s],sheet2$to), 3:4]
-    
-    # cat(paste(scennames[s], ' & ', paste0(format_to_print2(quantile(diffallupfront, c(1,3)/4)),collapse='--{}')
-    #           , ' & ', paste0(format_to_print2(quantile(diffallannual, c(1,3)/4)),collapse='--{}')
-    #           , ' & ', paste0(format_to_print2(quantile(diffallresp, c(1,3)/4)),collapse='--{}')
-    #           , ' & ', paste0(delta_lir,collapse='--{}')
-    #           , '\\\\ \n'
-    # ))
     
     tosave[[1]][[scennames[s]]] <- allupfront
     tosave[[2]][[scennames[s]]] <- allannual
@@ -411,9 +401,9 @@ for(s in 1:nscen){
     reachday[s,j-1] = thisscen[index,1]
   }
 }
+cat(paste0('\\renewcommand*{\\MinNumber}{',min(reachday),'} \n\\renewcommand*{\\MaxNumber}{',max(reachday),'}'))
 sapply(1:nscen,function(x) cat(paste(paste0(c(scennames[x], reachday[x,]), collapse=' & '),'\\\\\n'))) -> x
 
-cat(paste0('\\renewcommand*{\\MinNumber}{',min(reachday),'} \n\\renewcommand*{\\MaxNumber}{',max(reachday),'}'))
 
 
 ## convert to daily ########################################
@@ -435,10 +425,10 @@ diurnise_deliveries = function(deliveries){
     penultimate_week_doses = max(doses_per_week[last_week-c(1:8)]) 
     for(i in 1:last_week){
       # week to day
-      daily_doses[(i-1)*7+1:7,j] = rep(doses_per_week[i],7)/7*100
+      daily_doses[(i-1)*7+1:7,j] = rep(doses_per_week[i],7)/7
     }
     # extend indefinitely - allows for different population sizes
-    daily_doses[(7*last_week):maxdays, j] = penultimate_week_doses/7*100
+    daily_doses[(7*last_week):(7*(last_week+2)), j] = penultimate_week_doses/7
   }
   daily_doses[,1] = 1:maxdays
   colnames(daily_doses) = colnames(deliveries)
@@ -462,7 +452,9 @@ for(s in 1:nscen){
     dailybpsv = diurnise_deliveries(bpsv_deliveries)[,-1]
     del_mat[3+1:nrow(dailybpsv), 2+ (s-1)*2*3 + 1:3] = dailybpsv
   }
+  # convert from cumulative (fraction of population) to daily
   deliveries <- scenario_results[[s]]$delivery$ssv
+  # print(sum(diurnise_deliveries(deliveries)[,-1]))
   del_mat[4:nrow(del_mat), 2+ (s-1)*2*3 +3 + 1:3] = diurnise_deliveries(deliveries)[,-1]
 }
 
@@ -479,4 +471,7 @@ xlsx::write.xlsx(del_mat,file = '../../data/vaccine_delivery.xlsx',sheetName='Vx
 #     cat(paste0(nonzero[midi],': ',perweekvec[nonzero[midi]],'\n'))
 #     cat(paste0(nonzero[lasti-1],': ',perweekvec[nonzero[lasti-1]],'\n'))
 #   }
-# }    
+# }  
+
+
+# (rawpar$cost_un - cost_res)/rawpar$cost_capres
