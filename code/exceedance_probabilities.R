@@ -449,8 +449,8 @@ for(bau_scen in 1:nbscens){
     gdp2025 = 113.8e6 # million USD
     discountedth = sapply(discountrate, function(x) sum(1/(1+x)^(1:timehor-1)))
     
-    lb_cost_sheet = readxl::read_xlsx(lb_file,sheet = "Cost Breakdown")
-    costscens = colnames(lb_cost_sheet)[-c(1:3)]
+    # lb_cost_sheet = readxl::read_xlsx('../data/20251104 updated scenario delivery and costing.xlsx',sheet = "Cost Breakdown")
+    costscens = scenario_names[scen_scens]
     alllq <- alluq <- segs <- c() 
     
     for(i in 1:ncscens){
