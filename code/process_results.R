@@ -2,7 +2,7 @@
 args <- commandArgs(TRUE)
 # print(args)
 if(length(args)==0){
-  lb_file = '../data/20251104 updated scenario delivery and costing.xlsx'
+  lb_file = '../data/vaccine_delivery.xlsx'
 }else{
   lb_file = args[1]
 }
@@ -34,7 +34,7 @@ Sys.setenv(JAVA_HOME='C:\\Program Files (x86)\\Java\\jre1.8.0_451/') # for 32-bi
 cl <- makeCluster(4)
 registerDoParallel(cl)
 
-scenario_tab <- readxl::read_xlsx(lb_file, sheet = 'Delivery')
+scenario_tab <- readxl::read_xlsx(lb_file, sheet = 'Vx timeline')
 lbsheets = readxl::excel_sheets(lb_file)
 # onecost = readxl::read_xlsx(lb_file,sheet = "Lump Sum")
 # acosts = readxl::read_xlsx(lb_file,sheet = "Annual Cost")
@@ -141,7 +141,7 @@ for(sl in scenario_levels){
   evalues <- allresults[,mean(Cost/gdp),by=.(igroup,policy)]
   topchoices <- evalues[,list(policy[which.min(V1)],round(V1[which.min(V1)]*100)),by=igroup]
   print(topchoices)
-  print(allresults[policy=='No Closures',sum(Breach_before>0),by=igroup])
+  # print(allresults[policy=='No Closures',sum(Breach_before>0),by=igroup])
   # allresults[,keeprow:=policy==topchoices$V1[which(topchoices$igroup==igroup)],by=igroup]
   
   ##!! decision under uncertainty, or decision under certainty?
@@ -250,13 +250,13 @@ for(sl in 1:ncscens){
     subtab[,displaced:=Deaths4>scen_deaths4 & Deaths < scen_deaths]
     befores <- subset(subtab,Cost < 0 & scen_Mitigated_deaths <= Mitigated_deaths &!noclosuredisplacement&!exitwave)[,..dispcols]
     if(nrow(befores)>0){
-      print(c('before',sl,income_level))
-      print(befores)
+      # print(c('before',sl,income_level))
+      # print(befores)
     }
     afters <- subset(subtab,Cost < 0 & scen_Mitigated_deaths > Mitigated_deaths &!noclosuredisplacement&!exitwave)[,..dispcols]
     if(nrow(afters)>0){
-      print(c('after',sl,income_level))
-      print(afters)
+    #   print(c('after',sl,income_level))
+    #   print(afters)
     }
     nneg <- nneg + nrow(subset(subtab,Cost< 0 ))
   }
