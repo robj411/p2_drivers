@@ -64,7 +64,7 @@ library(extraDistr)
 library(PearsonDS)
 library(ggpubr)
 
-source('functions.R')
+source('costing_functions.R')
 
 panderOptions('round',2)
 panderOptions('table.split.table', Inf)
