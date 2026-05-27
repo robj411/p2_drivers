@@ -1,5 +1,5 @@
 ---
-title: "Costs and impacts of vaccine preparedness investments for SARS-X pandemics: DAEDALUS code and model description"
+title: "Costs and impacts of vaccine preparedness investments for SARS-X pandemics: daedalus code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   bookdown::pdf_document2: 
@@ -83,7 +83,9 @@ format_to_print2 <- function(x,z=2){
 
 
 
-This document describes the DAEDALUS model that is used in the CEPI application. The DAEDALUS model simulates a single epidemic in a single country. Details of how the DAEDALUS model is used as a part of the methodology of the CEPI application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the DAEDALUS model.
+This document describes the daedalus model that is used in the vaccine-impact application (url to follow). The daedalus model simulates a single epidemic in a single country. Details of how the daedalus model is used as a part of the methodology of the vaccine-impact application is presented in a separate report, which also details the scenarios which are expressed as vaccination rates and are inputs to the daedalus model.
+
+(NB. If equations are not legible, try (a) refreshing, (b) a different browser, (c) the pdf.)
 
 
 
@@ -143,7 +145,7 @@ bpsv_levels <- c(0,1)
 <!-- - The SARS-X--specific vaccine (SSV) is rolled out starting at least 107 days after the response time, depending on the investment scenario being simulated -->
 <!-- - All people aged 15 and over (including those previously infected) are eligible for vaccination. We assume an uptake of 80%. -->
 <!-- - The administration rate (% of population vaccinated per week) depends on investment scenario assumptions -->
-- Vaccination is a model input whose details depend on the scenario. The model allows for two vaccines to be administered flexibly, in that the first is not a prerequisite for the second. In the CEPI application, the first vaccine is a broadly protective sarbecovirus vaccine (BPSV) and the second is a strain-specific vaccine (SSV).
+- Vaccination is a model input whose details depend on the scenario. The model allows for two vaccines to be administered flexibly, in that the first is not a prerequisite for the second. In the vaccine-impact application, the first vaccine is a broadly protective sarbecovirus vaccine (BPSV) and the second is a strain-specific vaccine (SSV).
 - Closures, working from home and testing end when vaccine rollout completes (or if other stopping criteria are met, see Tables \@ref(tab:rulesreactive) and \@ref(tab:ruleselimination))
 - When vaccine rollout is complete, the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends.
 
