@@ -2,12 +2,6 @@
 title: "Costs and impacts of vaccine preparedness investments for SARS-X pandemics: DAEDALUS code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::pdf_document2: 
     #   --filter=pandoc-xnos
     toc: false
@@ -20,6 +14,12 @@ output:
     fig_caption: yes
     includes:
       in_header: "preamble.tex"
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -1107,7 +1107,7 @@ formula3 <- sprintf(
 Here, $p^5$ controls the variance of the distribution and $p^6$ and $p^7$ the linear relationship between $z$ and $b$. Using an optimisation routine in R we find `r formula1`, 
 `r formula2` and `r formula3`. Results are shown in Figure \@ref(fig:sectortourism). We use these values as inputs for all country models.
 
- ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](figures/sectortourism.png){ width=40% }
+ ![(\#fig:sectortourism) Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure \@ref(fig:tourismhist)).](outputs_files/sectortourism.png){ width=40% }
 
 \newpage
 

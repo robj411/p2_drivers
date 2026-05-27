@@ -19,5 +19,6 @@ source('aggregation_script.R')
 # build results markdown
 require(rmarkdown)
 setwd('..')
+rm(params)
 rmarkdown::render('outputs.Rmd', 'bookdown::pdf_document2', params=list(lbfile ='data/vaccine_delivery.xlsx'), clean=F)
 

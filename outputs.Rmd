@@ -839,7 +839,7 @@ tabres <- subset(tabres, fromscen!='BAU2')
 tabres$fromscen = NULL
 colnames(tabres)[1:2] <- c('Scenario','Income group')
 
-# write.csv(tabres,'cepi_results/Delta_LIR_IQR_IL.csv',row.names = F, quote = F)
+# write.csv(tabres,'results/Delta_LIR_IQR_IL.csv',row.names = F, quote = F)
 
 # subtabres <- subset(tabres,`From scenario`%in%bau_names)[,!colnames(tabres)%in%scenario_names[-c(scen_to_keep)],with=F]
 

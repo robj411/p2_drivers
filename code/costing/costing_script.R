@@ -310,7 +310,6 @@ tosave <- list()
 for(i in 1:3) tosave[[i]] <- list()
 
 
-sheet2 = read.csv('../../cepi_results/Delta_LIR_IQR_pc_GDP_BAU.csv',check.names = F)
 fifteen_yr_discount_weight = sapply(1:NSAMPLES, function(x) accumulate(discount = pardf$discount[x], from = 1, to = pardf$years_100[x]))
 
 for(s in 1:nscen){ #c(1,10)){# 
@@ -369,8 +368,6 @@ for(s in 1:nscen){ #c(1,10)){#
     diffallupfront = allupfront - bauallupfront
     diffallannual = allannual - bauallannual
     diffallresp = allresp - bauallresp
-    
-    delta_lir = sheet2[match(scennames[s],sheet2$to), 3:4]
     
     tosave[[1]][[scennames[s]]] <- allupfront
     tosave[[2]][[scennames[s]]] <- allannual

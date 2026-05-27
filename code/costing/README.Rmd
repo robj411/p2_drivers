@@ -1354,7 +1354,7 @@ rdplot = ggplot(df)  +
   theme_bw(base_size = 16) + 
   labs(x='Year',y='Billion USD',colour='Days to SSV') +
   theme(legend.position = 'top')
-ggsave(rdplot, filename='../../cepi_results/rdplot.png')
+ggsave(rdplot, filename='../../results/rdplot.png')
 
 
 costperyear = sapply(crs+pfixed$hic_cap_res, function(x) rawpar$cost_capres*x)
@@ -1371,7 +1371,7 @@ capresplot = ggplot(df)  +
   theme_bw(base_size = 16) + 
   labs(x='Year',y='Billion USD',colour='Total reserved capacity, billion doses') +
   theme(legend.position = 'top')
-ggsave(capresplot, filename='../../cepi_results/capresplot.png')
+ggsave(capresplot, filename='../../results/capresplot.png')
 
 
 
@@ -1393,7 +1393,7 @@ bpplot = ggplot(df)  +
   theme_bw(base_size = 16) + 
   labs(x='Year',y='Billion USD',colour='',fill='') +
   theme(legend.position = 'top')
-ggsave(bpplot, filename='../../cepi_results/bpplot.png')
+ggsave(bpplot, filename='../../results/bpplot.png')
 
 
 
@@ -1534,7 +1534,7 @@ unitcosts = ggplot(df) +
   labs(x = "", y = "Billion USD", fill = "") +
   scale_y_continuous(n.breaks = 9)
 
-ggsave(unitcosts + labs(title=''), filename='../../cepi_results/unit.png',height=5,width=10)
+ggsave(unitcosts + labs(title=''), filename='../../results/unit.png',height=5,width=10)
 
 
 ```
@@ -1668,7 +1668,7 @@ fifcosts = ggplot(toplot) +
   theme_bw(base_size = 15)
 
 final = ggarrange(unitcosts, fifcosts, ncol=1)
-ggsave(fifcosts + labs(title=''), filename='../../cepi_results/fifteen.png',height=6,width=10)
+ggsave(fifcosts + labs(title=''), filename='../../results/fifteen.png',height=6,width=10)
 
 ```
 
