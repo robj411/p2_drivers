@@ -486,4 +486,351 @@ for(bau_scen in 1:nbscens){
         geom_textsegment(
           aes(x = x, y = y/1000, xend = xend, yend = yend/1000, colour = scencol,label = to),
           hjust = 0.5,        # centered along the segment
-          vjust = 1.4,       # b
+          vjust = 1.4,       #  ???above??? the segment (perpendicular offset)
+          upright = TRUE,     # keeps text readable (flips if needed)
+          text_smoothing = 0, # no curve smoothing (straight line)
+          size=5, show.legend=F # 
+        ) +
+        labs(x = 'Decrease in LIR vs. BAU, % GDP', y = 'Increase in costs vs BAU, billion $') +
+        theme_bw(base_size = 15))
+    #ggsave(segplot,filename=paste0('../cepi_results/dominancediag_',bau_names[bau_scen],'.png'),width=7,height=7)
+    
+    expvalplot[,LQplus:=signif(quantile(LIRplus * timehor,c(1)/4),2),by=.(from,to)]
+    expvalplot[,UQplus:=signif(quantile(LIRplus * timehor,c(3)/4),2),by=.(from,to)]
+    dom = unique(expvalplot[,.(to,LQplus,UQplus)])
+    setorder(dom,to)
+    colourlists$bau = bau_names
+    # dominance analysis
+    dom[,scennumber:=which(scenario_names==to),by=to]
+    dom[,scencol:=names(colourlists)[sapply(colourlists,function(x)to%in%x)],by=scennumber]
+    dom$lq = alllq[match(dom$to,costscens)] - 0.2 # adjust to aid visibility
+    dom$uq = alluq[match(dom$to,costscens)] + 0.2
+    dom <- subset(dom,!is.na(lq))
+    dom[,labelx:=UQplus + 0.17] # adjust to aid visibility
+    dom[,labely:=lq]
+    cscheme = "plasma"
+    dom$scencol = factor(dom$scencol,
+                         levels=c('bpsv','capres','ssv200','ssv100','eq'),
+                         labels=c('BPSV', '365 days','200 days','100 days', 'Equality + Delivery'))
+    
+    (domplot = ggplot(dom) + 
+        geom_hline(yintercept=0,linewidth=1.25,colour='grey') +
+        geom_vline(xintercept=0,linewidth=1.25,colour='grey') +
+        geom_rect(aes(xmin=LQplus,xmax=UQplus,
+                      ymin=lq,#/gdp2025*100 - .0001,
+                      ymax=uq,#/gdp2025*100 + .0001,
+                      fill=scencol),colour='white',linewidth=0,alpha=0.5)  +
+        # scale_colour_manual(values=c(`FALSE`='white',`TRUE`=NA)) + 
+        # geom_textsegment(
+        #   aes(x = LQplus, y = lq,#/gdp2025*100,
+        #       xend = UQplus, yend = uq,#/gdp2025*100, 
+        #       colour = scencol,label = to),
+        #   hjust = 0.5,        # centered along the segment
+        #   vjust = 0,       # ???above??? the segment (perpendicular offset)
+        #   upright = TRUE,     # keeps text readable (flips if needed)
+        #   text_smoothing = 0, # no curve smoothing (straight line)
+        #   size=5, show.legend=F # 
+        # ) +
+        ggrepel::geom_label_repel(aes(x=labelx,y=labely,#/gdp2025*100,
+                                      label=to,fill=scencol,
+                                      color = after_scale(prismatic::best_contrast(fill))),
+                                  force=.01,vjust = 0.5,hjust = 0.5,show.legend = F) +
+        theme_bw(base_size=16) + 
+        theme(legend.position = 'top') +
+        # scale_fill_viridis_d(option = cscheme) +
+        # scale_colour_viridis_d(option = cscheme) +
+        labs(x="Decrease in pandemic loss, % GDP",
+             y='Increase in preparedness cost, billion USD',fill='')) #+
+    # ggtitle(paste0('Costs and impacts accumulated over ',timehor,' years, relative to ',bau_names[bau_scen])))
+    ggsave(domplot,filename=paste0('../cepi_results/dominancehoriz_',bau_names[bau_scen],'.png'),width=7,height=7)
+    
+    
+    comparisons <- lapply(list(bpsv = c(1:3), 
+                               ssv = c(4:11), 
+                               eq = c(12),
+                               supp1 = c(3,5,8,11),
+                               supp2 = c(2,4,7,10)),function(x) just_scen_names[x])
+  }
+}
+
+
+
+## global saving, %, by scenario #################################
+# slvaluelist is in terms of statistical lives to get back to gdp, assume one vsl is population-weighted average
+bootsls <- ilevelvals <- list()
+index <- c(0,cumsum(samplefracs))
+for(j in 1:ncscens){
+  # bootsls[[j]] <- ilevelvals[[j]] <- list()
+  for(refsl in 1:nbscens){
+    # :(j-1)
+    # bootsls[[j]][[refsl]] <- ilevelvals[[j]][[refsl]] <- list()
+    bootsls <- list()
+    for(i in 1:length(slvaluelist[[j]][[refsl]])){
+      thisval <- names(slvaluelist[[j]][[refsl]])[i]
+      value <- rowSums(slvaluelist[[j]][[refsl]][[thisval]])*average_vsl/(average_gdp*ncountries) * 100
+      bootsls[[thisval]] <- rep(value,boot)
+      # bootsls[[j]][[refsl]][[thisval]] <- rep(value,boot)
+    }
+    saveRDS( bootsls, paste0('tmp/bootsls',j,'-',refsl,'.Rds'))
+    for(i in 1:length(samplefracs)){
+      ilvalue <- rowSums(slvaluelist[[j]][[refsl]]$slvalue[,(index[i]+1):index[i+1]])
+      value <- rowSums(slvaluelist[[j]][[refsl]]$slvalue)
+      saveRDS(rep(ilvalue/value*100,boot),paste0('tmp/ilevelvals',j,'-',refsl,'-',i,'.Rds'))
+      #ilevelvals[[j]][[refsl]][[i]] <- rep(ilvalue/value*100,boot)
+    }
+  }
+}
+
+tens = seq(30,100,by=10)
+plotlist <- list()
+valuetablist <- list()
+absvalues <- s11lir <- data.frame()
+for(ex in 1:length(tens)){
+  allvaluesil <- allvaluescost <- valuetabcounter <- valuetabgdp <- data.frame()
+  for(refsl in 1:nbscens){
+    exlist <- lapply(tens,function(x) allyvals[[refsl]]<1/x*uval&allyvals[[refsl]]>1/x*lval)
+    oneinXindex <- exlist[[ex]]
+    
+    absvaluelist <- lapply(list(abscostslist[[refsl]],deathspermillist[[refsl]]),function(x)rep(x,boot)[oneinXindex])
+    absvaluesummary <- sapply(absvaluelist,function(x)paste0(signif(quantile(x,c(1,3)/4),2),collapse='--'))
+    absvalues <- rbind(absvalues,absvaluesummary)
+    for(j in 1:ncscens){
+      # j = scen_to_keep[ji]
+      scenname = just_scen_names[j]
+      # :(j-1)
+      # refsl = scen_to_keep[refsli]
+      ilevelvals1 = readRDS(paste0('tmp/ilevelvals',j,'-',refsl,'-1.Rds'))
+      ilevelvals2 = readRDS(paste0('tmp/ilevelvals',j,'-',refsl,'-2.Rds'))
+      ilevelvals3 = readRDS(paste0('tmp/ilevelvals',j,'-',refsl,'-3.Rds'))
+      # in sl
+      value1 <- ilevelvals1#[[j]][[refsl]][[1]] 
+      printval1 <- quantile(value1[oneinXindex],c(1:3)/4,na.rm=T)
+      value2 <- ilevelvals2#[[j]][[refsl]][[2]] 
+      printval2 <- quantile(value2[oneinXindex],c(1:3)/4,na.rm=T)
+      value3 <- ilevelvals3#[[j]][[refsl]][[3]] 
+      printval3 <- quantile(value3[oneinXindex],c(1:3)/4,na.rm=T)
+      allvaluesil <- rbind(allvaluesil,
+                           c(income_levels[1],bau_names[refsl],scenname,printval1),
+                           c(income_levels[2],bau_names[refsl],scenname,printval2),
+                           c(income_levels[3],bau_names[refsl],scenname,printval3))
+      
+      bootsls = readRDS(paste0('tmp/bootsls',j,'-',refsl,'.Rds'))
+      value1 <- bootsls$ylls/bootsls$slvalue*100 
+      printval1 <- quantile(value1[oneinXindex],c(1:3)/4,na.rm=T)
+      value2 <- bootsls$gdploss/bootsls$slvalue*100 
+      printval2 <- quantile(value2[oneinXindex],c(1:3)/4,na.rm=T)
+      value3 <- bootsls$education/bootsls$slvalue*100 
+      printval3 <- quantile(value3[oneinXindex],c(1:3)/4,na.rm=T)
+      allvaluescost <- rbind(allvaluescost,
+                             c(c('YLL','GDP','Education')[1],bau_names[refsl],scenname,printval1),
+                             c(c('YLL','GDP','Education')[2],bau_names[refsl],scenname,printval2),
+                             c(c('YLL','GDP','Education')[3],bau_names[refsl],scenname,printval3))
+      value4 <- bootsls$slvalue[oneinXindex]
+      ## index 1 of absvaluelist is cost. (2 is deaths)
+      printval <- paste0(signif(quantile(value4/absvaluelist[[1]]*100,c(1,3)/4),2),collapse='--')
+      printvalabs <- paste0(signif(quantile(value4,c(1,3)/4),2),collapse='--')
+      valuetabcounter <- rbind(valuetabcounter,c(bau_names[refsl],scenname,printval))
+      valuetabgdp <- rbind(valuetabgdp,c(bau_names[refsl],scenname,printvalabs))
+      newcolname <- paste0('val',refsl,'to',j)
+      if(length(value4)!=sum(abscosttab[[refsl]]$return==tens[ex])) break
+      abscosttab[[refsl]][[newcolname]][abscosttab[[refsl]]$return==tens[ex]] <- value4
+      # in % gdp
+      # print(summary(rowSums(valuelist[[j]][[refsl]])/ncountries))
+      if(scenname=='S09'){
+        printval <- paste0(signif(quantile(absvaluelist[[1]]-value4,c(1,3)/4),2),collapse='--')
+        s11lir <- rbind(s11lir,c(bau_names[refsl],paste0('Once in ',tens[ex],' years'),printval))
+      }
+    }
+  }
+  colnames(allvaluescost) <- c('Cost','From scenario','To','lower','Value','upper')
+  colnames(allvaluesil) <- c('Level','From scenario','To','lower','Value','upper')
+  for(i in 4:6){
+    allvaluesil[,i] <- as.numeric(allvaluesil[,i])
+    allvaluescost[,i] <- as.numeric(allvaluescost[,i])
+  }
+  allvaluesil$Level <- factor(allvaluesil$Level,levels=income_levels)
+  p2 <- ggplot(subset(allvaluesil,`From scenario`%in%bau_names[1]&To%in%scenario_names[scen_to_keep])) +
+    geom_bar(aes(x=To,fill=Level,y=as.numeric(Value)),stat='identity',position = 'dodge',show.legend = ex==1) +
+    # geom_boxplot(aes(x=To,fill=Level,lower=lower,middle=upper,ymin=lower,ymax=upper,upper=upper),
+    #            stat='identity',position = 'dodge',show.legend = ex==1) +
+    scale_colour_viridis(discrete=T, name="",option='plasma',end=.9) +
+    geom_hline(data=data.frame(y=100*popfrac[1],Level=factor('LLMIC',levels=income_levels)),aes(yintercept=y,colour=Level),show.legend = F,linewidth=1.2) +
+    geom_hline(yintercept=0,colour='black',linewidth=1) +
+    scale_fill_viridis(discrete=T, name="",option='plasma',end=.9) +
+    # facet_grid(`From scenario`~.,scales='free') +
+    theme_bw(base_size = 15) + 
+    labs(x='',y='')  +
+    theme(legend.position = 'top') + guides(colour = 'none')
+  
+  p1 <- ggplot(subset(allvaluescost,`From scenario`%in%bau_names[1]&To%in%scenario_names[scen_to_keep])) +
+    geom_hline(yintercept=0,colour='black',linewidth=1) +
+    geom_bar(aes(x=To,fill=Cost,y=as.numeric(Value)),stat='identity',position = 'dodge',show.legend = ex==1) +
+    # geom_boxplot(aes(x=To,fill=Cost,lower=lower,middle=upper,ymin=lower,ymax=upper,upper=upper),
+    #              stat='identity',position = 'dodge',show.legend = ex==1) +
+    scale_fill_viridis(discrete=T, name="",option='viridis',end=.9) +
+    # facet_grid(`From scenario`~.,scales='free') +
+    theme_bw(base_size = 15) + 
+    labs(x='',y='Median % contribution') +
+    theme(legend.position = 'top')
+  
+  plotlist[[ex]] <- p1 + p2
+  
+  colnames(valuetabcounter) <- c('From scenario','To','Value')
+  colnames(valuetabgdp) <- c('From scenario','To','Value')
+  valuetabcounter$counter = 'counter'
+  valuetabgdp$counter = 'gdp'
+  valuetablist[[ex]] <- do.call(rbind,list(valuetabcounter,valuetabgdp))
+  
+}
+colnames(s11lir) <- c('Counterfactual','Probability','LIR')
+colnames(absvalues) <- colnames(expvalues) <- c('LIR, % global GDP','Deaths per thousand')
+absvalues <- rbind(absvalues,expvalues)
+decades = c('thirty','forty','fifty','sixty','seventy','eighty','ninety','one hundred')
+rownames(absvalues) <- paste0(c(rep(paste0('Once in ',decades,' years'),each=nbscens),rep('Expectation',nbscens)),', ',bau_names)
+names(valuetablist) <- names(exlist)
+plotlist[[2]]
+saveRDS(plotlist[[1]] +  p1 + p2 + plot_layout(ncol = 2),'results/exXbars.Rds')
+saveRDS(list(valuetablist,absvalues),'results/exXvalues.Rds')
+write.csv(absvalues,'../cepi_results/counterfactual.csv')
+
+ggsave(plotlist[[1]] +  p1 + p2 + plot_layout(ncol = 2), filename='../cepi_results/ex30bar.png',height=6.5,width=9)
+
+## save values as % gdp and % counterfactuals ###################################################
+
+redo <- do.call(rbind,lapply(1:length(valuetablist),function(x)
+  cbind(subset(valuetablist[[x]],counter=='gdp'),x)))
+redopcgdp <- subset(redo,Value!='')
+redopcgdp$counter = NULL
+redopcgdp$lower <- sapply(redopcgdp$Value,function(y) as.numeric(strsplit(y,'--')[[1]][1]))
+redopcgdp$upper <- sapply(redopcgdp$Value,function(y) as.numeric(strsplit(y,'--')[[1]][2]))
+
+panlabs <- seq(100,30,-10) # rev(paste0('Once in ',decades,' years')) # c('Once in thirty years','Once in one hundred years'))
+(plotvalues <-
+    ggplot(subset(redopcgdp,`From scenario`%in%'BAU'&To%in%just_scen_names[scen_to_keep])) +
+    geom_boxplot(aes(x=To, #,
+                     colour=factor(x,levels=length(valuetablist):1,labels=panlabs),
+                     fill=factor(x,levels=length(valuetablist):1,labels=panlabs),
+                     lower=lower,middle=upper,ymin=lower,ymax=upper,upper=upper),
+                 stat='identity',position = 'dodge',show.legend = T,key_glyph=draw_key_rect) +
+    scale_colour_viridis(discrete=T, name="",option='plasma',end=.9,direction=-1) +
+    scale_fill_viridis(discrete=T, name="Return time",option='plasma',end=.9,direction=-1) +
+    # facet_grid(~factor(`From scenario`),scales='free') +
+    theme_bw(base_size = 15) + 
+    labs(x='',y=expression(Delta*"LIR, % of GDP"), parse=TRUE)  +
+    theme(panel.grid.major.y = element_blank() ,
+          panel.grid.minor.y = element_blank() ,
+          axis.ticks.y = element_blank() ,
+          strip.background = element_blank(),
+          legend.position = 'bottom',
+          legend.spacing.x = unit(-10,'cm'),  
+          legend.margin = margin(l = -.15, unit = "npc")) +
+    guides(fill=guide_legend(reverse = TRUE,nrow=1,label.position='bottom'#,#keywidth=2,byrow=T
+    ), colour='none' ) +
+    scale_y_continuous(sec.axis=dup_axis(name='',labels='',breaks=NULL)) +
+    coord_flip() )
+ggsave(plotvalues,filename='../cepi_results/Delta_LIR_IQR_pc_GDP_return.png',width=4,height=8)
+
+
+
+redopcgdp$Value <- NULL
+redopcgdp$x <- tens[redopcgdp$x]
+colnames(redopcgdp) <- c('From','To','Return time','LQ','UQ')
+write.csv(redopcgdp,'../cepi_results/Delta_LIR_IQR_pc_GDP_return.csv',row.names = F, quote = F)
+
+
+
+redo <- do.call(rbind,lapply(1:length(valuetablist),function(x)
+  cbind(subset(valuetablist[[x]],counter=='counter'),x)))
+redopcc <- subset(redo,Value!='')
+redopcc$counter <- NULL
+redopcc$lower <- sapply(redopcc$Value,function(y) as.numeric(strsplit(y,'--')[[1]][1]))
+redopcc$upper <- sapply(redopcc$Value,function(y) as.numeric(strsplit(y,'--')[[1]][2]))
+redopcc$Value <- NULL
+redopcc$x <- tens[redopcc$x]
+colnames(redopcc) <- c('From','To','Return time','LQ','UQ')
+write.csv(redopcc,'../cepi_results/Delta_LIR_IQR_pc_counterfactual_return.csv',row.names = F, quote = F)
+
+
+## reread and write to one file ###################################
+
+sheet1 = read.csv('../cepi_results/counterfactual.csv',check.names = F)
+sheet2 = read.csv('../cepi_results/Delta_LIR_IQR_pc_GDP_BAU.csv',check.names = F)
+# sheet2.5 = read.csv('../cepi_results/Delta_LIR_IQR_pc_GDP_BAU2.csv',check.names = F)
+sheet3 = read.csv('../cepi_results/Delta_LIR_IQR_pc_GDP_return.csv',check.names = F)
+sheet4 = read.csv('../cepi_results/Delta_LIR_IQR_pc_counterfactual_return.csv',check.names = F)
+sheet5 = read.csv('../cepi_results/LIR_IQR_pc_GDPBAU.csv',check.names = F)
+# sheet5.5 = read.csv('../cepi_results/LIR_IQR_pc_GDPBAU2.csv',check.names = F)
+# print(sheet1)
+# print(sheet2)
+
+# xlsx::write.xlsx(sheet1,file = '../cepi_results/cepi_results.xlsx',sheetName='Counterfactual (Table S5)', append=F,row.names = F)
+# xlsx::write.xlsx(rbind(sheet2,sheet2.5),file = '../cepi_results/cepi_results.xlsx',sheetName='Delta LIR, % GDP (Table S6)', append=T,row.names = F)
+# xlsx::write.xlsx(sheet3,file = '../cepi_results/cepi_results.xlsx',sheetName='given return, SARS-X (Table S7)', append=T,row.names = F)
+# xlsx::write.xlsx(sheet4,file = '../cepi_results/cepi_results.xlsx',sheetName='as % counterfactual (Table S8)', append=T,row.names = F)
+# xlsx::write.xlsx(sheet5,file = '../cepi_results/cepi_results.xlsx',sheetName='LIR, % GDP (BAU1)', append=F,row.names = F)
+# xlsx::write.xlsx(sheet5.5,file = '../cepi_results/cepi_results.xlsx',sheetName='LIR, % GDP (BAU2)', append=T,row.names = F)
+
+
+
+
+
+# frac yll of costs and values
+orderedyll <- lapply(income_levels,function(x){
+  best <- subset(bauresults[[1]],igroup==x&mincost==1)
+  setorder(best,Costpc)
+  best$YLL/(best$vsl * best$gdp)
+})
+orderedchoices <- lapply(income_levels,function(x){
+  best <- subset(bauresults[[1]],igroup==x&mincost==1)
+  setorder(best,Costpc)
+  best$policy
+})
+
+# yll frac as cost increases
+j <- 9; refsl <- 1
+scatter <- data.frame(policy=apply(sapply(1:ncol(sampleorders[[1]]),function(x){
+  ig <- rep(1:3,times=samplefracs)[x]
+  orderedchoices[[ig]][sampleorders[[1]][,x]]
+}),1,function(y)sum(y=='No Closures'))/sum(samplefracs)*100,
+deaths=rowSums(deathsamples[[1]])/(50*1e6*ncountries)*1e3,
+pcyll = rowSums(slvaluelist[[j]][[refsl]]$ylls)/rowSums(slvaluelist[[j]][[refsl]]$slvalue)*100,
+weightedyllpc = apply(
+  sapply(1:ncol(sampleorders[[1]]),function(x){
+    ig <- rep(1:3,times=samplefracs)[x]
+    orderedyll[[ig]][sampleorders[[1]][,x]]
+  }),1,sum)/rowSums(costsamples[[1]])*100
+)
+cyl_labels <- c("weightedyllpc" = "LIR", "pcyll" = "Delta*'LIR'")
+(pcyllplot <- ggplot(reshape2::melt(scatter,id.vars=c('deaths','policy'))) +
+    geom_vline(xintercept = quantile((scatter$deaths),c(1,3)/4),linewidth=1.5,colour='grey') +
+    geom_point(aes(x=(deaths),y=value,colour=policy)) +
+    facet_grid(~ variable, labeller = as_labeller(cyl_labels, default = label_parsed)) +
+    # facet_grid(~factor(variable,levels=c('weightedyllpc','pcyll'),labels=c('LIR',deparse(bquote("Delta"))))) +
+    scale_x_continuous(transform='log',breaks=c(.1,1,10)) +
+    theme_bw(base_size=18) +
+    labs(x='Deaths per thousand',y='YLL percent',colour='% No Closures'))
+# ggsave(pcyllplot,filename='results/pcYLL.png',width=10,height=6)
+
+
+scatter <- data.frame(deaths=rowSums(deathsamples[[1]])/(50*1e6*ncountries)*1e3,
+                      econ = rowSums(gdpsamples[[1]])*1e6/(113.8e12)*100
+)
+
+glendata <- data.frame(x=c(17.1,0.00016,0.0016,0.00014,2.7),y=c(6,.1,.06,.05,14.4),
+                       years = c(3,2,4,3,3), label=c('Flu','SARS','Ebola','Zika','COVID'))
+
+
+
+gp1 = ggplot(scatter) +
+  # scale_y_continuous(transform='log') +
+  # scale_x_continuous(transform='log',breaks=c(.1,1,10)) +
+  geom_point(aes(x=deaths,y=econ),colour='midnightblue',alpha=.7) +
+  scale_x_log10() + scale_y_log10() + 
+  theme_bw(base_size=15) + 
+  labs(x='Deaths per 1,000 people',y='GDP loss, % of pre-pandemic value') + 
+  theme(legend.position = 'top')
+ggsave(gp1,filename='../cepi_results/deathsgdpscatter.png',width=5,height=4)
+
+ggsave(gp1 + 
+         geom_label(data=glendata,aes(x=x,y=y,label=label)),
+       filename='../cepi_results/deathsgdpglen.png',width=5,height=4)
