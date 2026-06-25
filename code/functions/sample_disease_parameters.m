@@ -156,7 +156,7 @@ function [param_struct, R0_dist] = sample_disease_parameters(nsamples)
     subplot(1,3,2); plot(plotfun(hfrs)); title('HFR')
     subplot(1,3,3); plot(plotfun(param_struct.ifr),'color',[.5 .5 .5 .05]); hold on
     subplot(1,3,3); plot(plotfun(ifrs)); title('IFR')
-    saveas(h,'../figures/ratesbyage','jpg');
+    saveas(h,'../results/ratesbyage','jpg');
     close gcf
 
 

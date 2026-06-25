@@ -7,6 +7,8 @@ if(!file.exists('process_results.R')){
 
 setwd('costing')
 source('costing_script.R')
+rmarkdown::render('README.Rmd', 'bookdown::github_document2')
+rmarkdown::render('README.Rmd', 'bookdown::pdf_document2', clean=F)
 setwd('..')
 
 # run matlab impact model

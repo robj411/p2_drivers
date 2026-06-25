@@ -7,15 +7,15 @@ header-includes:
   - \usepackage{fancyhdr}
   - \usepackage{lastpage}
 output:
-  bookdown::html_document2: 
-    toc: true
-    toc_float: true
-    keep_md: true
   bookdown::pdf_document2: 
     toc_depth: 5
     toc_float: true
     number_sections: true
     keep_tex: true
+  bookdown::html_document2: 
+    toc: true
+    toc_float: true
+    keep_md: true
   md_document:
     variant: markdown_github
   bookdown::word_document2: default
@@ -114,8 +114,12 @@ populationhic15 = as.numeric(subset(caps,Code=='pop_hic_15')$Parameters)
 populationumic15 = as.numeric(subset(caps,Code=='pop_umic_15')$Parameters)
 populationllmic15 = sum(as.numeric(subset(caps,Code%in%c('pop_lmic_15','pop_lic_15'))$Parameters))
 pops15 = c(populationllmic15, populationumic15, populationhic15)
-pops0/sum(pops0)
-pops15/sum(pops15)
+populationhic65 = as.numeric(subset(caps,Code=='pop_hic_65')$Parameters)
+populationumic65 = as.numeric(subset(caps,Code=='pop_umic_65')$Parameters)
+populationllmic65 = sum(as.numeric(subset(caps,Code%in%c('pop_lmic_65','pop_lic_65'))$Parameters))
+pops65 = c(populationllmic65, populationumic65, populationhic65)
+# pops0/sum(pops0)
+# pops15/sum(pops15)
 ```
 
 ```{r costall,echo=F,warning=F,message=F}
@@ -268,8 +272,8 @@ setorder(plotgini, Income)
 plotgini[,Gini:=ginifunction(Percent),by=.(Day,Scenario)]
 
 percents = subset(plotgini, Day==896&Scenario=='S10')$Percent
-max(subset(plotgini,!is.na(Gini))$Gini)
-subset(plotgini,!is.na(Gini)&Gini<0.045&Day==896)
+# max(subset(plotgini,!is.na(Gini))$Gini)
+# subset(plotgini,!is.na(Gini)&Gini<0.045&Day==896)
 
 pl1 = ggplot(subset(plotgini,!Scenario%in%c('BAU2')&Week<200)) + 
   geom_line(aes(x=Week,y=Gini,colour=factor(Scenario,levels=scenario_names[c(1:11)])),linewidth=1,alpha=1) +
@@ -292,6 +296,9 @@ pl1
 
 tab[1,c(is.na(tab[1,]))] = ''
 
+bpsv_cutoffs = rev(80*pops65/pops0)
+ssv_cutoffs = rev(80*pops15/pops0)
+
 df_list <- list()
 for(scen in 1:nScen){
   for(il in 1:3){
@@ -300,16 +307,19 @@ for(scen in 1:nScen){
     get_index <- start_index - 1 + il
     ilevel <- gsub('s','',tab[2,get_index])
     scenario <- colnames(tab)[start_index]
-    vals <- 0
+    pcval <- 0
     for(i in c(0,3)){
       vaccine <- tab[1,start_index+i][[1]]
       vindex <- get_index + i
-      vals <- vals +  as.numeric(tab[-c(1:2),vindex][[1]])
+      pcval <- pcval +  cumsum(as.numeric(tab[-c(1:2),vindex][[1]]))*100
+      if(i==0) {
+        pcval = pmin(pcval, bpsv_cutoffs[il])
+        total_cutoff = max(pcval) + ssv_cutoffs[il]
+      }
     }
-    pcval = cumsum(as.numeric(vals))*100
-    max80 = which(pcval>80)[1]
-    # pcval[(max80+1):length(pcval)] = pcval[max80+1]
-    df_list[[length(df_list)+1]] <- data.frame(Day=1:length(vals), Percent=pcval, #Vaccine=vaccine,
+    max80 = which(pcval>total_cutoff)[1]
+    pcval[(max80+1):length(pcval)] = pcval[max80+1]
+    df_list[[length(df_list)+1]] <- data.frame(Day=1:length(pcval), Percent=pcval, #Vaccine=vaccine,
                                                Scenario=scenario, Income=ilevel)
   }
 }
@@ -321,7 +331,7 @@ plotscens$Week = plotscens$Day/7
 
 
 pl1 = ggplot(subset(plotscens,!Scenario%in%c('BAU2')&Week<200)) + 
-  geom_line(aes(x=Week,y=Percent,colour=factor(Scenario,levels=scenario_names[c(2:11,1)])),linewidth=1,alpha=1) +
+  geom_line(aes(x=Week,y=Percent,colour=factor(Scenario,levels=scenario_names[c(2:11,1)])),linewidth=.5,alpha=1) +
   facet_grid(~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
   theme_bw(base_size=15) + labs(colour='') +
   theme(legend.position = 'top') + 
@@ -343,7 +353,7 @@ pl2
 #   guides(colour=guide_legend(nrow=2,byrow=F))
 ```
 
-```{r}
+```{r,eval=F}
 plot2 = setDT(subset(plotscens,Scenario%in%c('BAU','S10')))
 plot2[,maxic:=max(Percent),by=.(Income,Scenario)]
 plot2[,minmaxic:=min(maxic),by=.(Income)]
@@ -652,12 +662,11 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 
 
-\newpage
+<!-- \newpage -->
+<!-- # Violin plots -->
 
-# Violin plots
 
-
-```{r violintop,fig.cap='Model results for the cost-minimising responses.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violintop,fig.cap='Model results for the cost-minimising responses.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 
 alltopresults <- do.call(rbind,topresults)
 vioplot <- reshape2::melt(alltopresults[,c(outcomenames,'igroup','scenario'),with=F],id.vars=c('igroup','scenario'))
@@ -683,10 +692,10 @@ ggplot(subset(vioplot,scenario%in%scenario_names[scen_to_keep]),aes(y=value, x=s
 ```
 
 
-\newpage
-## Scenario violin plots
+<!-- \newpage -->
+<!-- ## Scenario violin plots -->
 
-```{r violinBAU,fig.cap='Model results for the 365-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinBAU,fig.cap='Model results for the 365-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 p[[scen_to_keep[1]]]
 
 # ggsave(p[[1]][[1]] + theme_bw(base_size=15),filename='BAUviolinspill.png',width=9,height=6.5)
@@ -695,19 +704,19 @@ p[[scen_to_keep[1]]]
 
 ```
 
-```{r violinscen1,fig.cap='Model results for the 100-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinscen1,fig.cap='Model results for the 100-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 p[[scen_to_keep[2]]]
 ```
 
-```{r violinscen2,fig.cap='Model results for the 365-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinscen2,fig.cap='Model results for the 365-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 p[[scen_to_keep[3]]]
 ```
 
-```{r violinscen3,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinscen3,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 p[[scen_to_keep[4]]]
 ```
 
-```{r violinscen4,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6}
+```{r violinscen4,fig.cap='Model results for the 100-day SARS-X vaccine with the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 p[[scen_to_keep[5]]]
 ```
 
@@ -720,7 +729,7 @@ p[[scen_to_keep[5]]]
 
 # Expected value by policy choice
 
-```{r expectedvaluesbar,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=6,fig.width=6,eval=T}
+```{r expectedvaluesbar,fig.cap='Expected values of model results.',echo=F,warning=F,message=F,fig.height=6,fig.width=6,eval=F}
 
 # meltmeantab$scen <- factor((meltmeantab$scen), 
 #                                     levels=c('365, No BPSV','365, BPSV',
@@ -788,7 +797,7 @@ for(sl in scen_scens){
 # Violin plot of difference
 
 
-```{r diffviolin,fig.cap='Model results for losses saved by 100-day and BPS vaccines.',echo=F,warning=F,message=F,fig.height=4,fig.width=6}
+```{r diffviolin,fig.cap='Model results for losses saved by 100-day and BPS vaccines.',echo=F,warning=F,message=F,fig.height=4,fig.width=6,eval=F}
 
 vioplot <- reshape2::melt(difflist[,colnames(difflist)%in%c('Cost','igroup','toscen','fromscen')],id.vars=c('igroup','toscen','fromscen'))
 vioplot$igroup <- factor(vioplot$igroup,levels=c('LLMIC','UMIC','HIC'))
@@ -990,8 +999,8 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 # Distributions of loss
 
-```{r ex30bar,fig.cap='Distributions of values of investments for once-in-thirty-years events.',echo=F,warning=F,message=F,fig.height=8,fig.width=10}
-print(plotlist)
+```{r ex30bar,fig.cap='Distributions of values of investments for once-in-thirty-years events (top) and once-in-one-hundred-years events (bottom).',echo=F,warning=F,message=F,fig.height=8,fig.width=10}
+plotlist
 ```
 
 \newpage
