@@ -493,7 +493,7 @@ for(bau_scen in 1:nbscens){
         ) +
         labs(x = 'Decrease in LIR vs. BAU, % GDP', y = 'Increase in costs vs BAU, billion $') +
         theme_bw(base_size = 15))
-    #ggsave(segplot,filename=paste0('../cepi_results/dominancediag_',bau_names[bau_scen],'.png'),width=7,height=7)
+    #ggsave(segplot,filename=paste0('../results/dominancediag_',bau_names[bau_scen],'.png'),width=7,height=7)
     
     expvalplot[,LQplus:=signif(quantile(LIRplus * timehor,c(1)/4),2),by=.(from,to)]
     expvalplot[,UQplus:=signif(quantile(LIRplus * timehor,c(3)/4),2),by=.(from,to)]
@@ -542,7 +542,7 @@ for(bau_scen in 1:nbscens){
         labs(x="Decrease in pandemic loss, % GDP",
              y='Increase in preparedness cost, billion USD',fill='')) #+
     # ggtitle(paste0('Costs and impacts accumulated over ',timehor,' years, relative to ',bau_names[bau_scen])))
-    ggsave(domplot,filename=paste0('../cepi_results/dominancehoriz_',bau_names[bau_scen],'.png'),width=7,height=7)
+    ggsave(domplot,filename=paste0('../results/dominancehoriz_',bau_names[bau_scen],'.png'),width=7,height=7)
     
     
     comparisons <- lapply(list(bpsv = c(1:3), 
@@ -691,9 +691,9 @@ names(valuetablist) <- names(exlist)
 plotlist[[2]]
 saveRDS(plotlist[[1]] +  p1 + p2 + plot_layout(ncol = 2),'results/exXbars.Rds')
 saveRDS(list(valuetablist,absvalues),'results/exXvalues.Rds')
-write.csv(absvalues,'../cepi_results/counterfactual.csv')
+write.csv(absvalues,'../results/counterfactual.csv')
 
-ggsave(plotlist[[1]] +  p1 + p2 + plot_layout(ncol = 2), filename='../cepi_results/ex30bar.png',height=6.5,width=9)
+ggsave(plotlist[[1]] +  p1 + p2 + plot_layout(ncol = 2), filename='../results/ex30bar.png',height=6.5,width=9)
 
 ## save values as % gdp and % counterfactuals ###################################################
 
@@ -728,14 +728,14 @@ panlabs <- seq(100,30,-10) # rev(paste0('Once in ',decades,' years')) # c('Once 
     ), colour='none' ) +
     scale_y_continuous(sec.axis=dup_axis(name='',labels='',breaks=NULL)) +
     coord_flip() )
-ggsave(plotvalues,filename='../cepi_results/Delta_LIR_IQR_pc_GDP_return.png',width=4,height=8)
+ggsave(plotvalues,filename='../results/Delta_LIR_IQR_pc_GDP_return.png',width=4,height=8)
 
 
 
 redopcgdp$Value <- NULL
 redopcgdp$x <- tens[redopcgdp$x]
 colnames(redopcgdp) <- c('From','To','Return time','LQ','UQ')
-write.csv(redopcgdp,'../cepi_results/Delta_LIR_IQR_pc_GDP_return.csv',row.names = F, quote = F)
+write.csv(redopcgdp,'../results/Delta_LIR_IQR_pc_GDP_return.csv',row.names = F, quote = F)
 
 
 
@@ -748,27 +748,27 @@ redopcc$upper <- sapply(redopcc$Value,function(y) as.numeric(strsplit(y,'--')[[1
 redopcc$Value <- NULL
 redopcc$x <- tens[redopcc$x]
 colnames(redopcc) <- c('From','To','Return time','LQ','UQ')
-write.csv(redopcc,'../cepi_results/Delta_LIR_IQR_pc_counterfactual_return.csv',row.names = F, quote = F)
+write.csv(redopcc,'../results/Delta_LIR_IQR_pc_counterfactual_return.csv',row.names = F, quote = F)
 
 
 ## reread and write to one file ###################################
 
-sheet1 = read.csv('../cepi_results/counterfactual.csv',check.names = F)
-sheet2 = read.csv('../cepi_results/Delta_LIR_IQR_pc_GDP_BAU.csv',check.names = F)
-# sheet2.5 = read.csv('../cepi_results/Delta_LIR_IQR_pc_GDP_BAU2.csv',check.names = F)
-sheet3 = read.csv('../cepi_results/Delta_LIR_IQR_pc_GDP_return.csv',check.names = F)
-sheet4 = read.csv('../cepi_results/Delta_LIR_IQR_pc_counterfactual_return.csv',check.names = F)
-sheet5 = read.csv('../cepi_results/LIR_IQR_pc_GDPBAU.csv',check.names = F)
-# sheet5.5 = read.csv('../cepi_results/LIR_IQR_pc_GDPBAU2.csv',check.names = F)
+sheet1 = read.csv('../results/counterfactual.csv',check.names = F)
+sheet2 = read.csv('../results/Delta_LIR_IQR_pc_GDP_BAU.csv',check.names = F)
+# sheet2.5 = read.csv('../results/Delta_LIR_IQR_pc_GDP_BAU2.csv',check.names = F)
+sheet3 = read.csv('../results/Delta_LIR_IQR_pc_GDP_return.csv',check.names = F)
+sheet4 = read.csv('../results/Delta_LIR_IQR_pc_counterfactual_return.csv',check.names = F)
+sheet5 = read.csv('../results/LIR_IQR_pc_GDPBAU.csv',check.names = F)
+# sheet5.5 = read.csv('../results/LIR_IQR_pc_GDPBAU2.csv',check.names = F)
 # print(sheet1)
 # print(sheet2)
 
-# xlsx::write.xlsx(sheet1,file = '../cepi_results/cepi_results.xlsx',sheetName='Counterfactual (Table S5)', append=F,row.names = F)
-# xlsx::write.xlsx(rbind(sheet2,sheet2.5),file = '../cepi_results/cepi_results.xlsx',sheetName='Delta LIR, % GDP (Table S6)', append=T,row.names = F)
-# xlsx::write.xlsx(sheet3,file = '../cepi_results/cepi_results.xlsx',sheetName='given return, SARS-X (Table S7)', append=T,row.names = F)
-# xlsx::write.xlsx(sheet4,file = '../cepi_results/cepi_results.xlsx',sheetName='as % counterfactual (Table S8)', append=T,row.names = F)
-# xlsx::write.xlsx(sheet5,file = '../cepi_results/cepi_results.xlsx',sheetName='LIR, % GDP (BAU1)', append=F,row.names = F)
-# xlsx::write.xlsx(sheet5.5,file = '../cepi_results/cepi_results.xlsx',sheetName='LIR, % GDP (BAU2)', append=T,row.names = F)
+# xlsx::write.xlsx(sheet1,file = '../results/results.xlsx',sheetName='Counterfactual (Table S5)', append=F,row.names = F)
+# xlsx::write.xlsx(rbind(sheet2,sheet2.5),file = '../results/results.xlsx',sheetName='Delta LIR, % GDP (Table S6)', append=T,row.names = F)
+# xlsx::write.xlsx(sheet3,file = '../results/results.xlsx',sheetName='given return, SARS-X (Table S7)', append=T,row.names = F)
+# xlsx::write.xlsx(sheet4,file = '../results/results.xlsx',sheetName='as % counterfactual (Table S8)', append=T,row.names = F)
+# xlsx::write.xlsx(sheet5,file = '../results/results.xlsx',sheetName='LIR, % GDP (BAU1)', append=F,row.names = F)
+# xlsx::write.xlsx(sheet5.5,file = '../results/results.xlsx',sheetName='LIR, % GDP (BAU2)', append=T,row.names = F)
 
 
 
@@ -829,8 +829,8 @@ gp1 = ggplot(scatter) +
   theme_bw(base_size=15) + 
   labs(x='Deaths per 1,000 people',y='GDP loss, % of pre-pandemic value') + 
   theme(legend.position = 'top')
-ggsave(gp1,filename='../cepi_results/deathsgdpscatter.png',width=5,height=4)
+ggsave(gp1,filename='../results/deathsgdpscatter.png',width=5,height=4)
 
 ggsave(gp1 + 
          geom_label(data=glendata,aes(x=x,y=y,label=label)),
-       filename='../cepi_results/deathsgdpglen.png',width=5,height=4)
+       filename='../results/deathsgdpglen.png',width=5,height=4)
