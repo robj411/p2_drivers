@@ -10,7 +10,7 @@ library(stringi)
 library(data.table)
 library(splines)
 library(haven)
-library(hrbrthemes)
+# library(hrbrthemes)
 library(MASS)
 library(statmod)
 library(TruncExpFam)
@@ -433,13 +433,14 @@ diurnise_deliveries = function(deliveries){
   daily_doses
 }
 
+income_levels = colnames(scenario_results[[1]]$delivery$ssv)[-1]
 nweeks = max(sapply(scenario_results,function(x)nrow(x$delivery$ssv)))
-del_mat = matrix(0, nrow=3+nweeks*7, ncol=2+nScen*3*2)
+del_mat = matrix(0, nrow=3+nweeks*7, ncol=2+nscen*3*2)
 del_mat[3,1] = 'Day'
 del_mat[3,2] = 'Week'
 del_mat[4:nrow(del_mat),1] = 4:nrow(del_mat) - 3
 del_mat[4:nrow(del_mat),2] = rep(1:nweeks,each=7)
-del_mat[1, seq(3,ncol(del_mat),by=6)] = scenario_names
+del_mat[1, seq(3,ncol(del_mat),by=6)] = scennames
 del_mat[2, seq(3,ncol(del_mat),by=3)] = rep(c('BPSV','SSV dose 2'),nscen)
 del_mat[3, 3:ncol(del_mat)] = rep(rev(income_levels),2*nscen)
 
@@ -463,7 +464,7 @@ xlsx::write.xlsx(del_mat,file = '../../data/vaccine_delivery.xlsx',sheetName='Vx
 #     nonzero = which(perweekvec>0)
 #     lasti = length(nonzero)
 #     midi = round(lasti/2)
-#     cat(paste0(INCOMELEVELS[il],'; ',scenario_names[s],'\n'))
+#     cat(paste0(INCOMELEVELS[il],'; ',scennames[s],'\n'))
 #     cat(paste0(nonzero[1],': ',perweekvec[nonzero[1]],'\n'))
 #     cat(paste0(nonzero[midi],': ',perweekvec[nonzero[midi]],'\n'))
 #     cat(paste0(nonzero[lasti-1],': ',perweekvec[nonzero[lasti-1]],'\n'))
