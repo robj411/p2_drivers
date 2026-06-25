@@ -114,6 +114,10 @@ populationhic15 = as.numeric(subset(caps,Code=='pop_hic_15')$Parameters)
 populationumic15 = as.numeric(subset(caps,Code=='pop_umic_15')$Parameters)
 populationllmic15 = sum(as.numeric(subset(caps,Code%in%c('pop_lmic_15','pop_lic_15'))$Parameters))
 pops15 = c(populationllmic15, populationumic15, populationhic15)
+populationhic65 = as.numeric(subset(caps,Code=='pop_hic_65')$Parameters)
+populationumic65 = as.numeric(subset(caps,Code=='pop_umic_65')$Parameters)
+populationllmic65 = sum(as.numeric(subset(caps,Code%in%c('pop_lmic_65','pop_lic_65'))$Parameters))
+pops65 = c(populationllmic65, populationumic65, populationhic65)
 # pops0/sum(pops0)
 # pops15/sum(pops15)
 ```
@@ -292,6 +296,9 @@ pl1
 
 tab[1,c(is.na(tab[1,]))] = ''
 
+bpsv_cutoffs = rev(80*pops65/pops0)
+ssv_cutoffs = rev(80*pops15/pops0)
+
 df_list <- list()
 for(scen in 1:nScen){
   for(il in 1:3){
@@ -300,16 +307,19 @@ for(scen in 1:nScen){
     get_index <- start_index - 1 + il
     ilevel <- gsub('s','',tab[2,get_index])
     scenario <- colnames(tab)[start_index]
-    vals <- 0
+    pcval <- 0
     for(i in c(0,3)){
       vaccine <- tab[1,start_index+i][[1]]
       vindex <- get_index + i
-      vals <- vals +  as.numeric(tab[-c(1:2),vindex][[1]])
+      pcval <- pcval +  cumsum(as.numeric(tab[-c(1:2),vindex][[1]]))*100
+      if(i==0) {
+        pcval = pmin(pcval, bpsv_cutoffs[il])
+        total_cutoff = max(pcval) + ssv_cutoffs[il]
+      }
     }
-    pcval = cumsum(as.numeric(vals))*100
-    max80 = which(pcval>80)[1]
-    # pcval[(max80+1):length(pcval)] = pcval[max80+1]
-    df_list[[length(df_list)+1]] <- data.frame(Day=1:length(vals), Percent=pcval, #Vaccine=vaccine,
+    max80 = which(pcval>total_cutoff)[1]
+    pcval[(max80+1):length(pcval)] = pcval[max80+1]
+    df_list[[length(df_list)+1]] <- data.frame(Day=1:length(pcval), Percent=pcval, #Vaccine=vaccine,
                                                Scenario=scenario, Income=ilevel)
   }
 }
@@ -321,7 +331,7 @@ plotscens$Week = plotscens$Day/7
 
 
 pl1 = ggplot(subset(plotscens,!Scenario%in%c('BAU2')&Week<200)) + 
-  geom_line(aes(x=Week,y=Percent,colour=factor(Scenario,levels=scenario_names[c(2:11,1)])),linewidth=1,alpha=1) +
+  geom_line(aes(x=Week,y=Percent,colour=factor(Scenario,levels=scenario_names[c(2:11,1)])),linewidth=.5,alpha=1) +
   facet_grid(~factor(Income,levels=c('LLMIC','UMIC','HIC')),scales='free_y') + 
   theme_bw(base_size=15) + labs(colour='') +
   theme(legend.position = 'top') + 
@@ -652,9 +662,8 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 
 
-\newpage
-
-# Violin plots
+<!-- \newpage -->
+<!-- # Violin plots -->
 
 
 ```{r violintop,fig.cap='Model results for the cost-minimising responses.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
@@ -683,8 +692,8 @@ ggplot(subset(vioplot,scenario%in%scenario_names[scen_to_keep]),aes(y=value, x=s
 ```
 
 
-\newpage
-## Scenario violin plots
+<!-- \newpage -->
+<!-- ## Scenario violin plots -->
 
 ```{r violinBAU,fig.cap='Model results for the 365-day SARS-X vaccine without the BPSV.',echo=F,warning=F,message=F,fig.height=5,fig.width=6,eval=F}
 p[[scen_to_keep[1]]]
