@@ -88,6 +88,8 @@ format_to_print2 <- function(x,z=2){
     sapply(v, function(i)  formatC(i, format="f", digits=decimalplaces(i), big.mark=","))
 }
 
+set.seed(0)
+
 ```
 
 ```{r ages, eval=FALSE}
@@ -1297,20 +1299,20 @@ enab$type = missions
 # upfront cost in million dollars
 bpsv_man = as.data.frame(t(quantile(bpsv_upfront/1e3,iqrs)))
 bpsv_man$timing = 'Upfront'
-bpsv_man$category = 'Procurement'
+bpsv_man$category = 'Reservation and procurement'
 bpsv_man$type = 'BPSV'
 
 # inv_cost in millions
 bpsv_inv_prep = as.data.frame(t(quantile(inv_cost_per_year,iqrs)))
 bpsv_inv_prep$timing = 'Per year'
-bpsv_inv_prep$category = 'Procurement'
+bpsv_inv_prep$category = 'Reservation and procurement'
 bpsv_inv_prep$type = 'BPSV'
 
 
 # capres_costs
 ssv_capres = as.data.frame(t(sapply(crs[2:3],function(x) quantile(x*rawpar$cost_capres,iqrs))))
 ssv_capres$timing = 'Per year'
-ssv_capres$category = 'Procurement'
+ssv_capres$category = 'Reservation and procurement'
 ssv_capres$type = capas
 
 timings = c('Upfront','Per year','Per pandemic')
@@ -1426,14 +1428,14 @@ bau_ref = ssv_proccost_undiscounted[[1]]
 ssv_res_diff = lapply(c(3,4), function(x)ssv_proccost_undiscounted[[x]] - bau_ref)
 ssv_res_df = as.data.frame(t(sapply(ssv_res_diff, function(x)quantile(x,iqrs))))
 ssv_res_df$timing = 'Per pandemic'
-ssv_res_df$category = 'Procurement'
+ssv_res_df$category = 'Reservation and procurement'
 ssv_res_df$type = capas
 
 # bpsv; in billions
 
 bpsv_proc_res = as.data.frame(t(quantile(bpsvproc/1e3,iqrs)))
 bpsv_proc_res$timing = 'Per pandemic'
-bpsv_proc_res$category = 'Procurement'
+bpsv_proc_res$category = 'Reservation and procurement'
 bpsv_proc_res$type = 'BPSV'
 
 
@@ -1469,9 +1471,9 @@ datares$type = factor(datares$type,levels=types,labels=types)
 #   labs(x='',y='Billion USD',fill='',size='',title='Costs vs. BAU')
 
 unitplot = rbind(prepdata,subset(datares,category!=''))
-unitplot$category = factor(unitplot$category,levels=c('R&D','Procurement','Delivery'))
+unitplot$category = factor(unitplot$category,levels=c('R&D','Reservation and procurement','Delivery'),labels=c('R&D','Reservation\nand procurement','Delivery'))
 
-unitcosts =
+# unitcosts =
   ggplot(unitplot) + theme_bw(base_size = 15) +
   geom_hline(yintercept=0,colour='grey') +
   geom_vline(xintercept=0,colour='grey') +
@@ -1481,8 +1483,12 @@ unitcosts =
       theme(axis.text.x = element_text(angle = 60,  hjust=1,vjust=1)) +
   labs(x='',y='Billion USD',fill='',size='') +
   scale_y_continuous(n.breaks = 9) +
-  theme(legend.position = 'right')
+  theme(legend.position = 'right')  +
+  theme(legend.text = element_text(lineheight = .8), legend.key.height = unit(.8, "cm"), legend.key.width = unit(.8, "cm"))
+```
 
+
+```{r}
 
 slot_map <- unitplot %>%
   distinct(timing, category) %>%
@@ -1532,7 +1538,8 @@ unitcosts = ggplot(df) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 1),
         legend.position = "right") +
   labs(x = "", y = "Billion USD", fill = "") +
-  scale_y_continuous(n.breaks = 9)
+  scale_y_continuous(n.breaks = 9) +
+  theme(legend.text = element_text(lineheight = .8), legend.key.height = unit(.8, "cm"), legend.key.width = unit(.8, "cm"))
 
 ggsave(unitcosts + labs(title=''), filename='../../results/unit.png',height=5,width=10)
 
