@@ -2,7 +2,7 @@
 set.seed(0)
 
 data_path <- '../../data'
-figure_path <- '../../figures'
+figure_path <- '../../results'
 
 ## copy in data from https://github.com/jameel-institute/Daedalus-P2-Dashboard
 
