@@ -744,18 +744,14 @@ transmission, with the reduction in mobility.
 
 <div class="figure">
 
-\<img src=“README_files/figure-gfm/smoothmobility.png” alt=“Mobility
-trajectories in 2020 for all countries, with points showing the point at
-which the largest drop was observed. Trajectories are averaged
-over”Retail and recreation”, “Transit stations” and “Workplaces” and
-smoothed with a spline of 80 knots.” width=“50%” /\>
+<img src="README_files/figure-gfm/smoothmobility.png" alt="Mobility trajectories in 2020 for all countries, with points showing the point at which the largest drop was observed. Trajectories are averaged over Retail and recreation, Transit stations and Workplaces and smoothed with a spline of 80 knots." width="50%" />
 <p class="caption">
 
 <span id="fig:smoothmobility"></span>Figure 2.3: Mobility trajectories
 in 2020 for all countries, with points showing the point at which the
-largest drop was observed. Trajectories are averaged over “Retail and
-recreation”, “Transit stations” and “Workplaces” and smoothed with a
-spline of 80 knots.
+largest drop was observed. Trajectories are averaged over Retail and
+recreation, Transit stations and Workplaces and smoothed with a spline
+of 80 knots.
 </p>
 
 </div>
