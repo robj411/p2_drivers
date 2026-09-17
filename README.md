@@ -18,6 +18,7 @@ pandemics: Daedalus code and model description
     - [2.4.1 Community contacts](#241-community-contacts)
     - [2.4.2 Community-to-worker
       contacts](#242-community-to-worker-contacts)
+    - [2.4.3 Worker-to-worker contacts](#243-worker-to-worker-contacts)
   - [2.5 Uncosted transmission
     reductions](#25-uncosted-transmission-reductions)
   - [2.6 Testing and self isolating](#26-testing-and-self-isolating)
@@ -35,32 +36,34 @@ pandemics: Daedalus code and model description
 - [4 Closure policies](#4-closure-policies)
   - [4.1 Policy specifications](#41-policy-specifications)
   - [4.2 Implementation](#42-implementation)
-- [5 Daedalus model parameters](#5-daedalus-model-parameters)
-  - [5.1 Sampling from empirical and uniform
-    distributions](#51-sampling-from-empirical-and-uniform-distributions)
-  - [5.2 Sampling from parametric distributions informed by
-    data](#52-sampling-from-parametric-distributions-informed-by-data)
-    - [5.2.1 Compliance with the requirement to self
-      isolate](#521-compliance-with-the-requirement-to-self-isolate)
-    - [5.2.2 Hospital capacity](#522-hospital-capacity)
-    - [5.2.3 Labour share of GVA](#523-labour-share-of-gva)
-    - [5.2.4 Contact rates](#524-contact-rates)
-    - [5.2.5 Disease parameters](#525-disease-parameters)
-- [6 Notation](#6-notation)
+- [5 Simulation rules](#5-simulation-rules)
+- [6 Daedalus model parameters](#6-daedalus-model-parameters)
+  - [6.1 Sampling from empirical and uniform
+    distributions](#61-sampling-from-empirical-and-uniform-distributions)
+  - [6.2 Sampling from parametric distributions informed by
+    data](#62-sampling-from-parametric-distributions-informed-by-data)
+    - [6.2.1 Compliance with the requirement to self
+      isolate](#621-compliance-with-the-requirement-to-self-isolate)
+    - [6.2.2 Hospital capacity](#622-hospital-capacity)
+    - [6.2.3 Labour share of GVA](#623-labour-share-of-gva)
+    - [6.2.4 Contact rates](#624-contact-rates)
+    - [6.2.5 Disease parameters](#625-disease-parameters)
+- [7 Notation](#7-notation)
 
 <!-- # Figures (temporary) {.unlisted .unnumbered} -->
 
 This section details the simulation model used to generate epidemic
-outcomes, which were combined to create pandemic outcomes. Section
-<a href="#societal-losses">1</a> details how societal loss is defined
-and how it is derived from the epidemiological model. Section
+outcomes, which were combined to create pandemic outcomes. The
+simulation model is based on that published in Doohan et al. (2026).
+Section <a href="#societal-losses">1</a> details how societal loss is
+defined and how it is derived from the epidemiological model. Section
 <a href="#compartmental-epidemiological-transmission-model">2</a>
 details the epidemiological model itself, and Section
 <a href="#economic-projections">3</a> how economic variables are
 modelled. Section <a href="#closure-policies">4</a> describes how
 mandated closures are implemented as an endogenous policy response in
 the epidemiological model. Finally, Section
-<a href="#daedalus-model-parameters">5</a> lists all the model
+<a href="#daedalus-model-parameters">6</a> lists all the model
 parameters and their provenance.
 
 # 1 Societal losses
@@ -115,7 +118,7 @@ $$p_j^{23}(t)=\sum_{v=0}^{m_V}\left(\left(1-p^H_{j,v}\right)p^1p^{19}I_{j,v}^{s}
 with $m_V=2$ vaccines and $p_j^{22}(t)$ represents lost output from
 asymptomatic self-isolating workers:
 
-$$p_j^{22}(t)=p^2(t)p^{18}I_{j}^{a}.$$
+$$p_j^{22}(t)=p^1p^2(t)p^{18}I_{j}^{a}.$$
 
 $p^{18}$ is the number of days spent in self isolation per day of
 infectiousness (e.g. suppose the average infectious period is four days
@@ -150,14 +153,14 @@ age groups $g$ of our model as a population-weighted average, taking
 into account the size of each age group, $`\tilde{N}_a`$:
 
 ``` math
-l_g^{\text{(life)}} = \frac{\sum_{a\in g}N_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; 
+l_g^{\text{(life)}} = \frac{\sum_{a\in g}\tilde{N}_a\tilde{l}_a}{\sum_{a\in g}\tilde{N}_a}; 
 ```
 
 To estimate the expected number of life years lost per SARS-X death, we
 take into account the probability to die given infection, $P(D|I,a)$:
 
 ``` math
-l_g^{\text{(death)}} = \frac{\sum_{a\in g}N_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}N_aP(D|I,a)}; 
+l_g^{\text{(death)}} = \frac{\sum_{a\in g}\tilde{N}_a\tilde{l}_aP(D|I,a)}{\sum_{a\in g}\tilde{N}_aP(D|I,a)}; 
 ```
 
 The total number of years lost given $D_g$ deaths due to COVID-19 for
@@ -177,7 +180,7 @@ a population-weighted average (Ananthapavan et al. 2021; Robinson et al.
 life years remaining, and where each year has the same value:
 
 $$\begin{equation}
-\text{VSL}=\frac{\sum_gN_gl_g^{\text{(life)}}}{\sum_gN_g}\text{VLY}.
+\text{VSL}=\frac{\sum_g\tilde{N}_gl_g^{\text{(life)}}}{\sum_g\tilde{N}_g}\text{VLY}.
 \end{equation}$$
 
 Following The Global Fund (2022), “In this way, we made a choice to
@@ -193,24 +196,29 @@ higher-income countries because the opportunity cost of spending on
 basic necessities becomes large if incomes are at or below subsistence
 levels (Hammitt 2020).
 
-We estimate VSL as a function of GDP, relative to values for the USA:
+We estimate VSL as a function of GDP per capita, relative to values for
+the USA:
 
 ``` math
-\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{\text{GDP}}{\text{GDP}_{\text{USA}}}\right)^{r_e} 
+\text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{\text{GDPPC}}{\text{GDPPC}_{\text{USA}}}\right)^{r_e} 
 ```
 
-with $$\text{GDP}=\sum_{j=1}^{m_S}y_j.$$
+with
+$$\text{GDPPC}=\frac{1}{\sum_{a\in g}\tilde{N}_a}\sum_{j=1}^{m_S}y_j.$$
 
 Here, $`\text{VSL}_{\text{USA}}`$ is a 2019 estimate of VSL for the USA
-(10.9 million \$) and $`\text{GDP}_{\text{USA}}`$ is its GDP. We choose
-randomly between two alternative methods, OECD/IHME/World Bank and
-Viscusi & Masterman, to map from USA’s VSL to the VSL of our country, as
-discussed in Robinson et al. (2021). We implement the methods using
-approximations to the presentations therein, which we summarise in see
-Table <a href="#tab:ruleselimination">4.2</a>.
+(10.9 million \$) and $`\text{GDPPC}_{\text{USA}}`$ is its GDP per
+capita. We choose randomly between two alternative methods,
+OECD/IHME/World Bank and Viscusi & Masterman, to map from USA’s VSL to
+the VSL of our country, as discussed in Robinson et al. (2021). We
+implement the methods using approximations to the presentations therein,
+which we summarise in see Table <a href="#tab:ruleselimination">4.2</a>.
+We apply the convention in <span class="nocase">Robinson et al.</span>
+(2019) of setting a lower bound for a country’s VSL of twenty times its
+GDPPC.
 
-Parameter $r_p$ is a conversion rate from GDP based on market exchange
-rates (MER) to GDP based on purchasing power parity (PPP). We specify
+Parameter $r_p$ is a conversion rate from GDPPC based on market exchange
+rates (MER) to GDPPC based on purchasing power parity (PPP). We specify
 that the conversion is 1, i.e. equivalence and effective valuation at
 MER, for the Viscusi & Masterman method, and an income-level–specific
 random conversion variable sampled from World Bank Data for the
@@ -219,13 +227,12 @@ OECD/IHME/World Bank method.
 Parameter $r_e$ is the income elasticity. For an HIC we set it to 0.8,
 and otherwise we draw it from a uniform distribution between 0.9 and 1.2
 with the OECD/IHME/World Bank method. For the Viscusi & Masterman
-method, we set it to 1 if the GDP per capita (GDPpc) is less than
-\$8,809, and sample from a uniform distribution between 0.85 and 1
-otherwise. We use this approach in order to represent our uncertainty
-about the appropriate method to calculate the VSL for one country using
-the VSL from another.
+method, we set it to 1 if GDPPC is less than \$8,809, and sample from a
+uniform distribution between 0.85 and 1 otherwise. We use this approach
+in order to represent our uncertainty about the appropriate method to
+calculate the VSL for one country using the VSL from another.
 
-| Method | Probability | $r_p$ | $r_e$ (LLMIC) | $r_e$ (UMIC, GDPpc \< \$8,809) | $r_e$ (UMIC, GDPpc \> \$8,809) | $r_e$ (HIC) |
+| Method | Probability | $r_p$ | $r_e$ (LLMIC) | $r_e$ (UMIC, GDPPC \< \$8,809) | $r_e$ (UMIC, GDPPC \> \$8,809) | $r_e$ (HIC) |
 |:---|:---|:---|:---|:---|:---|:---|
 | OECD/IHME/ World Bank | 0.5 | Sampled from WB data | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | Uniform(0.9, 1.2) | 0.8 |
 | Viscusi/ Masterman | 0.5 | 1 | 1 | 1 | Uniform(0.85, 1) | Uniform(0.85, 1) |
@@ -236,10 +243,10 @@ adapted from Robinson et al. (2021), Table 2 (page 25)
 We note that in the methods presented in Table
 <a href="#tab:vslrules">1.1</a> there is a relationship between exchange
 rate and elasticity, in that the flatter elasticities of
-Viscusi/Masterman are matched with GDP based on MER, whereas the more
+Viscusi/Masterman are matched with GDPPC based on MER, whereas the more
 graduated elasticities of the OECD/IHME/World Bank method are matched
-with GDP based on PPP. This might be because these choices enact inverse
-transformations of low VSL values for GDP (Figure
+with GDPPC based on PPP. This might be because these choices enact
+inverse transformations of low VSL values for GDP (Figure
 <a href="#fig:pppelasticity">1.1</a>).
 
 <div class="figure">
@@ -284,7 +291,7 @@ respectively), and $p^{24}(t)$ represents education lost due to
 asymptomatic self isolation (which comes at a cost only when schools are
 open):
 
-$$p^{24}(t)=p^2(t)p^{18}I_{j_{\text{school}}}^{a}.$$
+$$p^{24}(t)=p^1p^2(t)p^{18}I_{j_{\text{school}}}^{a}.$$
 
 For the value of a year of education, we use the method of
 (Psacharopoulos et al. 2021).
@@ -334,7 +341,7 @@ $$\begin{align}
 \frac{dE_{j,v}}{dt} & = k_{j,v}^{1}(t)\left(S_{j,v}+\sum_{u=v+1}^2S_{j,v}^{c_u}\right) - (k^2+k^4)E_{j,v} \\
 \frac{dI_{j,v}^a}{dt} & = k^2E_{j,v} - k^3I_{j,v}^a \\
 \frac{dI_{j,v}^s}{dt} & = k^4E_{j,v} - (k_{j,v}^{5}+k_{j,v}^{6})I_{j,v}^s \\
-\frac{dR_{j,v}}{dt} & = k^3I_{j,v}^a + k_{j,v}^{5}I_{j,v}^s + k_{j}^{7}(t) H_{j,v} - \sum_{u=v+1}^{{m_V}}k_{j,v}^{10,c_u}(t)R_{j,v} + \sum_{u=0}^{v-1}k_{u,j}^{10,c_v}(t)R_{j,v-1}\\
+\frac{dR_{j,v}}{dt} & = k^3I_{j,v}^a + k_{j,v}^{5}I_{j,v}^s + k_{j}^{7}(t) H_{j,v} - \sum_{u=v+1}^{{m_V}}k_{j,v}^{10,c_u}(t)R_{j,v} + \sum_{u=0}^{v-1}k_{j,u}^{10,c_v}(t)R_{j,u}\\
 \frac{dH_{j,v}}{dt} & = k_{j,v}^{6}I_{j,v}^s - (k_{j}^{7}(t) + k_{j}^{8}(t)) H_{j,v} \\
 \frac{dD_{j,v}}{dt} & =  k_{j}^{8}(t) H_{j,v}
 \end{align}$$
@@ -373,7 +380,7 @@ The rate of infection of susceptible individuals, $`k^{1}_{j,v}(t)`$, is
 defined as
 
 $$\begin{equation}
-k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_J}M_{j,h}(x) I_h(t)
+k_{j,v}^{1}(t) = \eta_{v}^{E}\rho(t)\beta\sum_{h=1}^{m_J}M_{j,h}(x) \frac{I_h(t)}{N_h}
 \qquad(2.1)
 \end{equation}$$
 
@@ -619,14 +626,14 @@ to 64.
 In setting up a country, we sample values for $\tilde{M}$ (from which we
 get $`M(\textbf{1})`$). At the same time, we sample the proportion of
 contacts that come from workplaces (Figure
-<a href="#fig:workfrac">5.3</a>), and workplace-related contacts. From
+<a href="#fig:workfrac">6.3</a>), and workplace-related contacts. From
 these, we get $M^{\text{CW}}(\textbf{1})$, constructing the matrices and
 normalising.
 
 Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts
 experienced by workers from the community by sector (Figure
-<a href="#fig:allsector">5.4</a>, distributed by age, Figure
-<a href="#fig:uksecdistage">5.5</a>). Note that
+<a href="#fig:allsector">6.4</a>, distributed by age, Figure
+<a href="#fig:uksecdistage">6.5</a>). Note that
 $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix
 $M^{\text{WC}}(\textbf{1})$ is the complement of matrix
 $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by
@@ -646,8 +653,8 @@ M^{\text{com}}(\textbf{1})=M^{\text{home}} + M^{\text{sch}}(\textbf{1}) + M^{\te
 Values for $M^{\text{sch}}(\textbf{1})$ come from sampled values
 representing the fractions of contacts that come from school. School
 contacts are estimated separately in two age groups (pre-school age: 0—4
-(Figure <a href="#fig:school1frac">5.6</a>); school age: 5—19 (Figure
-<a href="#fig:school2frac">5.7</a>)): $M^{\text{sch}}(\textbf{1})$ has
+(Figure <a href="#fig:school1frac">6.6</a>); school age: 5—19 (Figure
+<a href="#fig:school2frac">6.7</a>)): $M^{\text{sch}}(\textbf{1})$ has
 entries of zero for groups not in school, and values for 0 to 4 year
 olds and 5 to 19 year olds.
 
@@ -698,7 +705,7 @@ where we sum over only the hospitality sectors.
 ### 2.4.2 Community-to-worker contacts
 
 $$\begin{equation}
-M_{j,h}^{\text{CW}}(x) = (x_{j}(1-q_j))^2M_{j,h}^{\text{CW}}(\textbf{1}),
+M_{j,h}^{\text{CW}}(x) = (x_{j}-q_j)^2M_{j,h}^{\text{CW}}(\textbf{1}),
 \qquad(2.4)
 \end{equation}$$
 
@@ -709,17 +716,18 @@ with respect to working from home and with respect to sector closure, as
 both workers and members of the community are absent from the workplace
 as the sector moves online and becomes more closed.
 
-<!-- ## Matrix $M^{\text{WW}}$: Worker-to-worker contacts -->
+### 2.4.3 Worker-to-worker contacts
 
-<!-- \begin{equation} -->
+$$\begin{equation}
+M_{j,j}^{\text{WW}}(x) = (x_{j}-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}),
+\qquad(2.5)
+\end{equation}$$
 
-<!-- M_{j,j}^{\text{WW}}(x) = x_{j}(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}), -->
-
-<!-- (\#eq:worker) -->
-
-<!-- \end{equation} -->
-
-<!-- for the working groups, with the number of contacts adjusted according to at-home working ($q_j$) and sector openness ($x_{j}$). As before, there is superlinear scaling of contacts with respect to working from home. There is linear scaling with respect to sector closure: that is, there are fewer contacts per person, but we do not approximate there being fewer people having them. This is because the latter is accounted for in the movement of people out of the group upon its closure.  -->
+for the working groups, with the number of contacts adjusted according
+to at-home working ($q_j$) and sector openness ($x_{j}$). As before,
+there is superlinear scaling of contacts with respect to working from
+home.
+<!-- There is linear scaling with respect to sector closure: that is, there are fewer contacts per person, but we do not approximate there being fewer people having them. This is because the latter is accounted for in the movement of people out of the group upon its closure. -->
 
 <!-- $$M_{j,j}^{\text{WW}}(x) = x_{j}^2(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1})$$ -->
 
@@ -798,7 +806,7 @@ without closures and, without closures, there is no economic cost); and
 of epidemiological circumstances.
 
 Finally, we assume that the effect wanes over time, with the minimum
-(baseline) tending to 1 with a rate of 0 to 0.1% per day.
+(baseline) tending to 1 with a rate of 0 to 1% per day.
 
 <div class="figure">
 
@@ -1113,9 +1121,9 @@ incidence.
 
 | From/to | No closures | Light closures | Heavy closures |
 |:---|:---|:---|:---|
-| **No closures** |  | t $\geq$ response time AND Hospital occupancy \> 95% capacity |  |
-| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity) AND vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |  | Hospital occupancy \> 95% capacity |
-| **Heavy closures** |  | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |  |
+| **No closures** |  | Hospital occupancy \> 95% capacity |  |
+| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity OR $R_t(M(\textbf{1})) < 1$) AND vaccine rollout complete |  | Hospital occupancy \> 95% capacity |
+| **Heavy closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity OR $R_t(M(\textbf{1})) < 1$) AND vaccine rollout complete | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |  |
 
 <span id="tab:rulesreactive"></span>Table 4.1: State transition rules
 for policies RC1 and RC2. See Table <a href="#tab:eccon">4.3</a> for
@@ -1123,9 +1131,9 @@ details of closures.
 
 | From/to | No closures | Light closures | Heavy closures |
 |:---|:---|:---|:---|
-| **No closures** |  | t $\geq$ response time OR Hospital occupancy \> 95% capacity |  |
-| **Light closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ |  | $R_t > 1.2$ |
-| **Heavy closures** | Vaccine rollout complete OR $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 0.95$ AND t \> 7 + last change time |  |
+| **No closures** |  | Hospital occupancy \> 95% capacity |  |
+| **Light closures** | Vaccine rollout complete AND $R_t(M(\textbf{1})) < 1$ |  | $R_t > 1.2$ |
+| **Heavy closures** | Vaccine rollout complete AND $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 1$ AND t \> 7 + last change time |  |
 
 <span id="tab:ruleselimination"></span>Table 4.2: State transition rules
 for policy RC3. See Table <a href="#tab:eccon">4.3</a> for details of
@@ -2991,13 +2999,46 @@ services-producing activities of households for own use
 
 <!-- \newpage -->
 
-# 5 Daedalus model parameters
+# 5 Simulation rules
+
+- Each synthetic country has 50 million people.
+- Each synthetic country is instantiated with two random variables: the
+  response time, and the pathogen importation time
+- The response time is the day at which the country reports having seen
+  X hospital cases, where X is a random number between 1 and 20
+- The importation time is a random number between 0 and 20 days. An
+  importation time of 0 days would be equivalent to the spillover event.
+- The epidemic simulation starts at the response or the importation time
+  (the one that is smaller)
+- At the importation time, five people are moved from compartment S to
+  compartment E
+- There is also a small continuing infection pressure, (10^{-U}),
+  (U(4,8)), which is switched off only during heavy closures.
+- At the response time, testing begins and working from home begins
+- If closure policies (RC1, RC2, or RC3) are being implemented, the
+  rules in Tables <a href="#tab:rulesreactive">4.1</a> or
+  <a href="#tab:ruleselimination">4.2</a> are followed
+- Vaccination is a model input whose details depend on the scenario. The
+  model allows for two vaccines to be administered flexibly, in that the
+  first is not a prerequisite for the second. In the vaccine-impact
+  application, the first vaccine is a broadly protective sarbecovirus
+  vaccine (BPSV) and the second is a strain-specific vaccine (SSV).
+- Closures, working from home and testing end when vaccine rollout
+  completes (or if other stopping criteria are met, see Tables
+  <a href="#tab:rulesreactive">4.1</a> and
+  <a href="#tab:ruleselimination">4.2</a>)
+- When vaccine rollout is complete, the doubling time is more than 30
+  days and there are fewer than 1,000 people in hospital, the simulation
+  ends.
+  <!-- - The simulation continues after mitigation ends. Ordinarily it stops after at least 30 days when hospital occupancy is below 1,000 and declining; after a year, an alternative slow-growth condition can stop it. -->
+
+# 6 Daedalus model parameters
 
 In this section we list the parameters used to construct a country in
 order to run the model. We organise them by the way in which they are
 sampled. Fixed values are described elsewhere.
 
-## 5.1 Sampling from empirical and uniform distributions
+## 6.1 Sampling from empirical and uniform distributions
 
 The following quantities are sampled from the set of values belonging to
 countries from one income level and/or uniform distributions:
@@ -3021,7 +3062,7 @@ countries from one income level and/or uniform distributions:
 
 <caption>
 
-<span id="tab:ages"></span>Table 5.1: Mean ages for all countries within
+<span id="tab:ages"></span>Table 6.1: Mean ages for all countries within
 each income-level group.
 </caption>
 
@@ -3135,7 +3176,7 @@ HIC
 
 <caption>
 
-<span id="tab:lifeexp"></span>Table 5.2: Mean life expectancy for all
+<span id="tab:lifeexp"></span>Table 6.2: Mean life expectancy for all
 countries within each income-level group. Life expectancy as given
 “Expected years of life remaining” for the youngest age group (0 to 4
 years old).
@@ -3247,7 +3288,7 @@ HIC
 
 </table>
 
-## 5.2 Sampling from parametric distributions informed by data
+## 6.2 Sampling from parametric distributions informed by data
 
 The following are sampled from parametric distributions:
 
@@ -3255,7 +3296,7 @@ The following are sampled from parametric distributions:
 
 <caption>
 
-<span id="tab:paramdist"></span>Table 5.3: Parameter distributions.
+<span id="tab:paramdist"></span>Table 6.3: Parameter distributions.
 Tourism parameters are those described in Section
 <a href="#dependence-on-international-tourism">3.1.4</a>. “school1
 fraction” and “school2 fraction” are the fractions of contacts that
@@ -4153,7 +4194,7 @@ Beta
 
 </table>
 
-### 5.2.1 Compliance with the requirement to self isolate
+### 6.2.1 Compliance with the requirement to self isolate
 
 We sought estimates to parametrise compliance with the requirement to
 self isolate. A YouGov survey (Jones, Sarah P et al. 2020) asked “If you
@@ -4176,14 +4217,14 @@ their status have a compliance $p^1\sim\text(Beta)(5,5)$ with the
 instruction to self isolate, starting one day into their infectious
 period.
 
-### 5.2.2 Hospital capacity
+### 6.2.2 Hospital capacity
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/hmax-1.png" alt="Hospital capacity: available beds minus usual occupancy." width="50%" />
 <p class="caption">
 
-<span id="fig:hmax"></span>Figure 5.1: Hospital capacity: available beds
+<span id="fig:hmax"></span>Figure 6.1: Hospital capacity: available beds
 minus usual occupancy.
 </p>
 
@@ -4191,17 +4232,17 @@ minus usual occupancy.
 
 We model hospital capacity by sampling values according to data collated
 in Doohan et al. (2026), which describe using gamma distributions. For
-LLMICs, we have parameters 1.3 and 0.05. For UMICs, we have parameters
-1.73 and 0.02. For HICs, we have parameters 2.05 and 0.02. (Data
+LLMICs, we have parameters 1.3 and 20.2. For UMICs, we have parameters
+1.73 and 40.73. For HICs, we have parameters 2.05 and 46.57. (Data
 sources: World Bank (beds); OECD, WHO euro (bed occupancy rates).)
 
-### 5.2.3 Labour share of GVA
+### 6.2.3 Labour share of GVA
 
 We estimate the average annual income per working-age adult as the total
 GVA multiplied by the fraction of GVA that goes to labour divided by the
 number of working-age adults. For the fraction of GVA that goes to
 labour we use PWT estimates from 2011 (Feenstra et al. 2015) (Figure
-<a href="#fig:labsh">5.2</a>).
+<a href="#fig:labsh">6.2</a>).
 
 <!-- For the value of a year of education, we use results from [@Psacharopoulos2021a]. For an LIC, the cost of a lost school year is 207% of GDP. For a UMIC, the cost of a lost school year is 73% of GDP. For an HIC, the cost of a lost school year is 30% of GDP. -->
 
@@ -4210,7 +4251,7 @@ labour we use PWT estimates from 2011 (Feenstra et al. 2015) (Figure
 <img src="README_files/figure-gfm/labsh-1.png" alt="Fraction of GVA that goes to labour (PWT, 2011)." width="50%" />
 <p class="caption">
 
-<span id="fig:labsh"></span>Figure 5.2: Fraction of GVA that goes to
+<span id="fig:labsh"></span>Figure 6.2: Fraction of GVA that goes to
 labour (PWT, 2011).
 </p>
 
@@ -4220,7 +4261,7 @@ We model these values with Beta distributions. For LLMICs, we have
 parameters 5.09 and 4.51. For UMICs, we have parameters 7.06 and 8.18.
 For HICs, we have parameters 7.97 and 6.87.
 
-### 5.2.4 Contact rates
+### 6.2.4 Contact rates
 
 The fraction of total contacts made by working-age people that occur in
 the workplace are modelled using data from Jarvis et al. (2024), in
@@ -4230,14 +4271,14 @@ time-use survey results for fraction of time spent at work (OECD,
 December 2023). These data covered 33 countries, with values ranging
 from 12 to 25%. The three reference countries have values 16 to 18%. The
 resulting distribution is shown in Figure
-<a href="#fig:workfrac">5.3</a>.
+<a href="#fig:workfrac">6.3</a>.
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/workfrac.png" alt="Distribution over fraction of contacts made at work." width="50%" />
 <p class="caption">
 
-<span id="fig:workfrac"></span>Figure 5.3: Distribution over fraction of
+<span id="fig:workfrac"></span>Figure 6.3: Distribution over fraction of
 contacts made at work.
 </p>
 
@@ -4252,14 +4293,14 @@ model, in order to account for the uncertainty we have around how these
 values might vary country by country, we sample values from half to
 double the average. The distribution of workplace contacts by age is
 constructed similarly, and is shown in Figure
-<a href="#fig:uksecdistage">5.5</a>.
+<a href="#fig:uksecdistage">6.5</a>.
 
 <div class="figure">
 
 <img src="README_files/figure-gfm/allsector45.png" alt="Number of contacts made at work by sector. Diamonds show average numbers and ranges are 50% quantile intervals." width="50%" />
 <p class="caption">
 
-<span id="fig:allsector"></span>Figure 5.4: Number of contacts made at
+<span id="fig:allsector"></span>Figure 6.4: Number of contacts made at
 work by sector. Diamonds show average numbers and ranges are 50%
 quantile intervals.
 </p>
@@ -4271,7 +4312,7 @@ quantile intervals.
 <img src="README_files/figure-gfm/uksec_dist_age.png" alt="Age distribution of contacts made at work by sector." width="50%" />
 <p class="caption">
 
-<span id="fig:uksecdistage"></span>Figure 5.5: Age distribution of
+<span id="fig:uksecdistage"></span>Figure 6.5: Age distribution of
 contacts made at work by sector.
 </p>
 
@@ -4280,9 +4321,9 @@ contacts made at work by sector.
 We model contacts made in schools as a fraction of all contacts made by
 children, and hospitality-related contacts as a fraction of non-school
 and non-work contacts for all ages. These fractions are shown in Figures
-<a href="#fig:school1frac">5.6</a>, <a href="#fig:school2frac">5.7</a>
-and <a href="#fig:hospfrac">5.8</a>. Figure
-<a href="#fig:conagefrac">5.9</a> shows how hospitality contacts are
+<a href="#fig:school1frac">6.6</a>, <a href="#fig:school2frac">6.7</a>
+and <a href="#fig:hospfrac">6.8</a>. Figure
+<a href="#fig:conagefrac">6.9</a> shows how hospitality contacts are
 distributed by age.
 
 <div class="figure">
@@ -4290,7 +4331,7 @@ distributed by age.
 <img src="README_files/figure-gfm/school1frac.png" alt="Fraction of contacts made at school for ages 0 to 4, from @Jarvis2024." width="50%" />
 <p class="caption">
 
-<span id="fig:school1frac"></span>Figure 5.6: Fraction of contacts made
+<span id="fig:school1frac"></span>Figure 6.6: Fraction of contacts made
 at school for ages 0 to 4, from Jarvis et al. (2024).
 </p>
 
@@ -4301,7 +4342,7 @@ at school for ages 0 to 4, from Jarvis et al. (2024).
 <img src="README_files/figure-gfm/school2frac.png" alt="Fraction of contacts made at school for ages 5 to 19, from @Jarvis2024." width="50%" />
 <p class="caption">
 
-<span id="fig:school2frac"></span>Figure 5.7: Fraction of contacts made
+<span id="fig:school2frac"></span>Figure 6.7: Fraction of contacts made
 at school for ages 5 to 19, from Jarvis et al. (2024).
 </p>
 
@@ -4312,7 +4353,7 @@ at school for ages 5 to 19, from Jarvis et al. (2024).
 <img src="README_files/figure-gfm/hospfrac.png" alt="Fraction of non-school and non-work contacts made in hospitality settings, by age group, from @Jarvis2024." width="50%" />
 <p class="caption">
 
-<span id="fig:hospfrac"></span>Figure 5.8: Fraction of non-school and
+<span id="fig:hospfrac"></span>Figure 6.8: Fraction of non-school and
 non-work contacts made in hospitality settings, by age group, from
 Jarvis et al. (2024).
 </p>
@@ -4324,20 +4365,20 @@ Jarvis et al. (2024).
 <img src="README_files/figure-gfm/conagefrac.png" alt="Distribution of non-school and non-work contacts made in hospitality settings by age group, from @Jarvis2024." width="50%" />
 <p class="caption">
 
-<span id="fig:conagefrac"></span>Figure 5.9: Distribution of non-school
+<span id="fig:conagefrac"></span>Figure 6.9: Distribution of non-school
 and non-work contacts made in hospitality settings by age group, from
 Jarvis et al. (2024).
 </p>
 
 </div>
 
-### 5.2.5 Disease parameters
+### 6.2.5 Disease parameters
 
 We sample disease profiles by defining distributions over each
 parameter. The distributions are made using data sourced by Doohan et
 al. (2026), and are described in Table
-<a href="#tab:pathogenparameters">5.4</a>. Severity ratios as a function
-of age are shown in Figure <a href="#fig:ratesbyage">5.10</a>.
+<a href="#tab:pathogenparameters">6.4</a>. Severity ratios as a function
+of age are shown in Figure <a href="#fig:ratesbyage">6.10</a>.
 $\text{R}_0$ is truncated at 1.5 and 3.5 following Whittaker et al.
 (2024).
 
@@ -4346,31 +4387,32 @@ $\text{R}_0$ is truncated at 1.5 and 3.5 following Whittaker et al.
 | Probability symptomatic | Beta | 5, 5 | None |
 | Latent period | Gamma | 2.28, 1.06 | None |
 | Asymptomatic infectious period | Gamma | 139.0, 0.017 | None |
-| Time from symptom onset to recovery | Gamma | 18.61, 0.17 | 0.99 (time to hospitalisation); 0.60 ($\text{R}_0$) |
-| Time from symptom onset to hospitalisation | Gamma | 21.21, 0.14 | 0.99 (time to recovery); 0.66 ($\text{R}_0$) |
+| Time from symptom onset to recovery | Gamma | 18.61, 0.17 | time to hospitalisation (0.99); $\text{R}_0$ (0.6) |
+| Time from symptom onset to hospitalisation | Gamma | 21.21, 0.14 | time to recovery (0.99); $\text{R}_0$ (0.66) |
 | Time from hospitalisation to recovery | Gamma | 2.46, 3.75 | 0.997 |
 | Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 |
 | Time to immunity waning | Constant | Inf | None |
-| Relative infectiousness of asymptomatic | Constant | 0.58 | None |
-| $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 3.5) | 0.60 (time to recovery); 0.66 (time to hospitalisation) |
-| Fatality ratio without care relative to HFR | Gamma | 5, 1 | None |
+| Relative infectiousness of asymptomatic | Beta | 5, 5 | None |
+| Fraction of infectious period presymptomatic | Uniform | 0, 1 | None |
+| $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 3.5) | time to recovery (0.6); time to hospitalisation (0.66); self-isolation compliance (0.7) |
+| Excess fatality ratio without care relative to HFR | Gamma | 5, 1 | None |
 
-<span id="tab:pathogenparameters"></span>Table 5.4: Distributions for
+<span id="tab:pathogenparameters"></span>Table 6.4: Distributions for
 pathogen parameters used to sample synthetic pathogens. Distributions
 are built from values from Doohan et al. (2026).
 
 <figure>
 <img src="README_files/figure-gfm/ratesbyage.jpg"
-alt="Figure 5.10: Infection hospitalisation (IHR) and hospital fatality ratios HFR) are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Lines show sampled profiles. Profiles are built from values from Doohan et al. (2026)." />
+alt="Figure 6.10: Infection hospitalisation (IHR) and hospital fatality ratios HFR) are generated by modelling profiles from SARS and influenza ratios. x axis: age group index. y axis: log ratio. Lines show sampled profiles. Profiles are built from values from Doohan et al. (2026)." />
 <figcaption aria-hidden="true"><span id="fig:ratesbyage"></span>Figure
-5.10: Infection hospitalisation (IHR) and hospital fatality ratios HFR)
+6.10: Infection hospitalisation (IHR) and hospital fatality ratios HFR)
 are generated by modelling profiles from SARS and influenza ratios. x
 axis: age group index. y axis: log ratio. Lines show sampled profiles.
 Profiles are built from values from <span class="citation"
 data-cites="Doohan2026">Doohan et al. (2026)</span>.</figcaption>
 </figure>
 
-# 6 Notation
+# 7 Notation
 
 In general in this notation, subscripts are indices, and superscripts
 are never indices but instead define new labels. In particular, note
@@ -4734,6 +4776,15 @@ Psacharopoulos, George, Victoria Collis, Harry Anthony Patrinos, and
 Emiliana Vegas. 2021. “The COVID-19 Cost of School Closures in Earnings
 and Income Across the World.” *Comparative Education Review* 65 (2).
 <https://doi.org/10.1086/713540>.
+
+</div>
+
+<div id="ref-Robinson2022" class="csl-entry">
+
+<span class="nocase">Robinson, Lisa A., James K. Hammitt, Michele
+Cecchini, et al.</span> 2019. “Reference Case Guidelines for
+Benefit-Cost Analysis in Global Health and Development.” *SSRN
+Electronic Journal*, no. May. <https://doi.org/10.2139/ssrn.4015886>.
 
 </div>
 
