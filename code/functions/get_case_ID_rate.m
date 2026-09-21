@@ -8,11 +8,11 @@
 
 function frac_cases_found = get_case_ID_rate(test_rate, Ip)
     
-    b0    = 2.197;
-    b1    = 0.1838;
-    b2    = -1.024;
+    a0    = 2.197;
+    a1    = 0.1838;
+    a2    = -1.024;
     
-    frac_cases_found = 1./(1+exp(b0+b1*Ip+b2*log10(test_rate)));
+    frac_cases_found = 1./(1+exp(a0+a1*Ip+a2*log10(test_rate)));
     
     frac_cases_found(Ip >= test_rate) = min(frac_cases_found(Ip >= test_rate),test_rate(Ip >= test_rate)./10^5);
     

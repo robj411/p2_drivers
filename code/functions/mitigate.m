@@ -164,7 +164,7 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
     %% Event 5: End mitigation
     
     if strcmp(strategy,"Elimination") || strcmp(strategy,"Unmitigated")   
-        %measures can be removed at any stage if (Rt<1) or (after end of vaccination campaign)        
+        %measures can be removed at any stage if (Rt<1) and (after end of vaccination campaign)        
 	    % i is in 1:4: ival = 0
 	    ivals = -abs((i-1)*(i-2)*(i-3)*(i-4));
 	    % t is greater than the penultimate timepoint: tval = 0
@@ -172,8 +172,8 @@ function [value,isterminal,direction] = mitigate(t,y,data,nStrata,dis,i,p2,strat
 	    % have reached end of vaccine rollout: otherval = 0
 	    otherval = min(t-max(p2.tpoints+7),0);
     elseif strcmp(strategy,"Reactive closures")
-	    %measures can be removed if (not in hard lockdown) and ((Rt<1) or (after end of vaccination campaign and below 25% occupancy or low growth rate))
-	    % not in hard lockdown: i = 1, 2 or 4; ivals = 0
+	    %measures can be removed if (after end of vaccination campaign) and (Rt<1 or below 25% occupancy or low growth rate)
+	    % not in heavy closures: i = 1, 2 or 4; ivals = 0
 	    ivals = -abs((i-1)*(i-2)*(i-4)*(i-3));
 	    % have passed penultimate timepoint: tval = 0
 	    tval = min(t-(data.tvec(end-1)+7),0) + min(t-7-max(p2.tpoints),0);

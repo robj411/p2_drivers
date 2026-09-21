@@ -148,14 +148,17 @@ function [param_struct, R0_dist] = sample_disease_parameters(nsamples)
     end
 
     plotfun = @(x) log(x'./repmat(x(:,1),1,size(x,2))');
-    plotfun = @(x) log(x');
-    h = figure('Position', [100 100 900 300]); 
-    subplot(1,3,1); plot(plotfun(param_struct.ihr),'color',[.5 .5 .5 .05]); hold on
-    subplot(1,3,1); plot(plotfun(ihrs)); title('IHR')
-    subplot(1,3,2); plot(plotfun(hfr),'color',[.5 .5 .5 .05]); hold on
-    subplot(1,3,2); plot(plotfun(hfrs)); title('HFR')
-    subplot(1,3,3); plot(plotfun(param_struct.ifr),'color',[.5 .5 .5 .05]); hold on
-    subplot(1,3,3); plot(plotfun(ifrs)); title('IFR')
+    plotfun = @(x) (x');
+    h = figure('Position', [100 100 600 300]); 
+    subplot(1,2,1); plot(plotfun(param_struct.ihr),'color',[.5 .5 .5 .05]); ylim([0 1]); hold on
+    % subplot(1,3,1); plot(plotfun(ihrs)); 
+    title('IHR')
+    subplot(1,2,2); plot(plotfun(hfr),'color',[.5 .5 .5 .05]); ylim([0 1]); hold on
+    % subplot(1,3,2); plot(plotfun(hfrs)); 
+    title('HFR')
+    % subplot(1,3,3); plot(plotfun(param_struct.ifr),'color',[.5 .5 .5 .05]); ylim([0 1]); hold on
+    % subplot(1,3,3); plot(plotfun(ifrs)); 
+    % title('IFR')
     saveas(h,'../results/ratesbyage','jpg');
     close gcf
 

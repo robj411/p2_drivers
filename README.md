@@ -121,11 +121,11 @@ asymptomatic self-isolating workers:
 $$p_j^{22}(t)=p^1p^2(t)p^{18}I_{j}^{a}.$$
 
 $p^{18}$ is the number of days spent in self isolation per day of
-infectiousness (e.g. suppose the average infectious period is four days
-and mandatory self-isolation time is ten days, then $p^{19}=2.5$ and
+infectiousness. The number of days required to isolate is set to twice
+the infectious period for symptomatic infection, so $p^{19}=2$ and
 $p^{18}=p^{19}T^{I^s}/T^{I^a:R}$, where $T^{I^s}$ and $T^{I^a:R}$ are
 expected infectious periods for symptomatic and asymptomatic,
-respectively). $p^1$ is compliance with the requirement to self isolate
+respectively. $p^1$ is compliance with the requirement to self isolate
 and $p^2(t)$ is the fraction of cases identified. Other notations are
 vaccine status $v$, infectious and asymptomatic $I_{j,v}^{a}$,
 infectious and symptomatic $I_{j,v}^{s}$, hospitalised $H$, deceased
@@ -578,15 +578,16 @@ model closures, and do not move workers out of their compartments. An
 important consequence of this is that workers within sectors retain
 their infection histories.
 
-We construct contact matrix $M(x)$ as the sum of three matrices:
-$M^{\text{com}}(x)$ (community contacts), $M^{\text{CW}}(x)$
-(community-to-worker contacts), and $M^{\text{WC}}(x)$
-(worker-to-community contacts). We construct normal-times matrices
-($x=\textbf{1}$) beginning with a “target matrix”, which the three
-matrices should add up to, which is taken from Walker et al. (2020). By
-sampling relevant values, we decompose the whole matrix into its
-component parts. To incorporate closures, each matrix is transformed
-independently, before being added together again.
+We construct contact matrix $M(x)$ as the sum of four matrices:
+$M^{\text{com}}(x)$ (community contacts), $M^{\text{WW}}(x)$
+(worker-to-worker contacts), $M^{\text{CW}}(x)$ (community-to-worker
+contacts), and $M^{\text{WC}}(x)$ (worker-to-community contacts). We
+construct normal-times matrices ($x=\textbf{1}$) beginning with a
+“target matrix”, which the four matrices should add up to, which is
+taken from Walker et al. (2020). By sampling relevant values, we
+decompose the whole matrix into its component parts. To incorporate
+closures, each matrix is transformed independently, before being added
+together again.
 
 Matrix $M(\textbf{1})$ is estimated using as a basis a contact matrix
 from Walker et al. (2020). These are 16-by-16 matrices, $\tilde{M}$, for
@@ -627,11 +628,13 @@ In setting up a country, we sample values for $\tilde{M}$ (from which we
 get $`M(\textbf{1})`$). At the same time, we sample the proportion of
 contacts that come from workplaces (Figure
 <a href="#fig:workfrac">6.3</a>), and workplace-related contacts. From
-these, we get $M^{\text{CW}}(\textbf{1})$, constructing the matrices and
-normalising.
+these, we get $M^{\text{WW}}(\textbf{1})$ and
+$M^{\text{CW}}(\textbf{1})$, constructing the matrices and normalising.
 
-Community-to-worker contacts (matrix $M^{\text{CW}}$) describe contacts
-experienced by workers from the community by sector (Figure
+Worker-to-worker contacts (matrix $M^{\text{WW}}$) describe contacts
+experienced by workers from other workers by sector. Community-to-worker
+contacts (matrix $M^{\text{CW}}$) describe contacts experienced by
+workers from the community by sector (Figure
 <a href="#fig:allsector">6.4</a>, distributed by age, Figure
 <a href="#fig:uksecdistage">6.5</a>). Note that
 $`M^{\text{CW}}_{j,h}(\textbf{1})=0`$ for $j>m_S$. Matrix
@@ -639,7 +642,7 @@ $M^{\text{WC}}(\textbf{1})$ is the complement of matrix
 $M^{\text{CW}}(\textbf{1})$, computed by multiplying through by
 population, transposing, and dividing again by population.
 
-With $M(\textbf{1})$, $M^{\text{CW}}(\textbf{1})$ and
+With $M(\textbf{1})$, $M^{\text{WW}}$, $M^{\text{CW}}(\textbf{1})$ and
 $M^{\text{WC}}(\textbf{1})$, we learn $M^{\text{com}}(\textbf{1})$.
 
 $M^{\text{com}}(\textbf{1})$ is decomposed into its constituent parts,
@@ -705,7 +708,7 @@ where we sum over only the hospitality sectors.
 ### 2.4.2 Community-to-worker contacts
 
 $$\begin{equation}
-M_{j,h}^{\text{CW}}(x) = (x_{j}-q_j)^2M_{j,h}^{\text{CW}}(\textbf{1}),
+M_{j,h}^{\text{CW}}(x) = \bar{x}_j^2M_{j,h}^{\text{CW}}(\textbf{1}), \quad \bar{x}_j=\max(x_{j}-q_j,0)
 \qquad(2.4)
 \end{equation}$$
 
@@ -719,7 +722,7 @@ as the sector moves online and becomes more closed.
 ### 2.4.3 Worker-to-worker contacts
 
 $$\begin{equation}
-M_{j,j}^{\text{WW}}(x) = (x_{j}-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1}),
+M_{j,h}^{\text{WW}}(x) = \bar{x}_j\bar{x}_hM_{j,h}^{\text{WW}}(\textbf{1}), \quad \bar{x}_j=\max(x_{j}-q_j,0)
 \qquad(2.5)
 \end{equation}$$
 
@@ -727,13 +730,10 @@ for the working groups, with the number of contacts adjusted according
 to at-home working ($q_j$) and sector openness ($x_{j}$). As before,
 there is superlinear scaling of contacts with respect to working from
 home.
-<!-- There is linear scaling with respect to sector closure: that is, there are fewer contacts per person, but we do not approximate there being fewer people having them. This is because the latter is accounted for in the movement of people out of the group upon its closure. -->
-
-<!-- $$M_{j,j}^{\text{WW}}(x) = x_{j}^2(1-q_j)^2M_{j,j}^{\text{WW}}(\textbf{1})$$ -->
 
 <!-- ```math -->
 
-<!-- M^{\text{WW}}_{j,j}(x) = \hat{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \hat{x}_j=\max(x_{j}-q_j,0) -->
+<!-- M^{\text{WW}}_{j,j}(x) = \bar{x}_j^2M^{\text{WW}}_{j,j}(\textbf{1}), \quad \bar{x}_j=\max(x_{j}-q_j,0) -->
 
 <!-- ``` -->
 
@@ -833,6 +833,18 @@ assume asymptomatic cases have the same probability to self isolate and
 that test results are returned after $p^{17}$ days of infectiousness.
 Then the infectiousness that testing averts is
 $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
+
+The fraction of cases identified is a function of the testing rate per
+10,000 population ($p^{21}$) and the current prevalence per 10,000
+population. The fraction increases with testing rate and decreases with
+prevalence:
+
+$$\begin{equation}
+p^2(t) = \frac{1}{1+\exp(a_0 + a_1 \sum_{j,v} \left(I_{j,v}^a+I_{j,v}^s\right)/1e4 + a_2 \log_{10}(p^{21}))}
+\qquad(2.6)
+\end{equation}$$
+
+with $a_0 = 2.197$, $a_1 = 0.1838$ and $a_2 = -1.024$.
 
 <!-- b0    = 2.197; -->
 
@@ -1104,10 +1116,10 @@ The sector-closure policies are defined as follows:
   capacity, and change to the light configuration once occupancy is less
   than 25% capacity.
 - RC2: Sectors (including the education sector) toggle between heavy and
-  light closures reactively, as in RC1, albeit with slightly different
-  economic configurations.
+  light closures reactively, as in RC1, with different economic
+  configurations.
 - RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when
-  $R_t<0.95$. Closures are maintained until $R_t<1$ without closures, or
+  $R_t<1$. Closures are maintained until $R_t<1$ without closures, or
   vaccination targets are reached.
 
 All policies assume there is testing (Section
@@ -1121,9 +1133,9 @@ incidence.
 
 | From/to | No closures | Light closures | Heavy closures |
 |:---|:---|:---|:---|
-| **No closures** |  | Hospital occupancy \> 95% capacity |  |
-| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity OR $R_t(M(\textbf{1})) < 1$) AND vaccine rollout complete |  | Hospital occupancy \> 95% capacity |
-| **Heavy closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity OR $R_t(M(\textbf{1})) < 1$) AND vaccine rollout complete | Hospital occupancy \< 25% capacity AND t \> 7 + last change time |  |
+| **No closures** |  | Response time | Hospital occupancy \> 95% capacity |
+| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity OR $R_t(M(\textbf{1})) < 1$) AND 7 days since vaccine rollout complete |  | Hospital occupancy \> 95% capacity |
+| **Heavy closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity OR $R_t(M(\textbf{1})) < 1$) AND 7 days since vaccine rollout complete | Hospital occupancy \< 25% capacity AND 7 days since last change time AND growth rate \< 0 |  |
 
 <span id="tab:rulesreactive"></span>Table 4.1: State transition rules
 for policies RC1 and RC2. See Table <a href="#tab:eccon">4.3</a> for
@@ -1131,9 +1143,9 @@ details of closures.
 
 | From/to | No closures | Light closures | Heavy closures |
 |:---|:---|:---|:---|
-| **No closures** |  | Hospital occupancy \> 95% capacity |  |
-| **Light closures** | Vaccine rollout complete AND $R_t(M(\textbf{1})) < 1$ |  | $R_t > 1.2$ |
-| **Heavy closures** | Vaccine rollout complete AND $R_t(M(\textbf{1})) < 1$ | $R_t(M(x_{\text{light closure}})) < 1$ AND t \> 7 + last change time |  |
+| **No closures** |  | Response time | Hospital occupancy \> 95% capacity |
+| **Light closures** | Vaccine rollout complete |  | $R_t > 1.2$ |
+| **Heavy closures** | Vaccine rollout complete | $R_t(M(x_{\text{light closure}})) < 1$ |  |
 
 <span id="tab:ruleselimination"></span>Table 4.2: State transition rules
 for policy RC3. See Table <a href="#tab:eccon">4.3</a> for details of
@@ -3004,8 +3016,8 @@ services-producing activities of households for own use
 - Each synthetic country has 50 million people.
 - Each synthetic country is instantiated with two random variables: the
   response time, and the pathogen importation time
-- The response time is the day at which the country reports having seen
-  X hospital cases, where X is a random number between 1 and 20
+- The response time is the day at which a country reports having seen X
+  hospital cases, where X is a random number between 1 and 20
 - The importation time is a random number between 0 and 20 days. An
   importation time of 0 days would be equivalent to the spillover event.
 - The epidemic simulation starts at the response or the importation time
@@ -3013,7 +3025,8 @@ services-producing activities of households for own use
 - At the importation time, five people are moved from compartment S to
   compartment E
 - There is also a small continuing infection pressure, (10^{-U}),
-  (U(4,8)), which is switched off only during heavy closures.
+  (U(4,8)), that starts at the same time and is switched off only during
+  heavy closures.
 - At the response time, testing begins and working from home begins
 - If closure policies (RC1, RC2, or RC3) are being implemented, the
   rules in Tables <a href="#tab:rulesreactive">4.1</a> or
@@ -3023,14 +3036,11 @@ services-producing activities of households for own use
   first is not a prerequisite for the second. In the vaccine-impact
   application, the first vaccine is a broadly protective sarbecovirus
   vaccine (BPSV) and the second is a strain-specific vaccine (SSV).
-- Closures, working from home and testing end when vaccine rollout
-  completes (or if other stopping criteria are met, see Tables
-  <a href="#tab:rulesreactive">4.1</a> and
-  <a href="#tab:ruleselimination">4.2</a>)
-- When vaccine rollout is complete, the doubling time is more than 30
-  days and there are fewer than 1,000 people in hospital, the simulation
-  ends.
-  <!-- - The simulation continues after mitigation ends. Ordinarily it stops after at least 30 days when hospital occupancy is below 1,000 and declining; after a year, an alternative slow-growth condition can stop it. -->
+  <!-- - Closures, working from home and testing end when vaccine rollout completes (or if other stopping criteria are met, see Tables <a href="#tab:rulesreactive">4.1</a> and <a href="#tab:ruleselimination">4.2</a>) -->
+  <!-- - When vaccine rollout is complete, the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends. -->
+- The simulation continues after both vaccine rollout and mitigation
+  have ended. It stops after 30 days if hospital occupancy is below
+  1,000 and declining; otherwise, it stops after a year.
 
 # 6 Daedalus model parameters
 
@@ -4480,7 +4490,7 @@ Capital letters
 
 | Letter | Script | Subscript | Superscript |
 |:--:|:--:|:--:|:--:|
-| $a$ |  | INDEX: age index, five-year age bands | asymptomatic |
+| $a$ | testing rate parameters | INDEX: age index, five-year age bands | asymptomatic |
 | $b$ | proportion of tourism that is international |  |  |
 | $c$ | fraction international tourism reduces to as a consequence of the pandemic |  | seroconverting |
 | $d$ | deaths per million |  |  |
@@ -4593,7 +4603,7 @@ Rates
 | $p^{18}$ | number of asymptomatic days spent in self isolation per day of infectiousness |
 | $p^{19}$ | number of symptomatic days spent in self isolation per day of infectiousness |
 | $p^{20}$ | number of days from onset of symptoms to self isolation |
-| $p^{21}$ | public transport mode share |
+| $p^{21}$ | testing rate |
 | $p^{22}$ | work absence, asymptomatic (cost calculation) |
 | $p^{23}$ | work absence, symptomatic (cost calculation) |
 | $p^{24}$ | school absence, asymptomatic (cost calculation) |

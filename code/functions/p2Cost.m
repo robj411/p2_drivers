@@ -30,7 +30,7 @@ p3 = selfisolation.p3;
 p4 = selfisolation.p4; % does not matter: symptomatic isolate for a fixed number of days based on symptom onset. testing therefore affects their infectiousness but not their time spent at home.
 
 self_isolation_compliance = data.self_isolation_compliance;
-frac_cases_found = p3 / p2.frac_asym_infectiousness_averted;
+frac_cases_found = min(1, p3 / p2.frac_asym_infectiousness_averted);
 frac_isolating = frac_cases_found * self_isolation_compliance; % maybe should not scale by compliance because why do you test if you do not comply?
 
 %% value of life lost
@@ -50,7 +50,7 @@ Stu              = nSectors+2;
 students         = data.NNs(Stu);
 % cost(4,nSectors+[1,2]) = students;
 
-%Student Supply
+% Student absence
 days_per_infectious_day_sym = days_per_infectious_day./dis.Ts(Stu).*dis.Tsr;
 prob_hosp = dis.ph(Stu).*[1 1-dis.hv1 1-dis.hv2];
 isoasym       = sum(reshape(Iamat(:,Stu,:),[],3),2).* days_per_infectious_day_asym .* frac_isolating; 
@@ -61,7 +61,7 @@ sym_to_hosp       = sum(symstudents.*prob_hosp,2).* self_isolation_compliance + 
 % deaths       = deathmat(:,Stu) ; 
 isosym          = sym_no_hosp + sym_to_hosp;% + deaths;%numbers of students
 
-%Student Demand
+% School closure
 closure = (1-returnobject.workers(:,data.EdInd)) .* (1 - data.remote_teaching_effectiveness);
 not_learning        = closure.*students + (1-closure).*isosym + (1-2*closure).*isoasym;
 not_learning_int     = trapz(t,not_learning)/365;%= (diff(t)'*presl)/365;
