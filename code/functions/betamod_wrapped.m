@@ -14,7 +14,7 @@ function utr = betamod_wrapped(deaths_per_mill, data, mandate, rel_stringency, t
     if mandate==1   % means no mandate
         utr = ones(size(deaths_per_mill));
     else
-        % baseline = data.utr_baseline; %1 - (1-data.utr_baseline).*(data.utr_decay_rate);
+        % baseline is the minimum and it increases over time
         baseline = 1 - (1-data.utr_baseline) ./ (1 + data.utr_decay_rate).^t;
         death_coef = data.utr_death_coef;
         mandate_coef = data.utr_mandate_coef;
@@ -23,6 +23,8 @@ function utr = betamod_wrapped(deaths_per_mill, data, mandate, rel_stringency, t
         if any(mandate==data.imand)
             reduction_with_mandate = min(reduction_with_mandate, transmission_reduction(baseline, death_coef, mandate_coef, 20, rel_stringency));
         end
+        % correct here for stringency: avoids double counting the mandate,
+        % which affects both the contact matrix and the UTR
         utr = min(1, reduction_with_mandate ./ (1-rel_stringency)) ;
     end
 %     utr = ones(size(deaths_per_mill));

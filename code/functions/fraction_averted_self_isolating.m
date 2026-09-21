@@ -11,7 +11,7 @@
 % p4: fraction of symptomatic infectious people's infectiousness averted
 
 
-function [p3, p4] = fraction_averted_self_isolating(sumI, sumN, p2, t, mandate)
+function [p3, p4, frac_cases_found] = fraction_averted_self_isolating(sumI, sumN, p2, t, mandate)
 
 
     test_start_time = p2.t_tit;

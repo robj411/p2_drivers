@@ -24,7 +24,7 @@
 % data: struct containing fixed values, with potential for updated state-6
 % variables
 
-function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,still_susc,data, peak_bpsv]=...
+function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4, frac_cases_found,betamod,y0new,inext,still_susc,data, peak_bpsv]=...
           integr8(data,contact_matrix,i,t0,tend,dis,y0,p2)
       
     %% copy over only required items
@@ -139,7 +139,7 @@ function [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0new,inext,st
     reduction_so_far = ((foi1'*NN0+1e-10)./(foi0'*NN0+1e-10));
     betamod = betamod_wrapped(deaths_per_mill, data, i, 1-reduction_so_far, tout);
     
-    [p3, p4] = fraction_averted_self_isolating(sum(Iclass,2), sumNN0, p2, tout, i);
+    [p3, p4, frac_cases_found] = fraction_averted_self_isolating(sum(Iclass,2), sumNN0, p2, tout, i);
     
     Iaclass = zeros(size(Ia,1),size(Ia,2),3);
     Isclass = zeros(size(Ia,1),size(Ia,2),3);

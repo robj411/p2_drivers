@@ -40,7 +40,7 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
     % frac_averted = max(frac_by_testing - time_to_test/dis.Tsr, 0);
     p2.frac_presym_infectiousness_averted = 0; 
     % assume they test after one day.
-    p2.frac_asym_infectiousness_averted = self_isolation_compliance * max(0.1,1-time_to_test./dis.Tay);
+    p2.frac_asym_infectiousness_averted = self_isolation_compliance * max(0.0, 1-time_to_test./dis.Tay);
     p2.time_to_test = time_to_test;
 
     % stopping criteria

@@ -75,6 +75,7 @@ function [data, returnobject] = p2SimVax(data, dis, p2)
     hwout      = [];
     p3out    = 0;
     p4out    = 0;
+    fraccasesout    = 0;
     betamodout = 1;
     Sout       = sum(S0);
     rout       = 0;
@@ -104,7 +105,7 @@ function [data, returnobject] = p2SimVax(data, dis, p2)
         isequence = [isequence; [t0 i]];
         tnext = data.tvec(find(data.tvec>t0,1));
         
-        [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4,betamod,y0,inext,still_susc,data, peak_bpsv_t]=...
+        [tout,Iclass,Iaclass,Isclass,Hclass,Dclass,p3,p4, frac_cases_found,betamod,y0,inext,still_susc,data, peak_bpsv_t]=...
          integr8(data,contact_matrix,i,t0,tnext,dis,y0,p2);
         if inext==0
             tend = tout(end);
@@ -122,6 +123,7 @@ function [data, returnobject] = p2SimVax(data, dis, p2)
         hwout      = [hwout;hw(1:end-1,:)];
         p3out    = [p3out;p3(2:end)];
         p4out    = [p4out;p4(2:end)];
+        fraccasesout = [fraccasesout; frac_cases_found(2:end)];
         betamodout = [betamodout;betamod(2:end)];
         Sout       = [Sout;still_susc(2:end,:)];
         peak_bpsv = max(peak_bpsv, peak_bpsv_t);
@@ -163,6 +165,7 @@ function [data, returnobject] = p2SimVax(data, dis, p2)
     pout = struct;
     pout.p3 = p3out;
     pout.p4 = p4out;
+    pout.frac_cases_found = fraccasesout;
     returnobject.selfisolation = pout;
     returnobject.isequence = isequence; 
 
