@@ -123,8 +123,8 @@ $$p_j^{22}(t)=p^1p^2(t)p^{18}I_{j}^{a}.$$
 $p^{18}$ is the number of days spent in self isolation per day of
 infectiousness. The number of days required to isolate is set to twice
 the infectious period for symptomatic infection, so $p^{19}=2$ and
-$p^{18}=p^{19}T^{I^s}/T^{I^a:R}$, where $T^{I^s}$ and $T^{I^a:R}$ are
-expected infectious periods for symptomatic and asymptomatic,
+$p^{18}=p^{19}T^{I^s:R}/T^{I^a:R}$, where $T^{I^s:R}$ and $T^{I^a:R}$
+are expected infectious periods for symptomatic and asymptomatic,
 respectively. $p^1$ is compliance with the requirement to self isolate
 and $p^2(t)$ is the fraction of cases identified. Other notations are
 vaccine status $v$, infectious and asymptomatic $I_{j,v}^{a}$,
@@ -203,8 +203,7 @@ the USA:
 \text{VSL}=\text{VSL}_{\text{USA}}\left(r_p\frac{\text{GDPPC}}{\text{GDPPC}_{\text{USA}}}\right)^{r_e} 
 ```
 
-with
-$$\text{GDPPC}=\frac{1}{\sum_{a\in g}\tilde{N}_a}\sum_{j=1}^{m_S}y_j.$$
+with $$\text{GDPPC}=\frac{1}{\sum_{a}\tilde{N}_a}\sum_{j=1}^{m_S}y_j.$$
 
 Here, $`\text{VSL}_{\text{USA}}`$ is a 2019 estimate of VSL for the USA
 (10.9 million \$) and $`\text{GDPPC}_{\text{USA}}`$ is its GDP per
@@ -212,10 +211,9 @@ capita. We choose randomly between two alternative methods,
 OECD/IHME/World Bank and Viscusi & Masterman, to map from USA’s VSL to
 the VSL of our country, as discussed in Robinson et al. (2021). We
 implement the methods using approximations to the presentations therein,
-which we summarise in see Table <a href="#tab:ruleselimination">4.2</a>.
-We apply the convention in <span class="nocase">Robinson et al.</span>
-(2019) of setting a lower bound for a country’s VSL of twenty times its
-GDPPC.
+which we summarise in Table <a href="#tab:vslrules">1.1</a>. We apply
+the convention in Robinson et al. (2019) of setting a lower bound for a
+country’s VSL of twenty times its GDPPC.
 
 Parameter $r_p$ is a conversion rate from GDPPC based on market exchange
 rates (MER) to GDPPC based on purchasing power parity (PPP). We specify
@@ -282,14 +280,8 @@ COVID-19:
 
 $$p^{25}(t)=\sum_{v=0}^{m_V}\left((1-p^H_{j_{\text{school}},v})p^1p^{19}I_{j_{\text{school}},v}^{s}+p^H_{j_{\text{school}},v}p^1I_{j_{\text{school}},v}^{s}+H_{j_{\text{school}},v}\right),$$
 
-$p^{18}$ is the number of days spent in self isolation per day of
-infectiousness (e.g. suppose the average infectious period is four days
-and mandatory self-isolation time is ten days, then $p^{19}=2.5$ and
-$p^{18}=p^{19}T^{I^s}/T^{I^a:R}$, where $T^{I^s}$ and $T^{I^a:R}$ are
-expected infectious periods for symptomatic and asymptomatic,
-respectively), and $p^{24}(t)$ represents education lost due to
-asymptomatic self isolation (which comes at a cost only when schools are
-open):
+$p^{24}(t)$ represents education lost due to asymptomatic self isolation
+(which comes at a cost only when schools are open):
 
 $$p^{24}(t)=p^1p^2(t)p^{18}I_{j_{\text{school}}}^{a}.$$
 
@@ -835,16 +827,18 @@ Then the infectiousness that testing averts is
 $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 
 The fraction of cases identified is a function of the testing rate per
-10,000 population ($p^{21}$) and the current prevalence per 10,000
+100,000 population ($p^{21}$) and the current prevalence per 100,000
 population. The fraction increases with testing rate and decreases with
 prevalence:
 
 $$\begin{equation}
-p^2(t) = \frac{1}{1+\exp(a_0 + a_1 \sum_{j,v} \left(I_{j,v}^a+I_{j,v}^s\right)/1e4 + a_2 \log_{10}(p^{21}))}
+p^2(t) = \frac{1}{1+\exp(a_0 + a_1 \frac{1e5\sum_{j,v} \left(I_{j,v}^a+I_{j,v}^s\right)}{\sum_j \tilde{N}_j} + a_2 \log_{10}(p^{21}))}
 \qquad(2.6)
 \end{equation}$$
 
-with $a_0 = 2.197$, $a_1 = 0.1838$ and $a_2 = -1.024$.
+with $a_0 = 2.197$, $a_1 = 0.1838$ and $a_2 = -1.024$. The testing rate
+ramps up from nothing to its maximum capacity over a thirty-day period
+starting at the response time.
 
 <!-- b0    = 2.197; -->
 
@@ -995,7 +989,7 @@ shown in Figure <a href="#fig:sectortourism">3.4</a>. We use these
 values as inputs for all country models.
 
 <figure>
-<img src="outputs_files/sectortourism.png" style="width:40.0%"
+<img src="README_files/figure-gfm/sectortourism.png" style="width:40.0%"
 alt="Figure 3.4: Predicting the percentage of tourism that comes from abroad as a function of the size of the sector. Each row represents a beta distribution whose mean is determined by the size of the sector (z). Blue points show the data we have available (grey bars in Figure 3.2)." />
 <figcaption aria-hidden="true"><span
 id="fig:sectortourism"></span>Figure 3.4: Predicting the percentage of
@@ -1077,19 +1071,16 @@ policies follow the same general pattern: they are defined by two
 economic configurations, which we refer to as heavy and light (where the
 “heavy” configuration has higher stringency than the “light”
 configuration; the configurations are tabulated in Table
-<a href="#tab:eccon">4.3</a>). The light configuration is implemented at
+<a href="#tab:eccon">4.1</a>). The light configuration is implemented at
 the response time. Thereafter, the level of closure for the three
 policies is mandated in response to the state of the epidemic, reverting
-between states as determined by the transmission dynamics. Tables
-<a href="#tab:rulesreactive">4.1</a> and
-<a href="#tab:ruleselimination">4.2</a> show the transitions and their
-conditions. RC1 and RC2 respond to hospital occupancy, allowing cases to
-rise and using closures to allow them to fall again. RC1 keeps schools
-closed throughout, whereas RC2 has schools open in the light
-configuration. RC3 aims to reduce cases and then to keep them low. All
-mitigation is suspended when the vaccine rollout has reached its target
-coverage (which is when 80% of the eligible population have been
-vaccinated).
+between states as determined by the transmission dynamics. RC1 and RC2
+respond to hospital occupancy, allowing cases to rise and using closures
+to allow them to fall again. RC1 keeps schools closed throughout,
+whereas RC2 has schools open in the light configuration. RC3 aims to
+reduce cases and then to keep them low. All mitigation is suspended when
+the vaccine rollout has reached its target coverage (which is when 80%
+of the eligible population have been vaccinated).
 
 <div class="figure">
 
@@ -1131,31 +1122,11 @@ epidemiological outcomes. They do not directly impact economic outcomes,
 but indirectly may reduce the need for closures because of reduced
 incidence.
 
-| From/to | No closures | Light closures | Heavy closures |
-|:---|:---|:---|:---|
-| **No closures** |  | Response time | Hospital occupancy \> 95% capacity |
-| **Light closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity OR $R_t(M(\textbf{1})) < 1$) AND 7 days since vaccine rollout complete |  | Hospital occupancy \> 95% capacity |
-| **Heavy closures** | (Growth rate \< 0.025 OR Hospital occupancy \< 25% capacity OR $R_t(M(\textbf{1})) < 1$) AND 7 days since vaccine rollout complete | Hospital occupancy \< 25% capacity AND 7 days since last change time AND growth rate \< 0 |  |
-
-<span id="tab:rulesreactive"></span>Table 4.1: State transition rules
-for policies RC1 and RC2. See Table <a href="#tab:eccon">4.3</a> for
-details of closures.
-
-| From/to | No closures | Light closures | Heavy closures |
-|:---|:---|:---|:---|
-| **No closures** |  | Response time | Hospital occupancy \> 95% capacity |
-| **Light closures** | Vaccine rollout complete |  | $R_t > 1.2$ |
-| **Heavy closures** | Vaccine rollout complete | $R_t(M(x_{\text{light closure}})) < 1$ |  |
-
-<span id="tab:ruleselimination"></span>Table 4.2: State transition rules
-for policy RC3. See Table <a href="#tab:eccon">4.3</a> for details of
-closures.
-
 <table class="table lightable-classic" style="width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
 
 <caption>
 
-<span id="tab:eccon"></span>Table 4.3: Economic configurations used to
+<span id="tab:eccon"></span>Table 4.1: Economic configurations used to
 implement strategies. Values are the openness of the sector expressed as
 a percentage. RC1 values are taken from Indonesia (Q2 and Q4 2020 (Badan
 Pusat Statistik 2022)). RC2 values are taken from the UK (April 2020 for
@@ -3029,18 +3000,19 @@ services-producing activities of households for own use
   heavy closures.
 - At the response time, testing begins and working from home begins
 - If closure policies (RC1, RC2, or RC3) are being implemented, the
-  rules in Tables <a href="#tab:rulesreactive">4.1</a> or
-  <a href="#tab:ruleselimination">4.2</a> are followed
+  rules in Section <a href="#implementation">4.2</a> are followed
 - Vaccination is a model input whose details depend on the scenario. The
   model allows for two vaccines to be administered flexibly, in that the
   first is not a prerequisite for the second. In the vaccine-impact
   application, the first vaccine is a broadly protective sarbecovirus
   vaccine (BPSV) and the second is a strain-specific vaccine (SSV).
-  <!-- - Closures, working from home and testing end when vaccine rollout completes (or if other stopping criteria are met, see Tables <a href="#tab:rulesreactive">4.1</a> and <a href="#tab:ruleselimination">4.2</a>) -->
   <!-- - When vaccine rollout is complete, the doubling time is more than 30 days and there are fewer than 1,000 people in hospital, the simulation ends. -->
 - The simulation continues after both vaccine rollout and mitigation
-  have ended. It stops after 30 days if hospital occupancy is below
-  1,000 and declining; otherwise, it stops after a year.
+  have ended. It stops once at least 30 days have elapsed after
+  mitigation ends and hospital occupancy is below 1,000 and declining;
+  after a year, it can also stop if the estimated doubling time exceeds
+  30 days.
+  <!-- after 30 days if hospital occupancy is below 1,000 and declining; otherwise, it stops after a year. -->
 
 # 6 Daedalus model parameters
 
@@ -4789,12 +4761,11 @@ and Income Across the World.” *Comparative Education Review* 65 (2).
 
 </div>
 
-<div id="ref-Robinson2022" class="csl-entry">
+<div id="ref-Robinson2019" class="csl-entry">
 
-<span class="nocase">Robinson, Lisa A., James K. Hammitt, Michele
-Cecchini, et al.</span> 2019. “Reference Case Guidelines for
-Benefit-Cost Analysis in Global Health and Development.” *SSRN
-Electronic Journal*, no. May. <https://doi.org/10.2139/ssrn.4015886>.
+Robinson, Lisa A., James K. Hammitt, and Lucy O’Keeffe. 2019. “Valuing
+Mortality Risk Reductions in Global Benefit-Cost Analysis.” *Journal of
+Benefit-Cost Analysis* 10: 15–50. <https://doi.org/10.1017/bca.2018.26>.
 
 </div>
 
