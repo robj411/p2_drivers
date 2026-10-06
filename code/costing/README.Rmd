@@ -375,14 +375,14 @@ for(x in 1:length(crs)){
 
 scennames = c('BAU',paste0('S',sprintf("%02d", 1:10)))
 nscen = length(scennames)
-pop_proportional = c(1,1,1,1,1,2,2,1,2,2,2)
-scen_dm = c(1, 1, 1,1, 2,2,2, 3,3,3, 1)
+pop_proportional = c(1,1,1,1,1,1,1,1,1,1,2)
+scen_dm     = c(1, 1, 1,1, 2,2,2, 3,3,3, 1)
 scen_capres = c(1, 1, 2,3, 1,2,3, 1,2,3, 1)
 bpsv_scen = rep(F,length(scennames))
 bpsv_scen[2] = T
 
 rates = matrix(rep(basic_rates, nscen), ,ncol=NLEVELS,byrow=T)
-rates[nscen,3:4] = 0.04
+# rates[nscen,3:4] = 0.04
 
 
 

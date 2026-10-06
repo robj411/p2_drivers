@@ -200,17 +200,11 @@ phase occurrence for Phase $i$ is:
 ```
 
 <!-- For $N^{\text{(BPSV-1)}} = $ candidate(s), which have already been through the preclinical phase, we have -->
-
 <!-- ```{r} -->
-
 <!-- eqtext = '\\hat{P}_i^{(1)} = \\begin{cases}1 & i=1 \\\\  -->
-
 <!-- \\prod_{j=1}^{i-1}P_j^{\\text{(BPSV)}} & i>1  -->
-
 <!-- \\end{cases}' -->
-
 <!-- printmath(eqtext) -->
-
 <!-- ``` -->
 
 The cost of each phase is $T_i$, a weighted average of costs of
@@ -255,7 +249,6 @@ whether or not they have licensure experience as of February 2026 (CEPI
 
 <img src="README_files/figure-gfm/posbpsv-1.png" alt="Risk-adjusted R&amp;D cost for 14 BPSV candidates"  />
 <p class="caption">
-
 <span id="fig:posbpsv"></span>Figure 2.1: Risk-adjusted R&D cost for 14
 BPSV candidates
 </p>
@@ -320,7 +313,6 @@ billion doses (Griffiths et al. 2021).
 
 <img src="README_files/figure-gfm/bpsvinv-1.png" alt="BPSV investigational reserve costs accumulated from the completion of Phase 2 to year 15 with uniformly distributed discount rate."  />
 <p class="caption">
-
 <span id="fig:bpsvinv"></span>Figure 2.2: BPSV investigational reserve
 costs accumulated from the completion of Phase 2 to year 15 with
 uniformly distributed discount rate.
@@ -363,7 +355,6 @@ The annual costs in billion USD are 0.27, 0.64, and 1.33, respectively.
 
 <img src="README_files/figure-gfm/capres-1.png" alt="Capacity reservation costs accumulated over 15 years with uniformly distributed discount rate."  />
 <p class="caption">
-
 <span id="fig:capres"></span>Figure 2.3: Capacity reservation costs
 accumulated over 15 years with uniformly distributed discount rate.
 </p>
@@ -371,11 +362,8 @@ accumulated over 15 years with uniformly distributed discount rate.
 </div>
 
 <!-- Targets: -->
-
 <!-- 3,086  (2,897 3,074 3,269) -->
-
 <!-- 7,407  (6,954 7,378 7,845) -->
-
 <!-- 15,431 (14,487 15,370  16,344) -->
 
 ## 2.4 Enabling activities
@@ -409,7 +397,6 @@ their respective $\zeta$ values as follows:
 
 <img src="README_files/figure-gfm/en-1.png" alt="Enabling costs accumulated over 15 years with uniformly distributed discount rate."  />
 <p class="caption">
-
 <span id="fig:en"></span>Figure 2.4: Enabling costs accumulated over 15
 years with uniformly distributed discount rate.
 </p>
@@ -417,9 +404,7 @@ years with uniformly distributed discount rate.
 </div>
 
 <!-- Targets: -->
-
 <!-- 3,242  (3,182 3,241 3,302) -->
-
 <!-- 8,126 (7,629 8,094 8,607) -->
 
 # 3 Response cost equation
@@ -514,7 +499,6 @@ quantile $q$.
 
 <img src="README_files/figure-gfm/posssv-1.png" alt="Risk-adjusted R&amp;D cost to secure at least five successful SSV candidates"  />
 <p class="caption">
-
 <span id="fig:posssv"></span>Figure 3.1: Risk-adjusted R&D cost to
 secure at least five successful SSV candidates
 </p>
@@ -522,11 +506,8 @@ secure at least five successful SSV candidates
 </div>
 
 <!-- Targets: -->
-
 <!-- 250 (107 170 275) -->
-
 <!-- 153 (54 83 135) -->
-
 <!-- 85 (27 49 88) -->
 
 ### 3.1.2 BPSV
@@ -548,7 +529,6 @@ D_s^{\text{(BP-resRD)}} = \begin{cases}\left( (1+\pi)\frac{W_3^{(365)}}{52Y_3^{(
 
 <img src="README_files/figure-gfm/bpsvresrd-1.png" alt="Reactive R&amp;D cost for BPSV"  />
 <p class="caption">
-
 <span id="fig:bpsvresrd"></span>Figure 3.2: Reactive R&D cost for BPSV
 </p>
 
@@ -594,34 +574,22 @@ cost per unreserved dose in USD.
 
 <img src="README_files/figure-gfm/costperyear-1.png" alt="SSV procurement cost"  />
 <p class="caption">
-
 <span id="fig:costperyear"></span>Figure 3.3: SSV procurement cost
 </p>
 
 </div>
 
 <!-- Targets: -->
-
 <!--  BAU   $213,204    $177,135    $209,062    $247,161 -->
-
 <!-- S01    $216,458    $180,402    $212,386    $250,435 -->
-
 <!-- S02    $195,822    $162,791    $192,045    $226,936 -->
-
 <!-- S03    $157,183    $130,875    $154,197    $181,966 -->
-
 <!-- S04    $218,874    $183,133    $214,909    $252,596 -->
-
 <!-- S05    $198,810    $166,431    $195,224    $229,363 -->
-
 <!-- S06    $169,394    $141,909    $166,360    $195,333 -->
-
 <!-- S07    $220,033    $184,390    $216,099    $253,673 -->
-
 <!-- S08    $197,578    $165,656    $194,070    $227,711 -->
-
 <!-- S09    $165,769    $139,125    $162,855    $190,932 -->
-
 <!-- S10    $207,642    $172,542    $203,619    $240,702 -->
 
 ### 3.2.2 BPSV
@@ -694,34 +662,22 @@ D_{s,y}^{\text{(S-del)}} =
 
 <img src="README_files/figure-gfm/deliverycost-1.png" alt="SSV delivery cost"  />
 <p class="caption">
-
 <span id="fig:deliverycost"></span>Figure 3.4: SSV delivery cost
 </p>
 
 </div>
 
 <!-- Targets: -->
-
 <!--  BAU   $115,985    $92,999 $112,301    $134,660 -->
-
 <!-- S01    $116,404    $93,210 $112,431    $135,476 -->
-
 <!-- S02    $115,989    $93,194 $112,640    $134,450 -->
-
 <!-- S03    $116,234    $93,153 $112,264    $135,306 -->
-
 <!-- S04    $116,699    $94,120 $113,068    $134,927 -->
-
 <!-- S05    $117,038    $94,169 $112,895    $135,891 -->
-
 <!-- S06    $117,222    $94,111 $113,502    $136,028 -->
-
 <!-- S07    $118,839    $95,667 $115,147    $137,742 -->
-
 <!-- S08    $117,980    $94,897 $113,822    $136,699 -->
-
 <!-- S09    $118,170    $95,625 $114,272    $136,928 -->
-
 <!-- S10    $114,979    $92,120 $110,950    $133,834 -->
 
 ### 3.3.2 BPSV
@@ -773,7 +729,6 @@ The logic of this is as follows:
 
 <img src="README_files/figure-gfm/bpsvdeliverycost-1.png" alt="BPSV delivery cost"  />
 <p class="caption">
-
 <span id="fig:bpsvdeliverycost"></span>Figure 3.5: BPSV delivery cost
 </p>
 
@@ -817,13 +772,9 @@ and country-specific delivery costs
 Manufacturing response timeline assumptions
 
 <!-- | Weeks from transition start | 0-11 | 12-21 | 22-29 | 30-45  | 46-47 | 48-63 | 64+ | -->
-
 <!-- |---|---|---|---|---|---|---|---| -->
-
 <!-- | Reserved Capacity (%)  || Scaling from 0-100 | 100 | 100 | 100 | 100 | 100 |  -->
-
 <!-- | Private Capacity (Existing; %)  || | | Scaling from 0-100 | 100 | 100 | 100 |  -->
-
 <!-- | Private Capacity (Response; %)  | | | |  | | Scaling from 0-100 | 100 | -->
 
 ## 4.1 Timing
@@ -882,11 +833,8 @@ Z_{x,s,w} = \begin{cases}0 & w-w_s^{(0)} \leq I_x \\
 ```
 
 <!-- \frac{1}{52}M_{R,s}  & w\in[I_R+C_R, I_E)\\\\  -->
-
 <!-- \frac{1}{52}\left(M_{R,s} + \frac{w-I_E+1}{C_E}M_{E,s}\right) & w\in[I_E, I_E+C_E)\\\\  -->
-
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s}\right)  & w\in[I_E+C_E, I_B)\\\\  -->
-
 <!-- \frac{1}{52}\left(M_{R,s} + M_{E,s} + \frac{w-I_B+1}{C_B}M_{B}\right) & w\in[I_B, I_B+C_B)\\\\  -->
 
 Here, $I_R = 12$ is the number of weeks to initial manufacturing for
@@ -941,7 +889,6 @@ Capacity scales from 0 to 100 in weeks 12–21.
 
 <img src="README_files/figure-gfm/supply-1.png" alt="Doses made available from manufacturing per scenario. Weeks are in reference to the sequencing of the pathogen."  />
 <p class="caption">
-
 <span id="fig:supply"></span>Figure 4.1: Doses made available from
 manufacturing per scenario. Weeks are in reference to the sequencing of
 the pathogen.
@@ -1060,7 +1007,6 @@ A_{x,s,y} = A_{x,s,y}^{(1)} + A_{x,s,y}^{(2)}.
 
 <img src="README_files/figure-gfm/procurement-1.png" alt="Doses procured by country income level"  />
 <p class="caption">
-
 <span id="fig:procurement"></span>Figure 4.2: Doses procured by country
 income level
 </p>
@@ -1113,7 +1059,6 @@ h_{s,i,w} = \sum_{j=1}^{2+N^{(boost)}}h_{s,i,w}^{(j)}.
 
 <img src="README_files/figure-gfm/scendelivery-1.png" alt="Cumulative vaccine coverage (second SSV dose) by country income level"  />
 <p class="caption">
-
 <span id="fig:scendelivery"></span>Figure 4.3: Cumulative vaccine
 coverage (second SSV dose) by country income level
 </p>
@@ -1155,7 +1100,6 @@ Z_w = \begin{cases}0 & w < I_R \\
 
 <img src="README_files/figure-gfm/bpsvsupply-1.png" alt="BPSV doses made available from manufacturing. Weeks are in reference to the sequencing of the pathogen."  />
 <p class="caption">
-
 <span id="fig:bpsvsupply"></span>Figure 5.1: BPSV doses made available
 from manufacturing. Weeks are in reference to the sequencing of the
 pathogen.
@@ -1171,7 +1115,6 @@ Doses are all allocated in proportion to eligible populations.
 
 <img src="README_files/figure-gfm/bpsvprocurement-1.png" alt="BPSV doses procured by country income level"  />
 <p class="caption">
-
 <span id="fig:bpsvprocurement"></span>Figure 5.2: BPSV doses procured by
 country income level
 </p>
@@ -1186,7 +1129,6 @@ country income level
 
 <img src="README_files/figure-gfm/bpsvdeliveryplot-1.png" alt="BPSV vaccine coverage by country income level"  />
 <p class="caption">
-
 <span id="fig:bpsvdeliveryplot"></span>Figure 5.3: BPSV vaccine coverage
 by country income level
 </p>

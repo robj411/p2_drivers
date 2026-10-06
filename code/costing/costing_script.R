@@ -50,14 +50,14 @@ rawpar <- get_parameters(nsamples=10000)[[1]]
 
 scennames = c('BAU',paste0('S',sprintf("%02d", 1:10)))
 nscen = length(scennames)
-pop_proportional = c(1,1,1,1,1,2,2,1,2,2,2)
-scen_dm = c(1, 1, 1,1, 2,2,2, 3,3,3, 1)
+pop_proportional = c(1,1,1,1,1,1,1,1,1,1,2)
+scen_dm     = c(1, 1, 1,1, 2,2,2, 3,3,3, 1)
 scen_capres = c(1, 1, 2,3, 1,2,3, 1,2,3, 1)
 bpsv_scen = rep(F,length(scennames))
 bpsv_scen[2] = T
 
 scenrates = matrix(rep(basic_rates, nscen), ,ncol=length(INCOMELEVELS),byrow=T)
-scenrates[nscen,3:4] = 0.04
+# scenrates[nscen,3:4] = 0.04
 
 scenario_df = data.frame(Scenario=scennames, Proportional=pop_proportional, DM=dms[scen_dm], CR=crs[scen_capres], BPSV=bpsv_scen, scenrates)
 
