@@ -409,14 +409,10 @@ for(bau_scen in 1:nbscens){
     labs(x='LIR, % global GDP',y=expression(Delta*"LIR, % of counterfactual LIR"))
   ggsave(p,filename=paste0('../results/valueloss.png'))
   
-  # dominance among BPSv scenarios
-  sapply(2:3,function(x) sapply(1:(x-1),function(y)sum(rowSums(slvaluelist[[x]][[bau_scen]]$slvalue) - rowSums(slvaluelist[[y]][[bau_scen]]$slvalue) > 0))/length(rowSums(slvaluelist[[x]][[bau_scen]]$slvalue))*100)
-  
   ## probability sars
   
-  print(summary(as.data.frame(gpdparams)[['p_sars']]))
   ps = as.data.frame(gpdparams)[['p_sars']]
-  timehor = 50 # years
+  print(summary(ps))
   horizon_end = as.numeric(format(Sys.Date(),'%Y')) + timehor
   ps_th <- expNevents <- p_two_or_more <- c()
   for(i in 1:boot){
@@ -445,13 +441,11 @@ for(bau_scen in 1:nbscens){
                                ssv100 = c(7:9), 
                                eq = c(10)),function(x) just_scen_names[x])
     
-    discountrate = runif(boot, 0.02, 0.06) # sample from 0.02 to 0.06 # 0.04 #  
-    gdp2025 = 113.8e6 # million USD
-    discountedth = sapply(discountrate, function(x) sum(1/(1+x)^(1:timehor-1)))
-    
-    # lb_cost_sheet = readxl::read_xlsx('../data/20251104 updated scenario delivery and costing.xlsx',sheet = "Cost Breakdown")
     costscens = scenario_names[scen_scens]
     alllq <- alluq <- segs <- c() 
+    costlist = list()
+    costlist$Response <- costlist$Annual <- costlist$Upfront <- list()
+    # <- costlist$`Annual (real)` <- costlist$`Response (real, per pandemic)` 
     
     for(i in 1:ncscens){
       scenocosts = cost_diffs[[1]][,i]/1e3 # billions
@@ -465,6 +459,11 @@ for(bau_scen in 1:nbscens){
       qs = quantile(scenocosts + scenacosts * discountedth, c(1,3)/4)
       alllq[i] = qs[1]
       alluq[i] = qs[2]
+      costlist$Upfront[[i]] <- scenocosts
+      costlist$Annual[[i]] <- scenacosts * discountedth
+      costlist$Response[[i]] <- scenrespcosts / gdp2025 * 100 * expNevents * discountedth
+      # costlist$`Annual (real)`[[i]] <- scenacosts
+      # costlist$`Response (real, per pandemic)`[[i]] <- scenrespcosts / gdp2025 * 100 
       # test
       x = expvalplot$LIRplus[expvalplot$to==costscens[i]] * timehor
       # PLUS the response cost, times the expected number of pandemics in the time horizon, averaging over the time it likely arrives, discounting later times
@@ -520,17 +519,7 @@ for(bau_scen in 1:nbscens){
                       ymin=lq,#/gdp2025*100 - .0001,
                       ymax=uq,#/gdp2025*100 + .0001,
                       fill=scencol),colour='white',linewidth=0,alpha=0.5)  +
-        # scale_colour_manual(values=c(`FALSE`='white',`TRUE`=NA)) + 
-        # geom_textsegment(
-        #   aes(x = LQplus, y = lq,#/gdp2025*100,
-        #       xend = UQplus, yend = uq,#/gdp2025*100, 
-        #       colour = scencol,label = to),
-        #   hjust = 0.5,        # centered along the segment
-        #   vjust = 0,       # ???above??? the segment (perpendicular offset)
-        #   upright = TRUE,     # keeps text readable (flips if needed)
-        #   text_smoothing = 0, # no curve smoothing (straight line)
-        #   size=5, show.legend=F # 
-        # ) +
+        
         ggrepel::geom_label_repel(aes(x=labelx,y=labely,#/gdp2025*100,
                                       label=to,fill=scencol,
                                       color = after_scale(prismatic::best_contrast(fill))),
@@ -543,7 +532,7 @@ for(bau_scen in 1:nbscens){
              y='Increase in preparedness cost, billion USD',fill='')) #+
     # ggtitle(paste0('Costs and impacts accumulated over ',timehor,' years, relative to ',bau_names[bau_scen])))
     ggsave(domplot,filename=paste0('../results/dominancehoriz_',bau_names[bau_scen],'.png'),width=7,height=7)
-    
+    write.csv(dom, '../results/iqrs_for_fig_4.csv')
     
     comparisons <- lapply(list(bpsv = c(1:3), 
                                ssv = c(4:11), 
@@ -751,26 +740,74 @@ colnames(redopcc) <- c('From','To','Return time','LQ','UQ')
 write.csv(redopcc,'../results/Delta_LIR_IQR_pc_counterfactual_return.csv',row.names = F, quote = F)
 
 
+## voi #######################
+
+source('evppifunctions.R')
+
+outcomes = list(expvals,absscencosts)
+varnames = c('value','cost')
+colnames(outcomes[[1]])[1] = 'scenario'
+voi <- matrix(0,length(outcomes)*ncscens, ncol(gpdparams)+1)
+for(i in 1:length(outcomes)){
+  for(k in 1:ncscens){
+    y = log(as.numeric(subset(outcomes[[i]], scenario==scenario_names[k+1])[[varnames[i]]]))
+    vary <- var(y) 
+    for(j in 1:ncol(gpdparams)){
+      sourcesj <- gpdparams[,j]
+      fittedvalues <- evppifit(y,sourcesj,pars=colnames(sourcesj)[j],method='gam')
+      voi[(i-1)*ncscens+k,j] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
+    }
+    fittedvalues <- evppifit(y,gpdparams[,1:4],pars=colnames(gpdparams)[1:4],method='gam')
+    voi[(i-1)*ncscens+k,j+1] <- (vary - mean((y - fittedvalues) ^ 2)) / vary * 100
+  }
+}
+
+library(latex2exp)
+voitab = reshape2::melt(voi)
+ggplot(voitab) +
+  geom_tile(aes(x=Var2,y=Var1,fill=value),colour='black',linewidth=0.05) +
+  annotate('rect',xmin=.5,xmax=6.5,ymin=.5,ymax=10.5,fill=NA,colour='black',linewidth=1) +
+  annotate('rect',xmin=.5,xmax=6.5,ymin=10.5,ymax=20.5,fill=NA,colour='black',linewidth=1) +
+  scale_fill_gradient(low = "azure2", high = "darkslategray") +
+  scale_y_continuous(breaks=1:nrow(voi),labels=rep(scenario_names[-1],2), expand=c(0,0),
+                     sec.axis = sec_axis(~ ., breaks = c(5,15), labels = TeX(c("\\Delta LIR", "LIR")))) +
+  theme_bw(base_size=15) +
+  theme(axis.text.y.right = element_text(angle=-90),
+        axis.ticks = element_blank()) +
+  scale_x_continuous(breaks=1:ncol(voi),labels=1:ncol(voi), expand=c(0,0)) +
+  labs(x='Parameter',y='',fill='VOI')
+
+allparameters = cbind(costparameters, gpdparams, expNevents)
+groupnames = c(`Probability of success (BPSV)`='pos',
+               `Probability of success (SSV)`='V',
+               Durations='duration',
+               `Experienced manufacturers`='_ex',
+               `Inexperienced manufacturers`='_inex',
+               `Discount rate`='discount',
+               `LIC delivery costs`='cost_lic',
+               `LMIC delivery costs`='cost_lmic',
+               `UMIC delivery costs`='cost_umic',
+               `HIC delivery costs`='cost_hic',
+               GPD='xi|sigmau|mu|p_bulk',
+               `Expected SARS events`='expNevents')
+groupings = lapply(groupnames,function(x) which(grepl(x,colnames(allparameters))))
+outcomes = lapply(costlist, function(x)do.call(cbind,x))
+expvals[,id:=rep(1:boot,each=ncscens)]
+expvals[,value:=as.numeric(value)]
+castexp = dcast(expvals,formula='id~to',value.var = 'value')
+castexp$id = NULL
+outcomes[["\\Delta LIR"]] = as.data.frame(castexp)
+
+pl = get_voi(outcomes, allparameters, groupings, scenario_names[-1])
+ggsave(pl[[1]], filename='../results/fig4voi.png',height=12,width=6)
+
 ## reread and write to one file ###################################
 
 sheet1 = read.csv('../results/counterfactual.csv',check.names = F)
 sheet2 = read.csv('../results/Delta_LIR_IQR_pc_GDP_BAU.csv',check.names = F)
-# sheet2.5 = read.csv('../results/Delta_LIR_IQR_pc_GDP_BAU2.csv',check.names = F)
 sheet3 = read.csv('../results/Delta_LIR_IQR_pc_GDP_return.csv',check.names = F)
 sheet4 = read.csv('../results/Delta_LIR_IQR_pc_counterfactual_return.csv',check.names = F)
 sheet5 = read.csv('../results/LIR_IQR_pc_GDPBAU.csv',check.names = F)
-# sheet5.5 = read.csv('../results/LIR_IQR_pc_GDPBAU2.csv',check.names = F)
-# print(sheet1)
-# print(sheet2)
-
-# xlsx::write.xlsx(sheet1,file = '../results/results.xlsx',sheetName='Counterfactual (Table S5)', append=F,row.names = F)
-# xlsx::write.xlsx(rbind(sheet2,sheet2.5),file = '../results/results.xlsx',sheetName='Delta LIR, % GDP (Table S6)', append=T,row.names = F)
-# xlsx::write.xlsx(sheet3,file = '../results/results.xlsx',sheetName='given return, SARS-X (Table S7)', append=T,row.names = F)
-# xlsx::write.xlsx(sheet4,file = '../results/results.xlsx',sheetName='as % counterfactual (Table S8)', append=T,row.names = F)
-# xlsx::write.xlsx(sheet5,file = '../results/results.xlsx',sheetName='LIR, % GDP (BAU1)', append=F,row.names = F)
-# xlsx::write.xlsx(sheet5.5,file = '../results/results.xlsx',sheetName='LIR, % GDP (BAU2)', append=T,row.names = F)
-
-
 
 
 
