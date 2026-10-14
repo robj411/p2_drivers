@@ -22,15 +22,17 @@ function [p3, p4, frac_cases_found] = fraction_averted_self_isolating(sumI, sumN
         Ip = 10^5*sumI/sumN;
         test_rate = p2.trate .* max(min((t-test_start_time)./30, 1),0);
         frac_cases_found = get_case_ID_rate(test_rate, Ip);
+        frac_cases_found = frac_cases_found.*(valid_timepoints); 
         
         p3 = frac_cases_found * p2.frac_asym_infectiousness_averted ;
-        p3 = p3.*(valid_timepoints); 
+        % p3 = p3.*(valid_timepoints); 
         
         presym_averted = frac_cases_found * p2.frac_presym_infectiousness_averted ;
-        presym_averted = presym_averted.*(valid_timepoints); 
+        % presym_averted = presym_averted.*(valid_timepoints); 
         sym_averted = p2.frac_sym_infectiousness_averted + presym_averted;
         p4 = sym_averted;
     else
+        frac_cases_found = zeros(size(t));
         p3 = zeros(size(t));
         p4 = p3;
         p4(t>=test_start_time) = p2.frac_sym_infectiousness_averted;

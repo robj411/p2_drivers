@@ -27,10 +27,11 @@ days_per_infectious_day = 2;
 days_per_infectious_day_asym = days_per_infectious_day./dis.Tay.*dis.Tsr;
 
 p3 = selfisolation.p3;
+frac_cases_found = selfisolation.frac_cases_found;
 p4 = selfisolation.p4; % does not matter: symptomatic isolate for a fixed number of days based on symptom onset. testing therefore affects their infectiousness but not their time spent at home.
 
 self_isolation_compliance = data.self_isolation_compliance;
-frac_cases_found = min(1, p3 / p2.frac_asym_infectiousness_averted);
+% frac_cases_found = min(1, p3 / p2.frac_asym_infectiousness_averted);
 frac_isolating = frac_cases_found * self_isolation_compliance; % maybe should not scale by compliance because why do you test if you do not comply?
 
 %% value of life lost
@@ -51,7 +52,7 @@ students         = data.NNs(Stu);
 % cost(4,nSectors+[1,2]) = students;
 
 % Student absence
-days_per_infectious_day_sym = days_per_infectious_day./dis.Ts(Stu).*dis.Tsr;
+days_per_infectious_day_sym = days_per_infectious_day; %./dis.Ts(Stu).*dis.Tsr;
 prob_hosp = dis.ph(Stu).*[1 1-dis.hv1 1-dis.hv2];
 isoasym       = sum(reshape(Iamat(:,Stu,:),[],3),2).* days_per_infectious_day_asym .* frac_isolating; 
 
@@ -77,7 +78,7 @@ worker_numbers = data.NNs(notEd);
 % labour supply
 isoasym       = sum(Iamat(:,notEd,:),3).* days_per_infectious_day_asym .* frac_isolating; 
 
-days_per_infectious_day_sym = days_per_infectious_day./dis.Ts(notEd).*dis.Tsr;
+%days_per_infectious_day_sym = days_per_infectious_day./dis.Ts(notEd).*dis.Tsr;
 prob_hosp = dis.ph(notEd).*[1 1-dis.hv1 1-dis.hv2];
 
 sym_no_hosp_total = zeros(size(Ismat(:,notEd,:)));
