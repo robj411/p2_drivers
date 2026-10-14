@@ -19,11 +19,10 @@ function [param_struct, R0_dist] = sample_disease_parameters(nsamples)
     disparams.Ti = repmat(365000000,size(disparams,1),1);
 
     sample_struct = struct;
-    % replicate non covid
     for i = 1:size(disparams,2)
         thisparam = disparams.Properties.VariableNames{i};
         samples = disparams.(thisparam);
-        sample_struct.(thisparam) = [samples; samples(1:4); samples(1:4)];
+        sample_struct.(thisparam) = samples;
     end
 
     param_struct = struct;
