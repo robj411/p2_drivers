@@ -28,17 +28,14 @@ library(prismatic)
 library(ggpubr)
 library(geomtextpath)
 
-Sys.setenv(JAVA_HOME='C:\\Program Files\\Java \\jre1.8.0_451/') # for 64-bit version
-Sys.setenv(JAVA_HOME='C:\\Program Files (x86)\\Java\\jre1.8.0_451/') # for 32-bit version
+# Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_503/') # for 64-bit version
+# Sys.setenv(JAVA_HOME='C:\\Program Files (x86)\\Java\\jre1.8.0_451/') # for 32-bit version
 
 cl <- makeCluster(4)
 registerDoParallel(cl)
 
 scenario_tab <- readxl::read_xlsx(lb_file, sheet = 'Vx timeline')
 lbsheets = readxl::excel_sheets(lb_file)
-# onecost = readxl::read_xlsx(lb_file,sheet = "Lump Sum")
-# acosts = readxl::read_xlsx(lb_file,sheet = "Annual Cost")
-# rcosts = readxl::read_xlsx(lb_file,sheet = "Response Cost")
 strategies <- c('No Closures','School Closures','Economic Closures','Elimination')
 income_levels <- c('LLMIC','UMIC','HIC')
 
@@ -64,6 +61,12 @@ just_scen_names = scenario_names[scen_scens]
 nbscens = length(bau_names)
 ncscens = length(scen_scens)
 
+costparameters = readRDS('costing/costparameters.Rds')
+
+gdp2025 = 113.8e6 # million USD
+timehor = 50 # years
+discountrate = costparameters$discount  # runif(boot, 0.02, 0.06) # sample from 0.02 to 0.06 # 
+discountedth = sapply(discountrate, function(x) sum(1/(1+x)^(1:timehor-1)))
 
 ## plot scenarios ##################################
 
@@ -195,7 +198,75 @@ saveRDS(alldiffs,'results/alldiffs.Rds')
 
 saveRDS(choicestab,paste0('results/choicestab.Rds'))
 
-with(do.call(rbind,topresults),table(policy,igroup))
+## voi for epidemic library ################################
+
+epilibrary <- diffepilibrary <- list()
+diffepilibrary$LLMIC <- diffepilibrary$UMIC <- diffepilibrary$HIC <- epilibrary$LLMIC <- epilibrary$UMIC <- epilibrary$HIC <- list()
+for(sl in 1:nscen)
+  for(j in names(epilibrary)){
+    epilibrary[[j]][[sl]] = log(subset(topresults[[sl]],igroup==j)$Costpc)
+    if(sl>1)
+      diffepilibrary[[j]][[sl-1]] = subset(topresults[[sl]],igroup==j)$Costpc - subset(topresults[[1]],igroup==j)$Costpc
+  }
+outcomes = lapply(epilibrary, function(x) do.call(cbind,x))
+diffoutcomes = lapply(diffepilibrary, function(x) do.call(cbind,x))
+
+epilibrarypars = list()
+for(j in names(epilibrary))
+  epilibrarypars[[j]] = read.csv(paste0('results/inputs_',j,'.csv'))
+
+groupnames = c(
+               R0='R0',
+               `Probability symptomatic`='^ps',
+               `Asymptomatic infectiousness`='^red',
+               `Presymptomatic infectiousness`='frac_presymptomatic',
+               `Latent period`='Tlat',
+               `Infectious periods`='Tay|Tsr|Tsh',
+               `Hospitalisation periods`='Threc|Thd',
+               IHR='IHR',
+               IFR='IFR',
+               HFR='HFR'
+)
+groupings = lapply(groupnames,function(x) which(grepl(x,colnames(epilibrarypars[[1]]))))
+
+groupnames2 = c(`Life expectancy`='yll_per_death',
+                `Age distribution`='Npop4',
+                VSL='vsl',
+               VSY='vsy',
+               GDP='gdp',
+               `Employment rate`='employmentrate',
+               `Labour share of income`='labsh',
+               WFH='remote_quantile',
+               Tourism='frac_tourism_international',
+               `Seed size`='seedsize',
+               `Hospital capacity`='Hmax',
+               `Testing`='^trate|sym_infectiousness_averted',
+               `Self isolation`='self_isolation_compliance',
+               UTR='utr_',
+               `Remote teaching`='remote_teaching_effectiveness',
+               `School contacts`='school|pupil_teacher_ratio',
+               `Hospitality contacts`='hospitality_frac',
+               `Work contacts`='work_frac')
+groupings2 = lapply(groupnames2,function(x) which(grepl(x,colnames(epilibrarypars[[1]]))))
+# lapply(groupings2,function(x)colnames(epilibrarypars[[1]])[x])
+
+pl = get_voi(outcomes, epilibrarypars, groupings, scenario_names)
+pl[[1]]
+ggsave(pl[[1]], filename='../results/pathogenvoi.png',height=12,width=6)
+
+pl2 = get_voi(outcomes, epilibrarypars, groupings2, scenario_names)
+pl2[[1]]
+ggsave(pl2[[1]], filename='../results/countryvoi.png',height=12,width=6)
+
+pld = get_voi(diffoutcomes, epilibrarypars, groupings, scenario_names[-1])
+pld[[1]]
+ggsave(pld[[1]], filename='../results/pathogenvoidiff.png',height=12,width=6)
+
+pl2d = get_voi(diffoutcomes, epilibrarypars, groupings2, scenario_names[-1])
+pl2d[[1]]
+ggsave(pl2d[[1]], filename='../results/countryvoidiff.png',height=12,width=6)
+
+## plot durations #################################
 
 plotdur <- list()
 for(i in scenario_levels){
@@ -210,7 +281,7 @@ ggplot(mplotdur) +
   theme_bw(base_size=15) +
   scale_x_continuous(limits=c(0,NA)) +
   scale_y_continuous(expand=c(0,NA)) +
-  labs(x='Day',y='Density')
+  labs(x='Year',y='Density')
 
 dispcols <- c('Cost','GDP_loss','YLL','School',
               'policy','samplei','Deaths','igroup')
@@ -261,14 +332,6 @@ for(sl in 1:ncscens){
     nneg <- nneg + nrow(subset(subtab,Cost< 0 ))
   }
 } 
-# nrow(drag)
-# summary(with(drag,Cost/gdp*100))
-# nrow(exitwaves)
-# summary(with(exitwaves,Cost/gdp*100))
-# nrow(ncdisp)
-# summary(with(ncdisp,Cost/gdp*100))
-# nrow(others)
-# summary(with(others,Cost/gdp*100))
 
 for (or in 1:nrow(others)){
   si <- others[or,samplei]
@@ -278,38 +341,6 @@ for (or in 1:nrow(others)){
   subset(reslist[[scen]],igroup==ig&policy==pol&samplei==si)[,c('Cost','GDP_loss','YLL','School','Deaths1','Deaths2','Deaths3','Deaths4','Deaths')]
   subset(reslist[[1]],igroup==ig&policy==pol&samplei==si)[,c('Cost','GDP_loss','YLL','School','Deaths1','Deaths2','Deaths3','Deaths4','Deaths')]
 }
-
-# 
-# agevals <- c('0-4','5-19','20-64','65+','Total')
-# barpt <- setDT(reshape2::melt(subset(ncdisp,samplei==1859&scenario==4)[,grepl('death',colnames(ncdisp),ignore.case = T),with=F]))
-# barpt$var <- 'BAU'
-# barpt$var[grepl('yll',barpt$variable)] <- 'YLLperdeath'
-# barpt$var[grepl('scen',barpt$variable)] <- 'Scenario'
-# barpt[,agegroup:=substr(variable,nchar(as.character(variable)),nchar(as.character(variable))),by=variable]
-# barpt[,ages:=agevals[as.numeric(agegroup)],by=agegroup]
-# barpt$ages <- factor(barpt$ages,levels=agevals,labels=agevals)
-# barpt2 <- dcast(barpt,formula=ages~var)
-# barpt2[,deathsaverted:=BAU-Scenario]
-# barpt2[,YLLaverted:=YLLperdeath*deathsaverted]
-# barpt2$ages[is.na(barpt2$ages)] <- 'Total'
-# barpt2$YLLaverted[is.na(barpt2$YLLaverted)] <- sum(barpt2$YLLaverted,na.rm=T)
-# 
-# 
-# library(patchwork)
-# ylims = range(barpt2$deathsaverted/1000)
-# (p1 <- ggplot(barpt2) + geom_bar(aes(x=ages,y=deathsaverted/1000,fill=ages),stat='identity',show.legend = F) +
-#     theme_bw(base_size = 15) +
-#     scale_fill_manual(values=c(`0-4`='chocolate3',`5-19`='chocolate3',`20-64`='chocolate3',`65+`='chocolate3','Total'='midnightblue')) +
-#     labs(x='',y='Deaths averted, thousand') +
-#     scale_y_continuous(limits=ylims)
-# )
-# p2 <- ggplot(barpt2) + geom_bar(aes(x=ages,y=YLLaverted/1e5,fill=ages),stat='identity',show.legend = F) +
-#   theme_bw(base_size = 15) +
-#   scale_fill_manual(values=c(`0-4`='chocolate3',`5-19`='chocolate3',`20-64`='chocolate3',`65+`='chocolate3','Total'='midnightblue')) +
-#   labs(x='',y='YLL averted, hundred thousand') +
-#   scale_y_continuous(limits=ylims)
-# p1 + p2
-# ggsave(p1 + p2,filename='results/displacement.png',width=7)
 
 
 
