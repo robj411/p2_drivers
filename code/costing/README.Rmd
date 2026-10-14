@@ -1950,10 +1950,8 @@ ggplot(reshape2::melt(do.call(rbind,alloc),id.vars=c('Scenario','Week'))) +
 
 ## Delivery
 
-<!-- **These values do not look correct** -->
 
-
-Delivery is written as $h_{s,i,w}^{(j)}$ doses delivered in scenario $s$, income group $i$ and week $w$ for schedule $j$, which is $j=1$ for first-dose SSV, $j=2$ for second-dose SSV, and $j=2+k$ for $k=\lbrace 1,...,N^{(boost)}\rbrace$.
+Delivery is written as $h_{s,i,w}^{(j)}$ doses delivered in scenario $s$, income group $i$ and week $w$ for schedule $j$, which is $j=1$ for first-dose SSV, $j=2$ for second-dose SSV, and $j=2+k$ for $k=\lbrace 1,...,N^{(boost)}\rbrace$. Given the delivery rate assumed in scenario $s$ for income level $i$, there is a maximum number of doses $\bar{h}_{s,i}$ that can be given in any week.
 
 The second dose is prioritised over the first, and follows the first by four weeks, so 
 
@@ -1969,7 +1967,8 @@ Available doses are $K_{s,i,w}$, the cumulative doses allocated to income group 
 ```{r,eval=T}
 eqtext = 'h_{s,i,w}^{(1)} =
 \\max\\left( 0,
-\\min\\left(  K_{s,i,w} - h_{s,i,w}^{(2)} - \\sum_{j=1}^2 \\sum_{k=1}^{w-1} h_{s,i,k}^{(j)},
+\\min\\left(  \\bar{h}_{s,i} - h_{s,i,w}^{(2)}, 
+K_{s,i,w} - h_{s,i,w}^{(2)} - \\sum_{j=1}^2 \\sum_{k=1}^{w-1} h_{s,i,k}^{(j)},
 L_i/2 - \\sum_{k=1}^{w-1} h_{s,i,k}^{(1)}
 \\right)
 \\right)'
@@ -2062,7 +2061,6 @@ ggplot(reshape2::melt(b_alloc,id.vars=c('Week'))) +
 
 ## Delivery
 
-<!-- **These values do not look correct** -->
 
 
 ```{r bpsvdeliveryplot,fig.cap='BPSV vaccine coverage by country income level'}

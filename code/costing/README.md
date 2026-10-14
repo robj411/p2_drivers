@@ -47,7 +47,7 @@ country income level.
 | $P_0^{\text{(BPSV)}}$ | pos_0 | Probability of success; preclinical | Multinomial | 0.40, 0.41, 0.41, 0.42, 0.48, 0.57 | Gouglas et al. (2018) |
 | $P_1^{\text{(BPSV)}}$ | pos_1 | Probability of success; Phase 1 | Multinomial | 0.33, 0.40, 0.50, 0.68, 0.70, 0.72, 0.74, 0.77, 0.81, 0.90 | Gouglas et al. (2018) |
 | $P_2^{\text{(BPSV)}}$ | pos_2 | Probability of success; Phase 2 | Multinomial | 0.22, 0.31, 0.33, 0.43, 0.46, 0.54, 0.58, 0.58, 0.74, 0.79 | Gouglas et al. (2018) |
-| $P_3^{\text{(BPSV)}}$ | pos_3 | Probability of success; Phase 3 | Uniform | 0.4, 0.8 | Lo, Siah, and Wong (2020) |
+| $P_3^{\text{(BPSV)}}$ | pos_3 | Probability of success; Phase 3 | Uniform | 0.4, 0.8 | Lo et al. (2020) |
 | $Y_0^{(B)}$ | duration_0 | Ordinary preclinical duration; years | Multinomial | 1, 2 | CEPI (2022) |
 | $Y_1^{(B)}$ | duration_1 | Ordinary Phase 1 duration; years | Multinomial | 1, 2 | CEPI (2022) |
 | $Y_2^{(B)}$ | duration_2 | Ordinary Phase 2 duration; years | Constant | 2 | CEPI (2022) |
@@ -84,7 +84,7 @@ country income level.
 | $T_4$ | cost_lic | Licensure cost, 2018; USD | Constant | 287750 | Gouglas et al. (2018) |
 | $\pi$ | inflation | Inflation (2018 t0 2025) | Constant | 0.28 | U.S. BLS (2025) |
 | $\omega$ | inex_weight | Share of manufacturers that are inexperienced | Constant | 0.923076923076923 | See Table <a href="#tab:inex">2.1</a> |
-| $r$ | discount | Discount rate | Uniform | 0.02, 0.06 | Glennerster, Snyder, and Tan (2023) |
+| $r$ | discount | Discount rate | Uniform | 0.02, 0.06 | Glennerster et al. (2023) |
 | $A_4$ | bpsv_inv_res | Size of BPSV investigational reserve, doses | Constant | 100000 | Model choice |
 | $A_1$ | cost_bpsv_res | Annual BPSV reservation cost from recurrent cold chain storage, USD per dose | Constant | 0.00996360623461854 | Griffiths et al. (2021) |
 | $A_5$ | bpsv_res_upfront | BPSV reserve upfront cost for cold chain equipment, USD per dose | Constant | 0.113154621821165 | Griffiths et al. (2021) |
@@ -92,10 +92,10 @@ country income level.
 | $A_2$ | cost_capres | Advanced capacity reservation fee; USD per dose per year | Constant | 0.531692307692308 | Pfizer (2023) |
 | $A_3$ | hic_cap_res | Reserved capacity for HIC, billions | Constant | 0.5 | See Section <a href="#ssv-capacity-reservation">2.3</a> |
 | $S_U$ | cost_un | SSV procurement price, reactive capacity; USD per dose | Constant | 18.9392 | Linksbridge SPC (2025) |
-| $G$ | cost_cogs | Drug substance cost; USD per dose | Constant | 4.68 | Kazaz, Webster, and Yadav (2021) |
+| $G$ | cost_cogs | Drug substance cost; USD per dose | Constant | 4.68 | Kazaz et al. (2021) |
 | $M_p$ | profit | Profit margin, fraction | Constant | 0.2 | U.S. Government Accountability Office (2017) |
 | $M_f$ | cost_ff | Fill/finish cost, fraction of COGS | Constant | 0.072 | Kis (2021) |
-| $M_t$ | cost_travel | Cost to transport product, fraction of COGS | Constant | 0.1 | Gotham, Barber, and Hill (2019) |
+| $M_t$ | cost_travel | Cost to transport product, fraction of COGS | Constant | 0.1 | Gotham et al. (2019) |
 | $M_G$ | man_glo | Global annual manufacturing volume; billion doses | Constant | 15 | Linksbridge SPC (2025) |
 | $M_C$ | man_curr | Current annual manufacturing volume; billion doses | Constant | 9 | Linksbridge SPC (2025) |
 | $\lambda$ | final_vaccine_coverage | Final vaccine coverage, proportion of population | Constant | 0.8 | Model choice |
@@ -565,7 +565,7 @@ U.S. Government Accountability Office (2017), and thus acts as a
 conservative estimate on profit margins sought by pharmaceutical
 companies. The 10% estimate for transportation from manufacturer to
 country isolates the transportation cost from the process of vaccination
-(Gotham, Barber, and Hill 2019).
+(Gotham et al. 2019).
 
 $S_R = G(1+M_p)(1+M_t)$ evaluates to 6.18 USD.
 
@@ -790,14 +790,14 @@ The logic of this is as follows:
 | Mozambique | LIC | Bottom up | 0.5 | Namalela et al. (2025) |
 | Uganda | LIC | Bottom up | 0.79 | Tumusiime et al. (2024) |
 | Bangladesh | LMIC | Bottom up | 0.29 | Yesmin et al. (2024) |
-| Cote d’Ivoire | LMIC | Bottom up | 0.67 | K. Vaughan et al. (2023) |
+| Cote d’Ivoire | LMIC | Bottom up | 0.67 | Vaughan et al. (2023) |
 | Nigeria | LMIC | Bottom up | 0.84 | Noh et al. (2024) |
 | Philippines | LMIC | Bottom up | 2.16 | Banks et al. (2023) |
 | Vietnam | LMIC | Bottom up | 1.73 | Nguyen et al. (2024) |
 | Ghana | LMIC | CVIC tool | 2.2–2.3 | Nonvignon et al. (2022) |
 | Lao PDR | LMIC | CVIC tool | 0.79–0.81 | Yeung et al. (2023) |
 | Kenya | LMIC | Top down | 3.29–4.28 | Orangi et al. (2022) |
-| Botswana | UMIC | Mixed | 19 | Kelsey Vaughan et al. (2025) |
+| Botswana | UMIC | Mixed | 19 | Vaughan et al. (2025) |
 | South Africa | UMIC | Top down | 3.84 | Edoka et al. (2024) |
 
 <span id="tab:delcosts"></span>Table 3.1: Literature review of global
@@ -1069,12 +1069,12 @@ income level
 
 ## 4.4 Delivery
 
-<!-- **These values do not look correct** -->
-
 Delivery is written as $h_{s,i,w}^{(j)}$ doses delivered in scenario
 $s$, income group $i$ and week $w$ for schedule $j$, which is $j=1$ for
 first-dose SSV, $j=2$ for second-dose SSV, and $j=2+k$ for
-$k=\lbrace 1,...,N^{(boost)}\rbrace$.
+$k=\lbrace 1,...,N^{(boost)}\rbrace$. Given the delivery rate assumed in
+scenario $s$ for income level $i$, there is a maximum number of doses
+$\bar{h}_{s,i}$ that can be given in any week.
 
 The second dose is prioritised over the first, and follows the first by
 four weeks, so
@@ -1090,7 +1090,8 @@ being given once $L_i/2$ is reached.
 ``` math
 h_{s,i,w}^{(1)} =
 \max\left( 0,
-\min\left(  K_{s,i,w} - h_{s,i,w}^{(2)} - \sum_{j=1}^2 \sum_{k=1}^{w-1} h_{s,i,k}^{(j)},
+\min\left(  \bar{h}_{s,i} - h_{s,i,w}^{(2)}, 
+K_{s,i,w} - h_{s,i,w}^{(2)} - \sum_{j=1}^2 \sum_{k=1}^{w-1} h_{s,i,k}^{(j)},
 L_i/2 - \sum_{k=1}^{w-1} h_{s,i,k}^{(1)}
 \right)
 \right)
@@ -1180,8 +1181,6 @@ country income level
 
 ## 5.4 Delivery
 
-<!-- **These values do not look correct** -->
-
 <div class="figure">
 
 <img src="README_files/figure-gfm/bpsvdeliveryplot-1.png" alt="BPSV vaccine coverage by country income level"  />
@@ -1209,23 +1208,21 @@ R code: Rob Johnson
 
 # 8 References
 
-<div id="refs" class="references csl-bib-body hanging-indent"
-entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-Banks2023" class="csl-entry">
 
-Banks, C, RD Estanislao, SJ De los Reyes, JE De Guzman, LB
-Sumpaico-Tanchanco, B Makani-Lim, R Archer, and L Boonstoppel. 2023.
-“The Cost of Delivering COVID-19 Vaccines in the Philippines.” Geneva:
-ThinkWell.
+Banks, C, RD Estanislao, SJ De los Reyes, et al. 2023. *The Cost of
+Delivering COVID-19 Vaccines in the Philippines*. ThinkWell.
 <https://thinkwell.global/wp-content/uploads/2024/03/Cost-of-delivering-COVID19-vaccines-in-the-Philippines_final-report_19-Dec-2023.pdf>.
 
 </div>
 
 <div id="ref-CEPI2021" class="csl-entry">
 
-CEPI. 2021. “CEPI 2022–2026 Strategy.”
-<https://static.cepi.net/downloads/2023-12/CEPI-2022-2026-Strategy-v3-Jan21_0.pdf>;
+CEPI. 2021. *CEPI 2022–2026 Strategy*. <a
+href="https://static.cepi.net/downloads/2023-12/CEPI-2022-2026-Strategy-v3-Jan21_0.pdf"
+class="uri">Https://static.cepi.net/downloads/2023-12/CEPI-2022-2026-Strategy-v3-Jan21_0.pdf</a>;
 Coalition for Epidemic Preparedness Innovations.
 <https://static.cepi.net/downloads/2023-12/CEPI-2022-2026-Strategy-v3-Jan21_0.pdf>.
 
@@ -1233,8 +1230,9 @@ Coalition for Epidemic Preparedness Innovations.
 
 <div id="ref-CEPI2022" class="csl-entry">
 
-———. 2022. “Delivering Pandemic Vaccines in 100 Days.”
-<https://static.cepi.net/downloads/2024-02/CEPI-100-Days-Report-Digital-Version_29-11-22.pdf>;
+CEPI. 2022. *Delivering Pandemic Vaccines in 100 Days*. <a
+href="https://static.cepi.net/downloads/2024-02/CEPI-100-Days-Report-Digital-Version_29-11-22.pdf"
+class="uri">Https://static.cepi.net/downloads/2024-02/CEPI-100-Days-Report-Digital-Version_29-11-22.pdf</a>;
 Coalition for Epidemic Preparedness Innovations.
 <https://static.cepi.net/downloads/2024-02/CEPI-100-Days-Report-Digital-Version_29-11-22.pdf>.
 
@@ -1242,20 +1240,19 @@ Coalition for Epidemic Preparedness Innovations.
 
 <div id="ref-CEPI2026a" class="csl-entry">
 
-———. 2026. “Broadly Protective Coronavirus Vaccines.”
-<https://cepi.net/broadly-protective-coronavirus-vaccines>.
+CEPI. 2026. *Broadly Protective Coronavirus Vaccines*.
+<a href="https://cepi.net/broadly-protective-coronavirus-vaccines"
+class="uri">Https://cepi.net/broadly-protective-coronavirus-vaccines</a>.
 <https://cepi.net/broadly-protective-coronavirus-vaccines>.
 
 </div>
 
 <div id="ref-Edoka2024" class="csl-entry">
 
-Edoka, Ijeoma, Lineo Marie Matsela, Khumo Modiba, Yolandie Luther,
-Sharlene Govender, Thapelo Maotoe, Heena Brahmbhatt, Pedro T. Pisa,
-Gesine Meyer-Rath, and Jacqui Miot. 2024. “Costs of the COVID-19
-Vaccination Programme: Estimates from the West Rand District of South
-Africa, 2021/2022.” *BMC Health Services Research* 24 (1): 857.
-<https://doi.org/10.1186/s12913-024-11251-1>.
+Edoka, Ijeoma, Lineo Marie Matsela, Khumo Modiba, et al. 2024. “Costs of
+the COVID-19 Vaccination Programme: Estimates from the West Rand
+District of South Africa, 2021/2022.” *BMC Health Services Research* 24
+(1): 857. <https://doi.org/10.1186/s12913-024-11251-1>.
 
 </div>
 
@@ -1272,7 +1269,7 @@ Capacity - Key Bottlenecks and Lessons Learned.” *Vaccine* 41 (30):
 
 Glennerster, Rachel, Christopher M. Snyder, and Brandon Joel Tan. 2023.
 *Calculating the Costs and Benefits of Advance Preparations for Future
-Pandemics*. *IMF Economic Review*. Vol. 71. Palgrave Macmillan UK.
+Pandemics*. In *IMF Economic Review*, vol. 71. Palgrave Macmillan UK.
 <https://doi.org/10.1057/s41308-023-00212-z>.
 
 </div>
@@ -1288,21 +1285,19 @@ Essential Medicines List.” *BMJ Open* 9 (9): e027780.
 
 <div id="ref-Gouglas2018" class="csl-entry">
 
-Gouglas, Dimitrios, Tung Thanh Le, Klara Henderson, Aristidis Kaloudis,
-Trygve Danielsen, Nicholas Caspersen Hammersland, James M Robinson,
-Penny M Heaton, and John-Arne Røttingen. 2018. “Estimating the Cost of
-Vaccine Development Against Epidemic Infectious Diseases: A Cost
-Minimisation Study.” *The Lancet Global Health* 6 (12): e1386–96.
-<https://doi.org/10.1016/S2214-109X(18)30346-2>.
+Gouglas, Dimitrios, Tung Thanh Le, Klara Henderson, et al. 2018.
+“Estimating the Cost of Vaccine Development Against Epidemic Infectious
+Diseases: A Cost Minimisation Study.” *The Lancet Global Health* 6 (12):
+e1386–96. <https://doi.org/10.1016/S2214-109X(18)30346-2>.
 
 </div>
 
 <div id="ref-Griffiths2021a" class="csl-entry">
 
-Griffiths, Ulla, Alex Adjagba, Marcia Attaran, Raymond Hutubessy,
-Nathalie Van de Maele, Karene Yeung, Wei Aun, et al. 2021. “Costs of
-Delivering COVID-19 Vaccine in 92 AMC Countries.”
-<https://www.who.int/publications/m/item/costs-of-delivering-covid-19-vaccine-in-92-amc-countries>;
+Griffiths, Ulla, Alex Adjagba, Marcia Attaran, et al. 2021. *Costs of
+Delivering COVID-19 Vaccine in 92 AMC Countries*. <a
+href="https://www.who.int/publications/m/item/costs-of-delivering-covid-19-vaccine-in-92-amc-countries"
+class="uri">Https://www.who.int/publications/m/item/costs-of-delivering-covid-19-vaccine-in-92-amc-countries</a>;
 WHO, Gavi, UNICEF.
 <https://www.who.int/publications/m/item/costs-of-delivering-covid-19-vaccine-in-92-amc-countries>.
 
@@ -1310,9 +1305,10 @@ WHO, Gavi, UNICEF.
 
 <div id="ref-Kazaz2021" class="csl-entry">
 
-Kazaz, Burak, Scott Webster, and Prashant Yadav. 2021. “Incentivizing
-COVID-19 Vaccine Developers to Expand Manufacturing Capacity.”
-<https://www.cgdev.org/sites/default/files/incentivizing-covid-19-vaccine-developers-expand-manufacturing-capacity.pdf>;
+Kazaz, Burak, Scott Webster, and Prashant Yadav. 2021. *Incentivizing
+COVID-19 Vaccine Developers to Expand Manufacturing Capacity*. <a
+href="https://www.cgdev.org/sites/default/files/incentivizing-covid-19-vaccine-developers-expand-manufacturing-capacity.pdf"
+class="uri">Https://www.cgdev.org/sites/default/files/incentivizing-covid-19-vaccine-developers-expand-manufacturing-capacity.pdf</a>;
 Center for Global Development.
 <https://www.cgdev.org/sites/default/files/incentivizing-covid-19-vaccine-developers-expand-manufacturing-capacity.pdf>.
 
@@ -1320,19 +1316,21 @@ Center for Global Development.
 
 <div id="ref-Kis2021" class="csl-entry">
 
-Kis, Zoltan. 2021. “Process-Cost Modelling for Producing 100
+Kis, Zoltan. 2021. *Process-Cost Modelling for Producing 100
 <span class="nocase">Million COVID-19 mRNA Vaccine Doses</span> Per Year
-at Injectable Medicines Manufacturing Sites.”
-<https://msfaccess.org/sites/default/files/2021-09/COVID19_TechBrief_Process_cost_modelling_ENG.pdf>.
+at Injectable Medicines Manufacturing Sites*. <a
+href="https://msfaccess.org/sites/default/files/2021-09/COVID19_TechBrief_Process_cost_modelling_ENG.pdf"
+class="uri">Https://msfaccess.org/sites/default/files/2021-09/COVID19_TechBrief_Process_cost_modelling_ENG.pdf</a>.
 <https://msfaccess.org/sites/default/files/2021-09/COVID19_TechBrief_Process_cost_modelling_ENG.pdf>.
 
 </div>
 
 <div id="ref-Kis2021a" class="csl-entry">
 
-Kis, Zoltan, and Zain Rizvi. 2021. “How to Make Enough Vaccine for the
-World in One Year.”
-<https://www.citizen.org/article/how-to-make-enough-vaccine-for-the-world-in-one-year>;
+Kis, Zoltan, and Zain Rizvi. 2021. *How to Make Enough Vaccine for the
+World in One Year*. <a
+href="https://www.citizen.org/article/how-to-make-enough-vaccine-for-the-world-in-one-year"
+class="uri">Https://www.citizen.org/article/how-to-make-enough-vaccine-for-the-world-in-one-year</a>;
 Public Citizen.
 <https://www.citizen.org/article/how-to-make-enough-vaccine-for-the-world-in-one-year>.
 
@@ -1340,8 +1338,9 @@ Public Citizen.
 
 <div id="ref-LinksbridgeSPC2025" class="csl-entry">
 
-Linksbridge SPC. 2025. “Global Vaccine Market Model.”
-<https://www.linksbridge.com/casestudy-gvmm>.
+Linksbridge SPC. 2025. *Global Vaccine Market Model*.
+<a href="https://www.linksbridge.com/casestudy-gvmm"
+class="uri">Https://www.linksbridge.com/casestudy-gvmm</a>.
 <https://www.linksbridge.com/casestudy-gvmm>.
 
 </div>
@@ -1350,8 +1349,8 @@ Linksbridge SPC. 2025. “Global Vaccine Market Model.”
 
 Lo, Andrew W., Kien Wei Siah, and Chi Heem Wong. 2020. “Estimating
 Probabilities of Success of Vaccine and Other Anti-Infective Therapeutic
-Development Programs.” *Harvard Data Science Review*, May.
-<https://doi.org/10.1162/99608f92.e0c150e8>.
+Development Programs.” *Harvard Data Science Review*, ahead of print,
+May. <https://doi.org/10.1162/99608f92.e0c150e8>.
 
 </div>
 
@@ -1366,16 +1365,15 @@ Pandemic.” *Politico*, June.
 <div id="ref-Moi2024" class="csl-entry">
 
 Moi, Flavia, Laura Boonstoppel, Rachel Archer, and Pierre Akilimali.
-2024. “The Cost of Delivering COVID-19 Vaccines in the Democratic
-Republic of the Congo.” Geneva: ThinkWell.
+2024. *The Cost of Delivering COVID-19 Vaccines in the Democratic
+Republic of the Congo*. ThinkWell.
 <https://thinkwell.global/wp-content/uploads/2024/04/DRC-C19-costing-study-report_final.pdf>.
 
 </div>
 
 <div id="ref-Namalela2025" class="csl-entry">
 
-Namalela, Tozé, Flavia Moi, Amélia Dipuve, Pedro Marizane Pota, José
-Guambe, Maria Tereza Couto, and Laura Boonstoppel. 2025. “The Cost of
+Namalela, Tozé, Flavia Moi, Amélia Dipuve, et al. 2025. “The Cost of
 Delivering COVID-19 Vaccines in Mozambique: A Bottom-up Costing Study.”
 *BMC Health Services Research* 25 (1): 521.
 <https://doi.org/10.1186/s12913-025-12671-3>.
@@ -1393,18 +1391,16 @@ Vaccines in Vietnam.” *BMC Health Services Research* 24 (1): 779.
 
 <div id="ref-Noh2024" class="csl-entry">
 
-Noh, Dave Haeyun, Roopa Darwar, Belinda V. Uba, Shiva Gab-deedam, Stella
-Yani, Akolade Jimoh, Ndadilnasiya Waziri, et al. 2024. “Cost of COVID-19
-Vaccine Delivery in Nine States in Nigeria via the U.S. Government
-Initiative for Global Vaccine Access.” *BMC Health Services Research* 24
-(1): 1232. <https://doi.org/10.1186/s12913-024-11645-1>.
+Noh, Dave Haeyun, Roopa Darwar, Belinda V. Uba, et al. 2024. “Cost of
+COVID-19 Vaccine Delivery in Nine States in Nigeria via the U.S.
+Government Initiative for Global Vaccine Access.” *BMC Health Services
+Research* 24 (1): 1232. <https://doi.org/10.1186/s12913-024-11645-1>.
 
 </div>
 
 <div id="ref-Nonvignon2022" class="csl-entry">
 
-Nonvignon, Justice, Richmond Owusu, Brian Asare, Alex Adjagba, Yap Wei
-Aun, Karene Hoi Ting Yeung, Joycelyn Naa Korkoi Azeez, et al. 2022.
+Nonvignon, Justice, Richmond Owusu, Brian Asare, et al. 2022.
 “Estimating the Cost of COVID-19 Vaccine Deployment and Introduction in
 Ghana Using the CVIC Tool.” *Vaccine* 40 (12): 1879–87.
 <https://doi.org/10.1016/j.vaccine.2022.01.036>.
@@ -1422,56 +1418,54 @@ Kenya.” *BMC Health Services Research* 22 (1): 439.
 
 <div id="ref-Oyatoye2023" class="csl-entry">
 
-Oyatoye, I. 2023. “Costs and Financing Gap of Delivering COVID-19
-Vaccine to 133 Low- and Middle-Income Countries.” Cape Town, South
-Africa:
-<https://immunizationeconomics.org/wp-content/uploads/2024/01/Ibironke-Oyatoye-Costs-and-financing-gap-of-C19v-delivery-in-LMICS_Final.pdf>.
+Oyatoye, I. 2023. *Costs and Financing Gap of Delivering COVID-19
+Vaccine to 133 Low- and Middle-Income Countries*. <a
+href="https://immunizationeconomics.org/wp-content/uploads/2024/01/Ibironke-Oyatoye-Costs-and-financing-gap-of-C19v-delivery-in-LMICS_Final.pdf"
+class="uri">Https://immunizationeconomics.org/wp-content/uploads/2024/01/Ibironke-Oyatoye-Costs-and-financing-gap-of-C19v-delivery-in-LMICS_Final.pdf</a>.
 <https://immunizationeconomics.org/wp-content/uploads/2024/01/Ibironke-Oyatoye-Costs-and-financing-gap-of-C19v-delivery-in-LMICS_Final.pdf>.
 
 </div>
 
 <div id="ref-Pfizer2023" class="csl-entry">
 
-Pfizer. 2023. “Pfizer and the European Commission Enter into
+Pfizer. 2023. *Pfizer and the European Commission Enter into
 Manufacturing Reservation Agreement for <span class="nocase">mRNA-based
-Vaccines</span> to Help Protect Against Future Pandemics.”
-<https://www.pfizer.com/news/announcements/pfizer-and-european-commission-enter-manufacturing-reservation-agreement-mrna>.
+Vaccines</span> to Help Protect Against Future Pandemics*. <a
+href="https://www.pfizer.com/news/announcements/pfizer-and-european-commission-enter-manufacturing-reservation-agreement-mrna"
+class="uri">Https://www.pfizer.com/news/announcements/pfizer-and-european-commission-enter-manufacturing-reservation-agreement-mrna</a>.
 <https://www.pfizer.com/news/announcements/pfizer-and-european-commission-enter-manufacturing-reservation-agreement-mrna>.
 
 </div>
 
 <div id="ref-PRNewswire2022" class="csl-entry">
 
-PR Newswire. 2022. “Seqirus and U.S. Government Renew Multi-Year
-Agreement for Influenza Pandemic Preparedness and Response.” Summit, NJ:
-PR Newswire.
+PR Newswire. 2022. *Seqirus and U.S. Government Renew Multi-Year
+Agreement for Influenza Pandemic Preparedness and Response*. PR
+Newswire.
 <https://www.prnewswire.com/news-releases/seqirus-and-us-government-renew-multi-year-agreement-for-influenza-pandemic-preparedness-and-response-301490505.html>.
 
 </div>
 
 <div id="ref-Ruisch2025" class="csl-entry">
 
-Ruisch, Anika, Simon Ntopi, Ishani Mathur, Maeve Conlin, Anna McCaffrey,
-Damian G. Walker, and Christian Suharlim. 2025. “The Cost of Delivering
-COVID-19 Vaccines in Four Districts in Malawi.” *Cost Effectiveness and
-Resource Allocation* 23 (1): 36.
+Ruisch, Anika, Simon Ntopi, Ishani Mathur, et al. 2025. “The Cost of
+Delivering COVID-19 Vaccines in Four Districts in Malawi.” *Cost
+Effectiveness and Resource Allocation* 23 (1): 36.
 <https://doi.org/10.1186/s12962-025-00610-2>.
 
 </div>
 
 <div id="ref-Tumusiime2024" class="csl-entry">
 
-Tumusiime, Cathbert, Rachel Archer, Charlotte Muheki, Paul Kiggundu,
-Richard Ssemujju, Angellah Nakyanzi, Prossy Kiddu Namyalo, et al. 2024.
-“The Cost of Delivering COVID-19 Vaccines in Kampala, Uganda.” Uganda:
-ThinkWell.
+Tumusiime, Cathbert, Rachel Archer, Charlotte Muheki, et al. 2024. *The
+Cost of Delivering COVID-19 Vaccines in Kampala, Uganda*. ThinkWell.
 <https://immunizationeconomics.org/wp-content/uploads/2024/05/thinkwell-report-uganda-final.pdf>.
 
 </div>
 
 <div id="ref-UN2024" class="csl-entry">
 
-UN. 2024. “World Population Prospects 2024, Online Edition.” United
+UN. 2024. *World Population Prospects 2024, Online Edition*. United
 Nations, Department of Economic and Social Affairs, Population Division.
 <https://population.un.org/wpp/>.
 
@@ -1479,24 +1473,25 @@ Nations, Department of Economic and Social Affairs, Population Division.
 
 <div id="ref-U.S.BLS2025" class="csl-entry">
 
-U.S. BLS. 2025. “CPI Inflation Calculator.”
+U.S. BLS. 2025. *CPI Inflation Calculator*.
 <https://www.bls.gov/data/inflation_calculator.htm>.
 
 </div>
 
 <div id="ref-U.S.GovernmentAccountabilityOffice2017" class="csl-entry">
 
-U.S. Government Accountability Office. 2017. “Drug Industry: Profits,
-Research and Development Spending, and Merger and Acquitisition Deals.”
-<https://www.gao.gov/products/gao-18-40>.
+U.S. Government Accountability Office. 2017. *Drug Industry: Profits,
+Research and Development Spending, and Merger and Acquitisition Deals*.
+<a href="https://www.gao.gov/products/gao-18-40"
+class="uri">Https://www.gao.gov/products/gao-18-40</a>.
 <https://www.gao.gov/products/gao-18-40>.
 
 </div>
 
 <div id="ref-VaccinesEurope2024" class="csl-entry">
 
-Vaccines Europe. 2024. “Vaccines Europe Analysis of Vaccine Production
-Lead Times.”
+Vaccines Europe. 2024. *Vaccines Europe Analysis of Vaccine Production
+Lead Times*.
 <https://www.vaccineseurope.eu/media-hub/position-papers/vaccines-europe-analysis-of-vaccine-production-lead-times-2024/>.
 
 </div>
@@ -1513,9 +1508,9 @@ Study.” *BMC Health Services Research* 25 (1): 405.
 
 <div id="ref-Vaughan2023" class="csl-entry">
 
-Vaughan, K, E Smith, C Schütte, F Moi, and L Boonstoppel. 2023. “The
+Vaughan, K, E Smith, C Schütte, F Moi, and L Boonstoppel. 2023. *The
 Cost of Delivering COVID-19 Vaccines in
-<span class="nocase">C<span class="nocase">ô</span>te</span> d’Ivoire.”
+<span class="nocase">C<span class="nocase">ô</span>te</span> d’Ivoire*.
 ThinkWell & Genesis Analytics.
 <https://thinkwell.global/wp-content/uploads/2023/09/Cote-dIvoire-final-report_FINAL.pdf>.
 
@@ -1523,10 +1518,10 @@ ThinkWell & Genesis Analytics.
 
 <div id="ref-WorldHealthOrganization2019a" class="csl-entry">
 
-World Health Organization. 2019. “Public Assessment Summary Report:
+World Health Organization. 2019. *Public Assessment Summary Report:
 ErveboTM, Ebola Zaire Vaccine
 (<span class="nocase">rVSV$\Delta$G-ZEBOV-GP</span>, Live), Merck & Co.,
-Inc. USA.” World Health Organization.
+Inc. USA*. World Health Organization.
 <https://extranet.who.int/prequal/sites/default/files/vwa_vaccine/VPSAR_MerckErvebo_16Dec2019.pdf>.
 
 </div>
@@ -1542,13 +1537,11 @@ Delivery in Bangladesh.” *Human Vaccines & Immunotherapeutics* 20 (1):
 
 <div id="ref-Yeung2023" class="csl-entry">
 
-Yeung, Karene Hoi Ting, Eunkyoung Kim, Wei Aun Yap, Chansay
-Pathammavong, Lauren Franzel, Yu Lee Park, Peter Cowley, Ulla Kou
-Griffiths, and Raymond Christiaan W. Hutubessy. 2023. “Estimating the
-Delivery Costs of COVID-19 Vaccination Using the COVID-19 Vaccine
-Introduction and Deployment Costing (CVIC) Tool: The Lao People’s
-Democratic Republic Experience.” *BMC Medicine* 21 (1): 248.
-<https://doi.org/10.1186/s12916-023-02944-1>.
+Yeung, Karene Hoi Ting, Eunkyoung Kim, Wei Aun Yap, et al. 2023.
+“Estimating the Delivery Costs of COVID-19 Vaccination Using the
+COVID-19 Vaccine Introduction and Deployment Costing (CVIC) Tool: The
+Lao People’s Democratic Republic Experience.” *BMC Medicine* 21 (1):
+248. <https://doi.org/10.1186/s12916-023-02944-1>.
 
 </div>
 
