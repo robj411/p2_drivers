@@ -19,6 +19,8 @@ library(extraDistr)
 library(PearsonDS)
 library(foreach)
 library(parallel)
+library(ggplot2)
+library(latex2exp)
 
 # cl <- makeCluster(4)
 # registerDoParallel(cl)
@@ -39,7 +41,12 @@ dms = c(365, 200, 100)
 caps <- readODS::read_ods('cost_parameters.ods',sheet = 1)
 
 rawpar <- get_parameters(nsamples=10000)[[1]]
-
+costparams = list(); 
+for(i in 1:length(rawpar)) 
+  if(length(rawpar[[i]])>1) 
+    costparams[[names(rawpar)[i]]] = rawpar[[i]]
+costparameters = as.data.frame(cbind(do.call(cbind, costparams),POS_SSV))
+saveRDS(costparameters, 'costparameters.Rds')
 
 
 ## scenario variables  ######################################################
@@ -168,6 +175,9 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
     enabling_costs = get_enabling_costs(cost_enab = cost_enab, 
                                         discount = discount, 
                                         time_to_target_dm = time_to_rd)
+    real_enabling_costs = get_enabling_costs(cost_enab = cost_enab, 
+                                        discount = 0, 
+                                        time_to_target_dm = time_to_rd)
     
     # ssv r&d
     ssv_rd_costsamples = get_ssv_randd_costs(pos = pos,
@@ -246,7 +256,7 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
     }else{
       bpsv_rd_costsamples_no_d <- bpsv_rd_costsamples_dyd <- inv_cost_per_year <- bpsvresrd <- bpsvproc <- bpsv_del_cost <- upfront_bpsv <- dis_upfront_bpsv <- 0
     }
-    outvec =     c(enabling_costs, bpsv_rd_costsamples_no_d,bpsv_rd_costsamples_dyd,
+    outvec =     c(enabling_costs, real_enabling_costs, bpsv_rd_costsamples_no_d,bpsv_rd_costsamples_dyd,
                    capres_costs_per_year, inv_cost_per_year,
                    ssv_rd_costsamples,ssv_proccost_discounted,ssv_proccost_undiscounted,
                    dis_ssv_delivery_costs,ssv_delivery_costs,
@@ -258,7 +268,7 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
   # print(xmat)
   outcosts = list()
   for(i in 1:ncol(xmat)) outcosts[[i]] = unname(xmat[,i])
-  names(outcosts) = c('enabling_costs', 'bpsv_rd_costsamples_no_d','bpsv_rd_costsamples_dyd',
+  names(outcosts) = c('enabling_costs', 'real_enabling_costs', 'bpsv_rd_costsamples_no_d','bpsv_rd_costsamples_dyd',
                       'capres_costs_per_year', 'inv_cost_per_year',
                       'ssv_rd_costsamples','ssv_proccost_discounted','ssv_proccost_undiscounted',
                       'dis_ssv_delivery_costs','ssv_delivery_costs',
@@ -268,6 +278,7 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
   
   ## return
   return(list(costs=list(upfront=list(enabling=enabling_costs,
+                                      real_enabling=real_enabling_costs,
                                       upfront_bpsv=upfront_bpsv,
                                       dis_upfront_bpsv=dis_upfront_bpsv,
                                       bpsv_rd_undiscounted=bpsv_rd_costsamples_no_d,
@@ -312,7 +323,7 @@ for(i in 1:3) tosave[[i]] <- list()
 
 fifteen_yr_discount_weight = sapply(1:NSAMPLES, function(x) accumulate(discount = pardf$discount[x], from = 1, to = pardf$years_100[x]))
 
-for(s in 1:nscen){ #c(1,10)){# 
+for(s in 1:nscen){ 
   
   dm = scenario_df$DM[s]
   whichdm <- which(dms==dm)
@@ -326,6 +337,7 @@ for(s in 1:nscen){ #c(1,10)){#
   
   thisscen = scenario_results[[s]]
   allupfront = with(thisscen$costs$upfront, enabling + dis_upfront_bpsv + bpsv_rd_discounted)
+  allupfrontreal = with(thisscen$costs$upfront, real_enabling + upfront_bpsv + bpsv_rd_undiscounted)
   allannual = with(thisscen$costs$annual, capres + investigational_reserve)
   allrespdis = with(thisscen$costs$response, ssv_rd + ssv_proc_discounted + ssv_delivery_discounted + 
                    bpsv_response_rd + bpsv_proc + bpsv_delivery)
@@ -333,6 +345,7 @@ for(s in 1:nscen){ #c(1,10)){#
                    bpsv_response_rd + bpsv_proc + bpsv_delivery)
   
   scenario_results[[s]]$costs$upfront$totalupfront = allupfront
+  scenario_results[[s]]$costs$upfront$totalupfrontreal = allupfrontreal
   scenario_results[[s]]$costs$annual$totalannual = allannual
   scenario_results[[s]]$costs$response$totaldiscounted = allrespdis
   scenario_results[[s]]$costs$response$totalundiscounted = allresp
@@ -447,13 +460,14 @@ del_mat[3, 3:ncol(del_mat)] = rep(rev(income_levels),2*nscen)
 for(s in 1:nscen){
   if(bpsv_scen[s]==T){
     bpsv_deliveries = scenario_results[[s]]$delivery$bpsv
-    dailybpsv = diurnise_deliveries(bpsv_deliveries)[,-1]
-    del_mat[3+1:nrow(dailybpsv), 2+ (s-1)*2*3 + 1:3] = dailybpsv
+    dailybpsv = diurnise_deliveries(bpsv_deliveries)
+    del_mat[3+1:nrow(dailybpsv), 2+ (s-1)*2*3 + 1:3] = dailybpsv[,match(rev(income_levels), colnames(dailybpsv))]
   }
   # convert from cumulative (fraction of population) to daily
   deliveries <- scenario_results[[s]]$delivery$ssv
   # print(sum(diurnise_deliveries(deliveries)[,-1]))
-  del_mat[4:nrow(del_mat), 2+ (s-1)*2*3 +3 + 1:3] = diurnise_deliveries(deliveries)[,-1]
+  dailyssv = diurnise_deliveries(deliveries)
+  del_mat[4:nrow(del_mat), 2+ (s-1)*2*3 +3 + 1:3] = dailyssv[,match(rev(income_levels), colnames(dailyssv))]
 }
 
 xlsx::write.xlsx(del_mat,file = '../../data/vaccine_delivery.xlsx',sheetName='Vx timeline', append=F,row.names = F, col.names=F)
@@ -473,3 +487,32 @@ xlsx::write.xlsx(del_mat,file = '../../data/vaccine_delivery.xlsx',sheetName='Vx
 
 
 # (rawpar$cost_un - cost_res)/rawpar$cost_capres
+
+
+## voi costs #############################
+
+source('../evppifunctions.R')
+
+groupnames = c(`Probability of success (BPSV)`='pos',
+               `Probability of success (SSV)`='V',
+               Durations='duration',
+               `Experienced manufacturers`='_ex',
+               `Inexperienced manufacturers`='_inex',
+               `Discount rate`='discount',
+               `LIC delivery costs`='cost_lic',
+               `LMIC delivery costs`='cost_lmic',
+               `UMIC delivery costs`='cost_umic',
+               `HIC delivery costs`='cost_hic')
+groupings = lapply(groupnames,function(x) which(grepl(x,colnames(costparameters))))
+costlist2 <- list()
+costlist2$Response <- costlist2$Annual <- costlist2$Upfront <- list()
+for(s in 1:nscen) {
+  costlist2$Response[[s]] = scenario_results[[s]]$costs$response$totalundiscounted
+  costlist2$Annual[[s]] = scenario_results[[s]]$costs$annual$totalannual
+  costlist2$Upfront[[s]] = scenario_results[[s]]$costs$upfront$totalupfrontreal
+}
+outcomes = lapply(costlist2, function(x)do.call(cbind,x))
+pl = get_voi(outcomes, costparameters, groupings, scennames)
+pl[[1]]
+ggsave(pl[[1]],filename='../../results/costsvoi.png',height=12,width=6)
+
