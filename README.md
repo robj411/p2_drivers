@@ -797,8 +797,11 @@ without closures and, without closures, there is no economic cost); and
 2, there is no voluntary social distancing, and behaviour is independent
 of epidemiological circumstances.
 
-Finally, we assume that the effect wanes over time, with the minimum
-(baseline) tending to 1 with a rate of 0 to 1% per day.
+In implementation, we adjust the transmission multiplier to account for
+the reduction already applied through the contact matrix under closures,
+avoiding double counting their effects. Finally, we assume that the
+effect wanes over time, with the minimum (baseline) tending to 1 with a
+rate of 0 to 1% per day.
 
 <div class="figure">
 
@@ -824,7 +827,7 @@ fraction of asymptomatic cases identified by testing is $p^2(t)$. We
 assume asymptomatic cases have the same probability to self isolate and
 that test results are returned after $p^{17}$ days of infectiousness.
 Then the infectiousness that testing averts is
-$p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
+$p^3(t)=p^1p^2(t)\max(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$.
 
 The fraction of cases identified is a function of the testing rate per
 100,000 population ($p^{21}$) and the current prevalence per 100,000
@@ -838,7 +841,14 @@ p^2(t) = \frac{1}{1+\exp(a_0 + a_1 \frac{1e5\sum_{j,v} \left(I_{j,v}^a+I_{j,v}^s
 
 with $a_0 = 2.197$, $a_1 = 0.1838$ and $a_2 = -1.024$. The testing rate
 ramps up from nothing to its maximum capacity over a thirty-day period
-starting at the response time.
+starting at the response time. When infectious prevalence exceeds
+testing capacity, testing loses its targeting advantage and detection
+falls back to what random population testing would achieve. Note that
+this uses an earlier version of the model of Doohan et al. (2026), from
+Doohan et al. (2022). This is a much simplified version that does not
+require additional disease states in the epidemiological model and, as
+uncertainty can be expressed through the testing rate parameter, is
+adequate for our purposes.
 
 <!-- b0    = 2.197; -->
 
@@ -1075,12 +1085,12 @@ configuration; the configurations are tabulated in Table
 the response time. Thereafter, the level of closure for the three
 policies is mandated in response to the state of the epidemic, reverting
 between states as determined by the transmission dynamics. RC1 and RC2
-respond to hospital occupancy, allowing cases to rise and using closures
-to allow them to fall again. RC1 keeps schools closed throughout,
-whereas RC2 has schools open in the light configuration. RC3 aims to
-reduce cases and then to keep them low. All mitigation is suspended when
-the vaccine rollout has reached its target coverage (which is when 80%
-of the eligible population have been vaccinated).
+respond to hospital occupancy and its growth, allowing cases to rise and
+using closures to allow them to fall again. RC1 keeps schools closed
+throughout, whereas RC2 has schools open in the light configuration. RC3
+aims to reduce cases and then to keep them low. All mitigation is
+suspended after vaccine rollout, subject to waiting periods and
+policy-specific stopping conditions.
 
 <div class="figure">
 
@@ -1110,8 +1120,8 @@ The sector-closure policies are defined as follows:
   light closures reactively, as in RC1, with different economic
   configurations.
 - RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when
-  $R_t<1$. Closures are maintained until $R_t<1$ without closures, or
-  vaccination targets are reached.
+  $R_t<1$. Closures are maintained until vaccination targets are
+  reached.
 
 All policies assume there is testing (Section
 <a href="#testing-and-self-isolating">2.6</a>), working from home
@@ -4367,16 +4377,16 @@ $\text{R}_0$ is truncated at 1.5 and 3.5 following Whittaker et al.
 | Model parameter name | Distribution | Distribution parameter values | Correlations |
 |:---|:---|:---|:---|
 | Probability symptomatic | Beta | 5, 5 | None |
-| Latent period | Gamma | 2.28, 1.06 | None |
-| Asymptomatic infectious period | Gamma | 139.0, 0.017 | None |
-| Time from symptom onset to recovery | Gamma | 18.61, 0.17 | time to hospitalisation (0.99); $\text{R}_0$ (0.6) |
-| Time from symptom onset to hospitalisation | Gamma | 21.21, 0.14 | time to recovery (0.99); $\text{R}_0$ (0.66) |
-| Time from hospitalisation to recovery | Gamma | 2.46, 3.75 | 0.997 |
-| Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 |
+| Latent period | Gamma | 4.57, 0.801 | None |
+| Asymptomatic infectious period | Gamma | 134, 0.0170 | None |
+| Time from symptom onset to recovery | Gamma | 19.2, 0.175 | time to hospitalisation (0.99); $\text{R}_0$ (0.6) |
+| Time from symptom onset to hospitalisation | Gamma | 20.4, 0.163 | time to recovery (0.99); $\text{R}_0$ (0.66) |
+| Time from hospitalisation to recovery | Gamma | 3.09, 2.91 | 0.997 |
+| Time from hospitalisation to death | Gamma | 3.64, 2.36 | 0.997 |
 | Time to immunity waning | Constant | Inf | None |
 | Relative infectiousness of asymptomatic | Beta | 5, 5 | None |
 | Fraction of infectious period presymptomatic | Uniform | 0, 1 | None |
-| $\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 3.5) | time to recovery (0.6); time to hospitalisation (0.66); self-isolation compliance (0.7) |
+| $\text{R}_0$ | Truncated normal | 3.07, 1.74; (1.5, 3.5) | time to recovery (0.6); time to hospitalisation (0.66); self-isolation compliance (0.7) |
 | Excess fatality ratio without care relative to HFR | Gamma | 5, 1 | None |
 
 <span id="tab:pathogenparameters"></span>Table 6.4: Distributions for
@@ -4636,6 +4646,14 @@ Doohan, Patrick, Pratik Gupte, David Haw, et al. 2026. *Daedalus R
 Package*. <a href="https://github.com/jameel-institute/daedalus"
 class="uri">Https://github.com/jameel-institute/daedalus</a>.
 <https://github.com/jameel-institute/daedalus>.
+
+</div>
+
+<div id="ref-Doohan2022" class="csl-entry">
+
+Doohan, Patrick, Rob Johnson, Christian Morgenstern, et al. 2022. *The
+Economic Benefits of Preparing for the Next Pandemic: Select Case
+Studies*. Imperial College London.
 
 </div>
 

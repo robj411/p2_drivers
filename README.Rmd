@@ -53,6 +53,8 @@ library(kableExtra)
 library(wbstats)
 library("cowplot")
 library(latex2exp)
+library(magick)
+library(pdftools)
 
 
 panderOptions('round',2)
@@ -803,7 +805,7 @@ with $p^9, p^{10}>0$. We fit this model to the data in Figure \@ref(fig:mobility
 
 The implications of this modelling choice are that two extremes are possible in terms of behaviour under (unseen) circumstances of a severe moment in an outbreak: 1, it is possible that social distancing comes "free" (i.e. that you get the same reduction in transmission with and without closures and, without closures, there is no economic cost); and 2, there is no voluntary social distancing, and behaviour is independent of epidemiological circumstances. 
 
-Finally, we assume that the effect wanes over time, with the minimum (baseline) tending to 1 with a rate of 0 to 1% per day.
+In implementation, we adjust the transmission multiplier to account for the reduction already applied through the contact matrix under closures, avoiding double counting their effects. Finally, we assume that the effect wanes over time, with the minimum (baseline) tending to 1 with a rate of 0 to 1% per day.
 
 ```{r mobilityfitted,fig.cap='Fit of model to data.', echo=F,message=F,warning=F, out.width="50%",eval=F}
 knitr::include_graphics(path = "README_files/figure-gfm/mobilityfitted.png")
@@ -821,7 +823,7 @@ knitr::include_graphics(path = "README_files/figure-gfm/mobilitycurves.png")
 ## Testing and self isolating
 
 
-Infectious people who know their status have a compliance $p^1$ with the instruction to self isolate, starting one day into their infectious period. We assume constant infectiousness over time and that a fraction $p^{26}$ of the symptomatic infectiousness is presymptomatic. Then the amount of infectiousness averted of symptomatic people is $p^4=p^1(1-p^{26})$, who isolate due to the onset of symptoms. The fraction of asymptomatic cases identified by testing is $p^2(t)$. We assume asymptomatic cases have the same probability to self isolate and that test results are returned after $p^{17}$ days of infectiousness. Then the infectiousness that testing averts is $p^3(t)=p^1p^2(t)\min(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$. 
+Infectious people who know their status have a compliance $p^1$ with the instruction to self isolate, starting one day into their infectious period. We assume constant infectiousness over time and that a fraction $p^{26}$ of the symptomatic infectiousness is presymptomatic. Then the amount of infectiousness averted of symptomatic people is $p^4=p^1(1-p^{26})$, who isolate due to the onset of symptoms. The fraction of asymptomatic cases identified by testing is $p^2(t)$. We assume asymptomatic cases have the same probability to self isolate and that test results are returned after $p^{17}$ days of infectiousness. Then the infectiousness that testing averts is $p^3(t)=p^1p^2(t)\max(0,(T^{I^a:R}-p^{17})/T^{I^a:R})$. 
 
 The fraction of cases identified is a function of the testing rate per 100,000 population ($p^{21}$) and the current prevalence per 100,000 population. The fraction increases with testing rate and decreases with prevalence:
 
@@ -830,7 +832,7 @@ p^2(t) = \frac{1}{1+\exp(a_0 + a_1 \frac{1e5\sum_{j,v} \left(I_{j,v}^a+I_{j,v}^s
 (\#eq:testrate)
 \end{equation}
 
-with $a_0 = 2.197$, $a_1 = 0.1838$ and $a_2 = -1.024$. The testing rate ramps up from nothing to its maximum capacity over a thirty-day period starting at the response time. Note that this uses an earlier version of the model of @Doohan2026, from @Doohan2022. This is a much simplified version that does not require additional disease states in the epidemiological model and, as uncertainty can be expressed through the testing rate parameter, is adequate for our purposes.
+with $a_0 = 2.197$, $a_1 = 0.1838$ and $a_2 = -1.024$. The testing rate ramps up from nothing to its maximum capacity over a thirty-day period starting at the response time. When infectious prevalence exceeds testing capacity, testing loses its targeting advantage and detection falls back to what random population testing would achieve. Note that this uses an earlier version of the model of @Doohan2026, from @Doohan2022. This is a much simplified version that does not require additional disease states in the epidemiological model and, as uncertainty can be expressed through the testing rate parameter, is adequate for our purposes.
 
 <!-- b0    = 2.197; -->
 <!-- b1    = 0.1838; -->
@@ -1078,7 +1080,7 @@ In reality, the observed effects combined mandated closures, reductions in consu
 
 The economic configurations define the sector closures for both economic and epidemiological parts of the model. Contacts associated with sectors -- between and among workers and customers -- are scaled down with closures. GVA per sector is scaled according to economic configurations in the economic part of the model.
 
-For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the "heavy" configuration has higher stringency than the "light" configuration; the configurations are tabulated in Table \@ref(tab:eccon)). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. RC1 and RC2 respond to hospital occupancy, allowing cases to rise and using closures to allow them to fall again. RC1 keeps schools closed throughout, whereas RC2 has schools open in the light configuration. RC3 aims to reduce cases and then to keep them low. All mitigation is suspended when the vaccine rollout has reached its target coverage (which is when 80% of the eligible population have been vaccinated). 
+For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the "heavy" configuration has higher stringency than the "light" configuration; the configurations are tabulated in Table \@ref(tab:eccon)). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. RC1 and RC2 respond to hospital occupancy and its growth, allowing cases to rise and using closures to allow them to fall again. RC1 keeps schools closed throughout, whereas RC2 has schools open in the light configuration. RC3 aims to reduce cases and then to keep them low. All mitigation is suspended after vaccine rollout, subject to waiting periods and policy-specific stopping conditions. 
 
 
 
@@ -1136,7 +1138,7 @@ The sector-closure policies are defined as follows:
 - NC: No closures are mandated. 
 - RC1: Schools are mandated to close to 10% of pre-epidemic levels throughout, and other economic sectors close to the heavy-closure economic configuration when hospital occupancy reaches 95% of its capacity, and change to the light configuration once occupancy is less than 25% capacity.
 - RC2: Sectors (including the education sector)  toggle between heavy and light closures reactively, as in RC1, with different economic configurations. 
-- RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when $R_t<1$. Closures are maintained until $R_t<1$ without closures, or vaccination targets are reached. 
+- RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when $R_t<1$. Closures are maintained until vaccination targets are reached. 
 
 
 All policies assume there is testing (Section \@ref(testing-and-self-isolating)), working from home (Section \@ref(remote-working)), and uncosted transmission reductions from behavioural changes (Section \@ref(uncosted-transmission-reductions)), which impact epidemiological outcomes. They do not directly impact economic outcomes, but indirectly may reduce the need for closures because of reduced incidence. 
@@ -1439,16 +1441,16 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 Model parameter name | Distribution | Distribution parameter values | Correlations 
 |:----- |:----- |:----- |:----- |
 Probability symptomatic | Beta | 5, 5 | None 
-Latent period | Gamma | 2.28, 1.06 | None 
-Asymptomatic infectious period | Gamma | 139.0, 0.017 | None 
-Time from symptom onset to recovery | Gamma | 18.61, 0.17 |  time to hospitalisation (0.99); $\text{R}_0$ (0.6) 
-Time from symptom onset to hospitalisation | Gamma | 21.21, 0.14 | time to recovery (0.99); $\text{R}_0$ (0.66)
-Time from hospitalisation to recovery | Gamma | 2.46, 3.75 | 0.997  
-Time from hospitalisation to death | Gamma | 2.93, 2.96 | 0.997 
+Latent period | Gamma | 4.57, 0.801 | None 
+Asymptomatic infectious period | Gamma | 134, 0.0170 | None 
+Time from symptom onset to recovery | Gamma | 19.2, 0.175 |  time to hospitalisation (0.99); $\text{R}_0$ (0.6) 
+Time from symptom onset to hospitalisation | Gamma | 20.4, 0.163 | time to recovery (0.99); $\text{R}_0$ (0.66)
+Time from hospitalisation to recovery | Gamma | 3.09, 2.91 | 0.997  
+Time from hospitalisation to death | Gamma | 3.64, 2.36 | 0.997 
 Time to immunity waning | Constant | Inf | None 
 Relative infectiousness of asymptomatic | Beta | 5, 5 | None 
 Fraction of infectious period presymptomatic | Uniform | 0, 1 | None 
-$\text{R}_0$ | Truncated normal | 2.45, 1.32; (1.5, 3.5) | time to recovery (0.6); time to hospitalisation (0.66); self-isolation compliance (0.7) 
+$\text{R}_0$ | Truncated normal | 3.07, 1.74; (1.5, 3.5) | time to recovery (0.6); time to hospitalisation (0.66); self-isolation compliance (0.7) 
 Excess fatality ratio without care relative to HFR | Gamma | 5, 1 | None
 
 Table: (\#tab:pathogenparameters) Distributions for pathogen parameters used to sample synthetic pathogens. Distributions are built from values from @Doohan2026.
