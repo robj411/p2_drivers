@@ -22,6 +22,9 @@ function [param_struct, R0_dist] = sample_disease_parameters(nsamples)
     for i = 1:size(disparams,2)
         thisparam = disparams.Properties.VariableNames{i};
         samples = disparams.(thisparam);
+        if strmatch('Tlat',thisparam)
+            samples = samples([1,2,5:7]);
+        end
         sample_struct.(thisparam) = samples;
     end
 
