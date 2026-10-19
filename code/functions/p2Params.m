@@ -23,10 +23,8 @@ function [data,dis,p2] = p2Params(data,dis,scenario)
     % amount averted by isolating needs to account for discovery rule
     % time taken to test
     time_to_test = 2;
-    % time taken to isolate after symptoms
-    time_to_isolate = 1;
     % total amount avertible if isolating after symptom onset
-    frac_by_symptoms = max(1 - dis.frac_presymptomatic - time_to_isolate/dis.Tsr, 0);
+    frac_by_symptoms = max(1 - dis.frac_presymptomatic, 0);
     % remaining amount can be averted by testing
     % frac_by_testing = 1 - frac_by_symptoms;
     % sym: assume isolation on symptoms, so infectiousness averted is frac that
