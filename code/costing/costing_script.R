@@ -323,6 +323,7 @@ for(i in 1:3) tosave[[i]] <- list()
 
 fifteen_yr_discount_weight = sapply(1:NSAMPLES, function(x) accumulate(discount = pardf$discount[x], from = 1, to = pardf$years_100[x]))
 
+s=2
 for(s in 1:nscen){ 
   
   dm = scenario_df$DM[s]
@@ -332,8 +333,7 @@ for(s in 1:nscen){
   cr <- scenario_df$CR[s]
   propflag = scenario_df$Proportional[s]
   
-    scenario_results[[s]] = get_scenario(dm, bpsvflag, cr, propflag, rates=scenrates[s,])
-    # })
+  scenario_results[[s]] = get_scenario(dm, bpsvflag, cr, propflag, rates=scenrates[s,])
   
   thisscen = scenario_results[[s]]
   allupfront = with(thisscen$costs$upfront, enabling + dis_upfront_bpsv + bpsv_rd_discounted)
@@ -350,16 +350,16 @@ for(s in 1:nscen){
   scenario_results[[s]]$costs$response$totaldiscounted = allrespdis
   scenario_results[[s]]$costs$response$totalundiscounted = allresp
   
+  dc = 1/(1+pardf$discount)^15
   # bpsv resp looks fine
-  # summary(round(thisscen$costs$response$bpsv_response_rd*dc))
-  # summary(round(thisscen$costs$response$bpsv_proc*dc))
-  # summary(round(thisscen$costs$response$bpsv_delivery*dc))
+  print(quantile(thisscen$costs$response$bpsv_response_rd*dc,c(1:3)/4))
+  print(quantile(thisscen$costs$response$bpsv_proc*dc,c(1:3)/4))
+  print(quantile(thisscen$costs$response$bpsv_delivery*dc,c(1:3)/4))
   # annual
   summary(round(thisscen$costs$annual$capres*fifteen_yr_discount_weight))
   # upfront
   summary(round(thisscen$costs$upfront$enabling))
   # response
-  dc = 1/(1+pardf$discount)^15
   # issue with inflation; this value should be lower than that in the spreadsheet
   summary(round(thisscen$costs$response$ssv_rd*dc))
   # issue with inflation; this value should be higher than that in the spreadsheet
@@ -455,19 +455,19 @@ del_mat[4:nrow(del_mat),1] = 4:nrow(del_mat) - 3
 del_mat[4:nrow(del_mat),2] = rep(1:nweeks,each=7)
 del_mat[1, seq(3,ncol(del_mat),by=6)] = scennames
 del_mat[2, seq(3,ncol(del_mat),by=3)] = rep(c('BPSV','SSV dose 2'),nscen)
-del_mat[3, 3:ncol(del_mat)] = rep(rev(income_levels),2*nscen)
+del_mat[3, 3:ncol(del_mat)] = rep((income_levels),2*nscen)
 
 for(s in 1:nscen){
   if(bpsv_scen[s]==T){
     bpsv_deliveries = scenario_results[[s]]$delivery$bpsv
     dailybpsv = diurnise_deliveries(bpsv_deliveries)
-    del_mat[3+1:nrow(dailybpsv), 2+ (s-1)*2*3 + 1:3] = dailybpsv[,match(rev(income_levels), colnames(dailybpsv))]
+    del_mat[3+1:nrow(dailybpsv), 2+ (s-1)*2*3 + 1:3] = dailybpsv[,match((income_levels), colnames(dailybpsv))]
   }
   # convert from cumulative (fraction of population) to daily
   deliveries <- scenario_results[[s]]$delivery$ssv
   # print(sum(diurnise_deliveries(deliveries)[,-1]))
   dailyssv = diurnise_deliveries(deliveries)
-  del_mat[4:nrow(del_mat), 2+ (s-1)*2*3 +3 + 1:3] = dailyssv[,match(rev(income_levels), colnames(dailyssv))]
+  del_mat[4:nrow(del_mat), 2+ (s-1)*2*3 +3 + 1:3] = dailyssv[,match((income_levels), colnames(dailyssv))]
 }
 
 xlsx::write.xlsx(del_mat,file = '../../data/vaccine_delivery.xlsx',sheetName='Vx timeline', append=F,row.names = F, col.names=F)
@@ -507,9 +507,9 @@ groupings = lapply(groupnames,function(x) which(grepl(x,colnames(costparameters)
 costlist2 <- list()
 costlist2$Response <- costlist2$Annual <- costlist2$Upfront <- list()
 for(s in 1:nscen) {
-  costlist2$Response[[s]] = scenario_results[[s]]$costs$response$totalundiscounted
+  costlist2$Response[[s]] = scenario_results[[s]]$costs$response$totaldiscounted
   costlist2$Annual[[s]] = scenario_results[[s]]$costs$annual$totalannual
-  costlist2$Upfront[[s]] = scenario_results[[s]]$costs$upfront$totalupfrontreal
+  costlist2$Upfront[[s]] = scenario_results[[s]]$costs$upfront$totalupfront
 }
 outcomes = lapply(costlist2, function(x)do.call(cbind,x))
 pl = get_voi(outcomes, costparameters, groupings, scennames)
