@@ -2,6 +2,12 @@
 title: "Costs and impacts of vaccine preparedness investments for SARS-X pandemics: Daedalus code and model description"
 #date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  bookdown::github_document2:
+    # pandoc_args: --webtex
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
   bookdown::pdf_document2: 
     #   --filter=pandoc-xnos
     toc: false
@@ -14,12 +20,6 @@ output:
     includes:
       in_header: "preamble.tex"
     pandoc_args: ["--shift-heading-level-by=1"]
-  bookdown::github_document2:
-    # pandoc_args: --webtex
-    toc: true
-    toc_depth: 5
-    toc_float: true
-    number_sections: true
   bookdown::word_document2: 
     toc_depth: 5
     toc_float: true
@@ -832,7 +832,7 @@ p^2(t) = \frac{1}{1+\exp(a_0 + a_1 \frac{1e5\sum_{j,v} \left(I_{j,v}^a+I_{j,v}^s
 (\#eq:testrate)
 \end{equation}
 
-with $a_0 = 2.197$, $a_1 = 0.1838$ and $a_2 = -1.024$. The testing rate ramps up from nothing to its maximum capacity over a thirty-day period starting at the response time. When infectious prevalence exceeds testing capacity, testing loses its targeting advantage and detection falls back to what random population testing would achieve. Note that this uses an earlier version of the model of @Doohan2026, from @Doohan2022. This is a much simplified version that does not require additional disease states in the epidemiological model and, as uncertainty can be expressed through the testing rate parameter, is adequate for our purposes.
+with $a_0 = 2.197$, $a_1 = 0.1838$ and $a_2 = -1.024$. The testing rate ramps up from nothing to its maximum capacity over a thirty-day period starting at the response time. When infectious prevalence exceeds testing capacity, testing loses its targeting advantage and detection falls back to what random population testing would achieve, and detection is assumed never to be lower than under random population testing. Note that this uses an earlier version of the model of @Doohan2026, from @Doohan2022. This is a much simplified version that does not require additional disease states in the epidemiological model and, as uncertainty can be expressed through the testing rate parameter, is adequate for our purposes.
 
 <!-- b0    = 2.197; -->
 <!-- b1    = 0.1838; -->
@@ -1080,7 +1080,7 @@ In reality, the observed effects combined mandated closures, reductions in consu
 
 The economic configurations define the sector closures for both economic and epidemiological parts of the model. Contacts associated with sectors -- between and among workers and customers -- are scaled down with closures. GVA per sector is scaled according to economic configurations in the economic part of the model.
 
-For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the "heavy" configuration has higher stringency than the "light" configuration; the configurations are tabulated in Table \@ref(tab:eccon)). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. RC1 and RC2 respond to hospital occupancy and its growth, allowing cases to rise and using closures to allow them to fall again. RC1 keeps schools closed throughout, whereas RC2 has schools open in the light configuration. RC3 aims to reduce cases and then to keep them low. All mitigation is suspended after vaccine rollout, subject to waiting periods and policy-specific stopping conditions. 
+For their dynamic implementation in the model, the three closure policies follow the same general pattern: they are defined by two economic configurations, which we refer to as heavy and light (where the "heavy" configuration has higher stringency than the "light" configuration; the configurations are tabulated in Table \@ref(tab:eccon)). The light configuration is implemented at the response time. Thereafter, the level of closure for the three policies is mandated in response to the state of the epidemic, reverting between states as determined by the transmission dynamics. RC1 and RC2 respond to hospital occupancy and its growth, allowing cases to rise and using closures to allow them to fall again. RC1 keeps schools closed throughout, whereas RC2 has schools open in the light configuration. RC3 aims to reduce cases and then to keep them low. Closures are lifted after vaccine rollout, subject to waiting periods and policy-specific stopping conditions. 
 
 
 
@@ -1136,7 +1136,7 @@ minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
 The sector-closure policies are defined as follows:
 
 - NC: No closures are mandated. 
-- RC1: Schools are mandated to close to 10% of pre-epidemic levels throughout, and other economic sectors close to the heavy-closure economic configuration when hospital occupancy reaches 95% of its capacity, and change to the light configuration once occupancy is less than 25% capacity.
+- RC1: Schools are mandated to close to 10% of pre-epidemic levels throughout, and other economic sectors close to the heavy-closure economic configuration when hospital occupancy is high (95% of its capacity) and growing, and change to the light configuration once occupancy is low (less than 25% capacity) and falling.
 - RC2: Sectors (including the education sector)  toggle between heavy and light closures reactively, as in RC1, with different economic configurations. 
 - RC3: Heavy closures are chosen when $R_t>1.2$ and light closures when $R_t<1$. Closures are maintained until vaccination targets are reached. 
 
@@ -1289,7 +1289,7 @@ if (!knitr::is_html_output(excludes = "markdown")) {
 
 ### Compliance with the requirement to self isolate
 
-We sought estimates to parametrise compliance with the requirement to self isolate. A YouGov survey [@jonessarahpImperialCollegeLondon2020] asked "If you were advised to do so by a healthcare professional or public health authority to what extent are you willing or not to self-isolate for 7 days?" The question was asked in 30 different countries (21 high income, five upper-middle income, four lower-middle income) and 63 different weeks of the COVID-19 pandemic to a total of 837,368 people. The possible answers were 'Very unwilling', 'Somewhat unwilling', 'Neither willing nor unwilling', 'Not sure', 'Somewhat willing', 'Very willing'.  Excluding the answer 'Not sure', and weighting all other answers on a uniform scale of 0 to 1, the average compliance from all participants is 84%. The range across countries is 73% to 90%. The average value for the UK is 87%. In contrast, @Smith2021 found that duration-adjusted adherence to full self isolation was 42.5%. The average value for Australia was 88%. A survey undertaken in 2009 found that 55% of households complied with quarantine requirements [@Kavanagh2011]. Given the mixed evidence, we assume that infectious people who know their status have a compliance $p^1\sim\text(Beta)(5,5)$ with the instruction to self isolate, starting one day into their infectious period.
+We sought estimates to parametrise compliance with the requirement to self isolate. A YouGov survey [@jonessarahpImperialCollegeLondon2020] asked "If you were advised to do so by a healthcare professional or public health authority to what extent are you willing or not to self-isolate for 7 days?" The question was asked in 30 different countries (21 high income, five upper-middle income, four lower-middle income) and 63 different weeks of the COVID-19 pandemic to a total of 837,368 people. The possible answers were 'Very unwilling', 'Somewhat unwilling', 'Neither willing nor unwilling', 'Not sure', 'Somewhat willing', 'Very willing'.  Excluding the answer 'Not sure', and weighting all other answers on a uniform scale of 0 to 1, the average compliance from all participants is 84%. The range across countries is 73% to 90%. The average value for the UK is 87%. In contrast, @Smith2021 found that duration-adjusted adherence to full self isolation was 42.5%. The average value for Australia was 88%. A survey undertaken in 2009 found that 55% of households complied with quarantine requirements [@Kavanagh2011]. Given the mixed evidence, we assume that infectious people who know their status have a compliance $p^1\sim\text(Beta)(5,5)$ with the instruction to self isolate.
 
 
 ### Hospital capacity
