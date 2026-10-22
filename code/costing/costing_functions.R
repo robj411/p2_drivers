@@ -413,7 +413,7 @@ get_bpsv_supply = function(){
        bpsv_dose_delivery=bpsv_dose_delivery)
 }
 
-## ssv allocation: reserved doses
+## ssv allocation: reserved doses #################
 allocate_res_doses = function(cum_received, new_doses, hic_only=1){
   demand15_bn = DEMAND15/1e9/(1-VACCINE_WASTAGE)
   allocation = rep(0,NLEVELS)
@@ -711,7 +711,7 @@ get_bpsv_costs = function(total_bpsv, pos, pto, exi, inexi,
   # fill and finish
   bpsv_ff_trans = (cost_ff+cost_travel)*cost_cogs*(1+profit)
   # procurement cost
-  bpsvproc = (cost_res*sum(DEMAND65)/1e6)/(1-VACCINE_WASTAGE) + bpsv_inv_res*bpsv_ff_trans/1e6
+  bpsvproc = cost_res*total_bpsv + bpsv_inv_res*bpsv_ff_trans/1e6
   
   # return
   list(bpsv_rd_costsamples_dyd=bpsv_rd_costsamples_dyd,
@@ -733,7 +733,7 @@ get_bpsv_del_costs = function(bpsv_dose_delivery, cost_per_dose_mat){
     icthresh = DEL_COST_THRESHOLDS[il,]
     ildoses = bpsv_dose_delivery[[INCOMELEVELS[il]]]
     # bpsv_dose_delivery is a fraction of population
-    icdemand = max(ildoses)*POPS0[il] # DEMAND65[il]
+    icdemand = max(ildoses)*POPS0[il] # DEMAND65[il] # DEMAND65[il]/sum(DEMAND65)*899000000 # 
     cost_per_dose_il = cost_per_dose_mat[il,]
     firstcost = cost_per_dose_il[1]
     if(icdemand < icthresh[1]){
