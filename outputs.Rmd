@@ -280,7 +280,7 @@ plotgini[,Income:=factor(plotgini$Income,levels=c('LLMIC','UMIC','HIC'))]
 setorder(plotgini, Income)
 plotgini[,Gini:=ginifunction(Percent),by=.(Day,Scenario)]
 percents = subset(plotgini,Day==150*7&Scenario=='BAU')$Percent
-subset(tab, `0...1`==150*7)
+# subset(tab, `0...1`==150*7)
 
 percents = subset(plotgini, Day==896&Scenario=='S10')$Percent
 # max(subset(plotgini,!is.na(Gini))$Gini)
