@@ -324,9 +324,8 @@ for(i in 1:3) tosave[[i]] <- list()
 
 
 fifteen_yr_discount_weight = sapply(1:NSAMPLES, function(x) accumulate(discount = pardf$discount[x], from = 1, to = pardf$years_100[x]))
-s=2
 for(s in 1:nscen){ 
-  print(s)
+  # print(s)
   dm = scenario_df$DM[s]
   whichdm <- which(dms==dm)
   pardf$time_to_rd = dm_rd_times[,whichdm]
