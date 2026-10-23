@@ -843,12 +843,13 @@ with $a_0 = 2.197$, $a_1 = 0.1838$ and $a_2 = -1.024$. The testing rate
 ramps up from nothing to its maximum capacity over a thirty-day period
 starting at the response time. When infectious prevalence exceeds
 testing capacity, testing loses its targeting advantage and detection
-falls back to what random population testing would achieve. Note that
-this uses an earlier version of the model of Doohan et al. (2026), from
-Doohan et al. (2022). This is a much simplified version that does not
-require additional disease states in the epidemiological model and, as
-uncertainty can be expressed through the testing rate parameter, is
-adequate for our purposes.
+falls back to what random population testing would achieve, and
+detection is assumed never to be lower than under random population
+testing. Note that this uses an earlier version of the model of Doohan
+et al. (2026), from Doohan et al. (2022). This is a much simplified
+version that does not require additional disease states in the
+epidemiological model and, as uncertainty can be expressed through the
+testing rate parameter, is adequate for our purposes.
 
 <!-- b0    = 2.197; -->
 
@@ -1088,9 +1089,9 @@ between states as determined by the transmission dynamics. RC1 and RC2
 respond to hospital occupancy and its growth, allowing cases to rise and
 using closures to allow them to fall again. RC1 keeps schools closed
 throughout, whereas RC2 has schools open in the light configuration. RC3
-aims to reduce cases and then to keep them low. All mitigation is
-suspended after vaccine rollout, subject to waiting periods and
-policy-specific stopping conditions.
+aims to reduce cases and then to keep them low. Closures are lifted
+after vaccine rollout, subject to waiting periods and policy-specific
+stopping conditions.
 
 <div class="figure">
 
@@ -1113,9 +1114,9 @@ The sector-closure policies are defined as follows:
 - NC: No closures are mandated.
 - RC1: Schools are mandated to close to 10% of pre-epidemic levels
   throughout, and other economic sectors close to the heavy-closure
-  economic configuration when hospital occupancy reaches 95% of its
-  capacity, and change to the light configuration once occupancy is less
-  than 25% capacity.
+  economic configuration when hospital occupancy is high (95% of its
+  capacity) and growing, and change to the light configuration once
+  occupancy is low (less than 25% capacity) and falling.
 - RC2: Sectors (including the education sector) toggle between heavy and
   light closures reactively, as in RC1, with different economic
   configurations.
@@ -4206,8 +4207,7 @@ Australia was 88%. A survey undertaken in 2009 found that 55% of
 households complied with quarantine requirements (Kavanagh et al. 2011).
 Given the mixed evidence, we assume that infectious people who know
 their status have a compliance $p^1\sim\text(Beta)(5,5)$ with the
-instruction to self isolate, starting one day into their infectious
-period.
+instruction to self isolate.
 
 ### 6.2.2 Hospital capacity
 
