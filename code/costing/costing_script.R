@@ -222,6 +222,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
       bpsv_replenishment = pardf$bpsv_replenishment[i]
       n_bpsv_p1 = pardf$n_bpsv_p1[i]
       bpsv_res_upfront = pardf$bpsv_res_upfront[i]
+      y_durations = durations[1:3] # years
+      old_duration = durations[4]/52 # weeks
       
       bpsvcosts = get_bpsv_costs(total_bpsv = total_bpsv,
                                  pos = pos, 
@@ -231,8 +233,8 @@ get_scenario = function(dm=365, bpsvflag=F, cr=0, propflag=1, rates=c(.07, .07, 
                                  inex_weight = inex_weight,
                                  n_bpsv_candidates = n_bpsv_candidates,
                                  bpsv_res_upfront = bpsv_res_upfront,
-                                 y_durations = durations[1:3], # years
-                                 old_duration = durations[4]/52, # weeks
+                                 y_durations = y_durations, # years
+                                 old_duration = old_duration, # weeks
                                  discount = discount,
                                  cost_lic = cost_lic,
                                  bpsv_replenishment = bpsv_replenishment,
@@ -322,10 +324,9 @@ for(i in 1:3) tosave[[i]] <- list()
 
 
 fifteen_yr_discount_weight = sapply(1:NSAMPLES, function(x) accumulate(discount = pardf$discount[x], from = 1, to = pardf$years_100[x]))
-
 s=2
 for(s in 1:nscen){ 
-  
+  print(s)
   dm = scenario_df$DM[s]
   whichdm <- which(dms==dm)
   pardf$time_to_rd = dm_rd_times[,whichdm]
@@ -351,22 +352,21 @@ for(s in 1:nscen){
   scenario_results[[s]]$costs$response$totalundiscounted = allresp
   
   dc = 1/(1+pardf$discount)^15
-  # bpsv resp looks fine
-  print(quantile(thisscen$costs$response$bpsv_response_rd*dc,c(1:3)/4))
-  print(quantile(thisscen$costs$response$bpsv_proc*dc,c(1:3)/4))
-  print(quantile(thisscen$costs$response$bpsv_delivery*dc,c(1:3)/4))
-  # annual
-  summary(round(thisscen$costs$annual$capres*fifteen_yr_discount_weight))
   # upfront
-  summary(round(thisscen$costs$upfront$enabling))
+  # print(quantile(thisscen$costs$upfront$bpsv_rd_discounted,c(1:3)/4))
+  # annual
+  # print(quantile(thisscen$costs$annual$capres*fifteen_yr_discount_weight,c(1,3)/4))
+  # upfront
+  # print(quantile(thisscen$costs$upfront$upfront_bpsv,c(1,3)/4))
+  # print(quantile(thisscen$costs$upfront$enabling,c(1,3)/4))
   # response
-  # issue with inflation; this value should be lower than that in the spreadsheet
-  summary(round(thisscen$costs$response$ssv_rd*dc))
-  # issue with inflation; this value should be higher than that in the spreadsheet
-  summary(round(thisscen$costs$response$ssv_rd*dc*(1.28)))
+  # print(quantile(thisscen$costs$response$bpsv_response_rd*dc,c(1,3)/4))
+  # print(quantile(thisscen$costs$response$ssv_rd*dc,c(1,3)/4))
+  # print(quantile(thisscen$costs$response$bpsv_proc*dc,c(1,3)/4))
+  # print(quantile(thisscen$costs$response$bpsv_delivery*dc,c(1,3)/4))
   # look okayish
-  summary(round(thisscen$costs$response$ssv_proc_discounted*dc))
-  summary(round(thisscen$costs$response$ssv_delivery_discounted*dc))
+  # print(quantile(thisscen$costs$response$ssv_proc_discounted*dc,c(1,3)/4))
+  # print(quantile(thisscen$costs$response$ssv_delivery_discounted*dc,c(1,3)/4))
   
   cat(paste(scennames[s], ' & ', round(thisscen$delivery$maxhoard[1]*1e3), '\\\\ \n'))
   
